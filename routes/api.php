@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\PostController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -27,7 +28,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::prefix('v1')->group(function() {
-    Route::apiResource('posts', PostController::class);
+    Route::apiResource('/', UserController::class);
     // Route::apiResource('users', UserController::class);
     // Route::apiResource('posts', PostController::class);
     // Route::apiResource('comments', CommentController::class);
