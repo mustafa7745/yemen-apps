@@ -12,8 +12,8 @@ class UserController extends Controller
     public function index()
     {
         $posts = DB::table('options')
-        ->where('id', 1)
-        ->where('id', 2)
+        ->whereIn('id', [1,2,5])
+        // ->where('id', 2)
         // ->where('id','like', 3)
         ->get();
         return response()->json($posts);
