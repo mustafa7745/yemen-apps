@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Api\Users;
 
 use App\Http\Controllers\Controller;
 use App\Models\Post;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -10,9 +11,11 @@ class UserController extends Controller
 {
     public function index()
     {
-        return new JsonResponse([
-            'data' => 88888
-        ]);
+        $posts = DB::table('options')->get();
+        return response()->json($posts);
+        // return new JsonResponse([
+        //     'data' => 88888
+        // ]);
 
         // return Post::all();
     }
