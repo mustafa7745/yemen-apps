@@ -13,8 +13,8 @@ class UserController extends Controller
     {
         $posts = DB::table('options')
         ->where('id','like', 1)
-        ->where('id','like', 2)
-        ->where('id','like', 3)
+        // ->where('id','like', 2)
+        // ->where('id','like', 3)
         ->get();
         return response()->json($posts);
         // return new JsonResponse([
