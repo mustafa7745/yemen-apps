@@ -1,0 +1,18 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /public/
+
+    # Redirect Trailing Slashes
+    RewriteRule ^(.*)/$ /public/$1 [L,R=301]
+
+    # Handle URLs without index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php/$1 [L]
+</IfModule>
+
+# Protect .env file (important for security)
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
