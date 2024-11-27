@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\PostController;
-use App\Http\Controllers\Api\Users\UserController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
