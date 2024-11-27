@@ -11,7 +11,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $posts = DB::table('options')->get();
+        $posts = DB::table('options')->where('id', 1)->get();
         return response()->json($posts);
         // return new JsonResponse([
         //     'data' => 88888
