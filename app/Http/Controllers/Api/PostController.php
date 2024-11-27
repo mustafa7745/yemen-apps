@@ -4,12 +4,17 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class PostController extends Controller
 {
     public function index()
     {
-        return Post::all();
+        return new JsonResponse([
+            'data' => 99999
+        ]);
+
+        // return Post::all();
     }
 
     public function store(Request $request)

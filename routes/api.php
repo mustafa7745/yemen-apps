@@ -18,10 +18,16 @@ use Illuminate\Support\Facades\Route;
 Route::get('/r2',function(){
     return new JsonResponse([
     'data'=>12345]);
-    });
+});
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
 Route::apiResource('posts', PostController::class);
+
+Route::prefix('v1')->group(function() {
+    // Route::apiResource('users', UserController::class);
+    // Route::apiResource('posts', PostController::class);
+    // Route::apiResource('comments', CommentController::class);
+});
