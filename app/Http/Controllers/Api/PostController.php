@@ -31,7 +31,10 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
-        return $post;
+        return new JsonResponse([
+            'data' => 55555
+        ]);
+        // return $post;
     }
 
     public function update(Request $request, Post $post)
