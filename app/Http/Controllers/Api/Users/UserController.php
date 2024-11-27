@@ -11,7 +11,11 @@ class UserController extends Controller
 {
     public function index()
     {
-        $posts = DB::table('options')->where('id', 1)->get();
+        $posts = DB::table('options')
+        ->where('id','like', 1)
+        ->where('id','like', 2)
+        ->where('id','like', 3)
+        ->get();
         return response()->json($posts);
         // return new JsonResponse([
         //     'data' => 88888
