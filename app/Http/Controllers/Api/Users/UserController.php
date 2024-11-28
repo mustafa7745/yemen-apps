@@ -106,19 +106,22 @@ class UserController extends Controller
                         'images' => []
                     ];
                 }
+                foreach ($productImages as $index => $image) {
+                    if ($image->productId == $product->productId) {
+                        $images[] = $image;
+                        unset($productImages[$index]);
+                    }
+                }
+                if ($product->categoryId == $category->categoryId)
+                    $result[$product->productId]['images'] = $images;
+
 
                 if ($product->categoryId == $category->categoryId)
                     // Add the option to the options array
                     $result[$product->productId]['options'][] = ['price' => $product->price, 'name' => $product->optionName];
 
 
-                foreach ($productImages as $image) {
-                    if ($image->productId == $product->productId) {
-                        $images[] = $image;
-                    }
-                }
-                if ($product->categoryId == $category->categoryId)
-                $result[$product->productId]['images'] = $images;
+
             }
             $value = ['category' => $category, 'products' => array_values($result)];
             array_push($final, $value);
