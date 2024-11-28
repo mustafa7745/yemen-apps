@@ -76,6 +76,7 @@ class UserController extends Controller
             // }
             $result = [];
             foreach ($storeProducts as $product) {
+                print_r($category);
                 // If the productId doesn't exist in the result array, add it
                 if (!isset($result[$product['productId']])) {
                     $result[$product['productId']] = [
