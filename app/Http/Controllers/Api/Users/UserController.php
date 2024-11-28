@@ -96,8 +96,8 @@ class UserController extends Controller
                 // Add the option to the options array
                 $result[$product->productId]['options'][] = ['price' => $product->price, 'name' => $product->optionName];
             }
-            // $value = ['category' => $category, 'products' => $result];
-            // array_push($final, $value);
+            $value = ['category' => $category, 'products' => $result];
+            array_push($final, $value);
         }
 
         // $result = [];
