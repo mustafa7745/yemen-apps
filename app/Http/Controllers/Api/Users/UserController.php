@@ -96,7 +96,7 @@ class UserController extends Controller
                 // Add the option to the options array
                 $result[$product->productId]['options'][] = ['price' => $product->price, 'name' => $product->optionName];
             }
-            $value = ['category' => $category, 'products' => $result];
+            $value = ['category' => $category, 'products' => array_values($result)];
             array_push($final, $value);
         }
 
@@ -116,7 +116,7 @@ class UserController extends Controller
         //     // Add the option to the options array
         //     $result[$product->productId]['options'][] = ['price' => $product->price, 'name' => $product->optionName];
         // }
-        return response()->json(array_values($final));
+        return response()->json($final);
         // return new JsonResponse([
         //     'data' => 88888
         // ]);
