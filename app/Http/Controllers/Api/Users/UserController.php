@@ -31,7 +31,7 @@ class UserController extends Controller
             )
             ->select(
                 Categories::$tableName . '.' . Categories::$id . ' as categoryId',
-                Categories::$tableName . '.' . Categories::$id . ' as categoryName'
+                Categories::$tableName . '.' . Categories::$name . ' as categoryName'
             )
             ->get()->toArray();
         $storeProducts = DB::table(StoreProducts::$tableName)
