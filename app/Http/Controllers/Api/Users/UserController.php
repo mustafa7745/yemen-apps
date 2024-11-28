@@ -44,18 +44,24 @@ class UserController extends Controller
                 StoreProducts::$tableName . '.' . StoreProducts::$storeCategoryId
             )
             ->join(
-               Categories::$tableName,
+                Categories::$tableName,
                 Categories::$tableName . '.' . Categories::$id,
                 '=',
                 StoreCategories::$tableName . '.' . StoreCategories::$categoryId
             )
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
-            // ->select(
-            //     Products::$tableName . '.' . Products::$name . ' as name',
-            //     Products::$tableName . '.' . Products::$description . ' as description',
-            //     StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
-            //     Options::$tableName . '.' . Options::$name . ' as optionName',
-            // )
+            ->select(
+                Products::$tableName . '.' . Products::$name . ' as name',
+                Products::$tableName . '.' . Products::$description . ' as description',
+                StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
+                    // 
+                Options::$tableName . '.' . Options::$id . ' as optionId',
+                Options::$tableName . '.' . Options::$name . ' as optionName',
+                    // 
+                Categories::$tableName . '.' . Categories::$id . ' as categoryId',
+                Categories::$tableName . '.' . Categories::$name . ' as categoryName',
+
+            )
             ->get();
         return response()->json($storeProducts);
         // return new JsonResponse([
