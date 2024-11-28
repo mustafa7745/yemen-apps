@@ -24,7 +24,7 @@ class UserController extends Controller
                 StoreProducts::$tableName . '.' . StoreProducts::$productId
             )
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
-            ->select(Products::$tableName . '.' . Products::$id .'as productName'
+            ->select(Products::$tableName . '.' . Products::$id .' as productName'
             
             )
             ->get();
