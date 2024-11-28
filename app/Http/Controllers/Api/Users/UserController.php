@@ -74,49 +74,49 @@ class UserController extends Controller
         //     print_r($categories[$i]->name);
         // }
 
-        // foreach ($categories as $category) {
-        //     // $products=[];
-        //     //    $options = [];
-        //     // for ($product = 0; $product < count($storeProducts); $product++) {
+        foreach ($categories as $category) {
+            // $products=[];
+            //    $options = [];
+            // for ($product = 0; $product < count($storeProducts); $product++) {
 
-        //     //     # code...
-        //     // }
-        //     $result = [];
+            //     # code...
+            // }
+            $result = [];
 
-        //     foreach ($storeProducts as $product) {
-        //         $options = [];
-        //         if (!isset($result[$product->productId])) {
-        //             $result[$product->productId] = [
-        //                 'productId' => $product->productId,
-        //                 'productName' => $product->productName,
-        //                 'options' => []
-        //             ];
-        //         }
+            foreach ($storeProducts as $product) {
+                $options = [];
+                if (!isset($result[$product->productId])) {
+                    $result[$product->productId] = [
+                        'productId' => $product->productId,
+                        'productName' => $product->productName,
+                        'options' => []
+                    ];
+                }
 
-        //         // Add the option to the options array
-        //         $result[$product->productId]['options'][] = ['price' => $product->price, 'name' => $product->optionName];
-        //     }
-        //     // $value = ['category' => $category, 'products' => $result];
-        //     // array_push($final, $value);
-        // }
-
-        $result = [];
-
-        foreach ($storeProducts as $product) {
-
-            $options = [];
-            if (!isset($result[$product->productId])) {
-                $result[$product->productId] = [
-                    'productId' => $product->productId,
-                    'productName' => $product->productName,
-                    'options' => []
-                ];
+                // Add the option to the options array
+                $result[$product->productId]['options'][] = ['price' => $product->price, 'name' => $product->optionName];
             }
-
-            // Add the option to the options array
-            $result[$product->productId]['options'][] = ['price' => $product->price, 'name' => $product->optionName];
+            // $value = ['category' => $category, 'products' => $result];
+            // array_push($final, $value);
         }
-        return response()->json(array_values($result));
+
+        // $result = [];
+
+        // foreach ($storeProducts as $product) {
+
+        //     $options = [];
+        //     if (!isset($result[$product->productId])) {
+        //         $result[$product->productId] = [
+        //             'productId' => $product->productId,
+        //             'productName' => $product->productName,
+        //             'options' => []
+        //         ];
+        //     }
+
+        //     // Add the option to the options array
+        //     $result[$product->productId]['options'][] = ['price' => $product->price, 'name' => $product->optionName];
+        // }
+        return response()->json(array_values($final));
         // return new JsonResponse([
         //     'data' => 88888
         // ]);
