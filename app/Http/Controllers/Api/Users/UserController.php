@@ -66,37 +66,38 @@ class UserController extends Controller
             ->get();
         $categoriesAndProducts = [];
         // 
+        print_r($categories);
         $final = [];
-        for ($i = 0; $i < count($categories); $i++) {
-            print_r($categories[$i][Categories::$id]);
-        }
+        // for ($i = 0; $i < count($categories); $i++) {
+        //     print_r($categories[$i][Categories::$id]);
+        // }
 
-        foreach ($categories as $category) {
-            // $products=[];
-            //    $options = [];
-            // for ($product = 0; $product < count($storeProducts); $product++) {
+        // foreach ($categories as $category) {
+        //     // $products=[];
+        //     //    $options = [];
+        //     // for ($product = 0; $product < count($storeProducts); $product++) {
 
-            //     # code...
-            // }
-            $result = [];
+        //     //     # code...
+        //     // }
+        //     $result = [];
 
-            foreach ($storeProducts as $product) {
-                print_r($category);
-                // If the productId doesn't exist in the result array, add it
-                if (!isset($result[$product['productId']])) {
-                    $result[$product['productId']] = [
-                        'productId' => $product['productId'],
-                        'productName' => $product['productName'],
-                        'options' => []
-                    ];
-                }
+        //     foreach ($storeProducts as $product) {
+        //         print_r($category);
+        //         // If the productId doesn't exist in the result array, add it
+        //         if (!isset($result[$product['productId']])) {
+        //             $result[$product['productId']] = [
+        //                 'productId' => $product['productId'],
+        //                 'productName' => $product['productName'],
+        //                 'options' => []
+        //             ];
+        //         }
 
-                // Add the option to the options array
-                $result[$product['productId']]['options'][] = $product['option'];
-            }
-            $value = ['category' => $category, 'products' => $result];
-            array_push($final, $value);
-        }
+        //         // Add the option to the options array
+        //         $result[$product['productId']]['options'][] = $product['option'];
+        //     }
+        //     $value = ['category' => $category, 'products' => $result];
+        //     array_push($final, $value);
+        // }
 
         return response()->json($final);
         // return new JsonResponse([
