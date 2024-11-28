@@ -85,7 +85,7 @@ class UserController extends Controller
         $productImages = DB::table(ProductImages::$tableName)
             ->whereIn(ProductImages::$productId, $productIds)
             ->select(
-                // ProductImages::$tableName . '.' . ProductImages::$id,
+                ProductImages::$tableName . '.' . ProductImages::$productId,
                 ProductImages::$tableName . '.' . ProductImages::$image,
             )
             ->get();
@@ -113,7 +113,7 @@ class UserController extends Controller
                     $images = [];
                     foreach ($productImages as $index => $image) {
                         if ($image->productId == $product->productId) {
-                            $images[] = $image;
+                            $images[] = ['image' => $image->image];
                             unset($productImages[$index]);
                         }
                     }
