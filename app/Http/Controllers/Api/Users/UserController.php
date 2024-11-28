@@ -85,7 +85,7 @@ class UserController extends Controller
         $productImages = DB::table(ProductImages::$tableName)
             ->whereIn(ProductImages::$productId, $productIds)
             ->select(
-                ProductImages::$tableName . '.' . ProductImages::$id,
+                // ProductImages::$tableName . '.' . ProductImages::$id,
                 ProductImages::$tableName . '.' . ProductImages::$image,
             )
             ->get();
