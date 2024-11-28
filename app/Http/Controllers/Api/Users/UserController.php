@@ -23,13 +23,18 @@ class UserController extends Controller
                 '=',
                 StoreProducts::$tableName . '.' . StoreProducts::$productId
             )
+            ->join(
+                Options::$tableName,
+                Options::$tableName . '.' . Options::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$optionId
+            )
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
             ->select(
-                Products::$tableName . '.' . Products::$name .' as productName',
-                Products::$tableName . '.' . Products::$description .' as productDescription',
-                StoreProducts::$tableName . '.' . StoreProducts::$price .' as productPrice',
-
-            
+                Products::$tableName . '.' . Products::$name .' as name',
+                Products::$tableName . '.' . Products::$description .' as description',
+                StoreProducts::$tableName . '.' . StoreProducts::$price .' as price',
+                Options::$tableName . '.' . Options::$name .' as optionName',
             )
             ->get();
         return response()->json($posts);
