@@ -15,6 +15,7 @@ class UserController extends Controller
         $storeId = 1;
         $posts = DB::table(Options::$tableName)
             ->whereIn(Options::$id, [1, 2, 5])
+            ->select(Options::$name)
             ->get();
         return response()->json($posts);
         // return new JsonResponse([
