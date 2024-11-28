@@ -18,6 +18,12 @@ class UserController extends Controller
     {
         $storeId = 1;
         $categories = DB::table(StoreCategories::$tableName)
+            ->join(
+                Categories::$tableName,
+                Categories::$tableName . '.' . Categories::$id,
+                '=',
+                StoreCategories::$tableName . '.' . StoreCategories::$categoryId
+            )
             ->where(
                 StoreCategories::$tableName . '.' . StoreCategories::$storeId,
                 '=',
