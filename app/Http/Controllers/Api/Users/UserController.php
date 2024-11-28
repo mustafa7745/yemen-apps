@@ -67,6 +67,10 @@ class UserController extends Controller
         $categoriesAndProducts = [];
         // 
         $final = [];
+        for ($i = 0; $i < count($categories); $i++) {
+            print_r($categories[$i]);
+        }
+
         foreach ($categories as $category) {
             // $products=[];
             //    $options = [];
@@ -75,6 +79,7 @@ class UserController extends Controller
             //     # code...
             // }
             $result = [];
+
             foreach ($storeProducts as $product) {
                 print_r($category);
                 // If the productId doesn't exist in the result array, add it
