@@ -2,9 +2,11 @@
 namespace App\Http\Controllers\Api\Users;
 
 use App\Http\Controllers\Controller;
+use App\Models\Categories;
 use App\Models\Options;
 use App\Models\Post;
 use App\Models\Products;
+use App\Models\StoreCategories;
 use App\Models\StoreProducts;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -15,7 +17,13 @@ class UserController extends Controller
     public function index()
     {
         $storeId = 1;
-        $posts = DB::table(StoreProducts::$tableName)
+        $categories = DB::table(StoreCategories::$tableName)
+            ->where(
+                StoreCategories::$tableName . '.' . StoreCategories::$storeId,
+                '=',
+                $storeId
+            );
+        $storeProducts = DB::table(StoreProducts::$tableName)
             // ->where(StoreProducts::$storeId, $storeId)
             ->join(
                 Products::$tableName,
@@ -29,15 +37,27 @@ class UserController extends Controller
                 '=',
                 StoreProducts::$tableName . '.' . StoreProducts::$optionId
             )
-            ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
-            ->select(
-                Products::$tableName . '.' . Products::$name .' as name',
-                Products::$tableName . '.' . Products::$description .' as description',
-                StoreProducts::$tableName . '.' . StoreProducts::$price .' as price',
-                Options::$tableName . '.' . Options::$name .' as optionName',
+            ->join(
+                StoreCategories::$tableName,
+                StoreCategories::$tableName . '.' . StoreCategories::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$storeCategoryId
             )
+            ->join(
+               Categories::$tableName,
+                Categories::$tableName . '.' . Categories::$id,
+                '=',
+                StoreCategories::$tableName . '.' . StoreCategories::$categoryId
+            )
+            ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
+            // ->select(
+            //     Products::$tableName . '.' . Products::$name . ' as name',
+            //     Products::$tableName . '.' . Products::$description . ' as description',
+            //     StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
+            //     Options::$tableName . '.' . Options::$name . ' as optionName',
+            // )
             ->get();
-        return response()->json($posts);
+        return response()->json($storeProducts);
         // return new JsonResponse([
         //     'data' => 88888
         // ]);
