@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Users;
 use App\Http\Controllers\Controller;
 use App\Models\Options;
 use App\Models\Post;
+use App\Models\Products;
 use App\Models\StoreProducts;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -16,6 +17,12 @@ class UserController extends Controller
         $storeId = 1;
         $posts = DB::table(StoreProducts::$tableName)
             ->where(StoreProducts::$storeId, $storeId)
+            ->join(
+                Products::$tableName,
+                Products::$tableName . '.' . Products::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$productId
+            )
             // ->select(Options::$name)
             ->get();
         return response()->json($posts);
