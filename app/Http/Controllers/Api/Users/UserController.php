@@ -97,7 +97,7 @@ class UserController extends Controller
             $result = [];
 
             foreach ($storeProducts as $product) {
-                $images = [];
+                
                 if (!isset($result[$product->productId]) && $product->categoryId == $category->categoryId) {
                     $result[$product->productId] = [
                         'productId' => $product->productId,
@@ -105,15 +105,16 @@ class UserController extends Controller
                         'options' => [],
                         'images' => []
                     ];
-                }
-                foreach ($productImages as $index => $image) {
-                    if ($image->productId == $product->productId) {
-                        $images[] = $image;
-                        unset($productImages[$index]);
+                    $images = [];
+                    foreach ($productImages as $index => $image) {
+                        if ($image->productId == $product->productId) {
+                            $images[] = $image;
+                            unset($productImages[$index]);
+                        }
                     }
-                }
-                if ($product->categoryId == $category->categoryId)
                     $result[$product->productId]['images'] = $images;
+                }
+
 
 
                 if ($product->categoryId == $category->categoryId)
