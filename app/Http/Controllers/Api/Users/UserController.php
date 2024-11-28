@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use App\Models\Options;
 use App\Models\Post;
+use App\Models\ProductImages;
 use App\Models\Products;
 use App\Models\StoreCategories;
 use App\Models\StoreProducts;
@@ -34,6 +35,7 @@ class UserController extends Controller
                 Categories::$tableName . '.' . Categories::$name . ' as categoryName'
             )
             ->get()->toArray();
+        // 
         $storeProducts = DB::table(StoreProducts::$tableName)
             // ->where(StoreProducts::$storeId, $storeId)
             ->join(
@@ -76,7 +78,12 @@ class UserController extends Controller
 
             )
             ->get();
-        $categoriesAndProducts = [];
+        $productIds = [];
+        foreach ($storeProducts as $product) {
+            $productIds[] = $product->productId;
+        }
+        $productImages = DB::table(ProductImages::$tableName)
+            ->whereIn(ProductImages::$productId, $productIds)->get();
         // 
         // print_r($categories);
         $final = [];
@@ -86,28 +93,31 @@ class UserController extends Controller
         // }
 
         foreach ($categories as $category) {
-            // $products=[];
-            //    $options = [];
-            // for ($product = 0; $product < count($storeProducts); $product++) {
 
-            //     # code...
-            // }
             $result = [];
 
             foreach ($storeProducts as $product) {
-                $options = [];
+                $images = [];
                 if (!isset($result[$product->productId]) && $product->categoryId == $category->categoryId) {
                     $result[$product->productId] = [
                         'productId' => $product->productId,
                         'productName' => $product->productName,
-                        'options' => []
+                        'options' => [],
+                        'images' => []
                     ];
-
                 }
 
                 if ($product->categoryId == $category->categoryId)
                     // Add the option to the options array
                     $result[$product->productId]['options'][] = ['price' => $product->price, 'name' => $product->optionName];
+
+
+                foreach ($productImages as $image) {
+                    if ($image->productId == $product->productId) {
+                        $images[] = $image;
+                    }
+                }
+                $result[$product->productId]['images'] = $images;
             }
             $value = ['category' => $category, 'products' => array_values($result)];
             array_push($final, $value);
