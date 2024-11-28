@@ -22,7 +22,7 @@ class UserController extends Controller
                 StoreCategories::$tableName . '.' . StoreCategories::$storeId,
                 '=',
                 $storeId
-            )->get();
+            )->get()->toArray();
         $storeProducts = DB::table(StoreProducts::$tableName)
             // ->where(StoreProducts::$storeId, $storeId)
             ->join(
