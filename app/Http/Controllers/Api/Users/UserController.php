@@ -68,7 +68,7 @@ class UserController extends Controller
         // 
         $final = [];
         for ($i = 0; $i < count($categories); $i++) {
-            print_r($categories[$i]);
+            print_r($categories[$i][Categories::$id]);
         }
 
         foreach ($categories as $category) {
