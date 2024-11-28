@@ -16,13 +16,14 @@ class UserController extends Controller
     {
         $storeId = 1;
         $posts = DB::table(StoreProducts::$tableName)
-            ->where(StoreProducts::$storeId, $storeId)
+            // ->where(StoreProducts::$storeId, $storeId)
             ->join(
                 Products::$tableName,
                 Products::$tableName . '.' . Products::$id,
                 '=',
                 StoreProducts::$tableName . '.' . StoreProducts::$productId
             )
+            ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId = $storeId)
             // ->select(Options::$name)
             ->get();
         return response()->json($posts);
