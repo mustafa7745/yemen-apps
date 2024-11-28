@@ -24,7 +24,9 @@ class UserController extends Controller
                 StoreProducts::$tableName . '.' . StoreProducts::$productId
             )
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
-            // ->select(Options::$name)
+            ->select(Products::$tableName . '.' . Products::$id .'as productName'
+            
+            )
             ->get();
         return response()->json($posts);
         // return new JsonResponse([
