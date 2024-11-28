@@ -51,6 +51,7 @@ class UserController extends Controller
             )
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
             ->select(
+                Products::$tableName . '.' . Products::$id . ' as productId',
                 Products::$tableName . '.' . Products::$name . ' as name',
                 Products::$tableName . '.' . Products::$description . ' as description',
                 StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
