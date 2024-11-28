@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Users;
 use App\Http\Controllers\Controller;
 use App\Models\Options;
 use App\Models\Post;
+use App\Models\StoreProducts;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -13,9 +14,9 @@ class UserController extends Controller
     public function index()
     {
         $storeId = 1;
-        $posts = DB::table(Options::$tableName)
-            ->whereIn(Options::$id, [1, 2, 5])
-            ->select(Options::$name)
+        $posts = DB::table(StoreProducts::$tableName)
+            ->where(StoreProducts::$storeId, $storeId)
+            // ->select(Options::$name)
             ->get();
         return response()->json($posts);
         // return new JsonResponse([
