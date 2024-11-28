@@ -28,7 +28,12 @@ class UserController extends Controller
                 StoreCategories::$tableName . '.' . StoreCategories::$storeId,
                 '=',
                 $storeId
-            )->get()->toArray();
+            )
+            ->select(
+                Categories::$tableName . '.' . Categories::$id . ' as categoryId',
+                Categories::$tableName . '.' . Categories::$id . ' as categoryName'
+            )
+            ->get()->toArray();
         $storeProducts = DB::table(StoreProducts::$tableName)
             // ->where(StoreProducts::$storeId, $storeId)
             ->join(
@@ -91,7 +96,7 @@ class UserController extends Controller
 
             foreach ($storeProducts as $product) {
                 $options = [];
-                if (!isset($result[$product->productId])) {
+                if (!isset($result[$product->productId]) && $product->categoryId == $category->categoryId) {
                     $result[$product->productId] = [
                         'productId' => $product->productId,
                         'productName' => $product->productName,
