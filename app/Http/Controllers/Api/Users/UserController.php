@@ -117,6 +117,7 @@ class UserController extends Controller
                         $images[] = $image;
                     }
                 }
+                if ($product->categoryId == $category->categoryId)
                 $result[$product->productId]['images'] = $images;
             }
             $value = ['category' => $category, 'products' => array_values($result)];
