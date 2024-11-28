@@ -102,10 +102,12 @@ class UserController extends Controller
                         'productName' => $product->productName,
                         'options' => []
                     ];
+
                 }
 
-                // Add the option to the options array
-                $result[$product->productId]['options'][] = ['price' => $product->price, 'name' => $product->optionName];
+                if ($product->categoryId == $category->categoryId)
+                    // Add the option to the options array
+                    $result[$product->productId]['options'][] = ['price' => $product->price, 'name' => $product->optionName];
             }
             $value = ['category' => $category, 'products' => array_values($result)];
             array_push($final, $value);
