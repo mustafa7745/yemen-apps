@@ -107,6 +107,7 @@ class UserController extends Controller
                     $result[$product->productId] = [
                         'productId' => $product->productId,
                         'productName' => $product->productName,
+                        'productDescription' => $product->productDescription,
                         'options' => [],
                         'images' => []
                     ];
