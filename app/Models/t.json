@@ -1,0 +1,20 @@
+{
+    "category":{
+        "id":1,
+        "name":"water"
+    },
+    "products":[
+        {
+            "id":1,
+            "name":"m water",
+            "description":"wtaer description",
+            "images":[],
+            "options":[
+                {
+                    "name":"small",
+                    "price":500
+                }
+            ]
+        }
+    ]
+}
