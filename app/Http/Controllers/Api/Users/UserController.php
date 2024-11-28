@@ -83,7 +83,12 @@ class UserController extends Controller
             $productIds[] = $product->productId;
         }
         $productImages = DB::table(ProductImages::$tableName)
-            ->whereIn(ProductImages::$productId, $productIds)->get();
+            ->whereIn(ProductImages::$productId, $productIds)
+            ->select(
+                ProductImages::$tableName . '.' . ProductImages::$id,
+                ProductImages::$tableName . '.' . ProductImages::$image,
+            )
+            ->get();
         // 
         // print_r($categories);
         $final = [];
@@ -97,7 +102,7 @@ class UserController extends Controller
             $result = [];
 
             foreach ($storeProducts as $product) {
-                
+
                 if (!isset($result[$product->productId]) && $product->categoryId == $category->categoryId) {
                     $result[$product->productId] = [
                         'productId' => $product->productId,
