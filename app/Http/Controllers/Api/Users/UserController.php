@@ -125,7 +125,7 @@ class UserController extends Controller
 
                 if ($product->categoryId == $category->categoryId)
                     // Add the option to the options array
-                    $result[$product->productId]['options'][] = ['price' => $product->price, 'name' => $product->optionName];
+                    $result[$product->productId]['options'][] = ['storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price];
 
 
 
