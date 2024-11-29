@@ -164,17 +164,27 @@ class UserController extends Controller
     public function uploadImage(Request $request)
     {
         if ($request->hasFile('image')) {
+            print_r("1");
             print_r("yes hav file");
             // $file = $request->file('image');
             $image = $request->file('image');
 
+            print_r("1.1");
+
             // // Generate a unique file name based on timestamp and original file name
             $fileName = 'images/' . Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
 
+            print_r("2");
+            print_r($fileName);
             // Upload the file to S3
+            print_r("3");
+
             $path = Storage::disk('s3')->put($fileName, fopen($image, 'r+'));
 
+            print_r("4");
+
             $url = Storage::disk('s3')->url($fileName);
+            print_r("5");
 
             return response()->json([
                 'message' => 'Image uploaded successfully',
