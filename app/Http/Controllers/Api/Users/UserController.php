@@ -180,7 +180,7 @@ class UserController extends Controller
             // // Upload the file to S3
             // print_r("3");
 
-            // $path = Storage::disk('s3')->put($fileName, fopen($image, 'r+'));
+            $path = Storage::disk('s3')->put($fileName, fopen($image, 'r+'));
 
             // print_r("4"); 
 
