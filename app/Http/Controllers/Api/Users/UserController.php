@@ -187,15 +187,16 @@ class UserController extends Controller
             $url = Storage::disk('s3')->url($fileName);
             print_r("5");
 
-            return response()->json(
-                $url
-                // [
-                // 'message' => 'Image uploaded successfully',
-                // 'url' => $url
-            // ], 
-            ,
+            return response($url);
+            // ->json(
+            //     $url
+            //     // [
+            //     // 'message' => 'Image uploaded successfully',
+            //     // 'url' => $url
+            // // ], 
+            // ,
             
-            200);
+            // 200);
 
             // Set up S3 client
             // $s3Client = new S3Client([
