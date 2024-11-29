@@ -167,12 +167,13 @@ class UserController extends Controller
             print_r("1");
             print_r("yes hav file");
             // $file = $request->file('image');
-            // $image = $request->file('image');
+            $image = $request->file('image');
 
             // print_r("1.1");
 
             // // // Generate a unique file name based on timestamp and original file name
-            // $fileName = 'images/' . Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
+            $fileName = 'images/' . Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
+            print_r($fileName);
 
             // print_r("2");
             // print_r($fileName);
