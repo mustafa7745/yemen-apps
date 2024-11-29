@@ -162,6 +162,7 @@ class UserController extends Controller
             print_r("yes hav file");
         }else{
             print_r("no");
+            print_r($request->all())
         }
         
         return response()->json(['error' => 'Image upload failed'], 400);
