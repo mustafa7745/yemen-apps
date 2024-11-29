@@ -185,7 +185,7 @@ class UserController extends Controller
             // print_r("4"); 
 
             $url = Storage::disk('s3')->url($fileName);
-            print_r("5");
+            // print_r("5");
 
             return response($url);
             // ->json(
