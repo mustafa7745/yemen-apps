@@ -188,22 +188,23 @@ class UserController extends Controller
 
             // Prepare the S3 upload parameters
             $bucket = env('AWS_BUCKET');
+            print_r("buket " . $bucket);
             $fileName = "mustafa.jpg";
             $expires = '+10 minutes'; // Expiry time for the URL
 
             try {
                 $command = $s3Client->getCommand('PutObject', [
                     'Bucket' => $bucket,
-                    'Key'    => $fileName, // File name in S3
+                    'Key' => $fileName, // File name in S3
                     'ContentType' => 'image/jpeg', // Set the content type for the file
                 ]);
-                
+
                 // Create a pre-signed URL with expiry time
                 $request = $s3Client->createPresignedRequest($command, $expires);
-    
+
                 // Get the pre-signed URL as a string
                 $url = (string) $request->getUri();
-    
+
                 // Return the pre-signed URL to the client
                 return response()->json(['url' => $url]);
             } catch (\Aws\Exception\AwsException $e) {
@@ -211,7 +212,7 @@ class UserController extends Controller
                 return response()->json(['error' => 'Unable to generate pre-signed URL'], 500);
             }
 
-          
+
 
             // print_r();
         } else {
