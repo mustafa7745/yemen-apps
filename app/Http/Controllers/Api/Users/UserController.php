@@ -12,6 +12,8 @@ use App\Models\StoreProducts;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -157,14 +159,33 @@ class UserController extends Controller
 
         // return Post::all();
     }
-    public function uploadImage(Request $request){
-        if ($request->hasFile('image')){
+    public function uploadImage(Request $request)
+    {
+        if ($request->hasFile('image')) {
             print_r("yes hav file");
-        }else{
+            // $file = $request->file('image');
+            $image = $request->file('image');
+
+            // Generate a unique file name based on timestamp and original file name
+            $fileName = 'images/' . Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
+
+            // Upload the file to S3
+            $path = Storage::disk('s3')->put($fileName, fopen($image, 'r+'));
+
+            $url = Storage::disk('s3')->url($fileName);
+
+            return response()->json([
+                'message' => 'Image uploaded successfully',
+                'url' => $url
+            ], 200);
+
+
+            // print_r();
+        } else {
             print_r("no");
             print_r($request->all());
         }
-        
+
         return response()->json(['error' => 'Image upload failed'], 400);
     }
 
