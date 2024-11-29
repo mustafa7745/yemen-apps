@@ -158,6 +158,7 @@ class UserController extends Controller
         // return Post::all();
     }
     public function uploadImage(Request $request){
+        print_r($request);
         return response()->json(['error' => 'Image upload failed'], 400);
     }
 
