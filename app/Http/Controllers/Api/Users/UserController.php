@@ -160,6 +160,8 @@ class UserController extends Controller
     public function uploadImage(Request $request){
         if ($request->hasFile('image')){
             print_r("yes hav file");
+        }else{
+            print_r("no");
         }
         
         return response()->json(['error' => 'Image upload failed'], 400);
