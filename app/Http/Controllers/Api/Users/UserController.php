@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Aws\S3\S3Client;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -166,19 +168,50 @@ class UserController extends Controller
             // $file = $request->file('image');
             $image = $request->file('image');
 
-            // Generate a unique file name based on timestamp and original file name
-            $fileName = 'images/' . Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
+            // // Generate a unique file name based on timestamp and original file name
+            // $fileName = 'images/' . Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
 
-            // Upload the file to S3
-            $path = Storage::disk('s3')->put($fileName, fopen($image, 'r+'));
+            // // Upload the file to S3
+            // $path = Storage::disk('s3')->put($fileName, fopen($image, 'r+'));
 
-            $url = Storage::disk('s3')->url($fileName);
+            // $url = Storage::disk('s3')->url($fileName);
 
-            return response()->json([
-                'message' => 'Image uploaded successfully',
-                'url' => $url
-            ], 200);
+            // Set up S3 client
+            $s3Client = new S3Client([
+                'region' => env('AWS_DEFAULT_REGION'),
+                'version' => 'latest',
+                'credentials' => [
+                    'key' => env('AWS_ACCESS_KEY_ID'),
+                    'secret' => env('AWS_SECRET_ACCESS_KEY'),
+                ],
+            ]);
 
+            // Prepare the S3 upload parameters
+            $bucket = env('AWS_BUCKET');
+            $fileName = "mustafa.jpg";
+            $expires = '+10 minutes'; // Expiry time for the URL
+
+            try {
+                $command = $s3Client->getCommand('PutObject', [
+                    'Bucket' => $bucket,
+                    'Key'    => $fileName, // File name in S3
+                    'ContentType' => 'image/jpeg', // Set the content type for the file
+                ]);
+                
+                // Create a pre-signed URL with expiry time
+                $request = $s3Client->createPresignedRequest($command, $expires);
+    
+                // Get the pre-signed URL as a string
+                $url = (string) $request->getUri();
+    
+                // Return the pre-signed URL to the client
+                return response()->json(['url' => $url]);
+            } catch (\Aws\Exception\AwsException $e) {
+                Log::error('Error generating pre-signed URL', ['error' => $e->getMessage()]);
+                return response()->json(['error' => 'Unable to generate pre-signed URL'], 500);
+            }
+
+          
 
             // print_r();
         } else {
