@@ -171,26 +171,26 @@ class UserController extends Controller
 
             // print_r("1.1");
 
-            // // // // Generate a unique file name based on timestamp and original file name
-            // $fileName = 'images/' . Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
+            // // // Generate a unique file name based on timestamp and original file name
+            $fileName = 'images/' . Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
+            print_r($fileName);
+
+            // print_r("2");
             // print_r($fileName);
+            // // Upload the file to S3
+            // print_r("3");
 
-            // // print_r("2");
-            // // print_r($fileName);
-            // // // Upload the file to S3
-            // // print_r("3");
-
-            // $path = Storage::disk('s3')->put($fileName, fopen($image, 'r+'));
+            $path = Storage::disk('s3')->put($fileName, fopen($image, 'r+'));
 
             // print_r("4"); 
 
-            // $url = Storage::disk('s3')->url($fileName);
-            // print_r("5");
+            $url = Storage::disk('s3')->url($fileName);
+            print_r("5");
 
-            // return response()->json([
-            //     'message' => 'Image uploaded successfully',
-            //     'url' => $url
-            // ], 200);
+            return response()->json([
+                'message' => 'Image uploaded successfully',
+                'url' => $url
+            ], 200);
 
             // Set up S3 client
             // $s3Client = new S3Client([
