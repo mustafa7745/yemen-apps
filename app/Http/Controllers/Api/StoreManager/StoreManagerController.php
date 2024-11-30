@@ -89,6 +89,8 @@ class StoreManagerController extends Controller
         $productImages = DB::table(ProductImages::$tableName)
             ->whereIn(ProductImages::$productId, $productIds)
             ->select(
+                ProductImages::$tableName . '.' . ProductImages::$id,
+
                 ProductImages::$tableName . '.' . ProductImages::$productId,
                 ProductImages::$tableName . '.' . ProductImages::$image,
             )
