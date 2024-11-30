@@ -170,7 +170,7 @@ class StoreManagerController extends Controller
 
 
             $validator = Validator::make($request->all(), [
-                'image' => 'required|image|mimes:jpg|max:20', // If you're uploading a file
+                'image' => 'required|image|mimes:jpg|max:80', // If you're uploading a file
             ]);
 
             if ($validator->fails()) {
