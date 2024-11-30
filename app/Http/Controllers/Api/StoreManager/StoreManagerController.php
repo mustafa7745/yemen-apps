@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Storage;
 use Aws\S3\S3Client;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class StoreManagerController extends Controller
 {
@@ -203,7 +204,7 @@ class StoreManagerController extends Controller
                     // Check if the file was uploaded successfully
                     if ($path) {
 
-                        $url = Storage::disk('s3')->url($fileName);
+                        Storage::disk('s3')->url($fileName);
 
                         $updatedRecord = DB::table(ProductImages::$tableName)
                             ->where(ProductImages::$id, '=', $id)
@@ -212,7 +213,7 @@ class StoreManagerController extends Controller
                         return response()->json($updatedRecord);
 
                     } else {
-                        DB::rollBack(); 
+                        DB::rollBack();
                         // If the image is not valid, return a validation error response
                         return response()->json([
                             'error' => 'No valid image file uploaded.',
@@ -299,39 +300,85 @@ class StoreManagerController extends Controller
 
         // return response()->json(['error' => 'Image upload failed'], 400);
     }
+    public function addProductImage(Request $request)
+    {
+        if ($request->hasFile('image')) {
 
-    // public function store(Request $request)
-    // {
-    //     // $post = Post::create($request->validate([
-    //     //     'title' => 'required|string|max:255',
-    //     //     'content' => 'required|string',
-    //     // ]));
-    //     // return response()->json($post, 201);
-    //     return new JsonResponse([
-    //         'data' => 11111
-    //     ]);
-    // }
 
-    // public function show(Post $post)
-    // {
-    //     return new JsonResponse([
-    //         'data' => 55555
-    //     ]);
-    //     // return $post;
-    // }
+            $validator = Validator::make($request->all(), [
+                'image' => 'required|image|mimes:jpg|max:80', // If you're uploading a file
+            ]);
 
-    // public function update(Request $request, Post $post)
-    // {
-    //     $post->update($request->validate([
-    //         'title' => 'sometimes|required|string|max:255',
-    //         'content' => 'sometimes|required|string',
-    //     ]));
-    //     return response()->json($post);
-    // }
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 400);
+            }
 
-    // public function destroy(Post $post)
-    // {
-    //     $post->delete();
-    //     return response()->json(null, 204);
-    // }
+            return DB::transaction(function () use ($request) {
+                $image = $request->file('image');
+                if ($image->isValid() == false) {
+                    return response()->json(['error' => 'Invalid image file.'], 400);
+                }
+                $productId = $request->input('productId');
+                $fileName = Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
+                $insertedId = DB::table(ProductImages::$tableName)
+                    ->insertGetId([
+                        ProductImages::$id => null,
+                        ProductImages::$image => $fileName,
+                        ProductImages::$productId => $productId,
+                        ProductImages::$storeId => 1,
+                        ProductImages::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                        ProductImages::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    ]);
+
+
+                DB::table(ProductImages::$tableName)
+                    ->where(ProductImages::$id, '=', $insertedId)
+                    ->first();
+
+                try {
+                    $path = Storage::disk('s3')->put('products/' . $fileName, fopen($image, 'r+'));
+
+                    // Check if the file was uploaded successfully
+                    if ($path) {
+
+                        Storage::disk('s3')->url($fileName);
+
+                        $addedRecord = DB::table(ProductImages::$tableName)
+                            ->where(ProductImages::$id, '=', $insertedId)
+                            ->first();
+
+                        return response()->json($addedRecord);
+
+                    } else {
+                        DB::rollBack();
+                        // If the image is not valid, return a validation error response
+                        return response()->json([
+                            'error' => 'No valid image file uploaded.',
+                        ], 400);
+
+                    }
+                } catch (\Exception $e) {
+                    DB::rollBack();  // Manually trigger a rollback
+                    return response()->json([
+                        'error' => 'An error occurred while uploading the image.',
+                        'message' => $e->getMessage(),
+                    ], 500);
+                }
+            });
+        } else {
+            return response()->json(['error' => 'Image Not Found'], 400);
+        }
+    }
+    public function deleteProductImage(Request $request)
+    {
+
+        return DB::transaction(function () use ($request) {
+            $id = $request->input('id');
+            $previousRecord = DB::table(ProductImages::$tableName)
+                ->where(ProductImages::$id, '=', $id)
+                ->first();
+            Storage::disk('s3')->delete('products/' . $previousRecord->image);
+            return response()->json(["success" => "yes"]);
+        });
+    }
 }

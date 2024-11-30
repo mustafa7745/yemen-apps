@@ -17,9 +17,10 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::get('/r2',function(){
+Route::get('/r2', function () {
     return new JsonResponse([
-    'data'=>12345]);
+        'data' => 12345
+    ]);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -28,16 +29,19 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 
-Route::prefix('v1')->group(function() {
+Route::prefix('v1')->group(function () {
     Route::apiResource('/', UserController::class);
     Route::post('/upload-image', [UserController::class, 'uploadImage']);
     // Route::apiResource('users', UserController::class);
     // Route::apiResource('posts', PostController::class);
     // Route::apiResource('comments', CommentController::class);
 });
-Route::prefix('v1/storeManager')->group(function() {
+Route::prefix('v1/storeManager')->group(function () {
     Route::apiResource('/', StoreManagerController::class);
     Route::post('/updateProductImage', [StoreManagerController::class, 'updateProductImage']);
+    Route::post('/addProductImage', [StoreManagerController::class, 'addProductImage']);
+    Route::post('/deleteProductImage', [StoreManagerController::class, 'deleteProductImage']);
+
     // Route::apiResource('users', UserController::class);
     // Route::apiResource('posts', PostController::class);
     // Route::apiResource('comments', CommentController::class);
