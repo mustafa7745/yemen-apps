@@ -212,6 +212,7 @@ class StoreManagerController extends Controller
                         return response()->json($updatedRecord);
 
                     } else {
+                        DB::rollBack(); 
                         // If the image is not valid, return a validation error response
                         return response()->json([
                             'error' => 'No valid image file uploaded.',
