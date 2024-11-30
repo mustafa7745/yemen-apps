@@ -196,15 +196,38 @@ class StoreManagerController extends Controller
                     ->update(
                         [ProductImages::$image => $fileName]
                     );
-                $path = Storage::disk('s3')->put('products/' . $fileName, fopen($image, 'r+'));
 
-                $url = Storage::disk('s3')->url($fileName);
+                try {
+                    $path = Storage::disk('s3')->put('products/' . $fileName, fopen($image, 'r+'));
 
-                $updatedRecord = DB::table(ProductImages::$tableName)
-                    ->where(ProductImages::$id, '=', $id)
-                    ->first();
-                Storage::disk('s3')->delete('products/' . $previousRecord->image);
-                return response()->json($updatedRecord);
+                    // Check if the file was uploaded successfully
+                    if ($path) {
+
+                        $url = Storage::disk('s3')->url($fileName);
+
+                        $updatedRecord = DB::table(ProductImages::$tableName)
+                            ->where(ProductImages::$id, '=', $id)
+                            ->first();
+                        Storage::disk('s3')->delete('products/' . $previousRecord->image);
+                        return response()->json($updatedRecord);
+
+                    } else {
+                        // If the image is not valid, return a validation error response
+                        return response()->json([
+                            'error' => 'No valid image file uploaded.',
+                        ], 400);
+
+                    }
+                } catch (\Exception $e) {
+                    DB::rollBack();  // Manually trigger a rollback
+                    return response()->json([
+                        'error' => 'An error occurred while uploading the image.',
+                        'message' => $e->getMessage(),
+                    ], 500);
+                }
+                // $path = Storage::disk('s3')->put('products/' . $fileName, fopen($image, 'r+'));
+
+
             });
 
             // print_r($fileName);
