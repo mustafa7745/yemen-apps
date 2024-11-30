@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\PostController;
+use App\Http\Controllers\Api\StoreManager\StoreManagerController;
 use App\Http\Controllers\Api\Users\UserController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -30,6 +31,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('v1')->group(function() {
     Route::apiResource('/', UserController::class);
     Route::post('/upload-image', [UserController::class, 'uploadImage']);
+    // Route::apiResource('users', UserController::class);
+    // Route::apiResource('posts', PostController::class);
+    // Route::apiResource('comments', CommentController::class);
+});
+Route::prefix('v1/storeManager')->group(function() {
+    Route::apiResource('/', StoreManagerController::class);
+    Route::post('/updateProductImage', [StoreManagerController::class, 'updateProductImage']);
     // Route::apiResource('users', UserController::class);
     // Route::apiResource('posts', PostController::class);
     // Route::apiResource('comments', CommentController::class);
