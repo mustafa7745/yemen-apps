@@ -378,6 +378,9 @@ class StoreManagerController extends Controller
                 ->where(ProductImages::$id, '=', $id)
                 ->first();
             Storage::disk('s3')->delete('products/' . $previousRecord->image);
+            DB::table(ProductImages::$tableName)
+                ->where(ProductImages::$id, '=', $id)
+                ->delete();
             return response()->json(["success" => "yes"]);
         });
     }
