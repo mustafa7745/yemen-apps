@@ -172,7 +172,7 @@ class StoreManagerController extends Controller
 
 
 
-            DB::transaction(function () use ($request) {
+          return  DB::transaction(function () use ($request) {
                 $image = $request->file('image');
                 $id = $request->input('id');
                 $previousRecord = DB::table(ProductImages::$tableName)
