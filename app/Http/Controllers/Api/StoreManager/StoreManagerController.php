@@ -175,16 +175,20 @@ class StoreManagerController extends Controller
             DB::transaction(function () use ($request) {
                 $image = $request->file('image');
                 $id = $request->input('id');
-                $fileName = 'products/' . Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
+                $fileName =  Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
                 DB::table(ProductImages::$tableName)
                     ->where(ProductImages::$id, '=', $id)
                     ->update(
                         [ProductImages::$image => $fileName]
                     );
-                $path = Storage::disk('s3')->put($fileName, fopen($image, 'r+'));
+                $path = Storage::disk('s3')->put('products/' .$fileName, fopen($image, 'r+'));
 
                 $url = Storage::disk('s3')->url($fileName);
-                return response($fileName);
+
+                $updatedRecord = DB::table(ProductImages::$tableName)
+                ->where(ProductImages::$id, '=', $id)
+                ->first();
+                return response()->json($updatedRecord);
             });
 
             // print_r($fileName);
