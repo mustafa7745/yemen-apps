@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Aws\S3\S3Client;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class StoreManagerController extends Controller
 {
@@ -168,12 +169,22 @@ class StoreManagerController extends Controller
         if ($request->hasFile('image')) {
 
 
+            $validator = Validator::make($request->all(), [
+                'image' => 'required|image|mimes:jpg|max:20', // If you're uploading a file
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 400);
+            }
 
 
 
 
-          return  DB::transaction(function () use ($request) {
+            return DB::transaction(function () use ($request) {
                 $image = $request->file('image');
+                if ($image->isValid() == false) {
+                    return response()->json(['error' => 'Invalid image file.'], 400);
+                }
                 $id = $request->input('id');
                 $previousRecord = DB::table(ProductImages::$tableName)
                     ->where(ProductImages::$id, '=', $id)
