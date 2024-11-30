@@ -248,11 +248,12 @@ class StoreManagerController extends Controller
 
             // print_r();
         } else {
-            print_r("no");
-            print_r($request->all());
+            return response()->json(['error' => 'Image Not Found'], 400);
+            // print_r("no");
+            // print_r($request->all());
         }
 
-        return response()->json(['error' => 'Image upload failed'], 400);
+        // return response()->json(['error' => 'Image upload failed'], 400);
     }
 
     // public function store(Request $request)
