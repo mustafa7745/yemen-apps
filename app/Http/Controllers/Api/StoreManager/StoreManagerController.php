@@ -169,47 +169,32 @@ class StoreManagerController extends Controller
 
 
 
-            $image = $request->file('image');
-            $id = $request->input('id');
-            $previousRecord = DB::table(ProductImages::$tableName)
-                ->where(ProductImages::$id, '=', $id)
-                ->first();
-
-            $fileName = Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
-            DB::table(ProductImages::$tableName)
-                ->where(ProductImages::$id, '=', $id)
-                ->update(
-                    [ProductImages::$image => $fileName]
-                );
-            $path = Storage::disk('s3')->put('products/' . $fileName, fopen($image, 'r+'));
-
-            $url = Storage::disk('s3')->url($fileName);
-
-            $updatedRecord = DB::table(ProductImages::$tableName)
-                ->where(ProductImages::$id, '=', $id)
-                ->first();
-            Storage::disk('s3')->delete('products/' . $previousRecord->image);
-            return response()->json($updatedRecord);
 
 
-            // DB::transaction(function () use ($request) {
-            //     $image = $request->file('image');
-            //     $id = $request->input('id');
-            //     $fileName =  Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
-            //     DB::table(ProductImages::$tableName)
-            //         ->where(ProductImages::$id, '=', $id)
-            //         ->update(
-            //             [ProductImages::$image => $fileName]
-            //         );
-            //     $path = Storage::disk('s3')->put('products/' .$fileName, fopen($image, 'r+'));
 
-            //     $url = Storage::disk('s3')->url($fileName);
+            DB::transaction(function () use ($request) {
+                $image = $request->file('image');
+                $id = $request->input('id');
+                $previousRecord = DB::table(ProductImages::$tableName)
+                    ->where(ProductImages::$id, '=', $id)
+                    ->first();
 
-            //     $updatedRecord = DB::table(ProductImages::$tableName)
-            //     ->where(ProductImages::$id, '=', $id)
-            //     ->first();
-            //     return response()->json($updatedRecord);
-            // });
+                $fileName = Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
+                DB::table(ProductImages::$tableName)
+                    ->where(ProductImages::$id, '=', $id)
+                    ->update(
+                        [ProductImages::$image => $fileName]
+                    );
+                $path = Storage::disk('s3')->put('products/' . $fileName, fopen($image, 'r+'));
+
+                $url = Storage::disk('s3')->url($fileName);
+
+                $updatedRecord = DB::table(ProductImages::$tableName)
+                    ->where(ProductImages::$id, '=', $id)
+                    ->first();
+                Storage::disk('s3')->delete('products/' . $previousRecord->image);
+                return response()->json($updatedRecord);
+            });
 
             // print_r($fileName);
 
