@@ -171,21 +171,26 @@ class StoreManagerController extends Controller
 
             $image = $request->file('image');
             $id = $request->input('id');
-            $fileName =  Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
+            $previousRecord = DB::table(ProductImages::$tableName)
+                ->where(ProductImages::$id, '=', $id)
+                ->first();
+
+            $fileName = Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
             DB::table(ProductImages::$tableName)
                 ->where(ProductImages::$id, '=', $id)
                 ->update(
                     [ProductImages::$image => $fileName]
                 );
-            $path = Storage::disk('s3')->put('products/' .$fileName, fopen($image, 'r+'));
+            $path = Storage::disk('s3')->put('products/' . $fileName, fopen($image, 'r+'));
 
             $url = Storage::disk('s3')->url($fileName);
 
             $updatedRecord = DB::table(ProductImages::$tableName)
-            ->where(ProductImages::$id, '=', $id)
-            ->first();
+                ->where(ProductImages::$id, '=', $id)
+                ->first();
+            Storage::disk('s3')->delete('products/' . $previousRecord->image);
             return response()->json($updatedRecord);
-            
+
 
             // DB::transaction(function () use ($request) {
             //     $image = $request->file('image');
