@@ -491,9 +491,12 @@ class StoreManagerController extends Controller
 
         return DB::transaction(function () use ($request) {
             $ids = $request->input('ids');
+            $ids = json_decode($ids);
             DB::table(ProductImages::$tableName)
-                ->whereIn(ProductImages::$id, json_decode($ids))
+                ->whereIn(ProductImages::$id, $ids)
                 ->delete();
+            print_r($ids);
+
             return response()->json(["success" => "yes"]);
         });
     }
