@@ -80,7 +80,7 @@ class StoreManagerController extends Controller
                 Options::$tableName . '.' . Options::$id . ' as optionId',
                 Options::$tableName . '.' . Options::$name . ' as optionName',
                     // 
-                
+
                 Categories::$tableName . '.' . Categories::$id . ' as categoryId',
                 Categories::$tableName . '.' . Categories::$name . ' as categoryName',
 
@@ -463,7 +463,7 @@ class StoreManagerController extends Controller
                 StoreProducts::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                 StoreProducts::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
-        $productOption = DB::table(table: StoreProducts::$tableName)->where(StoreProducts::$id, '=', $insertedId)
+        $productOption = DB::table(table: StoreProducts::$tableName)->where(StoreProducts::$tableName . '.' . StoreProducts::$id, '=', $insertedId)
             ->join(
                 Options::$tableName,
                 Options::$tableName . '.' . Options::$id,
@@ -493,7 +493,7 @@ class StoreManagerController extends Controller
     }
     public function readStoreCategories()
     {
-       
+
 
         $result = DB::table(table: StoreCategories::$tableName)
             ->where(StoreCategories::$storeId, '=', 1)
