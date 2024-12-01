@@ -442,6 +442,45 @@ class StoreManagerController extends Controller
         return response()->json(['result' => $price]);
     }
 
+    public function addProductOption(Request $request)
+    {
+        $productId = $request->input('productId');
+        $optionId = $request->input('optionId');
+        $price = $request->input('price');
+
+
+        $insertedId = DB::table(table: StoreProducts::$tableName)
+            ->insertGetId([
+                StoreProducts::$id => null,
+                StoreProducts::$optionId => $optionId,
+                StoreProducts::$productId => $productId,
+                StoreProducts::$price => $price,
+                StoreProducts::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                StoreProducts::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+        $productOption = DB::table(table: StoreProducts::$tableName)->where(StoreProducts::$id, '=', $insertedId)
+            ->join(
+                Options::$tableName,
+                Options::$tableName . '.' . Options::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$optionId
+            )
+            ->first(
+                [
+                    Options::$tableName . '.' . Options::$name . ' as optionId',
+                    Options::$tableName . '.' . Options::$name . ' as optionName',
+                    StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
+                    StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
+                ]
+            );
+
+        return response()->json([
+            'optionId' => $productOption->optionId,
+            'storeProductId' => $productOption->storeProductId,
+            'name' => $productOption->optionName,
+            'price' => $productOption->price
+        ]);
+    }
     public function readOptions()
     {
         $options = DB::table(table: Options::$tableName)->get();
