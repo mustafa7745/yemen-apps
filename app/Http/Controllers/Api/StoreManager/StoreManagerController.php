@@ -37,6 +37,7 @@ class StoreManagerController extends Controller
                 $storeId
             )
             ->select(
+                StoreCategories::$tableName . '.' . StoreCategories::$id . ' as storeCategoryId',
                 Categories::$tableName . '.' . Categories::$id . ' as categoryId',
                 Categories::$tableName . '.' . Categories::$name . ' as categoryName'
             )
@@ -79,7 +80,7 @@ class StoreManagerController extends Controller
                 Options::$tableName . '.' . Options::$id . ' as optionId',
                 Options::$tableName . '.' . Options::$name . ' as optionName',
                     // 
-                StoreCategories::$tableName . '.' . StoreCategories::$id . ' as storeCategoryId',
+                
                 Categories::$tableName . '.' . Categories::$id . ' as categoryId',
                 Categories::$tableName . '.' . Categories::$name . ' as categoryName',
 
