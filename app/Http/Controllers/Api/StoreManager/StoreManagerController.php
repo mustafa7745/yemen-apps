@@ -426,7 +426,7 @@ class StoreManagerController extends Controller
             ->update(
                 [StoreProducts::$optionId => $optionId]
             );
-        return response()->json($option);
+        return response()->json(['result' => $option->name]);
     }
     public function updateProductOptionPrice(Request $request)
     {
@@ -440,5 +440,11 @@ class StoreManagerController extends Controller
             );
 
         return response()->json(['result' => $price]);
+    }
+
+    public function readOptions()
+    {
+        $options = DB::table(table: Options::$tableName)->get();
+        return response()->json($options);
     }
 }
