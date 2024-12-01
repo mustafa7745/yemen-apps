@@ -384,4 +384,19 @@ class StoreManagerController extends Controller
             return response()->json(["success" => "yes"]);
         });
     }
+
+    // 
+    public function updateProductName(Request $request)
+    {
+        $productId = $request->input('productId');
+        $productName = $request->input('productName');
+
+        DB::table(table: Products::$tableName)
+            ->where(Products::$id, '=', $productId)
+            ->update(
+                [Products::$name => $productName]
+            );
+
+        return response()->json(['result' => $productName]);
+    }
 }

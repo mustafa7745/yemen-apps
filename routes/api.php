@@ -41,7 +41,8 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/updateProductImage', [StoreManagerController::class, 'updateProductImage']);
     Route::post('/addProductImage', [StoreManagerController::class, 'addProductImage']);
     Route::post('/deleteProductImage', [StoreManagerController::class, 'deleteProductImage']);
-
+    // 
+    Route::post('/updateProductName', [StoreManagerController::class, 'updateProductName']);
     // Route::apiResource('users', UserController::class);
     // Route::apiResource('posts', PostController::class);
     // Route::apiResource('comments', CommentController::class);
