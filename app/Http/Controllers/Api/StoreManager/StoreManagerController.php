@@ -486,6 +486,17 @@ class StoreManagerController extends Controller
             'price' => $productOption->price
         ]);
     }
+    public function deleteProductOptions(Request $request)
+    {
+
+        return DB::transaction(function () use ($request) {
+            $ids = $request->input('ids');
+            DB::table(ProductImages::$tableName)
+                ->whereIn(ProductImages::$id, $ids)
+                ->delete();
+            return response()->json(["success" => "yes"]);
+        });
+    }
     public function readOptions()
     {
         $options = DB::table(table: Options::$tableName)->get();
