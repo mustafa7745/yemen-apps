@@ -497,6 +497,9 @@ class StoreManagerController extends Controller
                 ->delete();
             print_r($ids);
             print_r($count);
+            print_r(DB::table(ProductImages::$tableName)
+            ->whereIn(ProductImages::$id, $ids)
+            ->toSql());
 
 
             return response()->json(["success" => "yes"]);
