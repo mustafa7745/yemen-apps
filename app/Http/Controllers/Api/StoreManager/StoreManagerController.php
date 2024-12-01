@@ -113,6 +113,7 @@ class StoreManagerController extends Controller
 
                 if (!isset($result[$product->productId]) && $product->categoryId == $category->categoryId) {
                     $result[$product->productId] = [
+                        'storeProductId' => $product->storeProductId,
                         'productId' => $product->productId,
                         'productName' => $product->productName,
                         'productDescription' => $product->productDescription,
@@ -133,7 +134,7 @@ class StoreManagerController extends Controller
 
                 if ($product->categoryId == $category->categoryId)
                     // Add the option to the options array
-                    $result[$product->productId]['options'][] = ['storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price];
+                    $result[$product->productId]['options'][] = ['optionId' => $product->optionId, 'storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price];
 
 
 
@@ -398,5 +399,46 @@ class StoreManagerController extends Controller
             );
 
         return response()->json(['result' => $productName]);
+    }
+    public function updateProductDescription(Request $request)
+    {
+        $productId = $request->input('productId');
+        $description = $request->input('description');
+
+        DB::table(table: Products::$tableName)
+            ->where(Products::$id, '=', $productId)
+            ->update(
+                [Products::$description => $description]
+            );
+
+        return response()->json(['result' => $description]);
+    }
+    public function updateProductOptionName(Request $request)
+    {
+        $storeProductId = $request->input('storeProductId');
+        $optionId = $request->input('optionId');
+
+        $option = DB::table(table: Options::$tableName)
+            ->where(Options::$id, '=', $optionId)->sole();
+
+        DB::table(table: StoreProducts::$tableName)
+            ->where(StoreProducts::$id, '=', $storeProductId)
+            ->update(
+                [StoreProducts::$optionId => $optionId]
+            );
+        return response()->json($option);
+    }
+    public function updateProductOptionPrice(Request $request)
+    {
+        $storeProductId = $request->input('storeProductId');
+        $price = $request->input('price');
+
+        DB::table(table: StoreProducts::$tableName)
+            ->where(StoreProducts::$id, '=', $storeProductId)
+            ->update(
+                [StoreProducts::$price => $price]
+            );
+
+        return response()->json(['result' => $price]);
     }
 }

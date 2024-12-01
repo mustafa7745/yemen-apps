@@ -17,11 +17,6 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::get('/r2', function () {
-    return new JsonResponse([
-        'data' => 12345
-    ]);
-});
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -32,9 +27,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('v1')->group(function () {
     Route::apiResource('/', UserController::class);
     Route::post('/upload-image', [UserController::class, 'uploadImage']);
-    // Route::apiResource('users', UserController::class);
-    // Route::apiResource('posts', PostController::class);
-    // Route::apiResource('comments', CommentController::class);
 });
 Route::prefix('v1/storeManager')->group(function () {
     Route::apiResource('/', StoreManagerController::class);
@@ -43,7 +35,7 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/deleteProductImage', [StoreManagerController::class, 'deleteProductImage']);
     // 
     Route::post('/updateProductName', [StoreManagerController::class, 'updateProductName']);
-    // Route::apiResource('users', UserController::class);
-    // Route::apiResource('posts', PostController::class);
-    // Route::apiResource('comments', CommentController::class);
+    Route::post('/updateProductDescription', [StoreManagerController::class, 'updateProductDescription']);
+    Route::post('/updateProductOptionName', [StoreManagerController::class, 'updateProductOptionName']);
+    Route::post('/updateProductOptionPrice', [StoreManagerController::class, 'updateProductOptionPrice']);
 });
