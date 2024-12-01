@@ -487,4 +487,20 @@ class StoreManagerController extends Controller
         $options = DB::table(table: Options::$tableName)->get();
         return response()->json($options);
     }
+    public function readStoreCategories()
+    {
+        $result = DB::table(table: StoreCategories::$tableName)
+            ->where(StoreCategories::$storeId, '=', 1)
+            ->join(
+                Categories::$tableName,
+                Categories::$tableName . '.' . Categories::$id,
+                '=',
+                StoreCategories::$tableName . '.' . StoreCategories::$categoryId
+            )
+            ->get([
+                Categories::$tableName . '.' . Categories::$id . ' as categoryId',
+                Categories::$tableName . '.' . Categories::$name . ' as categoryName',
+            ]);
+        return response()->json($result);
+    }
 }
