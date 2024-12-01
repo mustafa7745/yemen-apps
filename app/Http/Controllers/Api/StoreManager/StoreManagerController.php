@@ -492,17 +492,23 @@ class StoreManagerController extends Controller
         return DB::transaction(function () use ($request) {
             $ids = $request->input('ids');
             $ids = json_decode($ids);
-            $count = DB::table(ProductImages::$tableName)
-                ->whereIn(ProductImages::$id, $ids)
+            $count = DB::table(table: StoreProducts::$tableName)
+                ->whereIn(StoreProducts::$id, $ids)
                 ->delete();
-            print_r($ids);
-            print_r($count);
-            print_r(DB::table(ProductImages::$tableName)
-            ->whereIn(ProductImages::$id, $ids)
-            ->toSql());
+            // print_r($ids);
+            // print_r($count);
+            // print_r(DB::table(ProductImages::$tableName)
+            // ->whereIn(ProductImages::$id, $ids)
+            // ->toSql());
+            if ($count > 0) {
+               return response()->json(["success" => "yes"]);
+            }
+            else{
+                return response()->json(["success" => "yes"],400);
+            }
 
 
-            return response()->json(["success" => "yes"]);
+            
         });
     }
     public function readOptions()
