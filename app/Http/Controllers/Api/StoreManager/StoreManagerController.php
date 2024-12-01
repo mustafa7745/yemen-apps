@@ -472,7 +472,7 @@ class StoreManagerController extends Controller
             )
             ->first(
                 [
-                    Options::$tableName . '.' . Options::$name . ' as optionId',
+                    Options::$tableName . '.' . Options::$id . ' as optionId',
                     Options::$tableName . '.' . Options::$name . ' as optionName',
                     StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
                     StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
