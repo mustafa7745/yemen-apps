@@ -221,19 +221,26 @@ class StoreManagerController extends Controller
             )
             ->get();
 
+        // Initialize the final result array
         $final = [];
 
-        $images = [];
         foreach ($products as $product) {
+            $images = []; // Initialize an empty images array for each product
+
             foreach ($productImages as $index => $image) {
-                if ($image->id == $product->id) {
+                // Match the image with the product based on product ID
+                if ($image->productId == $product->id) {
                     $images[] = ['image' => $image->image, 'id' => $image->id];
-                    unset($productImages[$index]);
+                    unset($productImages[$index]); // Remove matched image
                 }
             }
-            $final[$product]['images'] = $images;
-        }
 
+            // Add the images to the final array using the product's ID as the key
+            $final[$product->id] = [
+                'product' => $product, // Add the product details
+                'images' => $images     // Add the images associated with the product
+            ];
+        }
 
         return response()->json(array_values($final));
     }
