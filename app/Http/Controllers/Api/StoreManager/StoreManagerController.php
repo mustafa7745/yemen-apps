@@ -223,6 +223,7 @@ class StoreManagerController extends Controller
 
         $final = [];
 
+        $images = [];
         foreach ($products as $product) {
             foreach ($productImages as $index => $image) {
                 if ($image->id == $product->id) {
