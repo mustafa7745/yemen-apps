@@ -237,7 +237,8 @@ class StoreManagerController extends Controller
 
             // Add the images to the final array using the product's ID as the key
             $imagesWithit = ['images' => $images];
-            $final[$product->id] = $product[$imagesWithit];
+            $final[$product->id] = array_merge((array) $product, $imagesWithit);
+            // $final[$product->id] = $product[$imagesWithit];
             //  [
             //    , // Add the product details
             //          // Add the images associated with the product
