@@ -238,11 +238,6 @@ class StoreManagerController extends Controller
             // Add the images to the final array using the product's ID as the key
             $imagesWithit = ['images' => $images];
             $final[$product->id] = array_merge((array) $product, $imagesWithit);
-            // $final[$product->id] = $product[$imagesWithit];
-            //  [
-            //    , // Add the product details
-            //          // Add the images associated with the product
-            // ];
         }
 
         return response()->json(array_values($final));
@@ -599,7 +594,7 @@ class StoreManagerController extends Controller
 
 
         $result = DB::table(table: StoreCategories::$tableName)
-            ->where(StoreCategories::$storeId, '=', 1)
+            ->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, '=', 1)
             ->join(
                 Categories::$tableName,
                 Categories::$tableName . '.' . Categories::$id,
