@@ -209,7 +209,7 @@ class StoreManagerController extends Controller
 
         $productIds = [];
         foreach ($products as $product) {
-            $productIds[] = $product->productId;
+            $productIds[] = $product->id;
         }
         $productImages = DB::table(ProductImages::$tableName)
             ->whereIn(ProductImages::$productId, $productIds)
