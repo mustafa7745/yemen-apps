@@ -236,10 +236,12 @@ class StoreManagerController extends Controller
             }
 
             // Add the images to the final array using the product's ID as the key
-            $final[$product->id] = [
-                'product' => $product, // Add the product details
-                'images' => $images     // Add the images associated with the product
-            ];
+            $imagesWithit = ['images' => $images];
+            $final[$product->id] = $product[$imagesWithit];
+            //  [
+            //    , // Add the product details
+            //          // Add the images associated with the product
+            // ];
         }
 
         return response()->json(array_values($final));
