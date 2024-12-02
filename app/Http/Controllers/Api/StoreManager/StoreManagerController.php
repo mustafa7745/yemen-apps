@@ -230,7 +230,7 @@ class StoreManagerController extends Controller
                     unset($productImages[$index]);
                 }
             }
-            $final[$product->productId]['images'] = $images;
+            $final[$product->id]['images'] = $images;
         }
 
 
