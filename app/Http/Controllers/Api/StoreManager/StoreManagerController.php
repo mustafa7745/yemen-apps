@@ -235,7 +235,7 @@ class StoreManagerController extends Controller
         }
 
 
-        return response()->json($final);
+        return response()->json(array_values($final));
     }
     public function updateProductImage(Request $request)
     {
