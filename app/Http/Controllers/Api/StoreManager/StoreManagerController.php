@@ -168,6 +168,74 @@ class StoreManagerController extends Controller
 
         // return Post::all();
     }
+    // public function getStoreCategories()
+    // {
+    //     $storeId = 1;
+    //     $categories = DB::table(StoreCategories::$tableName)
+    //         ->join(
+    //             Categories::$tableName,
+    //             Categories::$tableName . '.' . Categories::$id,
+    //             '=',
+    //             StoreCategories::$tableName . '.' . StoreCategories::$categoryId
+    //         )
+    //         ->where(
+    //             StoreCategories::$tableName . '.' . StoreCategories::$storeId,
+    //             '=',
+    //             $storeId
+    //         )
+    //         ->select(
+    //             StoreCategories::$tableName . '.' . StoreCategories::$id . ' as storeCategoryId',
+    //             Categories::$tableName . '.' . Categories::$id . ' as categoryId',
+    //             Categories::$tableName . '.' . Categories::$name . ' as categoryName'
+    //         )
+    //         ->get()->toArray();
+    //     return response()->json($categories);
+    // }
+
+    public function getCategories()
+    {
+        $storeId = 1;
+        $categories = DB::table(Categories::$tableName)
+            ->where(Categories::$tableName . '.' . Categories::$storeId, '=', $storeId)
+            ->get()->toArray();
+        return response()->json($categories);
+    }
+    public function getProducts()
+    {
+        $storeId = 1;
+        $products = DB::table(Products::$tableName)
+            ->where(Products::$tableName . '.' . Products::$storeId, '=', $storeId)
+            ->get()->toArray();
+
+        $productIds = [];
+        foreach ($products as $product) {
+            $productIds[] = $product->productId;
+        }
+        $productImages = DB::table(ProductImages::$tableName)
+            ->whereIn(ProductImages::$productId, $productIds)
+            ->select(
+                ProductImages::$tableName . '.' . ProductImages::$id,
+
+                ProductImages::$tableName . '.' . ProductImages::$productId,
+                ProductImages::$tableName . '.' . ProductImages::$image,
+            )
+            ->get();
+
+        $final = [];
+
+        foreach ($products as $product) {
+            foreach ($productImages as $index => $image) {
+                if ($image->productId == $product->productId) {
+                    $images[] = ['image' => $image->image, 'id' => $image->id];
+                    unset($productImages[$index]);
+                }
+            }
+            $final[$product->productId]['images'] = $images;
+        }
+
+
+        return response()->json($final);
+    }
     public function updateProductImage(Request $request)
     {
         if ($request->hasFile('image')) {
@@ -501,14 +569,13 @@ class StoreManagerController extends Controller
             // ->whereIn(ProductImages::$id, $ids)
             // ->toSql());
             if ($count > 0) {
-               return response()->json(["success" => "yes"]);
-            }
-            else{
-                return response()->json(["success" => "yes"],400);
+                return response()->json(["success" => "yes"]);
+            } else {
+                return response()->json("Error Remove", 400);
             }
 
 
-            
+
         });
     }
     public function readOptions()
