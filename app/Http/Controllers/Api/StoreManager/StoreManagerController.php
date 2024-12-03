@@ -9,6 +9,7 @@ use App\Models\ProductImages;
 use App\Models\Products;
 use App\Models\StoreCategories;
 use App\Models\StoreProducts;
+use App\Models\Users;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -675,5 +676,19 @@ class StoreManagerController extends Controller
         $product->images = [];
 
         return response()->json($product);
+    }
+
+    private function login(Request $request)
+    {
+        $phone = $request->input('phone');
+        $password = $request->input('password');
+        $user = DB::table(table: Users::$tableName)
+            ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
+            ->where(Users::$tableName . '.' . Users::$password, '=', $password)
+            ->first();
+        if ($user == null) {
+            return response()->json("Phone Or Password Error", 400);
+        }
+        return response()->json($user);
     }
 }
