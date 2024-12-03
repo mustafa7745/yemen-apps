@@ -143,7 +143,7 @@ class StoreManagerController extends Controller
 
 
             }
-            $value = ['StoreCategory' => $category, 'StoreProducts' => array_values($result)];
+            $value = ['storeCategory' => $category, 'storeProducts' => array_values($result)];
             array_push($final, $value);
         }
 
