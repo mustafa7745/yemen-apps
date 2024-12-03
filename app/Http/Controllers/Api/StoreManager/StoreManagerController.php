@@ -678,7 +678,7 @@ class StoreManagerController extends Controller
         return response()->json($product);
     }
 
-    private function login(Request $request)
+    public function login(Request $request)
     {
         $phone = $request->input('phone');
         $password = $request->input('password');
