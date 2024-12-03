@@ -672,6 +672,7 @@ class StoreManagerController extends Controller
         $product = DB::table(table: Products::$tableName)->where(Products::$tableName . '.' . Products::$id, '=', $insertedId)
             ->first(
             );
+        $product['images'] = [];
 
         return response()->json($product);
     }
