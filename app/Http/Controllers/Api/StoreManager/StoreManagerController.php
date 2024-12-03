@@ -635,4 +635,42 @@ class StoreManagerController extends Controller
             ]);
         return response()->json($result);
     }
+
+    // 
+    public function addMyCategory(Request $request)
+    {
+        $name = $request->input('name');
+
+        $insertedId = DB::table(table: Categories::$tableName)
+            ->insertGetId([
+                Categories::$id => null,
+                Categories::$name => $name,
+                Categories::$storeId => 1,
+                Categories::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                Categories::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+        $category = DB::table(table: Categories::$tableName)->where(Categories::$tableName . '.' . Categories::$id, '=', $insertedId)
+            ->first(
+            );
+
+        return response()->json($category);
+    }
+    public function addMyProduct(Request $request)
+    {
+        $name = $request->input('name');
+
+        $insertedId = DB::table(table: StoreProducts::$tableName)
+            ->insertGetId([
+                Products::$id => null,
+                Products::$name => $name,
+                Products::$storeId => 1,
+                Products::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                Products::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+        $product = DB::table(table: Products::$tableName)->where(Products::$tableName . '.' . Products::$id, '=', $insertedId)
+            ->first(
+            );
+
+        return response()->json($product);
+    }
 }
