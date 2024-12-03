@@ -128,7 +128,7 @@ class StoreManagerController extends Controller
                     foreach ($productImages as $index => $image) {
                         if ($image->productId == $product->productId) {
                             $images[] = ['image' => $image->image, 'id' => $image->id];
-                            unset($productImages[$index]);
+                            // unset($productImages[$index]);
                         }
                     }
                     $result[$product->productId]['images'] = $images;
