@@ -658,11 +658,13 @@ class StoreManagerController extends Controller
     public function addMyProduct(Request $request)
     {
         $name = $request->input('name');
+        $categoryId = $request->input('categoryId');
 
-        $insertedId = DB::table(table: StoreProducts::$tableName)
+        $insertedId = DB::table(table: Products::$tableName)
             ->insertGetId([
                 Products::$id => null,
                 Products::$name => $name,
+                Products::$categoryId => $categoryId,
                 Products::$storeId => 1,
                 Products::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                 Products::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
