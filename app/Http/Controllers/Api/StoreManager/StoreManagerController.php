@@ -72,6 +72,7 @@ class StoreManagerController extends Controller
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
             ->select(
                 StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
+                StoreProducts::$tableName . '.' . StoreProducts::$storeCategoryId . ' as storeCategoryId',
                 Products::$tableName . '.' . Products::$id . ' as productId',
                 Products::$tableName . '.' . Products::$name . ' as productName',
                 Products::$tableName . '.' . Products::$description . ' as productDescription',
@@ -116,6 +117,7 @@ class StoreManagerController extends Controller
                 if (!isset($result[$product->productId]) && $product->categoryId == $category->categoryId) {
                     $result[$product->productId] = [
                         'storeProductId' => $product->storeProductId,
+                        'storeCategoryId' => $product->storeCategoryId,
                         'productId' => $product->productId,
                         'productName' => $product->productName,
                         'productDescription' => $product->productDescription,
