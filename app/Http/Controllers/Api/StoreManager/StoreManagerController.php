@@ -143,7 +143,7 @@ class StoreManagerController extends Controller
 
 
             }
-            $value = ['category' => $category, 'products' => array_values($result)];
+            $value = ['StoreCategory' => $category, 'StoreProducts' => array_values($result)];
             array_push($final, $value);
         }
 
@@ -194,7 +194,7 @@ class StoreManagerController extends Controller
     //     return response()->json($categories);
     // }
 
-    public function getCategories()
+    public function getMyCategories()
     {
         $storeId = 1;
         $categories = DB::table(Categories::$tableName)
@@ -202,7 +202,7 @@ class StoreManagerController extends Controller
             ->get()->toArray();
         return response()->json($categories);
     }
-    public function getProducts()
+    public function getMyProducts()
     {
         $storeId = 1;
         $products = DB::table(Products::$tableName)
@@ -243,6 +243,31 @@ class StoreManagerController extends Controller
         }
 
         return response()->json(array_values($final));
+    }
+    public function getCategories()
+    {
+        $storeId = 1;
+        $categories = DB::table(Categories::$tableName)
+            ->whereIn(Categories::$tableName . '.' . Categories::$storeId, [$storeId, 1])
+            ->get([
+                Categories::$tableName . '.' . Categories::$id,
+                Categories::$tableName . '.' . Categories::$name
+            ])->toArray();
+        return response()->json($categories);
+    }
+    public function getProducts()
+    {
+        $storeId = 1;
+        $products = DB::table(Products::$tableName)
+            ->whereIn(Products::$tableName . '.' . Products::$storeId, [$storeId, 1])
+            ->get(
+                [
+                    Products::$tableName . '.' . Products::$id,
+                    Products::$tableName . '.' . Products::$name
+                ]
+            )->toArray();
+
+        return response()->json(array_values($products));
     }
     public function updateProductImage(Request $request)
     {
