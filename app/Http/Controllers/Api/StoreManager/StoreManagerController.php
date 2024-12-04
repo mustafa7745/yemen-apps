@@ -13,6 +13,7 @@ use App\Models\Products;
 use App\Models\StoreCategories;
 use App\Models\StoreProducts;
 use App\Models\Users;
+use App\Models\UsersSessions;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -700,7 +701,9 @@ class StoreManagerController extends Controller
             return response()->json(["error" => "Phone Or Password Error"], 400);
         }
         $this->updateAppToken($request, $deviceSession);
-        return response()->json($user);
+
+        $userSession = $this->getUserFinalSession($user->id, $device->id);
+        return response()->json($userSession);
     }
 
     public function getDevice(Request $request)
@@ -750,6 +753,53 @@ class StoreManagerController extends Controller
         }
         return $deviceSession;
     }
+    public function getUserFinalSession($userId, $deviceSessionId)
+    {
+        $userSession = $this->getUserSession($userId);
+        if (count($userSession) > 1) {
+            abort(
+                405,
+                json_encode([
+                    'message' => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل"
+                ])
+            );
+        } else if (count($userSession) == 1) {
+            return $this->updateLastLoginAt(userSession: $userSession[0]);
+        } else {
+            $insertedId = DB::table(UsersSessions::$tableName)->insertGetId([
+                UsersSessions::$id => null,
+                UsersSessions::$userId => $userId,
+                UsersSessions::$deviceSessionId => $deviceSessionId,
+                UsersSessions::$lastLoginAt => Carbon::now()->format('Y-m-d H:i:s'),
+                UsersSessions::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                UsersSessions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+
+            ]);
+            return DB::table(table: UsersSessions::$tableName)
+                ->where(UsersSessions::$tableName . '.' . UsersSessions::$id, '=', $insertedId)
+                ->first();
+        }
+    }
+
+    private function getUserSession($userId)
+    {
+        return DB::table(table: UsersSessions::$tableName)
+            ->where(UsersSessions::$tableName . '.' . UsersSessions::$userId, '=', $userId)
+            ->where(UsersSessions::$tableName . '.' . UsersSessions::$isLogin, '=', 1)
+            ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $this->appId)
+            ->join(
+                DevicesSessions::$tableName,
+                DevicesSessions::$tableName . '.' . Categories::$id,
+                '=',
+                UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId
+            )
+            // ->where(UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId, '<>', $deviceSessionId)
+            ->get([
+                UsersSessions::$tableName . '.' . UsersSessions::$id . ' as id',
+                DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
+                UsersSessions::$tableName . '.' . UsersSessions::$userId . ' as userId',
+            ]);
+    }
     private function updateAppToken(Request $request, $deviceSession)
     {
         $appToken = $request->input('appToken');
@@ -761,6 +811,19 @@ class StoreManagerController extends Controller
                     DevicesSessions::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
         }
+    }
+    private function updateLastLoginAt($userSession)
+    {
+        DB::table(table: UsersSessions::$tableName)
+            ->where(UsersSessions::$tableName . '.' . UsersSessions::$id, '=', $userSession->id)
+            ->update([
+                UsersSessions::$tableName . '.' . UsersSessions::$lastLoginAt => Carbon::now()->format('Y-m-d H:i:s'),
+                UsersSessions::$loginCount => UsersSessions::$loginCount . '. + 1',
+                UsersSessions::$isLogin => 1,
+            ]);
+        return DB::table(table: UsersSessions::$tableName)
+            ->where(UsersSessions::$tableName . '.' . UsersSessions::$id, '=', $userSession)
+            ->first();
     }
     public function getApp(Request $request)
     {
