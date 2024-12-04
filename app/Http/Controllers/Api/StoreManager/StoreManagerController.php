@@ -733,7 +733,13 @@ class StoreManagerController extends Controller
             ->first();
 
         if ($app == null) {
-            abort(403, "App not Auth");
+            abort(
+                403,
+
+                json_encode([
+                    'message' => "App not Auth"
+                ])
+            );
             // return response()->json(, 400)->send();
             // exit;
         }
