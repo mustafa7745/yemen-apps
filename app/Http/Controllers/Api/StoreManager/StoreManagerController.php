@@ -756,7 +756,6 @@ class StoreManagerController extends Controller
     public function getUserFinalSession($userId, $deviceSessionId)
     {
         $userSession = $this->getUserSession($userId);
-        print_r($userSession);
         if (count($userSession) > 1) {
             abort(
                 405,
