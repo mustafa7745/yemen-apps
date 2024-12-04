@@ -4,7 +4,7 @@ namespace App\Models;
 
 class UsersSessions
 {
-   public static $tableName = "devicesSessions";
+   public static $tableName = "usersSessions";
    public static $id = "id";
    public static $deviceSessionId = "deviceSessionId";
    public static $userId = "userId";
