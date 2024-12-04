@@ -757,7 +757,8 @@ class StoreManagerController extends Controller
             DB::table(table: DevicesSessions::$tableName)
                 ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$id, '=', $deviceSession->id)
                 ->update([
-                    DevicesSessions::$tableName . '.' . DevicesSessions::$appToken => $appToken
+                    DevicesSessions::$tableName . '.' . DevicesSessions::$appToken => $appToken,
+                    DevicesSessions::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
         }
     }
