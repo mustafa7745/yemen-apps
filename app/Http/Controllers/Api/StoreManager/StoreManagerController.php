@@ -765,7 +765,7 @@ class StoreManagerController extends Controller
                 ])
             );
         } else if (count($userSession) == 1) {
-            return $this->updateLastLoginAt(userSession: $userSession[0]);
+            return $this->updateLastLoginAt($userSession[0]);
         } else {
             $insertedId = DB::table(UsersSessions::$tableName)->insertGetId([
                 UsersSessions::$id => null,
@@ -824,7 +824,7 @@ class StoreManagerController extends Controller
                 UsersSessions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
         return DB::table(table: UsersSessions::$tableName)
-            ->where(UsersSessions::$tableName . '.' . UsersSessions::$id, '=', $userSession)
+            ->where(UsersSessions::$tableName . '.' . UsersSessions::$id, '=', $userSession->id)
             ->first();
     }
     public function getApp(Request $request)
