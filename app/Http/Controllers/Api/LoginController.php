@@ -208,7 +208,9 @@ class LoginController
                 AccessTokens::$token => $this->getUniqueToken(),
                 AccessTokens::$userSessionId => $userSessionId,
                 AccessTokens::$expireAt => $this->getRemainedMinute(),
+                AccessTokens::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                 AccessTokens::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+
             ]);
             return DB::table(table: AccessTokens::$tableName)
                 ->where(AccessTokens::$tableName . '.' . AccessTokens::$id, '=', $insertedId)
