@@ -702,7 +702,7 @@ class StoreManagerController extends Controller
         }
         $this->updateAppToken($request, $deviceSession);
 
-        $userSession = $this->getUserFinalSession($user->id, $device->id);
+        $userSession = $this->getUserFinalSession($user->id, $deviceSession->id);
         return response()->json($userSession);
     }
 
