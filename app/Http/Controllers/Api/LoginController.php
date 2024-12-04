@@ -183,6 +183,15 @@ class LoginController
             // return response()->json(, 400)->send();
             // exit;
         }
+        if ($app->id != $this->appId) {
+            abort(
+                403,
+
+                json_encode([
+                    'message' => "App not in Auth"
+                ])
+            );
+        }
         return $app;
     }
 }
