@@ -686,7 +686,7 @@ class StoreManagerController extends Controller
         $phone = $request->input('phone');
         $password = $request->input('password');
 
-        // $device = $this->getDevice();
+        $device = $this->getDevice($request);
 
 
         $user = DB::table(table: Users::$tableName)
