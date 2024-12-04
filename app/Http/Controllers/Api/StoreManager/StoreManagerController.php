@@ -699,6 +699,7 @@ class StoreManagerController extends Controller
         if ($user == null) {
             return response()->json(["error" => "Phone Or Password Error"], 400);
         }
+        $this->updateAppToken($request, $deviceSession);
         return response()->json($user);
     }
 
@@ -748,6 +749,17 @@ class StoreManagerController extends Controller
                 ->first();
         }
         return $deviceSession;
+    }
+    private function updateAppToken(Request $request, $deviceSession)
+    {
+        $appToken = $request->input('appToken');
+        if ($appToken != $deviceSession->appToken) {
+            DB::table(table: DevicesSessions::$tableName)
+                ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$id, '=', $deviceSession->id)
+                ->update([
+                    DevicesSessions::$tableName . '.' . DevicesSessions::$appToken => $appToken
+                ]);
+        }
     }
     public function getApp(Request $request)
     {
