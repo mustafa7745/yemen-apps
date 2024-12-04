@@ -799,7 +799,7 @@ class StoreManagerController extends Controller
                 UsersSessions::$tableName . '.' . UsersSessions::$id . ' as id',
                 DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
                 UsersSessions::$tableName . '.' . UsersSessions::$userId . ' as userId',
-            ]);
+            ])->toArray();
     }
     private function updateAppToken(Request $request, $deviceSession)
     {
