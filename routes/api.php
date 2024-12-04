@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\StoreManager\StoreManagerController;
 use App\Http\Controllers\Api\Users\UserController;
 use Illuminate\Http\JsonResponse;
