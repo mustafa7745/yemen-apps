@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Apps;
 use App\Models\Categories;
 use App\Models\Devices;
+use App\Models\DevicesSessions;
 use App\Models\Options;
 use App\Models\Post;
 use App\Models\ProductImages;
@@ -24,6 +25,7 @@ use Carbon\Carbon;
 
 class StoreManagerController extends Controller
 {
+    private $appId = 1;
     public function index()
     {
         $storeId = 1;
@@ -687,6 +689,7 @@ class StoreManagerController extends Controller
         $password = $request->input('password');
 
         $device = $this->getDevice($request);
+        $deviceSession = $this->getDeviceSession($request);
 
 
         $user = DB::table(table: Users::$tableName)
@@ -721,6 +724,30 @@ class StoreManagerController extends Controller
                 ->first();
         }
         return $device;
+    }
+    public function getDeviceSession(Request $request)
+    {
+        $deviceId = $request->input('deviceId');
+        $appToken = $request->input('modeappToken');
+        $deviceSession = DB::table(table: DevicesSessions::$tableName)
+            ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId, '=', $deviceId)
+            ->first();
+
+        if ($deviceSession == null) {
+            $insertedId = DB::table(DevicesSessions::$tableName)->insertGetId([
+                DevicesSessions::$id => null,
+                DevicesSessions::$appId => $this->appId,
+                DevicesSessions::$deviceId => $deviceId,
+                DevicesSessions::$appToken => $appToken,
+                DevicesSessions::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                DevicesSessions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+
+            ]);
+            return DB::table(table: DevicesSessions::$tableName)
+                ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$id, '=', $insertedId)
+                ->first();
+        }
+        return $deviceSession;
     }
     public function getApp(Request $request)
     {
