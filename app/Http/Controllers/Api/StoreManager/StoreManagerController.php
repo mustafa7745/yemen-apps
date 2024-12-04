@@ -698,7 +698,7 @@ class StoreManagerController extends Controller
             ->where(Users::$tableName . '.' . Users::$password, '=', $password)
             ->first();
         if ($user == null) {
-            return response()->json(["error" => "Phone Or Password Error"], 400);
+            return response()->json(["message" => "Phone Or Password Error"], 400);
         }
         $this->updateAppToken($request, $deviceSession);
 
