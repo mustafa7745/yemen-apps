@@ -703,6 +703,9 @@ class StoreManagerController extends Controller
         $this->updateAppToken($request, $deviceSession);
 
         $userSession = $this->getUserFinalSession($user->id, $deviceSession->id);
+        if ($userSession == false) {
+            return response()->json(["message" => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل"], 400);
+        }
         return response()->json($userSession);
     }
 
@@ -757,21 +760,16 @@ class StoreManagerController extends Controller
     {
         $userSession = $this->getUserSession($userId);
         // if (count($userSession) > 1) {
-            // abort(
-            //     405,
-            //     json_encode([
-            //         'message' => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل"
-            //     ])
-            // );
+        // abort(
+        //     405,
+        //     json_encode([
+        //         'message' => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل"
+        //     ])
+        // );
         // } else
         if (count($userSession) == 1) {
             if ($userSession[0]->deviceSessionId != $deviceSessionId) {
-                abort(
-                    405,
-                    json_encode([
-                        'message' => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل"
-                    ])
-                );
+                return false;
             }
             return $this->updateLastLoginAt($userSession[0]);
         } else {
