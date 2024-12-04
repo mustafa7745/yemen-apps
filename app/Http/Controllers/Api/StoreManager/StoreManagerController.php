@@ -690,7 +690,7 @@ class StoreManagerController extends Controller
         $password = $request->input('password');
 
         $device = $this->getDevice($request);
-        $deviceSession = $this->getDeviceSession($request, $deviceId = $device->id);
+        $deviceSession = $this->getDeviceSession($request, $device->id);
 
 
         $user = DB::table(table: Users::$tableName)
@@ -756,14 +756,23 @@ class StoreManagerController extends Controller
     public function getUserFinalSession($userId, $deviceSessionId)
     {
         $userSession = $this->getUserSession($userId);
-        if (count($userSession) > 1) {
-            abort(
-                405,
-                json_encode([
-                    'message' => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل"
-                ])
-            );
-        } else if (count($userSession) == 1) {
+        // if (count($userSession) > 1) {
+            // abort(
+            //     405,
+            //     json_encode([
+            //         'message' => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل"
+            //     ])
+            // );
+        // } else
+        if (count($userSession) == 1) {
+            if ($userSession[0]->deviceSessionId != $deviceSessionId) {
+                abort(
+                    405,
+                    json_encode([
+                        'message' => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل"
+                    ])
+                );
+            }
             return $this->updateLastLoginAt($userSession[0]);
         } else {
             $insertedId = DB::table(UsersSessions::$tableName)->insertGetId([
@@ -797,6 +806,7 @@ class StoreManagerController extends Controller
             ->get([
                 UsersSessions::$tableName . '.' . UsersSessions::$id . ' as id',
                 DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
+                DevicesSessions::$tableName . '.' . DevicesSessions::$id . ' as deviceSessionId',
                 UsersSessions::$tableName . '.' . UsersSessions::$userId . ' as userId',
             ])->toArray();
     }
