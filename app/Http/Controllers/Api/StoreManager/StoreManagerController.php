@@ -2,7 +2,9 @@
 namespace App\Http\Controllers\Api\StoreManager;
 
 use App\Http\Controllers\Controller;
+use App\Models\Apps;
 use App\Models\Categories;
+use App\Models\Devices;
 use App\Models\Options;
 use App\Models\Post;
 use App\Models\ProductImages;
@@ -680,8 +682,13 @@ class StoreManagerController extends Controller
 
     public function login(Request $request)
     {
+        $app = $this->getApp($request);
         $phone = $request->input('phone');
         $password = $request->input('password');
+
+        // $device = $this->getDevice();
+
+
         $user = DB::table(table: Users::$tableName)
             ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
             ->where(Users::$tableName . '.' . Users::$password, '=', $password)
@@ -690,5 +697,46 @@ class StoreManagerController extends Controller
             return response()->json("Phone Or Password Error", 400);
         }
         return response()->json($user);
+    }
+
+    public function getDevice(Request $request)
+    {
+        $deviceId = $request->input('deviceId');
+        $model = $request->input('model');
+        $version = $request->input('version');
+        $device = DB::table(table: Devices::$tableName)
+            ->where(Devices::$tableName . '.' . Devices::$deviceId, '=', $deviceId)
+            ->first();
+
+        if ($device == null) {
+            $insertedId = DB::table(Devices::$tableName)->insertGetId([
+                Devices::$id => null,
+                Devices::$model => $model,
+                Devices::$deviceId => $deviceId,
+                Devices::$version => $version,
+                Devices::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+            return DB::table(table: Devices::$tableName)
+                ->where(Devices::$tableName . '.' . Devices::$id, '=', $insertedId)
+                ->first();
+        }
+        return $device;
+    }
+    public function getApp(Request $request)
+    {
+        $sha = $request->input('sha');
+        $packageName = $request->input('packageName');
+
+        $app = DB::table(table: Apps::$tableName)
+            ->where(Apps::$tableName . '.' . Apps::$packageName, '=', $packageName)
+            ->where(Apps::$tableName . '.' . Apps::$sha, '=', $sha)
+            ->first();
+
+        if ($app == null) {
+            abort(403, "App not Auth");
+            // return response()->json(, 400)->send();
+            // exit;
+        }
+        return $app;
     }
 }
