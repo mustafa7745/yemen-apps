@@ -817,8 +817,7 @@ class StoreManagerController extends Controller
         DB::table(table: UsersSessions::$tableName)
             ->where(UsersSessions::$tableName . '.' . UsersSessions::$id, '=', $userSession->id)
             ->update([
-
-                UsersSessions::$loginCount => UsersSessions::$loginCount . ' + 1', //h
+                // UsersSessions::$loginCount => UsersSessions::$loginCount . ' + 1', //h
                 UsersSessions::$isLogin => 1,
                 UsersSessions::$lastLoginAt => Carbon::now()->format('Y-m-d H:i:s'),
                 UsersSessions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
