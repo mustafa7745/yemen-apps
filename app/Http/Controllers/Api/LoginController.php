@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
 
+use App\Models\AccessTokens;
 use App\Models\Apps;
 use App\Models\Categories;
 use App\Models\Devices;
@@ -42,7 +43,9 @@ class LoginController
         if ($userSession == false) {
             return response()->json(["message" => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل"], 400);
         }
-        return response()->json($userSession);
+
+        $accessToken = $this->getAccessToken($userSession->id);
+        return response()->json(["token" => $accessToken->token]);
     }
 
     private function getDevice(Request $request)
@@ -186,12 +189,100 @@ class LoginController
         if ($app->id != $this->appId) {
             abort(
                 403,
-
                 json_encode([
                     'message' => "App not in Auth"
                 ])
             );
         }
         return $app;
+    }
+    private function getAccessToken($userSessionId)
+    {
+        $accessToken = DB::table(table: AccessTokens::$tableName)
+            ->where(AccessTokens::$tableName . '.' . AccessTokens::$userSessionId, '=', $userSessionId)
+            ->first();
+
+        if ($accessToken == null) {
+            $insertedId = DB::table(AccessTokens::$tableName)->insertGetId([
+                AccessTokens::$id => null,
+                AccessTokens::$token => $this->getUniqueToken(),
+                AccessTokens::$userSessionId => $userSessionId,
+                AccessTokens::$expireAt => $this->getRemainedMinute(),
+                AccessTokens::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+            return DB::table(table: AccessTokens::$tableName)
+                ->where(AccessTokens::$tableName . '.' . AccessTokens::$id, '=', $insertedId)
+                ->first();
+        }
+        if ($this->compareExpiration($accessToken)) {
+            DB::table(table: AccessTokens::$tableName)
+                ->where(AccessTokens::$tableName . '.' . AccessTokens::$id, '=', $accessToken->id)
+                ->update([
+                    AccessTokens::$expireAt => $this->getRemainedMinute(), //h
+                    AccessTokens::$token => $this->getUniqueToken(),
+                    AccessTokens::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ]);
+            $accessToken = DB::table(table: UsersSessions::$tableName)
+                ->where(UsersSessions::$tableName . '.' . UsersSessions::$id, '=', $accessToken->id)
+                ->first();
+        }
+        return $accessToken;
+
+    }
+
+    private function getUniqueToken()
+    {
+        $baseToken = md5(uniqid(mt_rand(), true));
+
+        // Special characters to include in the token
+        $specialChars = '!@#$%^&*()-_=+[]{}|;:,.<>?/~';
+
+        // Number of special characters to insert
+        $numSpecialChars = 5; // For example, inserting 5 special characters
+
+        // Convert the token to an array of characters
+        $tokenArray = str_split($baseToken);
+
+        // Randomly insert special characters into the token
+        for ($i = 0; $i < $numSpecialChars; $i++) {
+            $randomPosition = mt_rand(0, count($tokenArray) - 1); // Choose random position
+            $randomSpecialChar = $specialChars[mt_rand(0, strlen($specialChars) - 1)]; // Choose random special char
+            array_splice($tokenArray, $randomPosition, 0, $randomSpecialChar); // Insert special char
+        }
+
+        // Convert the array back to a string
+        $uniqueTokenWithSpecialChars = implode('', $tokenArray);
+
+        return $uniqueTokenWithSpecialChars;
+    }
+    private function getRemainedMinute($minutes = null)
+    {
+        if ($minutes === null) {
+            // Get the end of the day (tomorrow at 00:00:00 - 1 second)
+            $end_of_day = Carbon::tomorrow()->startOfDay()->subSecond();
+            return $end_of_day->format('Y-m-d H:i:s');
+        } else {
+            // Add minutes to the current time
+            $date = Carbon::now()->addMinutes($minutes);
+            return $date->format('Y-m-d H:i:s');
+        }
+
+    }
+    private function compareExpiration($loginToken)
+    {
+        // Get current time using Carbon
+        $currentDate = Carbon::now();
+
+        // Get the expiration date from the $loginToken object and convert it to a Carbon instance
+        $expireAt = Carbon::parse($loginToken->expireAt);
+
+        // Compare the dates
+        if ($currentDate->gt($expireAt)) {
+            // Current time is greater than expiration time (token expired)
+            return true;
+        } else {
+            // Token is still valid
+            return false;
+        }
     }
 }
