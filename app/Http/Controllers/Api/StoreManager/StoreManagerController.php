@@ -689,7 +689,7 @@ class StoreManagerController extends Controller
         $password = $request->input('password');
 
         $device = $this->getDevice($request);
-        $deviceSession = $this->getDeviceSession($request);
+        $deviceSession = $this->getDeviceSession($request,$deviceId = $device->id);
 
 
         $user = DB::table(table: Users::$tableName)
@@ -725,9 +725,8 @@ class StoreManagerController extends Controller
         }
         return $device;
     }
-    public function getDeviceSession(Request $request)
+    public function getDeviceSession(Request $request,$deviceId)
     {
-        $deviceId = $request->input('deviceId');
         $appToken = $request->input('modeappToken');
         $deviceSession = DB::table(table: DevicesSessions::$tableName)
             ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId, '=', $deviceId)
