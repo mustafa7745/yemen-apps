@@ -727,7 +727,7 @@ class StoreManagerController extends Controller
     }
     public function getDeviceSession(Request $request, $deviceId)
     {
-        $appToken = $request->input('modeappToken');
+        $appToken = $request->input('appToken');
         $deviceSession = DB::table(table: DevicesSessions::$tableName)
             ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId, '=', $deviceId)
             ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $this->appId)
