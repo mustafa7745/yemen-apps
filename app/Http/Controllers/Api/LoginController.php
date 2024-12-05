@@ -245,7 +245,7 @@ class LoginController
         $accessToken = DB::table(table: AccessTokens1::$tableName)
             ->where(AccessTokens1::$tableName . '.' . AccessTokens1::$userSessionId, '=', $token)
             ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $this->appId)
-            ->where('deviceId', '=', $deviceId)
+            ->where(Devices::$tableName . '.' . Devices::$deviceId, '=', $deviceId)
             ->join(
                 UsersSessions::$tableName,
                 UsersSessions::$tableName . '.' . UsersSessions::$id,
