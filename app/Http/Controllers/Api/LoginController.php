@@ -352,9 +352,9 @@ class LoginController
         if ($myResult->isSuccess == false) {
             return $myResult;
         }
-        print_r($myResult->message);
+        // print_r($myResult->message);
         if ($this->compareExpiration($myResult->message)) {
-            print_r("sdsdsd");
+            // print_r("sdsdsd");
             return new MyResponse(false, "Need refresh", 405, 20006);
         }
 
