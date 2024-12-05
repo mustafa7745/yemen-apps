@@ -141,11 +141,11 @@ class LoginController
             )
             // ->where(UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId, '<>', $deviceSessionId)
             ->get([
-                    UsersSessions::$tableName . '.' . UsersSessions::$id . ' as id',
-                    DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
-                    DevicesSessions::$tableName . '.' . DevicesSessions::$id . ' as deviceSessionId',
-                    UsersSessions::$tableName . '.' . UsersSessions::$userId . ' as userId',
-                ])->toArray();
+                UsersSessions::$tableName . '.' . UsersSessions::$id . ' as id',
+                DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
+                DevicesSessions::$tableName . '.' . DevicesSessions::$id . ' as deviceSessionId',
+                UsersSessions::$tableName . '.' . UsersSessions::$userId . ' as userId',
+            ])->toArray();
     }
     private function getUserSessionByUserIdAndDevicesSessionId($userId, $deviceSessionId)
     {
@@ -237,6 +237,7 @@ class LoginController
                 ->update([
                     AccessTokens::$expireAt => $this->getRemainedMinute(), //h
                     AccessTokens::$token => $this->getUniqueToken(),
+                    AccessTokens::$refreshCount => DB::raw(AccessTokens::$refreshCount . ' + 1'),
                     AccessTokens::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
             $accessToken = DB::table(table: UsersSessions::$tableName)

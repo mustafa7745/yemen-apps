@@ -8,6 +8,8 @@ class AccessTokens
    public static $id = "id";
    public static $userSessionId = "userSessionId";
    public static $token = "token";
+   public static $refreshCount = "refreshCount";
+
    public static $expireAt = "expireAt";
    public static $createdAt = "createdAt";
    public static $updatedAt = "updatedAt";
