@@ -274,9 +274,9 @@ class LoginController
                 DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',
             ]);
         if ($accessToken == null) {
-            return new MyResponse(false,"Inv Tok",403,20005);
+            return new MyResponse(false, "Inv Tok", 403, 20005);
         }
-        return new MyResponse(true,$accessToken,403,20005);
+        return new MyResponse(true, $accessToken, 200, 20005);
         // return $accessToken;
     }
 
@@ -345,18 +345,22 @@ class LoginController
     }
     function readAccessToken($token, $deviceId)
     {
-        $accessToken = $this->getAccessTokenByToken($token, $deviceId);
-        if ($this->compareExpiration($accessToken)) {
-            abort(
-                403,
-                json_encode([
-                    'message' => "need refresh"
-                    ,
-                    'code' => 1000
-                ])
-            );
-        }
-        return $accessToken;
+        $myResult = $this->getAccessTokenByToken($token, $deviceId);
+
+        if ($myResult->isSuccess == false) {
+            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
+        } else
+            if ($this->compareExpiration($myResult->message)) {
+                abort(
+                    403,
+                    json_encode([
+                        'message' => "need refresh"
+                        ,
+                        'code' => 1000
+                    ])
+                );
+            }
+        return $myResult;
     }
     private function refreshAccessToken($preToken)
     {
