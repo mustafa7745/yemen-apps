@@ -273,14 +273,15 @@ class LoginController
                 DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',
             ]);
         if ($accessToken == null) {
-             response()->json(
-                [
-                    'message' => "Inv Tok",
-                    'code' => 2000
-                ],
-                403
-            );
-            exit;
+            $this->exitFromScript("Inv Tok",403,20005);
+            // response()->json(
+            //     [
+            //         'message' => ,
+            //         'code' => 2000
+            //     ],
+            //     403
+            // );
+            // exit;
             // abort(
             //     403,
 
@@ -381,5 +382,11 @@ class LoginController
         return DB::table(table: AccessTokens1::$tableName)
             ->where(AccessTokens1::$tableName . '.' . AccessTokens1::$token, '=', $newToken)
             ->first();
+    }
+    function exitFromScript($message, $response_code = 400, $code = 0)
+    {
+        http_response_code($response_code);
+        $res = json_encode(array("code" => $code, "message" => $message));
+        die($res);
     }
 }
