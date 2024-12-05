@@ -19,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      */
     public function boot(): void
-    {
+    {  
         // DB::listen(function ($query) {
         //     print_r($query->sql);
         //     print_r($query->bindings);
