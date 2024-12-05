@@ -340,7 +340,7 @@ class LoginController
     function readAndRefreshAccessToken($preToken, $deviceId)
     {
         $accessToken = $this->getAccessTokenByToken($preToken, $deviceId);
-        if ($this->compareExpiration($accessToken)) {
+        if ($this->compareExpiration($accessToken->message)) {
             return $this->refreshAccessToken($preToken);
         }
         return $accessToken;
