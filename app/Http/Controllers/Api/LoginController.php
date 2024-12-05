@@ -105,18 +105,26 @@ class LoginController
             }
             return $this->updateLastLoginAt($userSession[0]);
         } else {
-            $insertedId = DB::table(UsersSessions::$tableName)->insertGetId([
-                UsersSessions::$id => null,
-                UsersSessions::$userId => $userId,
-                UsersSessions::$deviceSessionId => $deviceSessionId,
-                UsersSessions::$lastLoginAt => Carbon::now()->format('Y-m-d H:i:s'),
-                UsersSessions::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                UsersSessions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+            $userSession = $this->getUserSessionByUserIdAndDevicesSessionId($userId, $deviceSessionId);
+            if (count($userSession) == 0) {
+                $insertedId = DB::table(UsersSessions::$tableName)->insertGetId([
+                    UsersSessions::$id => null,
+                    UsersSessions::$userId => $userId,
+                    UsersSessions::$deviceSessionId => $deviceSessionId,
+                    UsersSessions::$lastLoginAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    UsersSessions::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    UsersSessions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
 
-            ]);
-            return DB::table(table: UsersSessions::$tableName)
-                ->where(UsersSessions::$tableName . '.' . UsersSessions::$id, '=', $insertedId)
-                ->first();
+                ]);
+                return DB::table(table: UsersSessions::$tableName)
+                    ->where(UsersSessions::$tableName . '.' . UsersSessions::$id, '=', $insertedId)
+                    ->first();
+            } elseif (count($userSession) == 1) {
+                return $this->updateLastLoginAt($userSession[0]);
+            } else {
+                abort(405, "error: 6748");
+            }
+
         }
     }
     private function getUserSession($userId)
@@ -133,11 +141,18 @@ class LoginController
             )
             // ->where(UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId, '<>', $deviceSessionId)
             ->get([
-                UsersSessions::$tableName . '.' . UsersSessions::$id . ' as id',
-                DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
-                DevicesSessions::$tableName . '.' . DevicesSessions::$id . ' as deviceSessionId',
-                UsersSessions::$tableName . '.' . UsersSessions::$userId . ' as userId',
-            ])->toArray();
+                    UsersSessions::$tableName . '.' . UsersSessions::$id . ' as id',
+                    DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
+                    DevicesSessions::$tableName . '.' . DevicesSessions::$id . ' as deviceSessionId',
+                    UsersSessions::$tableName . '.' . UsersSessions::$userId . ' as userId',
+                ])->toArray();
+    }
+    private function getUserSessionByUserIdAndDevicesSessionId($userId, $deviceSessionId)
+    {
+        return DB::table(table: UsersSessions::$tableName)
+            ->where(UsersSessions::$tableName . '.' . UsersSessions::$userId, '=', $userId)
+            ->where(UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId, '=', $deviceSessionId)
+            ->get()->toArray();
     }
     private function updateAppToken(Request $request, $deviceSession)
     {
