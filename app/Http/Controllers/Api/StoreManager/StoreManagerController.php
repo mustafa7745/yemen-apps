@@ -28,7 +28,7 @@ use Carbon\Carbon;
 class StoreManagerController extends Controller
 {
     private $appId = 1;
-    public function index(Request $request)
+    public function readMain(Request $request)
     {
         $loginController = (new LoginController($this->appId));
         $token = $request->input('accessToken');
