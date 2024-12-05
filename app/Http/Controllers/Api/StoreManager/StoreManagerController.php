@@ -33,6 +33,8 @@ class StoreManagerController extends Controller
         $loginController = (new LoginController($this->appId));
         $token = $request->input('accessToken');
         $deviceId = $request->input('deviceId');
+
+        print_r($token);
         $myResult = $loginController->readAccessToken($token, $deviceId);
         if ($myResult->isSuccess == false) {
             return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
