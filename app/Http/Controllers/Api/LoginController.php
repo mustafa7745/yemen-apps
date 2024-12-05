@@ -277,7 +277,7 @@ class LoginController
         if ($accessToken == null) {
             return new MyResponse(false, "Inv Tok", 403, 20005);
         }
-        print_r($accessToken);
+        // print_r($accessToken);
         return new MyResponse(true, $accessToken, 200, 20005);
         // return $accessToken;
     }
@@ -351,17 +351,20 @@ class LoginController
 
         if ($myResult->isSuccess == false) {
             return $myResult;
-        } else
-            if ($this->compareExpiration($myResult->message)) {
-                abort(
-                    403,
-                    json_encode([
-                        'message' => "need refresh"
-                        ,
-                        'code' => 1000
-                    ])
-                );
-            }
+        }
+        if ($this->compareExpiration($myResult->message)) {
+            return new MyResponse(false, "Need refresh", 405, 20006);
+            // abort(
+            //     403,
+            //     json_encode([
+            //         'message' => "need refresh"
+            //         ,
+            //         'code' => 1000
+            //     ])
+            // );
+        }
+
+
         return $myResult;
     }
     private function refreshAccessToken($preToken)
