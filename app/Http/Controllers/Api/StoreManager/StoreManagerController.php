@@ -33,9 +33,9 @@ class StoreManagerController extends Controller
     {
         // Define validation rules
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6|confirmed',
+            'accessToken' => 'required|string|max:255',
+            'deviceId' => 'required|string|max:255',
+            'token' => 'required|string|max:255',
         ]);
 
         // Check if validation fails
@@ -44,6 +44,7 @@ class StoreManagerController extends Controller
             return response()->json([
                 'message' => 'Validation failed',
                 'errors' => $validator->errors(),
+                'code' => 0
             ], 422);  // 422 Unprocessable Entity
         }
 
