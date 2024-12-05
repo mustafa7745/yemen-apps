@@ -30,8 +30,8 @@ Route::prefix('v1')->group(function () {
 
 });
 Route::prefix('v1/storeManager')->group(function () {
-    Route::apiResource('/', StoreManagerController::class);
-
+    // Route::apiResource('/', StoreManagerController::class);
+    Route::post('/readMain', [UserController::class, 'readMain']);
     Route::post('/login', [StoreManagerController::class, 'login']);
 
 
