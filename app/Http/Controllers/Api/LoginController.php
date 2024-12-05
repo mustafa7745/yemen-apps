@@ -219,6 +219,22 @@ class LoginController
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     'code' => 0
                 ])
             );
@@ -251,11 +267,38 @@ class LoginController
         return $accessToken;
 
     }
-    function getAccessTokenByToken($token)
+    function getAccessTokenByToken($token, $deviceId)
     {
         $accessToken = DB::table(table: AccessTokens::$tableName)
             ->where(AccessTokens::$tableName . '.' . AccessTokens::$userSessionId, '=', $token)
-            ->first();
+            ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $this->appId)
+            ->where('deviceId', '=', $deviceId)
+            ->join(
+                UsersSessions::$tableName,
+                UsersSessions::$tableName . '.' . UsersSessions::$id,
+                '=',
+                AccessTokens::$tableName . '.' . AccessTokens::$userSessionId
+            )
+            ->join(
+                DevicesSessions::$tableName,
+                DevicesSessions::$tableName . '.' . DevicesSessions::$id,
+                '=',
+                UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId
+            )
+            ->join(
+                Devices::$tableName,
+                Devices::$tableName . '.' . Devices::$id,
+                '=',
+                DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId
+            )
+            ->first([
+                AccessTokens::$tableName . '.' . AccessTokens::$id . ' as id',
+                AccessTokens::$tableName . '.' . AccessTokens::$token . ' as token',
+                AccessTokens::$tableName . '.' . AccessTokens::$expireAt . ' as expireAt',
+                    // 
+                DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
+                DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',
+            ]);
         if ($accessToken == null) {
             abort(
                 403,
@@ -327,11 +370,26 @@ class LoginController
             return false;
         }
     }
-    function readAndRefreshAccessToken($preToken, $forceUpdate = false)
+    function readAndRefreshAccessToken($preToken, $deviceId)
     {
-        $accessToken = $this->getAccessTokenByToken($preToken);
+        $accessToken = $this->getAccessTokenByToken($preToken, $deviceId);
         if ($this->compareExpiration($accessToken)) {
             return $this->refreshAccessToken($preToken);
+        }
+        return $accessToken;
+    }
+    function readAccessToken($token, $deviceId)
+    {
+        $accessToken = $this->getAccessTokenByToken($token, $deviceId);
+        if ($this->compareExpiration($accessToken)) {
+            abort(
+                403,
+                json_encode([
+                    'message' => "need refresh"
+                    ,
+                    'code' => 1000
+                ])
+            );
         }
         return $accessToken;
     }

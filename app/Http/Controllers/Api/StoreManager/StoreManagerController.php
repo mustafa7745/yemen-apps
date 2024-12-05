@@ -691,7 +691,9 @@ class StoreManagerController extends Controller
     public function refreshToken(Request $request)
     {
         $token = $request->input('accessToken');
+        $deviceId = $request->input('deviceId');
+
         $loginController = (new LoginController($this->appId));
-        return $loginController->readAndRefreshAccessToken($token);
+        return $loginController->readAndRefreshAccessToken($token, $deviceId);
     }
 }
