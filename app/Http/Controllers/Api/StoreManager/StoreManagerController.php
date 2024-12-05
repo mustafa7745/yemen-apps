@@ -28,8 +28,13 @@ use Carbon\Carbon;
 class StoreManagerController extends Controller
 {
     private $appId = 1;
-    public function index()
+    public function index(Request $request)
     {
+        $loginController = (new LoginController($this->appId));
+        $token = $request->input('accessToken');
+        $deviceId = $request->input('deviceId');
+        $loginController->readAccessToken($token, $deviceId);
+
         $storeId = 1;
         $categories = DB::table(StoreCategories::$tableName)
             ->join(
