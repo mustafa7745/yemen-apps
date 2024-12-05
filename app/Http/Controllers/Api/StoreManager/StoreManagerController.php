@@ -15,6 +15,7 @@ use App\Models\StoreCategories;
 use App\Models\StoreProducts;
 use App\Models\Users;
 use App\Models\UsersSessions;
+use Dotenv\Exception\ValidationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -30,11 +31,21 @@ class StoreManagerController extends Controller
     private $appId = 1;
     public function readMain(Request $request)
     {
-        // $request->validate([
-        //     'name' => 'required',  // Makes the 'name' field required
-        //     'email' => 'required|email',  // Makes the 'email' field required and must be a valid email
-        //     'password' => 'required|min:6',  // Makes the 'password' field required and at least 6 characters long
-        // ]);
+        // Define validation rules
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6|confirmed',
+        ]);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            // Return a JSON response with validation errors
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 422);  // 422 Unprocessable Entity
+        }
 
         $loginController = (new LoginController($this->appId));
         $token = $request->input('accessToken');
@@ -43,7 +54,7 @@ class StoreManagerController extends Controller
         // print_r($request->all());
         $myResult = $loginController->readAccessToken($token, $deviceId);
         if ($myResult->isSuccess == false) {
-            return response()->json(['message' => $myResult->message . $token, 'code' => $myResult->code], $myResult->responseCode);
+            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
         }
 
         $storeId = 1;
