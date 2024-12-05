@@ -35,16 +35,16 @@ class LoginController
             ->where(Users::$tableName . '.' . Users::$password, '=', $password)
             ->first();
         if ($user == null) {
-            return response()->json(["message" => "Phone Or Password Error"], 400);
+            return response()->json(["message" => "Phone Or Password Error", 'code' => 0], 400);
         }
         $this->updateAppToken($request, $deviceSession);
 
         $userSession = $this->getUserFinalSession($user->id, $deviceSession->id);
         if ($userSession == false) {
-            return response()->json(["message" => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل"], 400);
+            return response()->json(["message" => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل", , 'code' => 0], 400);
         }
 
-        $accessToken = $this->getAccessToken($userSession->id);
+        $accessToken = $this->getAccessTokenByUserSessionId($userSession->id);
         return response()->json(["token" => $accessToken->token, 'expireAt' => $accessToken->expireAt]);
     }
 
@@ -196,6 +196,8 @@ class LoginController
 
                 json_encode([
                     'message' => "App not Auth"
+                    ,
+                    'code' => 0
                 ])
             );
             // return response()->json(, 400)->send();
@@ -205,13 +207,25 @@ class LoginController
             abort(
                 403,
                 json_encode([
-                    'message' => "App not in Auth"
+                    'message' => "App not in Auth",
+            ,
+
+
+
+
+
+
+
+
+
+
+                    'code' => 0
                 ])
             );
         }
         return $app;
     }
-    private function getAccessToken($userSessionId)
+    private function getAccessTokenByUserSessionId($userSessionId)
     {
         $accessToken = DB::table(table: AccessTokens::$tableName)
             ->where(AccessTokens::$tableName . '.' . AccessTokens::$userSessionId, '=', $userSessionId)
@@ -232,18 +246,28 @@ class LoginController
                 ->first();
         }
         if ($this->compareExpiration($accessToken)) {
-            DB::table(table: AccessTokens::$tableName)
-                ->where(AccessTokens::$tableName . '.' . AccessTokens::$id, '=', $accessToken->id)
-                ->update([
-                    AccessTokens::$expireAt => $this->getRemainedMinute(), //h
-                    AccessTokens::$token => $this->getUniqueToken(),
-                    AccessTokens::$refreshCount => DB::raw(AccessTokens::$refreshCount . ' + 1'),
-                    AccessTokens::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-                ]);
-            $accessToken = DB::table(table: AccessTokens::$tableName)
-                ->where(AccessTokens::$tableName . '.' . AccessTokens::$id, '=', $accessToken->id)
-                ->first();
+            $this->refreshAccessToken($accessToken->token);
         }
+        return $accessToken;
+
+    }
+    function getAccessTokenByToken($token)
+    {
+        $accessToken = DB::table(table: AccessTokens::$tableName)
+            ->where(AccessTokens::$tableName . '.' . AccessTokens::$userSessionId, '=', $token)
+            ->first();
+        if ($accessToken == null) {
+            abort(
+                403,
+
+                json_encode([
+                    'message' => "Inv Tok"
+                    ,
+                    'code' => 2000
+                ])
+            );
+        }
+
         return $accessToken;
 
     }
@@ -302,5 +326,28 @@ class LoginController
             // Token is still valid
             return false;
         }
+    }
+    function readAndRefreshAccessToken($preToken, $forceUpdate = false)
+    {
+        $accessToken = $this->getAccessTokenByToken($preToken);
+        if ($this->compareExpiration($accessToken)) {
+            return $this->refreshAccessToken($preToken);
+        }
+        return $accessToken;
+    }
+    private function refreshAccessToken($preToken)
+    {
+        $newToken = $this->getUniqueToken();
+        DB::table(table: AccessTokens::$tableName)
+            ->where(AccessTokens::$tableName . '.' . AccessTokens::$token, '=', $preToken)
+            ->update([
+                AccessTokens::$expireAt => $this->getRemainedMinute(), //h
+                AccessTokens::$token => $newToken,
+                AccessTokens::$refreshCount => DB::raw(AccessTokens::$refreshCount . ' + 1'),
+                AccessTokens::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+        return DB::table(table: AccessTokens::$tableName)
+            ->where(AccessTokens::$tableName . '.' . AccessTokens::$token, '=', $newToken)
+            ->first();
     }
 }

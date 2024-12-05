@@ -57,6 +57,8 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/readOptions', [StoreManagerController::class, 'readOptions']);
     Route::post('/readStoreCategories', [StoreManagerController::class, 'readStoreCategories']);
 
+    Route::post('/refreshToken', [StoreManagerController::class, 'refreshToken']);
+
 
 
 });

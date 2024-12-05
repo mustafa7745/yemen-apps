@@ -688,4 +688,10 @@ class StoreManagerController extends Controller
     {
         return (new LoginController($this->appId))->login($request);
     }
+    public function refreshToken(Request $request)
+    {
+        $token = $request->input('accessToken');
+        $loginController = (new LoginController($this->appId));
+        return $loginController->readAndRefreshAccessToken($token);
+    }
 }
