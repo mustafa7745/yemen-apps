@@ -269,7 +269,9 @@ class LoginController
                 AccessTokens1::$tableName . '.' . AccessTokens1::$id . ' as id',
                 AccessTokens1::$tableName . '.' . AccessTokens1::$token . ' as token',
                 AccessTokens1::$tableName . '.' . AccessTokens1::$expireAt . ' as expireAt',
-                    // 
+                    //
+                UsersSessions::$tableName . '.' . UsersSessions::$id . ' as userId',
+                    //
                 DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
                 DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',
             ]);

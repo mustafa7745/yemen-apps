@@ -13,7 +13,7 @@ use App\Models\ProductImages;
 use App\Models\Products;
 use App\Models\StoreCategories;
 use App\Models\StoreProducts;
-use App\Models\Users;
+use App\Models\Stores;
 use App\Models\UsersSessions;
 use Dotenv\Exception\ValidationException;
 use Illuminate\Support\Facades\DB;
@@ -35,6 +35,7 @@ class StoreManagerController extends Controller
         $validator = Validator::make($request->all(), [
             'accessToken' => 'required|string|max:255',
             'deviceId' => 'required|string|max:255',
+            'storeId' => 'required|integer|max:2147483647',
         ]);
 
         // Check if validation fails
@@ -50,14 +51,25 @@ class StoreManagerController extends Controller
         $loginController = (new LoginController($this->appId));
         $token = $request->input('accessToken');
         $deviceId = $request->input('deviceId');
-
+        $storeId = $request->input('storeId');
         // print_r($request->all());
         $myResult = $loginController->readAccessToken($token, $deviceId);
         if ($myResult->isSuccess == false) {
             return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
         }
+        $accessToken = $myResult->message;
 
-        $storeId = 1;
+        $store = DB::table(Stores::$tableName)
+            ->where(Stores::$tableName . '.' . Stores::$userId, '=', $accessToken->userId)
+            ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)
+            ->first([
+                Stores::$tableName . '.' . Stores::$id
+            ]);
+        if ($store == null) {
+            return response()->json(['message' => "متجر غير مخول", 'code' => 0], 403);
+        }
+
+
         $categories = DB::table(StoreCategories::$tableName)
             ->join(
                 Categories::$tableName,
