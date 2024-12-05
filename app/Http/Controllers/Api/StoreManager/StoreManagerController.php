@@ -33,9 +33,8 @@ class StoreManagerController extends Controller
     {
         // Define validation rules
         $validator = Validator::make($request->all(), [
-            'accessToken' => 'required|string|max:255',
+            'accessToken' => 'required|string|max:10',
             'deviceId' => 'required|string|max:255',
-            'token' => 'required|string|max:255',
         ]);
 
         // Check if validation fails
