@@ -273,7 +273,7 @@ class LoginController
                 DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
                 DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',
             ]);
-        print_r($accessToken->toSql());
+        // print_r($accessToken->toSql());
         if ($accessToken == null) {
             return new MyResponse(false, "Inv Tok", 403, 20005);
         }
