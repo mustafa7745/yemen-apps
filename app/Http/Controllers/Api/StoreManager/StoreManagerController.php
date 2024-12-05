@@ -33,7 +33,10 @@ class StoreManagerController extends Controller
         $loginController = (new LoginController($this->appId));
         $token = $request->input('accessToken');
         $deviceId = $request->input('deviceId');
-        $loginController->readAccessToken($token, $deviceId);
+        $myResult = $loginController->readAccessToken($token, $deviceId);
+        if ($myResult->isSuccess == false) {
+            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
+        }
 
         $storeId = 1;
         $categories = DB::table(StoreCategories::$tableName)

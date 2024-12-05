@@ -6,6 +6,7 @@ use App\Models\Apps;
 use App\Models\Categories;
 use App\Models\Devices;
 use App\Models\DevicesSessions;
+use App\Models\MyResponse;
 use App\Models\Users;
 use App\Models\UsersSessions;
 use Carbon\Carbon;
@@ -273,21 +274,10 @@ class LoginController
                 DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',
             ]);
         if ($accessToken == null) {
-            $this->exitFromScript("Inv Tok",403,20005);
-            // response()->json(
-            //     [
-            //         'message' => ,
-            //         'code' => 2000
-            //     ],
-            //     403
-            // );
-            // exit;
-            // abort(
-            //     403,
-
-            // );
+            return new MyResponse(false,"Inv Tok",403,20005);
         }
-        return $accessToken;
+        return new MyResponse(true,$accessToken,403,20005);
+        // return $accessToken;
     }
 
     private function getUniqueToken()
