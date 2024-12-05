@@ -30,17 +30,17 @@ class StoreManagerController extends Controller
     private $appId = 1;
     public function readMain(Request $request)
     {
-        $request->validate([
-            'name' => 'required',  // Makes the 'name' field required
-            'email' => 'required|email',  // Makes the 'email' field required and must be a valid email
-            'password' => 'required|min:6',  // Makes the 'password' field required and at least 6 characters long
-        ]);
+        // $request->validate([
+        //     'name' => 'required',  // Makes the 'name' field required
+        //     'email' => 'required|email',  // Makes the 'email' field required and must be a valid email
+        //     'password' => 'required|min:6',  // Makes the 'password' field required and at least 6 characters long
+        // ]);
 
         $loginController = (new LoginController($this->appId));
         $token = $request->input('accessToken');
         $deviceId = $request->input('deviceId');
 
-        print_r($token);
+        print_r($request->all());
         $myResult = $loginController->readAccessToken($token, $deviceId);
         if ($myResult->isSuccess == false) {
             return response()->json(['message' => $myResult->message . $token, 'code' => $myResult->code], $myResult->responseCode);
