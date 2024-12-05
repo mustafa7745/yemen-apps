@@ -273,7 +273,7 @@ class LoginController
                 DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',
             ]);
         if ($accessToken == null) {
-            return response()->json(
+             response()->json(
                 [
                     'message' => "Inv Tok",
                     'code' => 2000
