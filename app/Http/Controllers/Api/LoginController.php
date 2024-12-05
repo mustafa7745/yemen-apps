@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api;
 
-use App\Models\AccessTokens;
+use App\Models\AccessTokens1;
 use App\Models\Apps;
 use App\Models\Categories;
 use App\Models\Devices;
@@ -243,22 +243,22 @@ class LoginController
     }
     private function getAccessTokenByUserSessionId($userSessionId)
     {
-        $accessToken = DB::table(table: AccessTokens::$tableName)
-            ->where(AccessTokens::$tableName . '.' . AccessTokens::$userSessionId, '=', $userSessionId)
+        $accessToken = DB::table(table: AccessTokens1::$tableName)
+            ->where(AccessTokens1::$tableName . '.' . AccessTokens1::$userSessionId, '=', $userSessionId)
             ->first();
 
         if ($accessToken == null) {
-            $insertedId = DB::table(AccessTokens::$tableName)->insertGetId([
-                AccessTokens::$id => null,
-                AccessTokens::$token => $this->getUniqueToken(),
-                AccessTokens::$userSessionId => $userSessionId,
-                AccessTokens::$expireAt => $this->getRemainedMinute(),
-                AccessTokens::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-                AccessTokens::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+            $insertedId = DB::table(AccessTokens1::$tableName)->insertGetId([
+                AccessTokens1::$id => null,
+                AccessTokens1::$token => $this->getUniqueToken(),
+                AccessTokens1::$userSessionId => $userSessionId,
+                AccessTokens1::$expireAt => $this->getRemainedMinute(),
+                AccessTokens1::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                AccessTokens1::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
 
             ]);
-            return DB::table(table: AccessTokens::$tableName)
-                ->where(AccessTokens::$tableName . '.' . AccessTokens::$id, '=', $insertedId)
+            return DB::table(table: AccessTokens1::$tableName)
+                ->where(AccessTokens1::$tableName . '.' . AccessTokens1::$id, '=', $insertedId)
                 ->first();
         }
         if ($this->compareExpiration($accessToken)) {
@@ -269,15 +269,15 @@ class LoginController
     }
     function getAccessTokenByToken($token, $deviceId)
     {
-        $accessToken = DB::table(table: AccessTokens::$tableName)
-            ->where(AccessTokens::$tableName . '.' . AccessTokens::$userSessionId, '=', $token)
+        $accessToken = DB::table(table: AccessTokens1::$tableName)
+            ->where(AccessTokens1::$tableName . '.' . AccessTokens1::$userSessionId, '=', $token)
             ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $this->appId)
             ->where('deviceId', '=', $deviceId)
             ->join(
                 UsersSessions::$tableName,
                 UsersSessions::$tableName . '.' . UsersSessions::$id,
                 '=',
-                AccessTokens::$tableName . '.' . AccessTokens::$userSessionId
+                AccessTokens1::$tableName . '.' . AccessTokens1::$userSessionId
             )
             ->join(
                 DevicesSessions::$tableName,
@@ -292,9 +292,9 @@ class LoginController
                 DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId
             )
             ->first([
-                AccessTokens::$tableName . '.' . AccessTokens::$id . ' as id',
-                AccessTokens::$tableName . '.' . AccessTokens::$token . ' as token',
-                AccessTokens::$tableName . '.' . AccessTokens::$expireAt . ' as expireAt',
+                AccessTokens1::$tableName . '.' . AccessTokens1::$id . ' as id',
+                AccessTokens1::$tableName . '.' . AccessTokens1::$token . ' as token',
+                AccessTokens1::$tableName . '.' . AccessTokens1::$expireAt . ' as expireAt',
                     // 
                 DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
                 DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',
@@ -396,16 +396,16 @@ class LoginController
     private function refreshAccessToken($preToken)
     {
         $newToken = $this->getUniqueToken();
-        DB::table(table: AccessTokens::$tableName)
-            ->where(AccessTokens::$tableName . '.' . AccessTokens::$token, '=', $preToken)
+        DB::table(table: AccessTokens1::$tableName)
+            ->where(AccessTokens1::$tableName . '.' . AccessTokens1::$token, '=', $preToken)
             ->update([
-                AccessTokens::$expireAt => $this->getRemainedMinute(), //h
-                AccessTokens::$token => $newToken,
-                AccessTokens::$refreshCount => DB::raw(AccessTokens::$refreshCount . ' + 1'),
-                AccessTokens::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                AccessTokens1::$expireAt => $this->getRemainedMinute(), //h
+                AccessTokens1::$token => $newToken,
+                AccessTokens1::$refreshCount => DB::raw(AccessTokens1::$refreshCount . ' + 1'),
+                AccessTokens1::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
-        return DB::table(table: AccessTokens::$tableName)
-            ->where(AccessTokens::$tableName . '.' . AccessTokens::$token, '=', $newToken)
+        return DB::table(table: AccessTokens1::$tableName)
+            ->where(AccessTokens1::$tableName . '.' . AccessTokens1::$token, '=', $newToken)
             ->first();
     }
 }

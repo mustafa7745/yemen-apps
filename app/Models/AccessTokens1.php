@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class AccessTokens
+class AccessTokens1
 {
    public static $tableName = "accessTokens";
    public static $id = "id";
