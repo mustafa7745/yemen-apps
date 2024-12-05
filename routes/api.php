@@ -24,9 +24,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::prefix('v1')->group(function () {
-    // Route::apiResource('/readMain', UserController::class);
+    Route::apiResource('/readMain', UserController::class);
     Route::post('/upload-image', [UserController::class, 'uploadImage']);
-    Route::post('/readMain', [UserController::class, 'readMain']);
+    // Route::post('/readMain', [UserController::class, 'readMain']);
 
 });
 Route::prefix('v1/storeManager')->group(function () {
