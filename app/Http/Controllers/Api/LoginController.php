@@ -353,15 +353,8 @@ class LoginController
             return $myResult;
         }
         if ($this->compareExpiration($myResult->message)) {
+            print_r("sdsdsd");
             return new MyResponse(false, "Need refresh", 405, 20006);
-            // abort(
-            //     403,
-            //     json_encode([
-            //         'message' => "need refresh"
-            //         ,
-            //         'code' => 1000
-            //     ])
-            // );
         }
 
 
