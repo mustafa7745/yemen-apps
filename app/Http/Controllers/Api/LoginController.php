@@ -348,7 +348,7 @@ class LoginController
         $myResult = $this->getAccessTokenByToken($token, $deviceId);
 
         if ($myResult->isSuccess == false) {
-            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
+            return $myResult;
         } else
             if ($this->compareExpiration($myResult->message)) {
                 abort(
