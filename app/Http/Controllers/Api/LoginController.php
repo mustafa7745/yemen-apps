@@ -273,15 +273,18 @@ class LoginController
                 DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',
             ]);
         if ($accessToken == null) {
-            abort(
-                403,
-                response()->json(
-                    [
-                        'message' => "Inv Tok",
-                        'code' => 2000
-                    ]
-                )
+            response()->json(
+                [
+                    'message' => "Inv Tok",
+                    'code' => 2000
+                ],
+                403
             );
+            exit;
+            // abort(
+            //     403,
+
+            // );
         }
         return $accessToken;
     }
