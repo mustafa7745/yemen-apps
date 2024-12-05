@@ -45,7 +45,7 @@ class LoginController
         }
 
         $accessToken = $this->getAccessToken($userSession->id);
-        return response()->json(["token" => $accessToken->token]);
+        return response()->json(["token" => $accessToken->token, 'expireAt' => $accessToken->expireAt]);
     }
 
     private function getDevice(Request $request)
