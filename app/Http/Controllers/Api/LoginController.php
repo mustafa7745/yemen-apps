@@ -240,8 +240,8 @@ class LoginController
                     AccessTokens::$refreshCount => DB::raw(AccessTokens::$refreshCount . ' + 1'),
                     AccessTokens::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
-            $accessToken = DB::table(table: UsersSessions::$tableName)
-                ->where(UsersSessions::$tableName . '.' . UsersSessions::$id, '=', $accessToken->id)
+            $accessToken = DB::table(table: AccessTokens::$tableName)
+                ->where(AccessTokens::$tableName . '.' . AccessTokens::$id, '=', $accessToken->id)
                 ->first();
         }
         return $accessToken;
