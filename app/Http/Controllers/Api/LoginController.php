@@ -275,17 +275,15 @@ class LoginController
         if ($accessToken == null) {
             abort(
                 403,
-
-                json_encode([
-                    'message' => "Inv Tok"
-                    ,
-                    'code' => 2000
-                ])
+                response()->json(
+                    [
+                        'message' => "Inv Tok",
+                        'code' => 2000
+                    ]
+                )
             );
         }
-
         return $accessToken;
-
     }
 
     private function getUniqueToken()
