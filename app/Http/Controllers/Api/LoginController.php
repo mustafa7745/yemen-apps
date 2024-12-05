@@ -208,33 +208,6 @@ class LoginController
                 403,
                 json_encode([
                     'message' => "App not in Auth",
-            ,
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                     'code' => 0
                 ])
             );
