@@ -25,7 +25,7 @@ class LoginController
     {
         $app = $this->getApp($request);
         if ($app->isSuccess == false) {
-            return response()->json(["message" => "not auth", 'code' => 0], 400);
+            return response()->json(["message" => $app->message, 'code' => $app->code], $app->responseCode);
         }
         $phone = $request->input('phone');
         $password = $request->input('password');
