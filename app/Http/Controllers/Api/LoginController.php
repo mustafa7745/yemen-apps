@@ -23,11 +23,11 @@ class LoginController
     }
     public function login(Request $request)
     {
-        $app = $this->getApp($request);
+        $this->getApp($request);
         $phone = $request->input('phone');
         $password = $request->input('password');
 
-        $device = $this->getDevice($request);
+        $device = $this->getDevice(request: $request);
         $deviceSession = $this->getDeviceSession($request, $device->id);
 
 
@@ -192,28 +192,13 @@ class LoginController
             ->first();
 
         if ($app == null) {
-            abort(
-                403,
-
-                json_encode([
-                    'message' => "App not Auth"
-                    ,
-                    'code' => 0
-                ])
-            );
-            // return response()->json(, 400)->send();
-            // exit;
+            return (new MyResponse(false, "App not Auth", 403, 105));
         }
         if ($app->id != $this->appId) {
-            abort(
-                403,
-                json_encode([
-                    'message' => "App not in Auth",
-                    'code' => 0
-                ])
-            );
+            return response()->json(["message" => "App not in Auth", 'code' => 0], 403);
+            // return (new MyResponse(false, "App not in Auth", 403, 106));
         }
-        return $app;
+        return (new MyResponse(true, $app, 200, 0));
     }
     private function getAccessTokenByUserSessionId($userSessionId)
     {
