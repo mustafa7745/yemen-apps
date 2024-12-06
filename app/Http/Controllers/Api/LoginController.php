@@ -23,7 +23,10 @@ class LoginController
     }
     public function login(Request $request)
     {
-        $this->getApp($request);
+        $app = $this->getApp($request);
+        if ($app->isSuccess == false) {
+            return response()->json(["message" => "not auth", 'code' => 0], 400);
+        }
         $phone = $request->input('phone');
         $password = $request->input('password');
 
@@ -192,13 +195,13 @@ class LoginController
             ->first();
 
         if ($app == null) {
-            return response()->json(["message" => "App not Auth", 'code' => 0], 403);
+            // return response()->json(["message" => "App not Auth", 'code' => 0], 403);
 
             return (new MyResponse(false, "App not Auth", 403, 105));
         }
         if ($app->id != $this->appId) {
-            return response()->json(["message" => "App not in Auth", 'code' => 0], 403);
-            // return (new MyResponse(false, "App not in Auth", 403, 106));
+            // return response()->json(["message" => "App not in Auth", 'code' => 0], 403);
+            return (new MyResponse(false, "App not in Auth", 403, 106));
         }
         return (new MyResponse(true, $app, 200, 0));
     }
