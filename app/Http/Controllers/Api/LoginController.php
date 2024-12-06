@@ -192,6 +192,8 @@ class LoginController
             ->first();
 
         if ($app == null) {
+            return response()->json(["message" => "App not Auth", 'code' => 0], 403);
+
             return (new MyResponse(false, "App not Auth", 403, 105));
         }
         if ($app->id != $this->appId) {
