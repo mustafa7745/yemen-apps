@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api\Users;
 
+use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use App\Models\Options;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
+    private $appId = 2;
     public function index()
     {
         $storeId = 1;
@@ -161,122 +163,101 @@ class UserController extends Controller
 
         // return Post::all();
     }
-    public function uploadImage(Request $request)
-    {
-        if ($request->hasFile('image')) {
-            // print_r("1");
-            // print_r("yes hav file");
-            // $file = $request->file('image');
-            $image = $request->file('image');
+    // public function uploadImage(Request $request)
+    // {
+    //     if ($request->hasFile('image')) {
+    //         // print_r("1");
+    //         // print_r("yes hav file");
+    //         // $file = $request->file('image');
+    //         $image = $request->file('image');
 
-            // print_r("1.1");
+    //         // print_r("1.1");
 
-            // // // Generate a unique file name based on timestamp and original file name
-            $fileName = 'images/' . Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
-            // print_r($fileName);
+    //         // // // Generate a unique file name based on timestamp and original file name
+    //         $fileName = 'images/' . Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
+    //         // print_r($fileName);
 
-            // print_r("2");
-            // print_r($fileName);
-            // // Upload the file to S3
-            // print_r("3");
+    //         // print_r("2");
+    //         // print_r($fileName);
+    //         // // Upload the file to S3
+    //         // print_r("3");
 
-            $path = Storage::disk('s3')->put($fileName, fopen($image, 'r+'));
+    //         $path = Storage::disk('s3')->put($fileName, fopen($image, 'r+'));
 
-            // print_r("4"); 
+    //         // print_r("4"); 
 
-            $url = Storage::disk('s3')->url($fileName);
-            // print_r("5");
+    //         $url = Storage::disk('s3')->url($fileName);
+    //         // print_r("5");
 
-            return response($url);
-            // ->json(
-            //     $url
-            //     // [
-            //     // 'message' => 'Image uploaded successfully',
-            //     // 'url' => $url
-            // // ], 
-            // ,
+    //         return response($url);
+    //         // ->json(
+    //         //     $url
+    //         //     // [
+    //         //     // 'message' => 'Image uploaded successfully',
+    //         //     // 'url' => $url
+    //         // // ], 
+    //         // ,
             
-            // 200);
+    //         // 200);
 
-            // Set up S3 client
-            // $s3Client = new S3Client([
-            //     'region' => env('AWS_DEFAULT_REGION'),
-            //     'version' => 'latest',
-            //     'credentials' => [
-            //         'key' => env('AWS_ACCESS_KEY_ID'),
-            //         'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            //     ],
-            // ]);
+    //         // Set up S3 client
+    //         // $s3Client = new S3Client([
+    //         //     'region' => env('AWS_DEFAULT_REGION'),
+    //         //     'version' => 'latest',
+    //         //     'credentials' => [
+    //         //         'key' => env('AWS_ACCESS_KEY_ID'),
+    //         //         'secret' => env('AWS_SECRET_ACCESS_KEY'),
+    //         //     ],
+    //         // ]);
 
-            // // Prepare the S3 upload parameters
-            // $bucket = env('AWS_BUCKET');
-            // print_r("buket " . $bucket);
-            // $fileName = "mustafa.jpg";
-            // $expires = '+10 minutes'; // Expiry time for the URL
+    //         // // Prepare the S3 upload parameters
+    //         // $bucket = env('AWS_BUCKET');
+    //         // print_r("buket " . $bucket);
+    //         // $fileName = "mustafa.jpg";
+    //         // $expires = '+10 minutes'; // Expiry time for the URL
 
-            // try {
-            //     $command = $s3Client->getCommand('PutObject', [
-            //         'Bucket' => $bucket,
-            //         'Key' => $fileName, // File name in S3
-            //         'ContentType' => 'image/jpeg', // Set the content type for the file
-            //     ]);
+    //         // try {
+    //         //     $command = $s3Client->getCommand('PutObject', [
+    //         //         'Bucket' => $bucket,
+    //         //         'Key' => $fileName, // File name in S3
+    //         //         'ContentType' => 'image/jpeg', // Set the content type for the file
+    //         //     ]);
 
-            //     // Create a pre-signed URL with expiry time
-            //     $request = $s3Client->createPresignedRequest($command, $expires);
+    //         //     // Create a pre-signed URL with expiry time
+    //         //     $request = $s3Client->createPresignedRequest($command, $expires);
 
-            //     // Get the pre-signed URL as a string
-            //     $url = (string) $request->getUri();
+    //         //     // Get the pre-signed URL as a string
+    //         //     $url = (string) $request->getUri();
 
-            //     // Return the pre-signed URL to the client
-            //     return response()->json(['url' => $url]);
-            // } catch (\Aws\Exception\AwsException $e) {
-            //     Log::error('Error generating pre-signed URL', ['error' => $e->getMessage()]);
-            //     return response()->json(['error' => 'Unable to generate pre-signed URL'], 500);
-            // }
+    //         //     // Return the pre-signed URL to the client
+    //         //     return response()->json(['url' => $url]);
+    //         // } catch (\Aws\Exception\AwsException $e) {
+    //         //     Log::error('Error generating pre-signed URL', ['error' => $e->getMessage()]);
+    //         //     return response()->json(['error' => 'Unable to generate pre-signed URL'], 500);
+    //         // }
 
 
 
-            // print_r();
-        } else {
-            print_r("no");
-            print_r($request->all());
-        }
+    //         // print_r();
+    //     } else {
+    //         print_r("no");
+    //         print_r($request->all());
+    //     }
 
-        return response()->json(['error' => 'Image upload failed'], 400);
+    //     return response()->json(['error' => 'Image upload failed'], 400);
+    // }
+
+
+    public function login(Request $request)
+    {
+        return (new LoginController($this->appId))->login($request);
     }
+    public function refreshToken(Request $request)
+    {
+        $token = $request->input('accessToken');
+        $deviceId = $request->input('deviceId');
 
-    // public function store(Request $request)
-    // {
-    //     // $post = Post::create($request->validate([
-    //     //     'title' => 'required|string|max:255',
-    //     //     'content' => 'required|string',
-    //     // ]));
-    //     // return response()->json($post, 201);
-    //     return new JsonResponse([
-    //         'data' => 11111
-    //     ]);
-    // }
-
-    // public function show(Post $post)
-    // {
-    //     return new JsonResponse([
-    //         'data' => 55555
-    //     ]);
-    //     // return $post;
-    // }
-
-    // public function update(Request $request, Post $post)
-    // {
-    //     $post->update($request->validate([
-    //         'title' => 'sometimes|required|string|max:255',
-    //         'content' => 'sometimes|required|string',
-    //     ]));
-    //     return response()->json($post);
-    // }
-
-    // public function destroy(Post $post)
-    // {
-    //     $post->delete();
-    //     return response()->json(null, 204);
-    // }
+        $loginController = (new LoginController($this->appId));
+        return $loginController->readAndRefreshAccessToken($token, $deviceId);
+    }
 }
