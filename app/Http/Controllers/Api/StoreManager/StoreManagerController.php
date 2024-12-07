@@ -57,7 +57,7 @@ class StoreManagerController extends Controller
         $token = $request->input('accessToken');
         $deviceId = $request->input('deviceId');
         $storeId = $request->input('storeId');
-        $CsPsSCRId = $request->input('scrId');
+        $CsPsSCRId = $request->input('CsPsSCRId');
 
         // print_r($request->all());
         $myResult = $loginController->readAccessToken($token, $deviceId);
