@@ -63,6 +63,7 @@ class StoreManagerController2 extends Controller
             ->first(
                 [
                     StoreCategories1::$tableName . '.' . StoreCategories1::$id . ' as id',
+                    Categories1::$tableName . '.' . Categories1::$id . ' as categoryId',
                     Categories1::$tableName . '.' . Categories1::$name . ' as categoryName'
                 ]
             );
