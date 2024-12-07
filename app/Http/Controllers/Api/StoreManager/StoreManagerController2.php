@@ -173,7 +173,7 @@ class StoreManagerController2 extends Controller
             ->first(
                 [
                   CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as id',
-                    CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as name'
+                    CsPsSCR::$tableName . '.' . CsPsSCR::$name . ' as name'
                 ]
             );
 
