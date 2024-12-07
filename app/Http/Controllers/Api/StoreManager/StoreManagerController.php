@@ -114,12 +114,12 @@ class StoreManagerController extends Controller
                 '=',
                 StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId
             )
-            ->join(
-                Categories::$tableName,
-                Categories::$tableName . '.' . Categories::$id,
-                '=',
-                StoreCategories::$tableName . '.' . StoreCategories::$categoryId
-            )
+            // ->join(
+            //     Categories::$tableName,
+            //     Categories::$tableName . '.' . Categories::$id,
+            //     '=',
+            //     StoreCategories::$tableName . '.' . StoreCategories::$categoryId
+            // )
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId, '=', $CsPsSCRId)
             ->select(
@@ -134,8 +134,8 @@ class StoreManagerController extends Controller
                 Options::$tableName . '.' . Options::$name . ' as optionName',
                     // 
 
-                Categories::$tableName . '.' . Categories::$id . ' as categoryId',
-                Categories::$tableName . '.' . Categories::$name . ' as categoryName',
+                // Categories::$tableName . '.' . Categories::$id . ' as categoryId',
+                // Categories::$tableName . '.' . Categories::$name . ' as categoryName',
 
             )
             ->get();
