@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\StoreManager\StoreManagerController;
+use App\Http\Controllers\Api\StoreManager\StoreManagerController2;
 use App\Http\Controllers\Api\Users\UserController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -32,6 +33,22 @@ Route::prefix('v1')->group(function () {
 
 });
 Route::prefix('v1/storeManager')->group(function () {
+    Route::post('/getCategories', [StoreManagerController2::class, 'getCategories']);
+    Route::post('/getStoreCategories', [StoreManagerController2::class, 'getStoreCategories']);
+    Route::post('/addStoreCategory', [StoreManagerController2::class, 'addStoreCategory']);
+
+
+
+
+
+
+
+
+
+
+
+
+
     // Route::apiResource('/', StoreManagerController::class);
     Route::post('/readMain', [StoreManagerController::class, 'readMain']);
     Route::post('/login', [StoreManagerController::class, 'login']);

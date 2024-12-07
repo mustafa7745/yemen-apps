@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Apps;
 use App\Models\Categories;
+use App\Models\Categories1;
 use App\Models\Devices;
 use App\Models\DevicesSessions;
 use App\Models\Options;
@@ -12,6 +13,7 @@ use App\Models\Post;
 use App\Models\ProductImages;
 use App\Models\Products;
 use App\Models\StoreCategories;
+use App\Models\StoreCategories1;
 use App\Models\StoreProducts;
 use App\Models\Stores;
 use App\Models\UsersSessions;
@@ -734,5 +736,68 @@ class StoreManagerController extends Controller
 
         $loginController = (new LoginController($this->appId));
         return $loginController->readAndRefreshAccessToken($token, $deviceId);
+    }
+}
+
+class StoreManagerController2 extends Controller
+{
+    public function getCategories()
+    {
+        $storeId = 1;
+        $categories = DB::table(Categories1::$tableName)
+            ->get([
+                Categories1::$tableName . '.' . Categories1::$id,
+                Categories1::$tableName . '.' . Categories1::$name
+            ])->toArray();
+        return response()->json($categories);
+    }
+    public function getStoreCategories()
+    {
+        $storeId = 1;
+        $storeCategories = DB::table(table: StoreCategories1::$tableName)
+        ->where(StoreCategories1::$tableName . '.' . StoreCategories1::$storeId, '=', $storeId)
+            ->join(
+                Categories1::$tableName,
+                Categories1::$tableName . '.' . Categories1::$id,
+                '=',
+                StoreCategories1::$tableName . '.' . StoreCategories1::$categoryId1
+            )
+            ->first(
+                [
+                    StoreCategories1::$tableName . '.' . StoreCategories1::$id . ' as id',
+                    Categories1::$tableName . '.' . Categories1::$id . ' as categoryId',
+                    Categories1::$tableName . '.' . Categories1::$name . ' as categoryName'
+                ]
+            );
+
+        return response()->json($storeCategories);
+    }
+    public function addStoreCategory(Request $request)
+    {
+        $storeId = 1;
+        $categoryId = $request->input('categoryId');
+        $insertedId = DB::table(table: StoreCategories1::$tableName)
+            ->insertGetId([
+                StoreCategories1::$id => null,
+                StoreCategories1::$categoryId1 => $categoryId,
+                StoreCategories1::$storeId => $storeId,
+                StoreCategories1::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                StoreCategories1::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+        $storeCategory = DB::table(table: StoreCategories1::$tableName)->where(StoreCategories1::$tableName . '.' . StoreCategories1::$id, '=', $insertedId)
+            ->join(
+                Categories1::$tableName,
+                Categories1::$tableName . '.' . Categories1::$id,
+                '=',
+                StoreCategories1::$tableName . '.' . StoreCategories1::$categoryId1
+            )
+            ->first(
+                [
+                    StoreCategories1::$tableName . '.' . StoreCategories1::$id . ' as id',
+                    Categories1::$tableName . '.' . Categories1::$name . ' as categoryName'
+                ]
+            );
+
+        return response()->json($storeCategory);
     }
 }
