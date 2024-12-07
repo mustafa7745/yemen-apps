@@ -604,7 +604,7 @@ class StoreManagerController extends Controller
         $productId = $request->input('productId');
         $optionId = $request->input('optionId');
         $price = $request->input('price');
-        $storeCategoryId = $request->input('storeCategoryId');
+        $CsPsSCRId = $request->input(key: 'CsPsSCRId');
 
 
         $insertedId = DB::table(table: StoreProducts::$tableName)
@@ -613,7 +613,7 @@ class StoreManagerController extends Controller
                 StoreProducts::$optionId => $optionId,
                 StoreProducts::$productId => $productId,
                 StoreProducts::$price => $price,
-                StoreProducts::$storeCategoryId => $storeCategoryId,
+                StoreProducts::$CsPsSCRId => $CsPsSCRId,
                 StoreProducts::$storeId => 1,
                 StoreProducts::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                 StoreProducts::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
