@@ -143,7 +143,7 @@ class StoreManagerController2 extends Controller
     {
         // $storeId = 1;
         $sectionsStoreCategoryId = $request->input('sectionsStoreCategoryId');
-        $storeCategories = DB::table(table: SectionsStoreCategory::$tableName)
+        $storeCategories = DB::table(table: CsPsSCR::$tableName)
         ->where(CsPsSCR::$tableName . '.' . CsPsSCR::$sectionsStoreCategoryId, '=', $sectionsStoreCategoryId)
             ->get(
                 [
