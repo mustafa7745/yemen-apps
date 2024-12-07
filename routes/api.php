@@ -38,7 +38,7 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/addStoreCategory', [StoreManagerController2::class, 'addStoreCategory']);
 
 
-
+ 
 
 
 
