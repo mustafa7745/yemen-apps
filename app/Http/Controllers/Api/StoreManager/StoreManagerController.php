@@ -39,7 +39,6 @@ class StoreManagerController extends Controller
             'accessToken' => 'required|string|max:255',
             'deviceId' => 'required|string|max:255',
             'storeId' => 'required|integer|max:2147483647',
-            'CsPsSCRId' => 'required|integer|max:2147483647',
         ]);
 
         // Check if validation fails
