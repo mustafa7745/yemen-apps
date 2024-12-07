@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Api\StoreManager;
 
 use App\Http\Controllers\Controller;
 use App\Models\Categories1;
+use App\Models\CsPsSCR;
 use App\Models\Sections;
 use App\Models\SectionsStoreCategory;
 use App\Models\StoreCategories1;
@@ -137,4 +138,47 @@ class StoreManagerController2 extends Controller
 
         return response()->json($storeCategory);
     }
+    //
+    public function getCsPsSCR(Request $request)
+    {
+        // $storeId = 1;
+        $sectionsStoreCategoryId = $request->input('sectionsStoreCategoryId');
+        $storeCategories = DB::table(table: SectionsStoreCategory::$tableName)
+        ->where(CsPsSCR::$tableName . '.' . CsPsSCR::$sectionsStoreCategoryId, '=', $sectionsStoreCategoryId)
+            ->get(
+                [
+                    CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as id',
+                    CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as name'
+                ]
+            );
+
+        return response()->json($storeCategories);
+    }
+    public function addCsPsSCR(Request $request)
+    {
+        $storeId = 1;
+        $sectionsStoreCategoryId = $request->input('sectionsStoreCategoryId');
+        $name = $request->input('name');
+
+        $insertedId = DB::table(table: CsPsSCR::$tableName)
+            ->insertGetId([
+                CsPsSCR::$id => null,
+                CsPsSCR::$name => $name,
+                CsPsSCR::$sectionsStoreCategoryId => $sectionsStoreCategoryId,
+                CsPsSCR::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                CsPsSCR::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+        $storeCategory = DB::table(table: CsPsSCR::$tableName)->where(CsPsSCR::$tableName . '.' . CsPsSCR::$id, '=', $insertedId)
+        
+            ->first(
+                [
+                  CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as id',
+                    CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as name'
+                ]
+            );
+
+        return response()->json($storeCategory);
+    }
+
+
 }
