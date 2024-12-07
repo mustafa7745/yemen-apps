@@ -162,7 +162,7 @@ class StoreManagerController extends Controller
 
         // foreach ($categories as $category) {
 
-        //     $result = [];
+            $result = [];
 
         foreach ($storeProducts as $product) {
 
