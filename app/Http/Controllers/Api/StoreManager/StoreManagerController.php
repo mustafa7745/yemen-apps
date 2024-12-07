@@ -75,24 +75,24 @@ class StoreManagerController extends Controller
         }
 
 
-        $categories = DB::table(StoreCategories::$tableName)
-            ->join(
-                Categories::$tableName,
-                Categories::$tableName . '.' . Categories::$id,
-                '=',
-                StoreCategories::$tableName . '.' . StoreCategories::$categoryId
-            )
-            ->where(
-                StoreCategories::$tableName . '.' . StoreCategories::$storeId,
-                '=',
-                $storeId
-            )
-            ->select(
-                CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as CsPsSCRId',
-                Categories::$tableName . '.' . Categories::$id . ' as categoryId',
-                Categories::$tableName . '.' . Categories::$name . ' as categoryName'
-            )
-            ->get()->toArray();
+        // $categories = DB::table(StoreCategories::$tableName)
+        //     ->join(
+        //         Categories::$tableName,
+        //         Categories::$tableName . '.' . Categories::$id,
+        //         '=',
+        //         StoreCategories::$tableName . '.' . StoreCategories::$categoryId
+        //     )
+        //     ->where(
+        //         StoreCategories::$tableName . '.' . StoreCategories::$storeId,
+        //         '=',
+        //         $storeId
+        //     )
+        //     ->select(
+        //         CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as CsPsSCRId',
+        //         Categories::$tableName . '.' . Categories::$id . ' as categoryId',
+        //         Categories::$tableName . '.' . Categories::$name . ' as categoryName'
+        //     )
+        //     ->get()->toArray();
         // 
         $storeProducts = DB::table(StoreProducts::$tableName)
             // ->where(StoreProducts::$storeId, $storeId)
@@ -113,7 +113,7 @@ class StoreManagerController extends Controller
                 CsPsSCR::$tableName . '.' . CsPsSCR::$id,
                 '=',
                 StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId
-            ) 
+            )
             ->join(
                 Categories::$tableName,
                 Categories::$tableName . '.' . Categories::$id,
@@ -160,44 +160,44 @@ class StoreManagerController extends Controller
         //     print_r($categories[$i]->name);
         // }
 
-        foreach ($categories as $category) {
+        // foreach ($categories as $category) {
 
-            $result = [];
+        //     $result = [];
 
-            foreach ($storeProducts as $product) {
+        foreach ($storeProducts as $product) {
 
-                if (!isset($result[$product->productId]) && $product->categoryId == $category->categoryId) {
-                    $result[$product->productId] = [
-                        'storeProductId' => $product->storeProductId,
-                        'CsPsSCRId' => $product->CsPsSCRId,
-                        'productId' => $product->productId,
-                        'productName' => $product->productName,
-                        'productDescription' => $product->productDescription,
-                        'options' => [],
-                        'images' => []
-                    ];
-                    $images = [];
-                    foreach ($productImages as $index => $image) {
-                        if ($image->productId == $product->productId) {
-                            $images[] = ['image' => $image->image, 'id' => $image->id];
-                            // unset($productImages[$index]);
-                        }
+            if (!isset($result[$product->productId])) {
+                $result[$product->productId] = [
+                    'storeProductId' => $product->storeProductId,
+                    'CsPsSCRId' => $product->CsPsSCRId,
+                    'productId' => $product->productId,
+                    'productName' => $product->productName,
+                    'productDescription' => $product->productDescription,
+                    'options' => [],
+                    'images' => []
+                ];
+                $images = [];
+                foreach ($productImages as $index => $image) {
+                    if ($image->productId == $product->productId) {
+                        $images[] = ['image' => $image->image, 'id' => $image->id];
+                        // unset($productImages[$index]);
                     }
-                    $result[$product->productId]['images'] = $images;
                 }
-
-
-
-                if ($product->categoryId == $category->categoryId)
-                    // Add the option to the options array
-                    $result[$product->productId]['options'][] = ['optionId' => $product->optionId, 'storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price];
-
-
-
+                $result[$product->productId]['images'] = $images;
             }
-            $value = ['storeProducts' => array_values($result)];
-            array_push($final, $value);
+
+
+
+            // if ($product->categoryId == $category->categoryId)
+                // Add the option to the options array
+                $result[$product->productId]['options'][] = ['optionId' => $product->optionId, 'storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price];
+
+
+
         }
+        $value = ['storeProducts' => array_values($result)];
+        array_push($final, $value);
+        // }
 
         // $result = [];
 
