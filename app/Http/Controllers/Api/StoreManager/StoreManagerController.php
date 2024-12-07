@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Apps;
 use App\Models\Categories;
 use App\Models\Categories1;
+use App\Models\CsPsSCR;
 use App\Models\Devices;
 use App\Models\DevicesSessions;
 use App\Models\Options;
@@ -38,6 +39,7 @@ class StoreManagerController extends Controller
             'accessToken' => 'required|string|max:255',
             'deviceId' => 'required|string|max:255',
             'storeId' => 'required|integer|max:2147483647',
+            'CsPsSCRId' => 'required|integer|max:2147483647',
         ]);
 
         // Check if validation fails
@@ -54,6 +56,8 @@ class StoreManagerController extends Controller
         $token = $request->input('accessToken');
         $deviceId = $request->input('deviceId');
         $storeId = $request->input('storeId');
+        $CsPsSCRId = $request->input('CsPsSCRId');
+
         // print_r($request->all());
         $myResult = $loginController->readAccessToken($token, $deviceId);
         if ($myResult->isSuccess == false) {
@@ -85,7 +89,7 @@ class StoreManagerController extends Controller
                 $storeId
             )
             ->select(
-                StoreCategories::$tableName . '.' . StoreCategories::$id . ' as storeCategoryId',
+                CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as CsPsSCRId',
                 Categories::$tableName . '.' . Categories::$id . ' as categoryId',
                 Categories::$tableName . '.' . Categories::$name . ' as categoryName'
             )
@@ -106,11 +110,11 @@ class StoreManagerController extends Controller
                 StoreProducts::$tableName . '.' . StoreProducts::$optionId
             )
             ->join(
-                StoreCategories::$tableName,
-                StoreCategories::$tableName . '.' . StoreCategories::$id,
+                CsPsSCR::$tableName,
+                CsPsSCR::$tableName . '.' . CsPsSCR::$id,
                 '=',
-                StoreProducts::$tableName . '.' . StoreProducts::$storeCategoryId
-            )
+                StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId
+            ) 
             ->join(
                 Categories::$tableName,
                 Categories::$tableName . '.' . Categories::$id,
@@ -118,9 +122,10 @@ class StoreManagerController extends Controller
                 StoreCategories::$tableName . '.' . StoreCategories::$categoryId
             )
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
+            ->where(StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId, '=', $CsPsSCRId)
             ->select(
                 StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
-                StoreProducts::$tableName . '.' . StoreProducts::$storeCategoryId . ' as storeCategoryId',
+                StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId . ' as CsPsSCRId',
                 Products::$tableName . '.' . Products::$id . ' as productId',
                 Products::$tableName . '.' . Products::$name . ' as productName',
                 Products::$tableName . '.' . Products::$description . ' as productDescription',
@@ -165,7 +170,7 @@ class StoreManagerController extends Controller
                 if (!isset($result[$product->productId]) && $product->categoryId == $category->categoryId) {
                     $result[$product->productId] = [
                         'storeProductId' => $product->storeProductId,
-                        'storeCategoryId' => $product->storeCategoryId,
+                        'CsPsSCRId' => $product->CsPsSCRId,
                         'productId' => $product->productId,
                         'productName' => $product->productName,
                         'productDescription' => $product->productDescription,
@@ -191,7 +196,7 @@ class StoreManagerController extends Controller
 
 
             }
-            $value = ['storeCategory' => $category, 'storeProducts' => array_values($result)];
+            $value = ['storeProducts' => array_values($result)];
             array_push($final, $value);
         }
 

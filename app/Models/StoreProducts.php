@@ -9,7 +9,7 @@ class StoreProducts
    public static $storeId = "storeId";
    public static $productId = "productId";
    public static $optionId = "optionId";
-   public static $storeCategoryId = "storeCategoryId";
+   public static $CsPsSCRId = "CsPsSCRId";
    public static $price = "price";
    public static $prePrice = "prePrice";
    public static $likes = "likes";
