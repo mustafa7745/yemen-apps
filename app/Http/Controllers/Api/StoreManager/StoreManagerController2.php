@@ -148,7 +148,7 @@ class StoreManagerController2 extends Controller
             ->get(
                 [
                     CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as id',
-                    CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as name'
+                    CsPsSCR::$tableName . '.' . CsPsSCR::$name . ' as name'
                 ]
             );
 
