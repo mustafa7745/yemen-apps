@@ -39,6 +39,8 @@ class StoreManagerController extends Controller
             'accessToken' => 'required|string|max:255',
             'deviceId' => 'required|string|max:255',
             'storeId' => 'required|integer|max:2147483647',
+            'CsPsSCRId' => 'required|integer|max:2147483647',
+
         ]);
 
         // Check if validation fails
@@ -55,7 +57,7 @@ class StoreManagerController extends Controller
         $token = $request->input('accessToken');
         $deviceId = $request->input('deviceId');
         $storeId = $request->input('storeId');
-        $CsPsSCRId = $request->input('CsPsSCRId');
+        $CsPsSCRId = $request->input('scrId');
 
         // print_r($request->all());
         $myResult = $loginController->readAccessToken($token, $deviceId);
