@@ -31,7 +31,7 @@ class StoreManagerController2 extends Controller
                 '=',
                 StoreCategories1::$tableName . '.' . StoreCategories1::$categoryId1
             )
-            ->first(
+            ->get(
                 [
                     StoreCategories1::$tableName . '.' . StoreCategories1::$id . ' as id',
                     Categories1::$tableName . '.' . Categories1::$id . ' as categoryId',
