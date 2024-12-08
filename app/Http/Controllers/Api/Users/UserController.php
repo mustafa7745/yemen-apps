@@ -117,12 +117,12 @@ class UserController extends Controller
                 '=',
                 StoreProducts::$tableName . '.' . StoreProducts::$optionId
             )
-            ->join(
-                StoreCategories::$tableName,
-                StoreCategories::$tableName . '.' . StoreCategories::$id,
-                '=',
-                StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId
-            )
+            // ->join(
+            //     StoreCategories::$tableName,
+            //     StoreCategories::$tableName . '.' . StoreCategories::$id,
+            //     '=',
+            //     StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId
+            // )
             ->join(
                 CsPsSCR::$tableName,
                 CsPsSCR::$tableName . '.' . CsPsSCR::$id,
