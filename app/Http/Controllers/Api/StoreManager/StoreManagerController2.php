@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Api\StoreManager;
 
 use App\Http\Controllers\Controller;
 use App\Models\Categories1;
+use App\Models\Categories3;
 use App\Models\CsPsSCR;
 use App\Models\Sections;
 use App\Models\SectionsStoreCategory;
@@ -27,7 +28,7 @@ class StoreManagerController2 extends Controller
     {
         $storeId = 1;
         $storeCategories = DB::table(table: StoreCategories1::$tableName)
-        ->where(StoreCategories1::$tableName . '.' . StoreCategories1::$storeId, '=', $storeId)
+            ->where(StoreCategories1::$tableName . '.' . StoreCategories1::$storeId, '=', $storeId)
             ->join(
                 Categories1::$tableName,
                 Categories1::$tableName . '.' . Categories1::$id,
@@ -89,7 +90,7 @@ class StoreManagerController2 extends Controller
         // $storeId = 1;
         $storeCategory1Id = $request->input('storeCategory1Id');
         $storeCategories = DB::table(table: SectionsStoreCategory::$tableName)
-        ->where(SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$storeCategory1Id, '=', $storeCategory1Id)
+            ->where(SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$storeCategory1Id, '=', $storeCategory1Id)
             ->join(
                 Sections::$tableName,
                 Sections::$tableName . '.' . Sections::$id,
@@ -130,7 +131,7 @@ class StoreManagerController2 extends Controller
             )
             ->first(
                 [
-                 SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$id . ' as id',
+                    SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$id . ' as id',
                     Sections::$tableName . '.' . Sections::$id . ' as sectionId',
                     Sections::$tableName . '.' . Sections::$name . ' as sectionName'
                 ]
@@ -144,11 +145,23 @@ class StoreManagerController2 extends Controller
         // $storeId = 1;
         $sectionsStoreCategoryId = $request->input('sectionsStoreCategoryId');
         $storeCategories = DB::table(table: CsPsSCR::$tableName)
-        ->where(CsPsSCR::$tableName . '.' . CsPsSCR::$sectionsStoreCategoryId, '=', $sectionsStoreCategoryId)
+            ->where(CsPsSCR::$tableName . '.' . CsPsSCR::$sectionsStoreCategoryId, '=', $sectionsStoreCategoryId)
+            ->join(
+                Categories3::$tableName,
+                Categories3::$tableName . '.' . Categories3::$id,
+                '=',
+                CsPsSCR::$tableName . '.' . CsPsSCR::$category3Id
+            )
+            ->join(
+                Sections::$tableName,
+                Sections::$tableName . '.' . Sections::$id,
+                '=',
+                Categories3::$tableName . '.' . Categories3::$sectionId
+            )
             ->get(
                 [
                     CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as id',
-                    CsPsSCR::$tableName . '.' . CsPsSCR::$name . ' as name'
+                    Sections::$tableName . '.' . Sections::$name . ' as sectionName',
                 ]
             );
 
@@ -158,26 +171,53 @@ class StoreManagerController2 extends Controller
     {
         $storeId = 1;
         $sectionsStoreCategoryId = $request->input('sectionsStoreCategoryId');
-        $name = $request->input('name');
+        $category3Id = $request->input('category3Id');
 
         $insertedId = DB::table(table: CsPsSCR::$tableName)
             ->insertGetId([
                 CsPsSCR::$id => null,
-                CsPsSCR::$name => $name,
+                CsPsSCR::$category3Id => $category3Id,
                 CsPsSCR::$sectionsStoreCategoryId => $sectionsStoreCategoryId,
                 CsPsSCR::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                 CsPsSCR::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
         $storeCategory = DB::table(table: CsPsSCR::$tableName)->where(CsPsSCR::$tableName . '.' . CsPsSCR::$id, '=', $insertedId)
-        
+            ->join(
+                Categories3::$tableName,
+                Categories3::$tableName . '.' . Categories3::$id,
+                '=',
+                CsPsSCR::$tableName . '.' . CsPsSCR::$category3Id
+            )
+            ->join(
+                Sections::$tableName,
+                Sections::$tableName . '.' . Sections::$id,
+                '=',
+                Categories3::$tableName . '.' . Categories3::$sectionId
+            )
             ->first(
                 [
-                  CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as id',
-                    CsPsSCR::$tableName . '.' . CsPsSCR::$name . ' as name'
+                    CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as id',
+                    Sections::$tableName . '.' . Sections::$name . ' as sectionName',
                 ]
             );
 
         return response()->json($storeCategory);
+    }
+    public function getCategories3()
+    {
+        $storeId = 1;
+        $categories = DB::table(Categories3::$tableName)
+            ->join(
+                Sections::$tableName,
+                Sections::$tableName . '.' . Sections::$id,
+                '=',
+                Categories3::$tableName . '.' . Categories3::$sectionId
+            )
+            ->get([
+                Categories3::$tableName . '.' . Categories3::$id,
+                Categories3::$tableName . '.' . Categories3::$name
+            ])->toArray();
+        return response()->json($categories);
     }
 
 
