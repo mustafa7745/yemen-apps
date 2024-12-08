@@ -4,10 +4,15 @@ namespace App\Http\Controllers\Api\Users;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
+use App\Models\Categories1;
+use App\Models\Categories3;
+use App\Models\CsPsSCR;
 use App\Models\Options;
 use App\Models\Post;
 use App\Models\ProductImages;
 use App\Models\Products;
+use App\Models\Sections;
+use App\Models\SectionsStoreCategory;
 use App\Models\StoreCategories;
 use App\Models\StoreProducts;
 use Illuminate\Support\Facades\DB;
@@ -24,145 +29,209 @@ class UserController extends Controller
     public function index()
     {
         $storeId = 1;
-        $categories = DB::table(StoreCategories::$tableName)
-            ->join(
-                Categories::$tableName,
-                Categories::$tableName . '.' . Categories::$id,
-                '=',
-                StoreCategories::$tableName . '.' . StoreCategories::$categoryId
-            )
+        $storeCategories = DB::table(Categories1::$tableName)
             ->where(
                 StoreCategories::$tableName . '.' . StoreCategories::$storeId,
                 '=',
                 $storeId
             )
             ->select(
-                Categories::$tableName . '.' . Categories::$id . ' as categoryId',
-                Categories::$tableName . '.' . Categories::$name . ' as categoryName'
+                Categories::$tableName . '.' . Categories::$id . ' as id',
+                Categories::$tableName . '.' . Categories::$name . ' as name'
             )
             ->get()->toArray();
         // 
-        $storeProducts = DB::table(StoreProducts::$tableName)
-            // ->where(StoreProducts::$storeId, $storeId)
-            ->join(
-                Products::$tableName,
-                Products::$tableName . '.' . Products::$id,
-                '=',
-                StoreProducts::$tableName . '.' . StoreProducts::$productId
-            )
-            ->join(
-                Options::$tableName,
-                Options::$tableName . '.' . Options::$id,
-                '=',
-                StoreProducts::$tableName . '.' . StoreProducts::$optionId
-            )
-            ->join(
-                StoreCategories::$tableName,
-                StoreCategories::$tableName . '.' . StoreCategories::$id,
-                '=',
-                StoreProducts::$tableName . '.' . StoreProducts::$storeCategoryId
-            )
-            ->join(
-                Categories::$tableName,
-                Categories::$tableName . '.' . Categories::$id,
-                '=',
-                StoreCategories::$tableName . '.' . StoreCategories::$categoryId
-            )
-            ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
-            ->select(
-                StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
-                Products::$tableName . '.' . Products::$id . ' as productId',
-                Products::$tableName . '.' . Products::$name . ' as productName',
-                Products::$tableName . '.' . Products::$description . ' as productDescription',
-                StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
-                    // 
-                Options::$tableName . '.' . Options::$id . ' as optionId',
-                Options::$tableName . '.' . Options::$name . ' as optionName',
-                    // 
-                Categories::$tableName . '.' . Categories::$id . ' as categoryId',
-                Categories::$tableName . '.' . Categories::$name . ' as categoryName',
-
-            )
-            ->get();
-        $productIds = [];
-        foreach ($storeProducts as $product) {
-            $productIds[] = $product->productId;
+        $storeCategoriesIds = [];
+        foreach ($storeCategories as $storeCategory) {
+            $storeCategoriesIds[] = $storeCategory->id;
         }
-        $productImages = DB::table(ProductImages::$tableName)
-            ->whereIn(ProductImages::$productId, $productIds)
-            ->select(
-                ProductImages::$tableName . '.' . ProductImages::$productId,
-                ProductImages::$tableName . '.' . ProductImages::$image,
+        $storeCategoriesSections = DB::table(SectionsStoreCategory::$tableName)
+            ->whereIn(
+                SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$storeCategory1Id,
+                $storeCategoriesIds
+
             )
-            ->get();
-        // 
-        // print_r($categories);
-        $final = [];
-        // for ($i = 0; $i < count($categories); $i++) {
-        //     print_r($categories[$i]->id);
-        //     print_r($categories[$i]->name);
-        // }
+            ->join(
+                Sections::$tableName,
+                Sections::$tableName . '.' . Sections::$id,
+                '=',
+                SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$sectionId
+            )
+            ->select(
+                SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$id . ' as id',
+                Sections::$tableName . '.' . Sections::$name . ' as name'
+            )
+            ->get()->toArray();
 
-        foreach ($categories as $category) {
-
-            $result = [];
-
-            foreach ($storeProducts as $product) {
-
-                if (!isset($result[$product->productId]) && $product->categoryId == $category->categoryId) {
-                    $result[$product->productId] = [
-                        'productId' => $product->productId,
-                        'productName' => $product->productName,
-                        'productDescription' => $product->productDescription,
-                        'options' => [],
-                        'images' => []
-                    ];
-                    $images = [];
-                    foreach ($productImages as $index => $image) {
-                        if ($image->productId == $product->productId) {
-                            $images[] = ['image' => $image->image];
-                            unset($productImages[$index]);
-                        }
-                    }
-                    $result[$product->productId]['images'] = $images;
-                }
-
-
-
-                if ($product->categoryId == $category->categoryId)
-                    // Add the option to the options array
-                    $result[$product->productId]['options'][] = ['storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price];
-
-
-
-            }
-            $value = ['category' => $category, 'products' => array_values($result)];
-            array_push($final, $value);
+        $storeCategoriesSectionsIds = [];
+        foreach ($storeCategoriesSections as $storeCategorySection) {
+            $storeCategoriesSectionsIds[] = $storeCategorySection->id;
         }
 
-        // $result = [];
+        $csps = DB::table(CsPsSCR::$tableName)
+            ->join(
+                Categories3::$tableName,
+                Categories3::$tableName . '.' . Sections::$id,
+                '=',
+                CsPsSCR::$tableName . '.' . CsPsSCR::$category3Id
+            )
 
-        // foreach ($storeProducts as $product) {
+            ->whereIn(CsPsSCR::$tableName . '.' . CsPsSCR::$sectionsStoreCategoryId, $storeCategoriesSectionsIds)
+            ->select(
+                CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as id',
+                Categories3::$tableName . '.' . Categories3::$name . ' as name',
+            )
+            ->get();
 
-        //     $options = [];
-        //     if (!isset($result[$product->productId])) {
-        //         $result[$product->productId] = [
-        //             'productId' => $product->productId,
-        //             'productName' => $product->productName,
-        //             'options' => []
-        //         ];
-        //     }
-
-        //     // Add the option to the options array
-        //     $result[$product->productId]['options'][] = ['price' => $product->price, 'name' => $product->optionName];
-        // }
-        return response()->json($final);
+        return response()->json(['storeCategories' => $storeCategories, 'storeCategoriesSections' => $storeCategoriesSections, 'csps' => $csps]);
         // return new JsonResponse([
         //     'data' => 88888
         // ]);
 
         // return Post::all();
     }
+    // public function index()
+    // {
+    //     $storeId = 1;
+    //     $categories = DB::table(StoreCategories::$tableName)
+    //         ->join(
+    //             Categories::$tableName,
+    //             Categories::$tableName . '.' . Categories::$id,
+    //             '=',
+    //             StoreCategories::$tableName . '.' . StoreCategories::$categoryId
+    //         )
+    //         ->where(
+    //             StoreCategories::$tableName . '.' . StoreCategories::$storeId,
+    //             '=',
+    //             $storeId
+    //         )
+    //         ->select(
+    //             Categories::$tableName . '.' . Categories::$id . ' as categoryId',
+    //             Categories::$tableName . '.' . Categories::$name . ' as categoryName'
+    //         )
+    //         ->get()->toArray();
+    //     // 
+    //     $storeProducts = DB::table(StoreProducts::$tableName)
+    //         // ->where(StoreProducts::$storeId, $storeId)
+    //         ->join(
+    //             Products::$tableName,
+    //             Products::$tableName . '.' . Products::$id,
+    //             '=',
+    //             StoreProducts::$tableName . '.' . StoreProducts::$productId
+    //         )
+    //         ->join(
+    //             Options::$tableName,
+    //             Options::$tableName . '.' . Options::$id,
+    //             '=',
+    //             StoreProducts::$tableName . '.' . StoreProducts::$optionId
+    //         )
+    //         ->join(
+    //             StoreCategories::$tableName,
+    //             StoreCategories::$tableName . '.' . StoreCategories::$id,
+    //             '=',
+    //             StoreProducts::$tableName . '.' . StoreProducts::$storeCategoryId
+    //         )
+    //         ->join(
+    //             Categories::$tableName,
+    //             Categories::$tableName . '.' . Categories::$id,
+    //             '=',
+    //             StoreCategories::$tableName . '.' . StoreCategories::$categoryId
+    //         )
+    //         ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
+    //         ->select(
+    //             StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
+    //             Products::$tableName . '.' . Products::$id . ' as productId',
+    //             Products::$tableName . '.' . Products::$name . ' as productName',
+    //             Products::$tableName . '.' . Products::$description . ' as productDescription',
+    //             StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
+    //                 // 
+    //             Options::$tableName . '.' . Options::$id . ' as optionId',
+    //             Options::$tableName . '.' . Options::$name . ' as optionName',
+    //                 // 
+    //             Categories::$tableName . '.' . Categories::$id . ' as categoryId',
+    //             Categories::$tableName . '.' . Categories::$name . ' as categoryName',
+
+    //         )
+    //         ->get();
+    //     $productIds = [];
+    //     foreach ($storeProducts as $product) {
+    //         $productIds[] = $product->productId;
+    //     }
+    //     $productImages = DB::table(ProductImages::$tableName)
+    //         ->whereIn(ProductImages::$productId, $productIds)
+    //         ->select(
+    //             ProductImages::$tableName . '.' . ProductImages::$productId,
+    //             ProductImages::$tableName . '.' . ProductImages::$image,
+    //         )
+    //         ->get();
+    //     // 
+    //     // print_r($categories);
+    //     $final = [];
+    //     // for ($i = 0; $i < count($categories); $i++) {
+    //     //     print_r($categories[$i]->id);
+    //     //     print_r($categories[$i]->name);
+    //     // }
+
+    //     foreach ($categories as $category) {
+
+    //         $result = [];
+
+    //         foreach ($storeProducts as $product) {
+
+    //             if (!isset($result[$product->productId]) && $product->categoryId == $category->categoryId) {
+    //                 $result[$product->productId] = [
+    //                     'productId' => $product->productId,
+    //                     'productName' => $product->productName,
+    //                     'productDescription' => $product->productDescription,
+    //                     'options' => [],
+    //                     'images' => []
+    //                 ];
+    //                 $images = [];
+    //                 foreach ($productImages as $index => $image) {
+    //                     if ($image->productId == $product->productId) {
+    //                         $images[] = ['image' => $image->image];
+    //                         unset($productImages[$index]);
+    //                     }
+    //                 }
+    //                 $result[$product->productId]['images'] = $images;
+    //             }
+
+
+
+    //             if ($product->categoryId == $category->categoryId)
+    //                 // Add the option to the options array
+    //                 $result[$product->productId]['options'][] = ['storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price];
+
+
+
+    //         }
+    //         $value = ['category' => $category, 'products' => array_values($result)];
+    //         array_push($final, $value);
+    //     }
+
+    //     // $result = [];
+
+    //     // foreach ($storeProducts as $product) {
+
+    //     //     $options = [];
+    //     //     if (!isset($result[$product->productId])) {
+    //     //         $result[$product->productId] = [
+    //     //             'productId' => $product->productId,
+    //     //             'productName' => $product->productName,
+    //     //             'options' => []
+    //     //         ];
+    //     //     }
+
+    //     //     // Add the option to the options array
+    //     //     $result[$product->productId]['options'][] = ['price' => $product->price, 'name' => $product->optionName];
+    //     // }
+    //     return response()->json($final);
+    //     // return new JsonResponse([
+    //     //     'data' => 88888
+    //     // ]);
+
+    //     // return Post::all();
+    // }
     // public function uploadImage(Request $request)
     // {
     //     if ($request->hasFile('image')) {
@@ -197,7 +266,7 @@ class UserController extends Controller
     //         //     // 'url' => $url
     //         // // ], 
     //         // ,
-            
+
     //         // 200);
 
     //         // Set up S3 client

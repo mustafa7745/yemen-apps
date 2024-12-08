@@ -674,8 +674,6 @@ class StoreManagerController extends Controller
     }
     public function readStoreCategories()
     {
-
-
         $result = DB::table(table: StoreCategories::$tableName)
             ->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, '=', 1)
             ->join(
