@@ -309,11 +309,13 @@ class StoreManagerController extends Controller
             ])->toArray();
         return response()->json($categories);
     }
-    public function getProducts()
+    public function getProducts(Request $request)
     {
         $storeId = 1;
+        $category3Id = $request->input('category3Id');
         $products = DB::table(Products::$tableName)
             ->whereIn(Products::$tableName . '.' . Products::$storeId, [$storeId, 1])
+            ->where(Products::$tableName . '.' . Products::$category3Id, $category3Id)
             ->get(
                 [
                     Products::$tableName . '.' . Products::$id,
