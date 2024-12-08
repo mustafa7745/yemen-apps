@@ -192,9 +192,9 @@ class UserController extends Controller
             // Add the option to the options array
             $result[$product->productId]['options'][] = ['storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price];
         }
-        $value = ['products' => array_values($result)];
-        // array_push($final, $value);
-        return response()->json($value);
+     
+ 
+        return response()->json(array_values($result));
     }
     public function login(Request $request)
     {
