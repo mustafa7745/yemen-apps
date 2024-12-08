@@ -197,6 +197,7 @@ class StoreManagerController2 extends Controller
             ->first(
                 [
                     CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as id',
+                    Categories3::$tableName . '.' . Categories3::$id . ' as category3Id',
                     Sections::$tableName . '.' . Sections::$name . ' as sectionName',
                 ]
             );
