@@ -129,12 +129,12 @@ class UserController extends Controller
                 '=',
                 StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId
             )
-            ->join(
-                Categories::$tableName,
-                Categories::$tableName . '.' . Categories::$id,
-                '=',
-                StoreCategories::$tableName . '.' . StoreCategories::$categoryId
-            )
+            // ->join(
+            //     Categories::$tableName,
+            //     Categories::$tableName . '.' . Categories::$id,
+            //     '=',
+            //     StoreCategories::$tableName . '.' . StoreCategories::$categoryId
+            // )
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId, '=', $CsPsSCRId)
             ->select(
