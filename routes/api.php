@@ -28,7 +28,7 @@ Route::prefix('v1')->group(function () {
     Route::apiResource('/', UserController::class);
     Route::post('/upload-image', [UserController::class, 'uploadImage']);
     Route::post('/login', [UserController::class, 'login']);
-
+    Route::post('/getProducts', [UserController::class, 'getProducts']);
     // Route::post('/readMain', [UserController::class, 'readMain']);
 
 });
