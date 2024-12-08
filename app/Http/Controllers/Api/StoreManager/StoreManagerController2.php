@@ -162,7 +162,7 @@ class StoreManagerController2 extends Controller
                 [
                     CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as id',
                     Categories3::$tableName . '.' . Categories3::$id . ' as category3Id',
-                    Sections::$tableName . '.' . Sections::$name . ' as sectionName',
+                    Categories3::$tableName . '.' . Categories3::$name . ' as category3Name',
                 ]
             );
 
@@ -199,7 +199,7 @@ class StoreManagerController2 extends Controller
                 [
                     CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as id',
                     Categories3::$tableName . '.' . Categories3::$id . ' as category3Id',
-                    Sections::$tableName . '.' . Sections::$name . ' as sectionName',
+                    Categories3::$tableName . '.' . Categories3::$name . ' as category3Name',
                 ]
             );
 
