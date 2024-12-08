@@ -24,11 +24,13 @@ class StoreManagerController2 extends Controller
             ])->toArray();
         return response()->json($categories);
     }
-    public function getStoreCategories()
+    public function getStoreCategories(Request $request)
     {
+        $categoryId1 = $request->input('category3Id');
         $storeId = 1;
         $storeCategories = DB::table(table: StoreCategories1::$tableName)
             ->where(StoreCategories1::$tableName . '.' . StoreCategories1::$storeId, '=', $storeId)
+            ->where(StoreCategories1::$tableName . '.' . StoreCategories1::$categoryId1, '=', $categoryId1)
             ->join(
                 Categories1::$tableName,
                 Categories1::$tableName . '.' . Categories1::$id,
@@ -205,10 +207,11 @@ class StoreManagerController2 extends Controller
 
         return response()->json($storeCategory);
     }
-    public function getCategories3()
+    public function getCategories3(Request $request)
     {
-        $storeId = 1;
+        $sectionId = $request->input('sectionId');
         $categories = DB::table(Categories3::$tableName)
+            ->where(Categories3::$tableName . '.' . Categories3::$sectionId, '=', $sectionId)
             ->join(
                 Sections::$tableName,
                 Sections::$tableName . '.' . Sections::$id,
