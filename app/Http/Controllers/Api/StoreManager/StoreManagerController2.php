@@ -26,7 +26,7 @@ class StoreManagerController2 extends Controller
     }
     public function getStoreCategories(Request $request)
     {
-        $categoryId1 = $request->input('category3Id');
+        $categoryId1 = $request->input('categoryId1');
         $storeId = 1;
         $storeCategories = DB::table(table: StoreCategories1::$tableName)
             ->where(StoreCategories1::$tableName . '.' . StoreCategories1::$storeId, '=', $storeId)
