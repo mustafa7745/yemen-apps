@@ -30,8 +30,9 @@ class UserController extends Controller
     {
         $storeId = 1;
         $storeCategories = DB::table(Categories1::$tableName)
-            ->where(
-                StoreCategories::$tableName . '.' . StoreCategories::$storeId,
+  
+            ->where( 
+                Categories1::$tableName . '.' . Categories1::$storeId,
                 '=',
                 $storeId
             )
