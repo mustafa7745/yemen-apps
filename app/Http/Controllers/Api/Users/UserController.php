@@ -36,8 +36,8 @@ class UserController extends Controller
                 $storeId
             )
             ->select(
-                Categories::$tableName . '.' . Categories::$id . ' as id',
-                Categories::$tableName . '.' . Categories::$name . ' as name'
+                Categories1::$tableName . '.' . Categories1::$id . ' as id',
+                Categories1::$tableName . '.' . Categories1::$name . ' as name'
             )
             ->get()->toArray();
         // 
