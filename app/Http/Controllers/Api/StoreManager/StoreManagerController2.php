@@ -14,10 +14,12 @@ use Carbon\Carbon;
 
 class StoreManagerController2 extends Controller
 {
-    public function getCategories()
+    public function getCategories(Request $request)
     {
+    
         $storeId = 1;
         $categories = DB::table(Categories1::$tableName)
+        
             ->get([
                 Categories1::$tableName . '.' . Categories1::$id,
                 Categories1::$tableName . '.' . Categories1::$name
@@ -26,11 +28,10 @@ class StoreManagerController2 extends Controller
     }
     public function getStoreCategories(Request $request)
     {
-        $categoryId1 = $request->input('categoryId1');
+       
         $storeId = 1;
         $storeCategories = DB::table(table: StoreCategories1::$tableName)
             ->where(StoreCategories1::$tableName . '.' . StoreCategories1::$storeId, '=', $storeId)
-            ->where(StoreCategories1::$tableName . '.' . StoreCategories1::$categoryId1, '=', $categoryId1)
             ->join(
                 Categories1::$tableName,
                 Categories1::$tableName . '.' . Categories1::$id,
@@ -77,10 +78,12 @@ class StoreManagerController2 extends Controller
         return response()->json($storeCategory);
     }
     // 
-    public function getSections()
+    public function getSections(Request $request)
     {
+        $category1Id = $request->input('category1Id');
         $storeId = 1;
         $categories = DB::table(Sections::$tableName)
+        ->where(Sections::$tableName . '.' . Sections::$category1Id, '=', $category1Id)
             ->get([
                 Sections::$tableName . '.' . Sections::$id,
                 Sections::$tableName . '.' . Sections::$name
