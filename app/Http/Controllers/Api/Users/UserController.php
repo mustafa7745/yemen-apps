@@ -124,6 +124,12 @@ class UserController extends Controller
                 StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId
             )
             ->join(
+                CsPsSCR::$tableName,
+                CsPsSCR::$tableName . '.' . CsPsSCR::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId
+            )
+            ->join(
                 Categories::$tableName,
                 Categories::$tableName . '.' . Categories::$id,
                 '=',
@@ -140,6 +146,10 @@ class UserController extends Controller
                     // 
                 Options::$tableName . '.' . Options::$id . ' as optionId',
                 Options::$tableName . '.' . Options::$name . ' as optionName',
+                    //
+                CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as CsPsSCRId',
+
+
 
             )
             ->get();
@@ -162,6 +172,7 @@ class UserController extends Controller
             if (!isset($result[$product->productId])) {
                 $result[$product->productId] = [
                     'productId' => $product->productId,
+                    'CsPsSCRId' => $product->CsPsSCRId,
                     'productName' => $product->productName,
                     'productDescription' => $product->productDescription,
                     'options' => [],
