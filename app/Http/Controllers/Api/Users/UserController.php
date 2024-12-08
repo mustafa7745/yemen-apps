@@ -30,15 +30,16 @@ class UserController extends Controller
     {
         $storeId = 1;
         $storeCategories = DB::table(Categories1::$tableName)
-  
-            ->where( 
+
+            ->where(
                 Categories1::$tableName . '.' . Categories1::$storeId,
                 '=',
                 $storeId
             )
             ->select(
-                Categories1::$tableName . '.' . Categories1::$id . ' as id',
-                Categories1::$tableName . '.' . Categories1::$name . ' as name'
+                Categories1::$tableName . '.' . Categories1::$id,
+                Categories1::$tableName . '.' . Categories1::$name,
+                Categories1::$tableName . '.' . Categories1::$storeId,
             )
             ->get()->toArray();
         // 
@@ -60,7 +61,9 @@ class UserController extends Controller
             )
             ->select(
                 SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$id . ' as id',
-                Sections::$tableName . '.' . Sections::$name . ' as name'
+                SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$storeCategory1Id . ' as storeCategoryId',
+                Sections::$tableName . '.' . Sections::$name . ' as sectionName',
+                Sections::$tableName . '.' . Sections::$id . ' as sectionId',
             )
             ->get()->toArray();
 
@@ -72,7 +75,7 @@ class UserController extends Controller
         $csps = DB::table(CsPsSCR::$tableName)
             ->join(
                 Categories3::$tableName,
-                Categories3::$tableName . '.' . Sections::$id,
+                Categories3::$tableName . '.' . Categories3::$id,
                 '=',
                 CsPsSCR::$tableName . '.' . CsPsSCR::$category3Id
             )
@@ -80,6 +83,8 @@ class UserController extends Controller
             ->whereIn(CsPsSCR::$tableName . '.' . CsPsSCR::$sectionsStoreCategoryId, $storeCategoriesSectionsIds)
             ->select(
                 CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as id',
+                CsPsSCR::$tableName . '.' . CsPsSCR::$sectionsStoreCategoryId . ' as storeCategorySectionId',
+                CsPsSCR::$tableName . '.' . CsPsSCR::$category3Id . ' as category3Id',
                 Categories3::$tableName . '.' . Categories3::$name . ' as name',
             )
             ->get();
