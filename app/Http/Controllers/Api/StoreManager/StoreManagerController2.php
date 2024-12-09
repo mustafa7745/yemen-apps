@@ -97,6 +97,7 @@ class StoreManagerController2 extends Controller
 
             $storeCategories = DB::table(table: StoreCategories1::$tableName)
                 ->whereNotIn(StoreCategories1::$tableName . '.' . StoreCategories1::$id, $categories)
+                ->where(StoreCategories1::$tableName . '.' . StoreCategories1::$storeId, 1)
                 ->join(
                     Categories1::$tableName,
                     Categories1::$tableName . '.' . Categories1::$id,
