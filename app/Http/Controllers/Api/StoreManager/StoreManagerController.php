@@ -142,7 +142,7 @@ class StoreManagerController extends Controller
             // )
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId, '=', $CsPsSCRId)
-            ->whereNotIn(StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId, $storeProductsIds)
+            ->whereNotIn(StoreProducts::$tableName . '.' . StoreProducts::$id, $storeProductsIds)
             ->select(
                 StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
                 StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId . ' as CsPsSCRId',
