@@ -74,6 +74,8 @@ class StoreManagerController2 extends Controller
 
         // print_r($storeConfigs);
 
+        
+
         foreach ($stores as $index => $store) {
 
             foreach ($storeConfigs as $storeConfig) {
@@ -84,6 +86,7 @@ class StoreManagerController2 extends Controller
                     $sections = json_decode($storeConfig->sections);
                     $nestedSections = json_decode($storeConfig->nestedSections);
                     $products = json_decode($storeConfig->products);
+                    $stores[$index] = (array)$stores[$index];
                     $stores[$index]['storeConfig'] = ['categories' => $categories, '' => $sections, 'nestedSections' => $nestedSections, 'products' => $products];
                 }
             }
