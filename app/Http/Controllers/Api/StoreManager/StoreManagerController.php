@@ -70,7 +70,9 @@ class StoreManagerController extends Controller
             ->where(Stores::$tableName . '.' . Stores::$userId, '=', $accessToken->userId)
             ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)
             ->first([
-                Stores::$tableName . '.' . Stores::$id
+                Stores::$tableName . '.' . Stores::$id,
+                Stores::$tableName . '.' . Stores::$typeId
+
             ]);
         if ($store == null) {
             return response()->json(['message' => "متجر غير مخول", 'code' => 0], 403);
