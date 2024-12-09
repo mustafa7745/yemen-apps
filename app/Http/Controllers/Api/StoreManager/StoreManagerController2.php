@@ -89,6 +89,7 @@ class StoreManagerController2 extends Controller
                     // $stores[$index] = (array)$stores[$index];
                     $stores[$index]->storeConfig = ['categories' => $categories, 'sections' => $sections, 'nestedSections' => $nestedSections, 'products' => $products];
                 }
+                $stores[$index]->storeConfig = null;
             }
         }
 
