@@ -77,7 +77,7 @@ class StoreManagerController2 extends Controller
 
         foreach ($storeConfigs as $storeConfig) {
             foreach ($stores as $index => $store) {
-                print_r($store->id);
+                print_r($storeConfig);
                 if ($storeConfig->storeId == $store->id && $store->typeId == 1) {
                     $categories = json_decode($storeConfig->categories);
                     $sections = json_decode($storeConfig->sections);
