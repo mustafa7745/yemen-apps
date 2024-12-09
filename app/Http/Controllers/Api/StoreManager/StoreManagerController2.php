@@ -1,25 +1,67 @@
 <?php
 namespace App\Http\Controllers\Api\StoreManager;
 
+use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Categories1;
 use App\Models\Categories3;
 use App\Models\CsPsSCR;
 use App\Models\Sections;
+use App\Models\Stores;
 use App\Models\SectionsStoreCategory;
 use App\Models\StoreCategories1;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Validator;
 
 class StoreManagerController2 extends Controller
 {
+    private $appId = 1;
+    public function getStores(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'accessToken' => 'required|string|max:255',
+            'deviceId' => 'required|string|max:255',
+        ]);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            // Return a JSON response with validation errors
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+                'code' => 0
+            ], 422);  // 422 Unprocessable Entity
+        }
+
+        $loginController = (new LoginController($this->appId));
+        $token = $request->input('accessToken');
+        $deviceId = $request->input('deviceId');
+
+        // print_r($request->all());
+        $myResult = $loginController->readAccessToken($token, $deviceId);
+        if ($myResult->isSuccess == false) {
+            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
+        }
+        $accessToken = $myResult->message;
+
+
+        $stores = DB::table(Stores::$tableName)
+            ->where(Stores::$tableName . '.' . Stores::$userId, '=', $accessToken->userId)
+            ->get([
+                Stores::$tableName . '.' . Stores::$id,
+                Stores::$tableName . '.' . Stores::$name
+            ])->toArray();
+        return response()->json($stores);
+    }
+
     public function getCategories(Request $request)
     {
-    
+
         $storeId = 1;
         $categories = DB::table(Categories1::$tableName)
-        
+
             ->get([
                 Categories1::$tableName . '.' . Categories1::$id,
                 Categories1::$tableName . '.' . Categories1::$name
@@ -28,8 +70,7 @@ class StoreManagerController2 extends Controller
     }
     public function getStoreCategories(Request $request)
     {
-       
-        $storeId = 1;
+        $storeId = $request->input('storeId');
         $storeCategories = DB::table(table: StoreCategories1::$tableName)
             ->where(StoreCategories1::$tableName . '.' . StoreCategories1::$storeId, '=', $storeId)
             ->join(
@@ -83,7 +124,7 @@ class StoreManagerController2 extends Controller
         $category1Id = $request->input('category1Id');
         $storeId = 1;
         $categories = DB::table(Sections::$tableName)
-        ->where(Sections::$tableName . '.' . Sections::$category1Id, '=', $category1Id)
+            ->where(Sections::$tableName . '.' . Sections::$category1Id, '=', $category1Id)
             ->get([
                 Sections::$tableName . '.' . Sections::$id,
                 Sections::$tableName . '.' . Sections::$name
