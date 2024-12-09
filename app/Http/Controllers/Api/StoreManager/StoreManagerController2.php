@@ -50,10 +50,22 @@ class StoreManagerController2 extends Controller
 
         $stores = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$userId, '=', $accessToken->userId)
+            ->join(
+                SharedStoresConfigs::$tableName,
+                SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId,
+                '=',
+                Stores::$tableName . '.' . Stores::$id
+            )
             ->get([
                 Stores::$tableName . '.' . Stores::$id,
-                Stores::$tableName . '.' . Stores::$name
+                Stores::$tableName . '.' . Stores::$name,
+                Stores::$tableName . '.' . Stores::$typeId,
+                SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$categories,
+                SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$sections,
+                SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$nestedSections,
+                SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$products,
             ])->toArray();
+            
         return response()->json($stores);
     }
 
