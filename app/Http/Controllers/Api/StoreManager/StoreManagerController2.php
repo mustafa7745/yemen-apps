@@ -63,7 +63,10 @@ class StoreManagerController2 extends Controller
 
         $storeIds = [];
         foreach ($stores as $store) {
-            $storeIds[] = $store->id;
+            if ($store->typeId == 1) {
+                $storeIds[] = $store->id;
+            }
+
         }
 
         $storeConfigs = DB::table(table: SharedStoresConfigs::$tableName)
