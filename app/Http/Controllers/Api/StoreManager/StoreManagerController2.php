@@ -70,7 +70,7 @@ class StoreManagerController2 extends Controller
 
         $storeConfigs = DB::table(table: SharedStoresConfigs::$tableName)
             ->whereIn(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, $storeIds)
-            ->first();
+            ->get();
 
         // print_r($storeConfigs);
 
