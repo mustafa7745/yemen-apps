@@ -72,6 +72,7 @@ class StoreManagerController2 extends Controller
             ->whereIn(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, $storeIds)
             ->first();
 
+        print_r($stores);
 
 
         foreach ($storeConfigs as $storeConfig) {
