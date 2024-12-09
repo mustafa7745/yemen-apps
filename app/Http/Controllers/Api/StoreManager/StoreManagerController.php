@@ -78,7 +78,7 @@ class StoreManagerController extends Controller
             return response()->json(['message' => "متجر غير مخول", 'code' => 0], 403);
         }
 
-        if ($storeId->typeId == 1) {
+        if ($store->typeId == 1) {
             $storeId = 1;
         }
 
