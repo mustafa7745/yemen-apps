@@ -87,12 +87,12 @@ class StoreManagerController2 extends Controller
                     $nestedSections = json_decode($storeConfig->nestedSections);
                     $products = json_decode($storeConfig->products);
                     // $stores[$index] = (array)$stores[$index];
-                    $stores[$index]->storeConfig = ['categories' => $categories, '' => $sections, 'nestedSections' => $nestedSections, 'products' => $products];
+                    $stores[$index]->storeConfig = ['categories' => $categories, 'sections' => $sections, 'nestedSections' => $nestedSections, 'products' => $products];
                 }
             }
         }
 
-        return response()->json(array_values($stores));
+        return response()->json($stores);
     }
 
     public function getCategories(Request $request)
