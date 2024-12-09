@@ -453,4 +453,33 @@ class StoreManagerController2 extends Controller
     }
 
 
+
+    public function updateStoreConfig(Request $request)
+    {
+        $storeId = $request->input('storeId');
+        $products = $request->input('products');
+        $nestedSections = $request->input('nestedSections');
+        $sections = $request->input('sections');
+        $categories = $request->input('categories');
+
+
+
+        DB::table(table: SharedStoresConfigs::$tableName)
+            ->where(SharedStoresConfigs::$storeId, '=', $storeId)
+            ->update(
+                [
+                    SharedStoresConfigs::$categories => $categories,
+                    SharedStoresConfigs::$sections => $sections,
+                    SharedStoresConfigs::$nestedSections => $nestedSections,
+                    SharedStoresConfigs::$products => $products,
+
+                ]
+            );
+        $result = DB::table(table: SharedStoresConfigs::$tableName)
+            ->where(SharedStoresConfigs::$storeId, '=', $storeId)
+            ->first(
+            );
+        return response()->json($result);
+    }
+
 }
