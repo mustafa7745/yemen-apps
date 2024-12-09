@@ -92,7 +92,7 @@ class StoreManagerController2 extends Controller
             }
         }
 
-        return response()->json($stores);
+        return response()->json(array_values($stores));
     }
 
     public function getCategories(Request $request)
