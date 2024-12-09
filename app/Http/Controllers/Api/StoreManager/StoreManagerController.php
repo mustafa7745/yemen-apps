@@ -13,6 +13,7 @@ use App\Models\Options;
 use App\Models\Post;
 use App\Models\ProductImages;
 use App\Models\Products;
+use App\Models\SharedStoresConfigs;
 use App\Models\StoreCategories;
 use App\Models\StoreCategories1;
 use App\Models\StoreProducts;
@@ -77,10 +78,19 @@ class StoreManagerController extends Controller
         if ($store == null) {
             return response()->json(['message' => "متجر غير مخول", 'code' => 0], 403);
         }
-
+        $storeProductsIds = [];
         if ($store->typeId == 1) {
             $storeId = 1;
+
+            $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
+                ->where(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, '=', $storeId)
+                ->first();
+            $storeProductsIds = json_decode($storeConfig->products);
+
+
         }
+
+
 
 
         // $categories = DB::table(StoreCategories::$tableName)
@@ -130,6 +140,7 @@ class StoreManagerController extends Controller
             // )
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId, '=', $CsPsSCRId)
+            ->whereNotIn(StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId, $storeProductsIds)
             ->select(
                 StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
                 StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId . ' as CsPsSCRId',
@@ -140,7 +151,7 @@ class StoreManagerController extends Controller
                     // 
                 Options::$tableName . '.' . Options::$id . ' as optionId',
                 Options::$tableName . '.' . Options::$name . ' as optionName',
-                    // 
+                // 
 
                 // Categories::$tableName . '.' . Categories::$id . ' as categoryId',
                 // Categories::$tableName . '.' . Categories::$name . ' as categoryName',
@@ -170,7 +181,7 @@ class StoreManagerController extends Controller
 
         // foreach ($categories as $category) {
 
-            $result = [];
+        $result = [];
 
         foreach ($storeProducts as $product) {
 
@@ -197,8 +208,8 @@ class StoreManagerController extends Controller
 
 
             // if ($product->categoryId == $category->categoryId)
-                // Add the option to the options array
-                $result[$product->productId]['options'][] = ['optionId' => $product->optionId, 'storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price];
+            // Add the option to the options array
+            $result[$product->productId]['options'][] = ['optionId' => $product->optionId, 'storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price];
 
 
 
