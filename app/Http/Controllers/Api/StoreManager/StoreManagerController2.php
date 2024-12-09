@@ -72,11 +72,12 @@ class StoreManagerController2 extends Controller
             ->whereIn(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, $storeIds)
             ->first();
 
-        print_r($stores);
+        
 
 
         foreach ($storeConfigs as $storeConfig) {
             foreach ($stores as $index => $store) {
+                print_r($store);
                 if ($storeConfig->storeId == $store->id && $store->typeId == 1) {
                     $categories = json_decode($storeConfig->categories);
                     $sections = json_decode($storeConfig->sections);
