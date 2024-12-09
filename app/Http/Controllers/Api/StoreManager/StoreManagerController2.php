@@ -475,11 +475,16 @@ class StoreManagerController2 extends Controller
 
                 ]
             );
-        $result = DB::table(table: SharedStoresConfigs::$tableName)
+        $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
             ->where(SharedStoresConfigs::$storeId, '=', $storeId)
             ->first(
             );
-        return response()->json($result);
+
+        $categories = json_decode($storeConfig->categories);
+        $sections = json_decode($storeConfig->sections);
+        $nestedSections = json_decode($storeConfig->nestedSections);
+        $products = json_decode($storeConfig->products);
+        return response()->json(['categories' => $categories, 'sections' => $sections, 'nestedSections' => $nestedSections, 'products' => $products]);
     }
 
 }
