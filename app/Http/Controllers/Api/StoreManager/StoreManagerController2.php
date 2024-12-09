@@ -112,44 +112,44 @@ class StoreManagerController2 extends Controller
                     ]
                 );
 
-                $storeCategoriesIds = [];
-                foreach ($storeCategories as $storeCategory) {
-                    $storeCategoriesIds[] = $storeCategory->id;
-                }
-                $storeCategoriesSections = DB::table(SectionsStoreCategory::$tableName)
-                    ->whereIn(
-                        SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$storeCategory1Id,
-                        $storeCategoriesIds
-        
-                    )
-                    ->whereNotIn(SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$id, $sections)
-                    ->join(
-                        Sections::$tableName,
-                        Sections::$tableName . '.' . Sections::$id,
-                        '=',
-                        SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$sectionId
-                    )
-                    ->select(
-                        SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$id . ' as id',
-                        SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$storeCategory1Id . ' as storeCategoryId',
-                        Sections::$tableName . '.' . Sections::$name . ' as sectionName',
-                        Sections::$tableName . '.' . Sections::$id . ' as sectionId',
-                    )
-                    ->get()->toArray();
-        
-                $storeCategoriesSectionsIds = [];
-                foreach ($storeCategoriesSections as $storeCategorySection) {
-                    $storeCategoriesSectionsIds[] = $storeCategorySection->id;
-                }
+            $storeCategoriesIds = [];
+            foreach ($storeCategories as $storeCategory) {
+                $storeCategoriesIds[] = $storeCategory->id;
+            }
+            $storeCategoriesSections = DB::table(SectionsStoreCategory::$tableName)
+                ->whereIn(
+                    SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$storeCategory1Id,
+                    $storeCategoriesIds
 
-                $csps = DB::table(CsPsSCR::$tableName)
+                )
+                ->whereNotIn(SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$id, $sections)
+                ->join(
+                    Sections::$tableName,
+                    Sections::$tableName . '.' . Sections::$id,
+                    '=',
+                    SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$sectionId
+                )
+                ->select(
+                    SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$id . ' as id',
+                    SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$storeCategory1Id . ' as storeCategoryId',
+                    Sections::$tableName . '.' . Sections::$name . ' as sectionName',
+                    Sections::$tableName . '.' . Sections::$id . ' as sectionId',
+                )
+                ->get()->toArray();
+
+            $storeCategoriesSectionsIds = [];
+            foreach ($storeCategoriesSections as $storeCategorySection) {
+                $storeCategoriesSectionsIds[] = $storeCategorySection->id;
+            }
+
+            $csps = DB::table(CsPsSCR::$tableName)
                 ->join(
                     Categories3::$tableName,
                     Categories3::$tableName . '.' . Categories3::$id,
                     '=',
                     CsPsSCR::$tableName . '.' . CsPsSCR::$category3Id
                 )
-    
+
                 ->whereIn(CsPsSCR::$tableName . '.' . CsPsSCR::$sectionsStoreCategoryId, $storeCategoriesSectionsIds)
                 ->whereNotIn(CsPsSCR::$tableName . '.' . CsPsSCR::$id, $nestedSections)
                 ->select(
@@ -160,13 +160,13 @@ class StoreManagerController2 extends Controller
                 )
                 ->get();
 
-                return response()->json(['storeCategories' => $storeCategories, 'storeCategoriesSections' => $storeCategoriesSections, 'csps' => $csps]);
+            return response()->json(['storeCategories' => $storeCategories, 'storeCategoriesSections' => $storeCategoriesSections, 'csps' => $csps]);
 
             // return response()->json($storeCategories);
         }
         if ($typeId == 2) {
             $storeCategories = DB::table(table: StoreCategories1::$tableName)
-                ->where(StoreCategories1::$tableName . '.' . StoreCategories1::$storeId, '=', $storeId)
+                ->where(StoreCategories1::$tableName . '.' . StoreCategories1::$storeId, $storeId)
                 ->join(
                     Categories1::$tableName,
                     Categories1::$tableName . '.' . Categories1::$id,
@@ -181,7 +181,53 @@ class StoreManagerController2 extends Controller
                     ]
                 );
 
-            return response()->json($storeCategories);
+            $storeCategoriesIds = [];
+            foreach ($storeCategories as $storeCategory) {
+                $storeCategoriesIds[] = $storeCategory->id;
+            }
+            $storeCategoriesSections = DB::table(SectionsStoreCategory::$tableName)
+                ->whereIn(
+                    SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$storeCategory1Id,
+                    $storeCategoriesIds
+
+                )
+                ->join(
+                    Sections::$tableName,
+                    Sections::$tableName . '.' . Sections::$id,
+                    '=',
+                    SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$sectionId
+                )
+                ->select(
+                    SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$id . ' as id',
+                    SectionsStoreCategory::$tableName . '.' . SectionsStoreCategory::$storeCategory1Id . ' as storeCategoryId',
+                    Sections::$tableName . '.' . Sections::$name . ' as sectionName',
+                    Sections::$tableName . '.' . Sections::$id . ' as sectionId',
+                )
+                ->get()->toArray();
+
+            $storeCategoriesSectionsIds = [];
+            foreach ($storeCategoriesSections as $storeCategorySection) {
+                $storeCategoriesSectionsIds[] = $storeCategorySection->id;
+            }
+
+            $csps = DB::table(CsPsSCR::$tableName)
+                ->join(
+                    Categories3::$tableName,
+                    Categories3::$tableName . '.' . Categories3::$id,
+                    '=',
+                    CsPsSCR::$tableName . '.' . CsPsSCR::$category3Id
+                )
+
+                ->whereIn(CsPsSCR::$tableName . '.' . CsPsSCR::$sectionsStoreCategoryId, $storeCategoriesSectionsIds)
+                ->select(
+                    CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as id',
+                    CsPsSCR::$tableName . '.' . CsPsSCR::$sectionsStoreCategoryId . ' as storeCategorySectionId',
+                    CsPsSCR::$tableName . '.' . CsPsSCR::$category3Id . ' as category3Id',
+                    Categories3::$tableName . '.' . Categories3::$name . ' as name',
+                )
+                ->get();
+
+            return response()->json(['storeCategories' => $storeCategories, 'storeCategoriesSections' => $storeCategoriesSections, 'csps' => $csps]);
         } else {
             return response()->json(['message' => 'Undefiend Store type', 'code' => 0], 400);
         }
