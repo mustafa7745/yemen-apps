@@ -86,10 +86,10 @@ class StoreManagerController2 extends Controller
             $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
                 ->where(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, '=', $storeId)
                 ->first();
-            $categories = $storeConfig->categories;
-            $sections = $storeConfig->sections;
-            $nestedSections = $storeConfig->nestedSections;
-            $products = $storeConfig->products;
+            // $categories = $storeConfig->categories;
+            // $sections = $storeConfig->sections;
+            // $nestedSections = $storeConfig->nestedSections;
+            // $products = $storeConfig->products;
 
             return response()->json($storeConfig);
         }
