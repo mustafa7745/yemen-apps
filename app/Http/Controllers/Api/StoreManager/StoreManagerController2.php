@@ -90,11 +90,28 @@ class StoreManagerController2 extends Controller
             $sections = json_decode($storeConfig->sections);
             $nestedSections = json_decode($storeConfig->nestedSections);
             $products = json_decode($storeConfig->products);
-            print_r($categories);
-            print_r($sections);
-            print_r($nestedSections);
-            print_r($products);
-            return response()->json($storeConfig);
+            // print_r($categories);
+            // print_r($sections);
+            // print_r($nestedSections);
+            // print_r($products);
+
+            $storeCategories = DB::table(table: StoreCategories1::$tableName)
+                ->whereIn(StoreCategories1::$tableName . '.' . StoreCategories1::$id, $categories, true)
+                ->join(
+                    Categories1::$tableName,
+                    Categories1::$tableName . '.' . Categories1::$id,
+                    '=',
+                    StoreCategories1::$tableName . '.' . StoreCategories1::$categoryId1
+                )
+                ->get(
+                    [
+                        StoreCategories1::$tableName . '.' . StoreCategories1::$id . ' as id',
+                        Categories1::$tableName . '.' . Categories1::$id . ' as categoryId',
+                        Categories1::$tableName . '.' . Categories1::$name . ' as categoryName'
+                    ]
+                );
+
+            return response()->json($storeCategories);
         }
         if ($typeId == 2) {
             $storeCategories = DB::table(table: StoreCategories1::$tableName)
