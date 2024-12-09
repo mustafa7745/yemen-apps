@@ -7,6 +7,7 @@ use App\Models\Categories1;
 use App\Models\Categories3;
 use App\Models\CsPsSCR;
 use App\Models\Sections;
+use App\Models\SharedStoresConfigs;
 use App\Models\Stores;
 use App\Models\SectionsStoreCategory;
 use App\Models\StoreCategories1;
@@ -71,23 +72,49 @@ class StoreManagerController2 extends Controller
     public function getStoreCategories(Request $request)
     {
         $storeId = $request->input('storeId');
-        $storeCategories = DB::table(table: StoreCategories1::$tableName)
-            ->where(StoreCategories1::$tableName . '.' . StoreCategories1::$storeId, '=', $storeId)
-            ->join(
-                Categories1::$tableName,
-                Categories1::$tableName . '.' . Categories1::$id,
-                '=',
-                StoreCategories1::$tableName . '.' . StoreCategories1::$categoryId1
-            )
-            ->get(
-                [
-                    StoreCategories1::$tableName . '.' . StoreCategories1::$id . ' as id',
-                    Categories1::$tableName . '.' . Categories1::$id . ' as categoryId',
-                    Categories1::$tableName . '.' . Categories1::$name . ' as categoryName'
-                ]
-            );
 
-        return response()->json($storeCategories);
+        $store = DB::table(Stores::$tableName)
+            ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)
+            ->first([
+                Stores::$tableName . '.' . Stores::$id,
+                Stores::$tableName . '.' . Stores::$typeId,
+            ]);
+
+        $typeId = $store->typeId;
+
+        if ($typeId == 1) {
+            $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
+                ->where(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, '=', $storeId)
+                ->first();
+            $categories = $storeConfig->categories;
+            $sections = $storeConfig->sections;
+            $nestedSections = $storeConfig->nestedSections;
+            $products = $storeConfig->products;
+
+            return response()->json($storeConfig);
+        }
+        if ($typeId == 2) {
+            $storeCategories = DB::table(table: StoreCategories1::$tableName)
+                ->where(StoreCategories1::$tableName . '.' . StoreCategories1::$storeId, '=', $storeId)
+                ->join(
+                    Categories1::$tableName,
+                    Categories1::$tableName . '.' . Categories1::$id,
+                    '=',
+                    StoreCategories1::$tableName . '.' . StoreCategories1::$categoryId1
+                )
+                ->get(
+                    [
+                        StoreCategories1::$tableName . '.' . StoreCategories1::$id . ' as id',
+                        Categories1::$tableName . '.' . Categories1::$id . ' as categoryId',
+                        Categories1::$tableName . '.' . Categories1::$name . ' as categoryName'
+                    ]
+                );
+
+            return response()->json($storeCategories);
+        } else {
+            return response()->json(['message' => 'Undefiend Store type', 'code' => 0], 400);
+        }
+
     }
     public function addStoreCategory(Request $request)
     {
