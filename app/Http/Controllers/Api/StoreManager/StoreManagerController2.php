@@ -66,7 +66,6 @@ class StoreManagerController2 extends Controller
             if ($store->typeId == 1) {
                 $storeIds[] = $store->id;
             }
-
         }
 
         $storeConfigs = DB::table(table: SharedStoresConfigs::$tableName)
@@ -77,7 +76,7 @@ class StoreManagerController2 extends Controller
 
         foreach ($storeConfigs as $storeConfig) {
             foreach ($stores as $index => $store) {
-                if ($storeConfig->storeId == $store->id) {
+                if ($storeConfig->storeId == $store->id && $store->typeId == 1) {
                     $categories = json_decode($storeConfig->categories);
                     $sections = json_decode($storeConfig->sections);
                     $nestedSections = json_decode($storeConfig->nestedSections);
