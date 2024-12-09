@@ -50,22 +50,40 @@ class StoreManagerController2 extends Controller
 
         $stores = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$userId, '=', $accessToken->userId)
-            ->join(
-                SharedStoresConfigs::$tableName,
-                SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId,
-                '=',
-                Stores::$tableName . '.' . Stores::$id
-            )
+
             ->get([
                 Stores::$tableName . '.' . Stores::$id,
                 Stores::$tableName . '.' . Stores::$name,
                 Stores::$tableName . '.' . Stores::$typeId,
-                SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$categories,
-                SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$sections,
-                SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$nestedSections,
-                SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$products,
+                // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$categories,
+                // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$sections,
+                // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$nestedSections,
+                // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$products,
             ])->toArray();
-            
+
+        $storeIds = [];
+        foreach ($stores as $store) {
+            $storeIds[] = $store->id;
+        }
+
+        $storeConfigs = DB::table(table: SharedStoresConfigs::$tableName)
+            ->whereIn(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, $storeIds)
+            ->first();
+
+
+
+        foreach ($storeConfigs as $storeConfig) {
+            foreach ($stores as $index => $store) {
+                if ($storeConfig->storeId == $store->id) {
+                    $categories = json_decode($storeConfig->categories);
+                    $sections = json_decode($storeConfig->sections);
+                    $nestedSections = json_decode($storeConfig->nestedSections);
+                    $products = json_decode($storeConfig->products);
+                    $stores[$index]['storeConfig'] = ['categories' => $categories, '' => $sections, 'nestedSections' => $nestedSections, 'products' => $products];
+                }
+            }
+        }
+
         return response()->json($stores);
     }
 
