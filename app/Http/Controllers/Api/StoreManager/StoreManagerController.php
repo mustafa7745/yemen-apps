@@ -213,7 +213,7 @@ class StoreManagerController extends Controller
 
         }
         // $value =  array_values($result);
-        // array_push($final, $value);
+        array_push($final, $value);
         // }
 
         // $result = [];
@@ -232,7 +232,7 @@ class StoreManagerController extends Controller
         //     // Add the option to the options array
         //     $result[$product->productId]['options'][] = ['price' => $product->price, 'name' => $product->optionName];
         // }
-        return response()->json($final);
+        return response()->json(array_values($result));
         // return new JsonResponse([
         //     'data' => 88888
         // ]);
