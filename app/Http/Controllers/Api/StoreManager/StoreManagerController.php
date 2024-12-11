@@ -213,7 +213,7 @@ class StoreManagerController extends Controller
 
         }
         // $value =  array_values($result);
-        array_push($final, $value);
+        // array_push($final, $value);
         // }
 
         // $result = [];
