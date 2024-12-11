@@ -80,16 +80,12 @@ class StoreManagerController extends Controller
         }
         $storeProductsIds = [];
         if ($store->typeId == 1) {
-
-
             $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
                 ->where(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, '=', $storeId)
                 ->first();
             $storeProductsIds = json_decode($storeConfig->products);
 
-            $storeId = 1;
-
-
+            $storeId = $storeConfig->storeIdReference;
         }
 
 
@@ -216,7 +212,7 @@ class StoreManagerController extends Controller
 
 
         }
-        $value = ['storeProducts' => array_values($result)];
+        $value =  array_values($result);
         array_push($final, $value);
         // }
 
