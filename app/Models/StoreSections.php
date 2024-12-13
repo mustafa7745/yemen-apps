@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-class StoreCategorySections
+class StoreSections
 {
-   public static $tableName = "storeCategorySections";
+   public static $tableName = "storeSections";
    public static $id = "id";
    public static $sectionId = "sectionId";
    public static $storeCategoryId = "storeCategoryId";

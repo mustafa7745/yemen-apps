@@ -5,7 +5,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use App\Models\NestedSections;
-use App\Models\StoreCategorySections;
+use App\Models\StoreSections;
 use App\Models\StoreNestedSections;
 use App\Models\Sections;
 use App\Models\SharedStoresConfigs;
@@ -153,22 +153,22 @@ class StoreManagerController2 extends Controller
             foreach ($storeCategories as $storeCategory) {
                 $storeCategoriesIds[] = $storeCategory->id;
             }
-            $storeCategoriesSections = DB::table(StoreCategorySections::$tableName)
+            $storeCategoriesSections = DB::table(StoreSections::$tableName)
                 ->whereIn(
-                    StoreCategorySections::$tableName . '.' . StoreCategorySections::$storeCategoryId,
+                    StoreSections::$tableName . '.' . StoreSections::$storeCategoryId,
                     $storeCategoriesIds
 
                 )
-                ->whereNotIn(StoreCategorySections::$tableName . '.' . StoreCategorySections::$id, $sections)
+                ->whereNotIn(StoreSections::$tableName . '.' . StoreSections::$id, $sections)
                 ->join(
                     Sections::$tableName,
                     Sections::$tableName . '.' . Sections::$id,
                     '=',
-                    StoreCategorySections::$tableName . '.' . StoreCategorySections::$sectionId
+                    StoreSections::$tableName . '.' . StoreSections::$sectionId
                 )
                 ->select(
-                    StoreCategorySections::$tableName . '.' . StoreCategorySections::$id . ' as id',
-                    StoreCategorySections::$tableName . '.' . StoreCategorySections::$storeCategoryId . ' as storeCategoryId',
+                    StoreSections::$tableName . '.' . StoreSections::$id . ' as id',
+                    StoreSections::$tableName . '.' . StoreSections::$storeCategoryId . ' as storeCategoryId',
                     Sections::$tableName . '.' . Sections::$name . ' as sectionName',
                     Sections::$tableName . '.' . Sections::$id . ' as sectionId',
                 )
@@ -222,9 +222,9 @@ class StoreManagerController2 extends Controller
             foreach ($storeCategories as $storeCategory) {
                 $storeCategoriesIds[] = $storeCategory->id;
             }
-            $storeCategoriesSections = DB::table(StoreCategorySections::$tableName)
+            $storeCategoriesSections = DB::table(StoreSections::$tableName)
                 ->whereIn(
-                    StoreCategorySections::$tableName . '.' . StoreCategorySections::$storeCategoryId,
+                    StoreSections::$tableName . '.' . StoreSections::$storeCategoryId,
                     $storeCategoriesIds
 
                 )
@@ -232,11 +232,11 @@ class StoreManagerController2 extends Controller
                     Sections::$tableName,
                     Sections::$tableName . '.' . Sections::$id,
                     '=',
-                    StoreCategorySections::$tableName . '.' . StoreCategorySections::$sectionId
+                    StoreSections::$tableName . '.' . StoreSections::$sectionId
                 )
                 ->select(
-                    StoreCategorySections::$tableName . '.' . StoreCategorySections::$id . ' as id',
-                    StoreCategorySections::$tableName . '.' . StoreCategorySections::$storeCategoryId . ' as storeCategoryId',
+                    StoreSections::$tableName . '.' . StoreSections::$id . ' as id',
+                    StoreSections::$tableName . '.' . StoreSections::$storeCategoryId . ' as storeCategoryId',
                     Sections::$tableName . '.' . Sections::$name . ' as sectionName',
                     Sections::$tableName . '.' . Sections::$id . ' as sectionId',
                 )
@@ -316,17 +316,17 @@ class StoreManagerController2 extends Controller
     {
         // $storeId = 1;
         $storeCategory1Id = $request->input('storeCategory1Id');
-        $storeCategories = DB::table(table: StoreCategorySections::$tableName)
-            ->where(StoreCategorySections::$tableName . '.' . StoreCategorySections::$storeCategoryId, '=', $storeCategory1Id)
+        $storeCategories = DB::table(table: StoreSections::$tableName)
+            ->where(StoreSections::$tableName . '.' . StoreSections::$storeCategoryId, '=', $storeCategory1Id)
             ->join(
                 Sections::$tableName,
                 Sections::$tableName . '.' . Sections::$id,
                 '=',
-                StoreCategorySections::$tableName . '.' . StoreCategorySections::$sectionId
+                StoreSections::$tableName . '.' . StoreSections::$sectionId
             )
             ->get(
                 [
-                    StoreCategorySections::$tableName . '.' . StoreCategorySections::$id . ' as id',
+                    StoreSections::$tableName . '.' . StoreSections::$id . ' as id',
                     Sections::$tableName . '.' . Sections::$id . ' as sectionId',
                     Sections::$tableName . '.' . Sections::$name . ' as sectionName'
                 ]
@@ -340,25 +340,25 @@ class StoreManagerController2 extends Controller
         $storeCategoryId = $request->input('storeCategoryId');
         $sectionId = $request->input('sectionId');
 
-        $insertedId = DB::table(table: StoreCategorySections::$tableName)
+        $insertedId = DB::table(table: StoreSections::$tableName)
             ->insertGetId([
-                StoreCategorySections::$id => null,
-                StoreCategorySections::$sectionId => $sectionId,
-                StoreCategorySections::$storeCategoryId => $storeCategoryId,
-                StoreCategorySections::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                StoreCategorySections::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                StoreSections::$id => null,
+                StoreSections::$sectionId => $sectionId,
+                StoreSections::$storeCategoryId => $storeCategoryId,
+                StoreSections::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                StoreSections::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
-        $storeCategory = DB::table(table: StoreCategorySections::$tableName)->where(StoreCategorySections::$tableName . '.' . StoreCategorySections::$id, '=', $insertedId)
+        $storeCategory = DB::table(table: StoreSections::$tableName)->where(StoreSections::$tableName . '.' . StoreSections::$id, '=', $insertedId)
             ->join(
                 Sections::$tableName,
                 Sections::$tableName . '.' . Sections::$id,
                 '=',
-                StoreCategorySections::$tableName . '.' . StoreCategorySections::$sectionId
+                StoreSections::$tableName . '.' . StoreSections::$sectionId
 
             )
             ->first(
                 [
-                    StoreCategorySections::$tableName . '.' . StoreCategorySections::$id . ' as id',
+                    StoreSections::$tableName . '.' . StoreSections::$id . ' as id',
                     Sections::$tableName . '.' . Sections::$id . ' as sectionId',
                     Sections::$tableName . '.' . Sections::$name . ' as sectionName'
                 ]
