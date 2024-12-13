@@ -260,7 +260,7 @@ class StoreManagerController2 extends Controller
                     StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as id',
                     StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId . ' as storeSectionId',
                     StoreNestedSections::$tableName . '.' . StoreNestedSections::$nestedSectionId . ' as nestedSectionId',
-                    NestedSections::$tableName . '.' . NestedSections::$name . ' as name',
+                    NestedSections::$tableName . '.' . NestedSections::$name . ' as nestedSectionName',
                 )
                 ->get();
 
