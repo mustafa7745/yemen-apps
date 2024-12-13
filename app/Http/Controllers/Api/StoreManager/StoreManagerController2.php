@@ -187,13 +187,13 @@ class StoreManagerController2 extends Controller
                     StoreNestedSections::$tableName . '.' . StoreNestedSections::$nestedSectionId
                 )
 
-                ->whereIn(StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeCategorySectionId, $storeCategoriesSectionsIds)
+                ->whereIn(StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId, $storeCategoriesSectionsIds)
                 ->whereNotIn(StoreNestedSections::$tableName . '.' . StoreNestedSections::$id, $nestedSections)
                 ->select(
                     StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as id',
-                    StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeCategorySectionId . ' as storeCategorySectionId',
+                    StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId . ' as storeSectionId',
                     StoreNestedSections::$tableName . '.' . StoreNestedSections::$nestedSectionId . ' as nestedSectionId',
-                    NestedSections::$tableName . '.' . NestedSections::$name . ' as name',
+                    NestedSections::$tableName . '.' . NestedSections::$name . ' as name', 
                 )
                 ->get();
 
@@ -255,10 +255,10 @@ class StoreManagerController2 extends Controller
                     StoreNestedSections::$tableName . '.' . StoreNestedSections::$nestedSectionId
                 )
 
-                ->whereIn(StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeCategorySectionId, $storeCategoriesSectionsIds)
+                ->whereIn(StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId, $storeCategoriesSectionsIds)
                 ->select(
                     StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as id',
-                    StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeCategorySectionId . ' as storeCategorySectionId',
+                    StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId . ' as storeSectionId',
                     StoreNestedSections::$tableName . '.' . StoreNestedSections::$nestedSectionId . ' as nestedSectionId',
                     NestedSections::$tableName . '.' . NestedSections::$name . ' as name',
                 )
@@ -370,9 +370,9 @@ class StoreManagerController2 extends Controller
     public function getStoreNestedSections(Request $request)
     {
         // $storeId = 1;
-        $storeCategorySectionId = $request->input('storeCategorySectionId');
+        $storeSectionId = $request->input('storeSectionId');
         $storeCategories = DB::table(table: StoreNestedSections::$tableName)
-            ->where(StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeCategorySectionId, '=', $storeCategorySectionId)
+            ->where(StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId, '=', $storeSectionId)
             ->join(
                 NestedSections::$tableName,
                 NestedSections::$tableName . '.' . NestedSections::$id,
@@ -398,14 +398,14 @@ class StoreManagerController2 extends Controller
     public function addStoreNestedSections(Request $request)
     {
         $storeId = 1;
-        $storeCategorySectionId = $request->input('storeCategorySectionId');
+        $storeSectionId = $request->input('storeSectionId');
         $nestedSectionId = $request->input('nestedSectionId');
 
         $insertedId = DB::table(table: StoreNestedSections::$tableName)
             ->insertGetId([
                 StoreNestedSections::$id => null,
                 StoreNestedSections::$nestedSectionId => $nestedSectionId,
-                StoreNestedSections::$storeCategorySectionId => $storeCategorySectionId,
+                StoreNestedSections::$storeSectionId => $storeSectionId,
                 StoreNestedSections::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                 StoreNestedSections::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
