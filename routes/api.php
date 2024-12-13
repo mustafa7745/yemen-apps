@@ -43,8 +43,8 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/getSecionsStoreCategories', [StoreManagerController2::class, 'getSecionsStoreCategories']);
     Route::post('/addSectionStoreCategory', [StoreManagerController2::class, 'addSectionStoreCategory']);
     //
-    Route::post('/addCsPsSCR', [StoreManagerController2::class, 'addCsPsSCR']);
-    Route::post('/getCsPsSCR', [StoreManagerController2::class, 'getCsPsSCR']);
+    Route::post('/addStoreNestedSections', [StoreManagerController2::class, 'addStoreNestedSections']);
+    Route::post('/getStoreNestedSections', [StoreManagerController2::class, 'getStoreNestedSections']);
     Route::post('/getCategories3', [StoreManagerController2::class, 'getCategories3']);
 
     Route::post('/updateStoreConfig', [StoreManagerController2::class, 'updateStoreConfig']);

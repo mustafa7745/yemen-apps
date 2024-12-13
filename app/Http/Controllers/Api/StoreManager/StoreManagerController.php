@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Apps;
 use App\Models\Categories;
 use App\Models\Categories1;
-use App\Models\CsPsSCR;
+use App\Models\StoreNestedSections;
 use App\Models\Devices;
 use App\Models\DevicesSessions;
 use App\Models\Options;
@@ -40,7 +40,7 @@ class StoreManagerController extends Controller
             'accessToken' => 'required|string|max:255',
             'deviceId' => 'required|string|max:255',
             'storeId' => 'required|integer|max:2147483647',
-            'CsPsSCRId' => 'required|integer|max:2147483647',
+            'StoreNestedSectionsId' => 'required|integer|max:2147483647',
 
         ]);
 
@@ -58,7 +58,7 @@ class StoreManagerController extends Controller
         $token = $request->input('accessToken');
         $deviceId = $request->input('deviceId');
         $storeId = $request->input('storeId');
-        $CsPsSCRId = $request->input('CsPsSCRId');
+        $storeNestedSectionsId = $request->input('storeNestedSectionsId');
 
         // print_r($request->all());
         $myResult = $loginController->readAccessToken($token, $deviceId);
@@ -104,7 +104,7 @@ class StoreManagerController extends Controller
         //         $storeId
         //     )
         //     ->select(
-        //         CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as CsPsSCRId',
+        //         StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as StoreNestedSectionsId',
         //         Categories::$tableName . '.' . Categories::$id . ' as categoryId',
         //         Categories::$tableName . '.' . Categories::$name . ' as categoryName'
         //     )
@@ -125,10 +125,10 @@ class StoreManagerController extends Controller
                 StoreProducts::$tableName . '.' . StoreProducts::$optionId
             )
             ->join(
-                CsPsSCR::$tableName,
-                CsPsSCR::$tableName . '.' . CsPsSCR::$id,
+                StoreNestedSections::$tableName,
+                StoreNestedSections::$tableName . '.' . StoreNestedSections::$id,
                 '=',
-                StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId
+                StoreProducts::$tableName . '.' . StoreProducts::$storeNestedSectionId
             )
             // ->join(
             //     Categories::$tableName,
@@ -137,11 +137,11 @@ class StoreManagerController extends Controller
             //     StoreCategories::$tableName . '.' . StoreCategories::$categoryId
             // )
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
-            ->where(StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId, '=', $CsPsSCRId)
+            ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeNestedSectionId, '=', $storeNestedSectionsId)
             ->whereNotIn(StoreProducts::$tableName . '.' . StoreProducts::$id, $storeProductsIds)
             ->select(
                 StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
-                StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId . ' as CsPsSCRId',
+                StoreProducts::$tableName . '.' . StoreProducts::$storeNestedSectionId . ' as StoreNestedSectionsId',
                 Products::$tableName . '.' . Products::$id . ' as productId',
                 Products::$tableName . '.' . Products::$name . ' as productName',
                 Products::$tableName . '.' . Products::$description . ' as productDescription',
@@ -185,9 +185,8 @@ class StoreManagerController extends Controller
 
             if (!isset($result[$product->productId])) {
                 $result[$product->productId] = [
-                    'storeProductId' => $product->storeProductId,
-                    'CsPsSCRId' => $product->CsPsSCRId,
                     'productId' => $product->productId,
+                    'StoreNestedSectionsId' => $product->StoreNestedSectionsId,
                     'productName' => $product->productName,
                     'productDescription' => $product->productDescription,
                     'options' => [],
@@ -621,7 +620,7 @@ class StoreManagerController extends Controller
         $productId = $request->input('productId');
         $optionId = $request->input('optionId');
         $price = $request->input('price');
-        $CsPsSCRId = $request->input(key: 'CsPsSCRId');
+        $StoreNestedSectionsId = $request->input(key: 'StoreNestedSectionsId');
 
 
         $insertedId = DB::table(table: StoreProducts::$tableName)
@@ -630,7 +629,7 @@ class StoreManagerController extends Controller
                 StoreProducts::$optionId => $optionId,
                 StoreProducts::$productId => $productId,
                 StoreProducts::$price => $price,
-                StoreProducts::$CsPsSCRId => $CsPsSCRId,
+                StoreProducts::$storeNestedSectionId => $StoreNestedSectionsId,
                 StoreProducts::$storeId => 1,
                 StoreProducts::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                 StoreProducts::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),

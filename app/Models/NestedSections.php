@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-class SectionsStoreCategory
+class NestedSections
 {
-   public static $tableName = "sectionsStoreCategory";
+   public static $tableName = "nestedSections";
    public static $id = "id";
+   public static $name = "name";
+   public static $storeId = "storeId";
    public static $sectionId = "sectionId";
-   public static $storeCategory1Id = "storeCategory1Id";
    public static $createdAt = "createdAt";
    public static $updatedAt = "updatedAt";
 }

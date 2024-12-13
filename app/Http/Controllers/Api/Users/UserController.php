@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use App\Models\Categories1;
 use App\Models\Categories3;
-use App\Models\CsPsSCR;
+use App\Models\StoreNestedSections;
 use App\Models\Options;
 use App\Models\Post;
 use App\Models\ProductImages;
@@ -72,19 +72,19 @@ class UserController extends Controller
             $storeCategoriesSectionsIds[] = $storeCategorySection->id;
         }
 
-        $csps = DB::table(CsPsSCR::$tableName)
+        $csps = DB::table(StoreNestedSections::$tableName)
             ->join(
                 Categories3::$tableName,
                 Categories3::$tableName . '.' . Categories3::$id,
                 '=',
-                CsPsSCR::$tableName . '.' . CsPsSCR::$category3Id
+                StoreNestedSections::$tableName . '.' . StoreNestedSections::$category3Id
             )
 
-            ->whereIn(CsPsSCR::$tableName . '.' . CsPsSCR::$sectionsStoreCategoryId, $storeCategoriesSectionsIds)
+            ->whereIn(StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeCategorySectionId, $storeCategoriesSectionsIds)
             ->select(
-                CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as id',
-                CsPsSCR::$tableName . '.' . CsPsSCR::$sectionsStoreCategoryId . ' as storeCategorySectionId',
-                CsPsSCR::$tableName . '.' . CsPsSCR::$category3Id . ' as category3Id',
+                StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as id',
+                StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeCategorySectionId . ' as storeCategorySectionId',
+                StoreNestedSections::$tableName . '.' . StoreNestedSections::$category3Id . ' as category3Id',
                 Categories3::$tableName . '.' . Categories3::$name . ' as name',
             )
             ->get();
@@ -99,7 +99,7 @@ class UserController extends Controller
 
     public function getProducts(Request $request)
     {
-        $CsPsSCRId = $request->input('CsPsSCRId');
+        $StoreNestedSectionsId = $request->input('StoreNestedSectionsId');
         $storeId = 1;
 
         // 
@@ -121,13 +121,13 @@ class UserController extends Controller
             //     StoreCategories::$tableName,
             //     StoreCategories::$tableName . '.' . StoreCategories::$id,
             //     '=',
-            //     StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId
+            //     StoreProducts::$tableName . '.' . StoreProducts::$StoreNestedSectionsId
             // )
             ->join(
-                CsPsSCR::$tableName,
-                CsPsSCR::$tableName . '.' . CsPsSCR::$id,
+                StoreNestedSections::$tableName,
+                StoreNestedSections::$tableName . '.' . StoreNestedSections::$id,
                 '=',
-                StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId
+                StoreProducts::$tableName . '.' . StoreProducts::$StoreNestedSectionsId
             )
             // ->join(
             //     Categories::$tableName,
@@ -136,7 +136,7 @@ class UserController extends Controller
             //     StoreCategories::$tableName . '.' . StoreCategories::$categoryId
             // )
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
-            ->where(StoreProducts::$tableName . '.' . StoreProducts::$CsPsSCRId, '=', $CsPsSCRId)
+            ->where(StoreProducts::$tableName . '.' . StoreProducts::$StoreNestedSectionsId, '=', $StoreNestedSectionsId)
             ->select(
                 StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
                 Products::$tableName . '.' . Products::$id . ' as productId',
@@ -147,7 +147,7 @@ class UserController extends Controller
                 Options::$tableName . '.' . Options::$id . ' as optionId',
                 Options::$tableName . '.' . Options::$name . ' as optionName',
                     //
-                CsPsSCR::$tableName . '.' . CsPsSCR::$id . ' as CsPsSCRId',
+                StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as StoreNestedSectionsId',
 
 
 
@@ -172,7 +172,7 @@ class UserController extends Controller
             if (!isset($result[$product->productId])) {
                 $result[$product->productId] = [
                     'productId' => $product->productId,
-                    'CsPsSCRId' => $product->CsPsSCRId,
+                    'StoreNestedSectionsId' => $product->StoreNestedSectionsId,
                     'productName' => $product->productName,
                     'productDescription' => $product->productDescription,
                     'options' => [],

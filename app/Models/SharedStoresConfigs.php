@@ -8,7 +8,6 @@ class SharedStoresConfigs
    public static $id = "id";
    public static $categories = "categories";
    public static $sections = "sections";
-
    public static $nestedSections = "nestedSections";
    public static $products = "products";
    public static $storeId = "storeId";
