@@ -264,7 +264,7 @@ class StoreManagerController2 extends Controller
                 )
                 ->get();
 
-            return response()->json(['storeCategories' => $storeCategories, 'storeCategoriesSections' => $storeCategoriesSections, 'csps' => $csps]);
+            return response()->json(['storeCategories' => $storeCategories, 'storeSections' => $storeCategoriesSections, 'storeNestedSections' => $csps]);
         } else {
             return response()->json(['message' => 'Undefiend Store type', 'code' => 0], 400);
         }
