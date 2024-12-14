@@ -321,6 +321,7 @@ class StoreManagerController extends Controller
                 Categories::$tableName . '.' . Categories::$id,
                 Categories::$tableName . '.' . Categories::$name
             ])->toArray();
+            print_r($categories);
         return response()->json($categories);
     }
     public function getProducts(Request $request)
