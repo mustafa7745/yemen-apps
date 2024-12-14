@@ -108,6 +108,28 @@ class StoreManagerController2 extends Controller
             ])->toArray();
         return response()->json($categories);
     }
+    public function addCategory(Request $request)
+    {
+        $storeId = $request->input('storeId');
+        $name = $request->input('name');
+        $insertedId = DB::table(table: StoreCategories::$tableName)
+            ->insertGetId([
+                Categories::$id => null,
+                Categories::$storeId => $storeId,
+                Categories::$name => $name,
+                Categories::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                Categories::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+
+        $category = DB::table(Categories::$tableName)
+        ->where(Categories::$tableName . '.' . Categories::$id, '=', $insertedId)
+            ->sole([
+                Categories::$tableName . '.' . Categories::$id,
+                Categories::$tableName . '.' . Categories::$name,
+                Categories::$tableName . '.' . Categories::$acceptedStatus,
+            ]);
+        return response()->json($category);
+    }
     public function getStoreCategories(Request $request)
     {
         $storeId = $request->input('storeId');
