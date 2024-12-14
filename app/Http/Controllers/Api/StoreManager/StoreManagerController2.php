@@ -100,7 +100,7 @@ class StoreManagerController2 extends Controller
     {
         $storeId = $request->input('storeId');
         $categories = DB::table(Categories::$tableName)
-        ->where(Categories::$tableName . '.' . Categories::$id, '=', $storeId)
+        ->where(Categories::$tableName . '.' . Categories::$storeId, '=', $storeId)
             ->get([
                 Categories::$tableName . '.' . Categories::$id,
                 Categories::$tableName . '.' . Categories::$name
