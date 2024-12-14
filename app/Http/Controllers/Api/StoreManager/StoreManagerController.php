@@ -312,11 +312,11 @@ class StoreManagerController extends Controller
 
         return response()->json(array_values($final));
     }
-    public function getCategories()
+    public function getCategories(Request $request)
     {
-        $storeId = 1;
+        $storeId = $request->input('storeId');
         $categories = DB::table(Categories::$tableName)
-            ->whereIn(Categories::$tableName . '.' . Categories::$storeId, [$storeId, 1])
+            ->where(Categories::$tableName . '.' . Categories::$storeId, '=', $storeId, 1)
             ->get([
                 Categories::$tableName . '.' . Categories::$id,
                 Categories::$tableName . '.' . Categories::$name
