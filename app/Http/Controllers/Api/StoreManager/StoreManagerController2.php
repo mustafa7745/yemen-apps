@@ -103,7 +103,8 @@ class StoreManagerController2 extends Controller
         ->where(Categories::$tableName . '.' . Categories::$storeId, '=', $storeId)
             ->get([
                 Categories::$tableName . '.' . Categories::$id,
-                Categories::$tableName . '.' . Categories::$name
+                Categories::$tableName . '.' . Categories::$name,
+                Categories::$tableName . '.' . Categories::$acceptedStatus,
             ])->toArray();
         return response()->json($categories);
     }

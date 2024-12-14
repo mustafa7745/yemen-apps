@@ -312,18 +312,7 @@ class StoreManagerController extends Controller
 
         return response()->json(array_values($final));
     }
-    public function getCategories(Request $request)
-    {
-        $storeId = $request->input('storeId');
-        $categories = DB::table(Categories::$tableName)
-            ->where(Categories::$tableName . '.' . Categories::$storeId, '=', $storeId, 1)
-            ->get([
-                Categories::$tableName . '.' . Categories::$id,
-                Categories::$tableName . '.' . Categories::$name
-            ])->toArray();
-            print_r($categories);
-        return response()->json($categories);
-    }
+    
     public function getProducts(Request $request)
     {
         $storeId = 1;
