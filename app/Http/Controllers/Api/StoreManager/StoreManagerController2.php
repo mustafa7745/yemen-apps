@@ -112,7 +112,7 @@ class StoreManagerController2 extends Controller
     {
         $storeId = $request->input('storeId');
         $name = $request->input('name');
-        $insertedId = DB::table(table: StoreCategories::$tableName)
+        $insertedId = DB::table(table: Categories::$tableName)
             ->insertGetId([
                 Categories::$id => null,
                 Categories::$storeId => $storeId,
