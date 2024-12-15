@@ -453,17 +453,12 @@ class StoreManagerController2 extends Controller
                 '=',
                 StoreNestedSections::$tableName . '.' . StoreNestedSections::$nestedSectionId
             )
-            ->join(
-                Sections::$tableName,
-                Sections::$tableName . '.' . Sections::$id,
-                '=',
-                NestedSections::$tableName . '.' . NestedSections::$sectionId
-            )
             ->get(
                 [
                     StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as id',
+                    StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId . ' as storeSectionId',
                     NestedSections::$tableName . '.' . NestedSections::$id . ' as nestedSectionId',
-                    NestedSections::$tableName . '.' . NestedSections::$name . ' as category3Name',
+                    NestedSections::$tableName . '.' . NestedSections::$id . ' as nestedSectionName',
                 ]
             );
 
