@@ -458,7 +458,7 @@ class StoreManagerController2 extends Controller
                     StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as id',
                     StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId . ' as storeSectionId',
                     NestedSections::$tableName . '.' . NestedSections::$id . ' as nestedSectionId',
-                    NestedSections::$tableName . '.' . NestedSections::$id . ' as nestedSectionName',
+                    NestedSections::$tableName . '.' . NestedSections::$name . ' as nestedSectionName',
                 ]
             );
 
@@ -490,7 +490,7 @@ class StoreManagerController2 extends Controller
                 StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as id',
                 StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId . ' as storeSectionId',
                 NestedSections::$tableName . '.' . NestedSections::$id . ' as nestedSectionId',
-                NestedSections::$tableName . '.' . NestedSections::$id . ' as nestedSectionName',
+                NestedSections::$tableName . '.' . NestedSections::$name . ' as nestedSectionName',
             ]
         );
 
