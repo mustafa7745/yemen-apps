@@ -479,25 +479,20 @@ class StoreManagerController2 extends Controller
                 StoreNestedSections::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
         $storeCategory = DB::table(table: StoreNestedSections::$tableName)->where(StoreNestedSections::$tableName . '.' . StoreNestedSections::$id, '=', $insertedId)
-            ->join(
-                NestedSections::$tableName,
-                NestedSections::$tableName . '.' . NestedSections::$id,
-                '=',
-                StoreNestedSections::$tableName . '.' . StoreNestedSections::$nestedSectionId
-            )
-            ->join(
-                Sections::$tableName,
-                Sections::$tableName . '.' . Sections::$id,
-                '=',
-                NestedSections::$tableName . '.' . NestedSections::$sectionId
-            )
-            ->first(
-                [
-                    StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as id',
-                    NestedSections::$tableName . '.' . NestedSections::$id . ' as nestedSectionId',
-                    NestedSections::$tableName . '.' . NestedSections::$name . ' as category3Name',
-                ]
-            );
+        ->join(
+            NestedSections::$tableName,
+            NestedSections::$tableName . '.' . NestedSections::$id,
+            '=',
+            StoreNestedSections::$tableName . '.' . StoreNestedSections::$nestedSectionId
+        )
+        ->get(
+            [
+                StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as id',
+                StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId . ' as storeSectionId',
+                NestedSections::$tableName . '.' . NestedSections::$id . ' as nestedSectionId',
+                NestedSections::$tableName . '.' . NestedSections::$id . ' as nestedSectionName',
+            ]
+        );
 
         return response()->json($storeCategory);
     }
