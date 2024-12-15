@@ -485,7 +485,7 @@ class StoreManagerController2 extends Controller
             '=',
             StoreNestedSections::$tableName . '.' . StoreNestedSections::$nestedSectionId
         )
-        ->get(
+        ->first(
             [
                 StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as id',
                 StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId . ' as storeSectionId',
