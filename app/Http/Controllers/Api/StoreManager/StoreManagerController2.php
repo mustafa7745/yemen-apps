@@ -169,7 +169,7 @@ class StoreManagerController2 extends Controller
                 NestedSections::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
 
-        $category = DB::table(Sections::$tableName)
+        $category = DB::table(NestedSections::$tableName)
             ->where(NestedSections::$tableName . '.' . NestedSections::$id, '=', $insertedId)
             ->sole([
                 NestedSections::$tableName . '.' . NestedSections::$id,
