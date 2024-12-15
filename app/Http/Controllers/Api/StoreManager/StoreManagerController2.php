@@ -467,7 +467,7 @@ class StoreManagerController2 extends Controller
 
         return response()->json($storeCategories);
     }
-    public function addStoreNestedSections(Request $request)
+    public function addStoreNestedSection(Request $request)
     {
         $storeId = 1;
         $storeSectionId = $request->input('storeSectionId');
