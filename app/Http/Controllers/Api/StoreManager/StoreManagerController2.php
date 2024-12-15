@@ -453,6 +453,7 @@ class StoreManagerController2 extends Controller
                 Products::$id => null,
                 Products::$nestedSectionId => $nestedSectionId,
                 Products::$name => $name,
+                Products::$storeId => $storeId,
                 Products::$description => $description,
                 Products::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                 Products::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
