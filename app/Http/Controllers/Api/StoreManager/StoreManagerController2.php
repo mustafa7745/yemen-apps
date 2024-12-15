@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use App\Models\NestedSections;
+use App\Models\Products;
 use App\Models\StoreSections;
 use App\Models\StoreNestedSections;
 use App\Models\Sections;
@@ -439,6 +440,34 @@ class StoreManagerController2 extends Controller
             );
 
         return response()->json($storeCategory);
+    }
+    public function addProduct(Request $request)
+    {
+        $storeId = $request->input('storeId');
+        $nestedSectionId = $request->input('nestedSectionId');
+        $name = $request->input('name');
+        $description = $request->input('description');
+
+        $insertedId = DB::table(table: Products::$tableName)
+            ->insertGetId([
+                Products::$id => null,
+                Products::$nestedSectionId => $nestedSectionId,
+                Products::$name => $name,
+                Products::$description => $description,
+                Products::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                Products::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+        $product = DB::table(table: Products::$tableName)->where(Products::$tableName . '.' . Products::$id, '=', $insertedId)
+            ->first(
+                [
+                    Products::$tableName . '.' . Products::$id ,
+                    Products::$tableName . '.' . Products::$name ,
+                    Products::$tableName . '.' . Products::$description ,
+                    Products::$tableName . '.' . Products::$acceptedStatus ,
+                ]
+            );
+
+        return response()->json($product);
     }
     //
     public function getStoreNestedSections(Request $request)

@@ -53,6 +53,8 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/getNestedSections', [StoreManagerController2::class, 'getNestedSections']);
 
     Route::post('/updateStoreConfig', [StoreManagerController2::class, 'updateStoreConfig']);
+    Route::post('/addProduct', [StoreManagerController2::class, 'addProduct']);
+
 
 
 

@@ -323,7 +323,9 @@ class StoreManagerController extends Controller
             ->get(
                 [
                     Products::$tableName . '.' . Products::$id,
-                    Products::$tableName . '.' . Products::$name
+                    Products::$tableName . '.' . Products::$name,
+                    Products::$tableName . '.' . Products::$acceptedStatus,
+
                 ]
             )->toArray();
 
