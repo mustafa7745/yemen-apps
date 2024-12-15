@@ -100,7 +100,7 @@ class StoreManagerController2 extends Controller
     {
         $storeId = $request->input('storeId');
         $categories = DB::table(Categories::$tableName)
-        ->where(Categories::$tableName . '.' . Categories::$storeId, '=', $storeId)
+            ->where(Categories::$tableName . '.' . Categories::$storeId, '=', $storeId)
             ->get([
                 Categories::$tableName . '.' . Categories::$id,
                 Categories::$tableName . '.' . Categories::$name,
@@ -122,11 +122,59 @@ class StoreManagerController2 extends Controller
             ]);
 
         $category = DB::table(Categories::$tableName)
-        ->where(Categories::$tableName . '.' . Categories::$id, '=', $insertedId)
+            ->where(Categories::$tableName . '.' . Categories::$id, '=', $insertedId)
             ->sole([
                 Categories::$tableName . '.' . Categories::$id,
                 Categories::$tableName . '.' . Categories::$name,
                 Categories::$tableName . '.' . Categories::$acceptedStatus,
+            ]);
+        return response()->json($category);
+    }
+    public function addSection(Request $request)
+    {
+        $storeId = $request->input('storeId');
+        $categoryId = $request->input('categoryId');
+        $name = $request->input('name');
+        $insertedId = DB::table(table: Sections::$tableName)
+            ->insertGetId([
+                Sections::$id => null,
+                Sections::$storeId => $storeId,
+                Sections::$categoryId => $categoryId,
+                Sections::$name => $name,
+                Sections::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                Sections::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+
+        $category = DB::table(Sections::$tableName)
+            ->where(Sections::$tableName . '.' . Sections::$id, '=', $insertedId)
+            ->sole([
+                Sections::$tableName . '.' . Sections::$id,
+                Sections::$tableName . '.' . Sections::$name,
+                Sections::$tableName . '.' . Sections::$acceptedStatus,
+            ]);
+        return response()->json($category);
+    }
+    public function addNestedSection(Request $request)
+    {
+        $storeId = $request->input('storeId');
+        $sectionId = $request->input('sectionId');
+        $name = $request->input('name');
+        $insertedId = DB::table(table: NestedSections::$tableName)
+            ->insertGetId([
+                NestedSections::$id => null,
+                NestedSections::$storeId => $storeId,
+                NestedSections::$sectionId => $sectionId,
+                NestedSections::$name => $name,
+                NestedSections::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                NestedSections::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+
+        $category = DB::table(Sections::$tableName)
+            ->where(NestedSections::$tableName . '.' . NestedSections::$id, '=', $insertedId)
+            ->sole([
+                NestedSections::$tableName . '.' . NestedSections::$id,
+                NestedSections::$tableName . '.' . NestedSections::$name,
+                NestedSections::$tableName . '.' . NestedSections::$acceptedStatus,
             ]);
         return response()->json($category);
     }
@@ -135,7 +183,7 @@ class StoreManagerController2 extends Controller
         $storeId = $request->input('storeId');
         $store = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)
-            ->sole ([
+            ->sole([
                 Stores::$tableName . '.' . Stores::$id,
                 Stores::$tableName . '.' . Stores::$typeId,
             ]);
@@ -216,7 +264,7 @@ class StoreManagerController2 extends Controller
                     StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as id',
                     StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId . ' as storeSectionId',
                     StoreNestedSections::$tableName . '.' . StoreNestedSections::$nestedSectionId . ' as nestedSectionId',
-                    NestedSections::$tableName . '.' . NestedSections::$name . ' as name', 
+                    NestedSections::$tableName . '.' . NestedSections::$name . ' as name',
                 )
                 ->get();
 
@@ -325,12 +373,13 @@ class StoreManagerController2 extends Controller
     // 
     public function getSections(Request $request)
     {
-        $category1Id = $request->input('category1Id');
-        $storeId = 1;
+        $categoryId = $request->input('categoryId');
+        $storeId = $request->input('storeId');
         $categories = DB::table(Sections::$tableName)
-            ->where(Sections::$tableName . '.' . Sections::$category1Id, '=', $category1Id)
+            ->where(Sections::$tableName . '.' . Sections::$categoryId, '=', $categoryId)
             ->get([
                 Sections::$tableName . '.' . Sections::$id,
+                Sections::$tableName . '.' . Sections::$acceptedStatus,
                 Sections::$tableName . '.' . Sections::$name
             ])->toArray();
         return response()->json($categories);
@@ -455,7 +504,7 @@ class StoreManagerController2 extends Controller
 
         return response()->json($storeCategory);
     }
-    public function getCategories3(Request $request)
+    public function getNestedSections(Request $request)
     {
         $sectionId = $request->input('sectionId');
         $categories = DB::table(NestedSections::$tableName)
@@ -468,7 +517,8 @@ class StoreManagerController2 extends Controller
             )
             ->get([
                 NestedSections::$tableName . '.' . NestedSections::$id,
-                NestedSections::$tableName . '.' . NestedSections::$name
+                NestedSections::$tableName . '.' . NestedSections::$name,
+                NestedSections::$tableName . '.' . NestedSections::$acceptedStatus,
             ])->toArray();
         return response()->json($categories);
     }
