@@ -432,7 +432,9 @@ class StoreManagerController2 extends Controller
                 [
                     StoreSections::$tableName . '.' . StoreSections::$id . ' as id',
                     Sections::$tableName . '.' . Sections::$id . ' as sectionId',
-                    Sections::$tableName . '.' . Sections::$name . ' as sectionName'
+                    Sections::$tableName . '.' . Sections::$name . ' as sectionName',
+                    StoreSections::$tableName . '.' . StoreSections::$storeCategoryId . ' as storeCategoryId'
+
                 ]
             );
 
