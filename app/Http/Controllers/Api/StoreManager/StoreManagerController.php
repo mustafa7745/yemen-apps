@@ -679,7 +679,7 @@ class StoreManagerController extends Controller
                 'storeNestedSectionId' => $product->storeNestedSectionId,
                 'productName' => $product->productName,
                 'productDescription' => $product->productDescription,
-                'options' => ['optionId' => $product->optionId, 'storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price],
+                'options' => [['optionId' => $product->optionId, 'storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price]],
                 'images' => []
             ];
             return response()->json($result);
