@@ -406,9 +406,9 @@ class StoreManagerController2 extends Controller
 
         return response()->json($storeCategories);
     }
-    public function addSectionStoreCategory(Request $request)
+    public function addStoreSection(Request $request)
     {
-        $storeId = 1;
+        $storeId = $request->input('storeId');
         $storeCategoryId = $request->input('storeCategoryId');
         $sectionId = $request->input('sectionId');
 
