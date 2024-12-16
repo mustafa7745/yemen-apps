@@ -792,7 +792,9 @@ class StoreManagerController extends Controller
                         ->where(Stores::$id, '=', $insertedId)
                         ->first();
 
-                    return response()->json($addedRecord->storeConfig = null);
+                    $addedRecord->storeConfig = null;
+
+                    return response()->json($addedRecord);
 
                 } else {
                     DB::rollBack();
