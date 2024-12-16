@@ -530,9 +530,13 @@ class StoreManagerController2 extends Controller
     public function getNestedSections(Request $request)
     {
         $sectionId = $request->input('sectionId');
+        $storeId = $request->input('storeId');
+
         
         $categories = DB::table(NestedSections::$tableName)
             ->where(NestedSections::$tableName . '.' . NestedSections::$sectionId, '=', $sectionId)
+            ->where(NestedSections::$tableName . '.' . NestedSections::$storeId, '=', $storeId)
+
             ->join(
                 Sections::$tableName,
                 Sections::$tableName . '.' . Sections::$id,
