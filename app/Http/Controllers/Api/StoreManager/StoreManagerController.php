@@ -782,11 +782,6 @@ class StoreManagerController extends Controller
                     Stores::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
 
-
-            DB::table(Stores::$tableName)
-                ->where(Stores::$id, '=', $insertedId)
-                ->first();
-
             try {
                 $pathIcon = Storage::disk('s3')->put('stores/icons/' . $iconName, fopen($icon, 'r+'));
                 $pathCover = Storage::disk('s3')->put('stores/covers/' . $coverName, fopen($cover, 'r+'));
@@ -797,7 +792,7 @@ class StoreManagerController extends Controller
                         ->where(Stores::$id, '=', $insertedId)
                         ->first();
 
-                    return response()->json($addedRecord);
+                    return response()->json($addedRecord->storeConfig = null);
 
                 } else {
                     DB::rollBack();
