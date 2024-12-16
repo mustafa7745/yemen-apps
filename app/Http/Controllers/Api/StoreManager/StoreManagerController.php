@@ -315,7 +315,7 @@ class StoreManagerController extends Controller
 
     public function getProducts(Request $request)
     {
-        $storeId = 1;
+        $storeId  = $request->input('storeId');
         $nestedSectionId = $request->input('nestedSectionId');
         $products = DB::table(Products::$tableName)
             ->whereIn(Products::$tableName . '.' . Products::$storeId, [$storeId, 1])
