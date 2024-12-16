@@ -146,7 +146,7 @@ class StoreManagerController extends Controller
                 Products::$tableName . '.' . Products::$name . ' as productName',
                 Products::$tableName . '.' . Products::$description . ' as productDescription',
                 StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
-                    // 
+                // 
                 Options::$tableName . '.' . Options::$id . ' as optionId',
                 Options::$tableName . '.' . Options::$name . ' as optionName',
                 // 
@@ -615,6 +615,7 @@ class StoreManagerController extends Controller
         $price = $request->input('price');
         $storeNestedSectionId = $request->input(key: 'storeNestedSectionId');
         $getWithProduct = $request->input(key: 'getWithProduct');
+        $storeId = $request->input('storeId');
 
         $insertedId = DB::table(table: StoreProducts::$tableName)
             ->insertGetId([
@@ -623,7 +624,7 @@ class StoreManagerController extends Controller
                 StoreProducts::$productId => $productId,
                 StoreProducts::$price => $price,
                 StoreProducts::$storeNestedSectionId => $storeNestedSectionId,
-                StoreProducts::$storeId => 1,
+                StoreProducts::$storeId => $storeId     ,
                 StoreProducts::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                 StoreProducts::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
