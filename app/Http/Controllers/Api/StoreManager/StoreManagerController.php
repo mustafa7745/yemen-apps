@@ -531,6 +531,7 @@ class StoreManagerController extends Controller
                     ], 500);
                 }
             });
+
         } else {
             return response()->json(['error' => 'Image Not Found'], 400);
         }
@@ -710,6 +711,110 @@ class StoreManagerController extends Controller
 
 
 
+    }
+
+    public function addStore(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'accessToken' => 'required|string|max:255',
+            'deviceId' => 'required|string|max:255',
+            'icon' => 'required|image|mimes:jpg|max:40',
+            'name' => 'required|string|max:100',
+            'typeId' => 'required|string|max:1',
+            'cover' => 'required|image|mimes:jpg|max:80',
+        ]);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            // Return a JSON response with validation errors
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+                'code' => 0
+            ], 422);  // 422 Unprocessable Entity
+        }
+
+
+        $loginController = (new LoginController($this->appId));
+        $token = $request->input('accessToken');
+        $deviceId = $request->input('deviceId');
+
+        // print_r($request->all());
+        $myResult = $loginController->readAccessToken($token, $deviceId);
+        if ($myResult->isSuccess == false) {
+            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
+        }
+        $accessToken = $myResult->message;
+
+
+
+
+
+
+
+        return DB::transaction(function () use ($request, $accessToken) {
+
+            $name = $request->input('name');
+            $typeId = $request->input('typeId');
+            $icon = $request->file('icon');
+            $cover = $request->file('cover');
+
+            if ($icon->isValid() == false) {
+                return response()->json(['error' => 'Invalid Icon file.'], 400);
+            }
+
+            if ($cover->isValid() == false) {
+                return response()->json(['error' => 'Invalid Cover file.'], 400);
+            }
+
+            $iconName = Str::random(10) . '_' . time() . '.jpg';
+            $coverName = Str::random(10) . '_' . time() . '.jpg';
+
+            $insertedId = DB::table(table: Stores::$tableName)
+                ->insertGetId([
+                    Stores::$id => null,
+                    Stores::$name => $name,
+                    Stores::$userId => $accessToken->userId,
+                    Stores::$typeId => $typeId,
+                    Stores::$icon => $iconName,
+                    Stores::$cover => $coverName,
+                    Stores::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    Stores::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ]);
+
+
+            DB::table(Stores::$tableName)
+                ->where(Stores::$id, '=', $insertedId)
+                ->first();
+
+            try {
+                $pathIcon = Storage::disk('s3')->put('stores/icons/' . $iconName, fopen($icon, 'r+'));
+                $pathCover = Storage::disk('s3')->put('stores/covers/' . $coverName, fopen($cover, 'r+'));
+
+                // Check if the file was uploaded successfully
+                if ($pathIcon && $pathCover) {
+                    $addedRecord = DB::table(Stores::$tableName)
+                        ->where(Stores::$id, '=', $insertedId)
+                        ->first();
+
+                    return response()->json($addedRecord);
+
+                } else {
+                    DB::rollBack();
+                    // If the image is not valid, return a validation error response
+                    return response()->json([
+                        'error' => 'No valid image file uploaded.',
+                    ], 400);
+
+                }
+            } catch (\Exception $e) {
+                DB::rollBack();  // Manually trigger a rollback
+                return response()->json([
+                    'error' => 'An error occurred while uploading the image.',
+                    'message' => $e->getMessage(),
+                ], 500);
+            }
+        });
     }
     public function deleteProductOptions(Request $request)
     {
