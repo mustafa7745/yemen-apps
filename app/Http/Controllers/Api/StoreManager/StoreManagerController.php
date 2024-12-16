@@ -721,7 +721,7 @@ class StoreManagerController extends Controller
             'icon' => 'required|image|mimes:jpg|max:80',
             'name' => 'required|string|max:100',
             'typeId' => 'required|string|max:1',
-            'cover' => 'required|image|mimes:jpg|max:80',
+            'cover' => 'required|image|mimes:jpg|max:100',
         ]);
 
         // Check if validation fails
