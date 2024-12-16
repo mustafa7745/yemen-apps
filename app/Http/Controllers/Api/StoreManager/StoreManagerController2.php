@@ -344,7 +344,7 @@ class StoreManagerController2 extends Controller
     }
     public function addStoreCategory(Request $request)
     {
-        $storeId = 1;
+        $storeId = $request->input('storeId');
         $categoryId = $request->input('categoryId');
         $insertedId = DB::table(table: StoreCategories::$tableName)
             ->insertGetId([
@@ -378,6 +378,7 @@ class StoreManagerController2 extends Controller
         $storeId = $request->input('storeId');
         $categories = DB::table(Sections::$tableName)
             ->where(Sections::$tableName . '.' . Sections::$categoryId, '=', $categoryId)
+            ->where(Sections::$tableName . '.' . Sections::$storeId, '=', $storeId)
             ->get([
                 Sections::$tableName . '.' . Sections::$id,
                 Sections::$tableName . '.' . Sections::$acceptedStatus,
@@ -529,6 +530,7 @@ class StoreManagerController2 extends Controller
     public function getNestedSections(Request $request)
     {
         $sectionId = $request->input('sectionId');
+        
         $categories = DB::table(NestedSections::$tableName)
             ->where(NestedSections::$tableName . '.' . NestedSections::$sectionId, '=', $sectionId)
             ->join(
