@@ -291,7 +291,7 @@ class StoreManagerControllerAdd extends Controller
                     )
                     ->first();
 
-                    $images = DB::table(table: ProductImages::$tableName)->where(ProductImages::$tableName . '.' . ProductImages::$productId, '=', $$product->productId)
+                    $images = DB::table(table: ProductImages::$tableName)->where(ProductImages::$tableName . '.' . ProductImages::$productId, '=', $product->productId)
                     ->get([
                         ProductImages::$tableName . '.' . ProductImages::$id ,
                         ProductImages::$tableName . '.' . ProductImages::$image 
