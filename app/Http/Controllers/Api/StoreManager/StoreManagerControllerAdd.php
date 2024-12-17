@@ -14,6 +14,7 @@ use App\Models\StoreNestedSections;
 use App\Models\Sections;
 use App\Models\Stores;
 use App\Models\StoreCategories;
+use App\Traits\StoreManagerControllerShared;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -24,7 +25,7 @@ use Validator;
 class StoreManagerControllerAdd extends Controller
 {
 
-    use \StoreManagerControllerShared;
+    use StoreManagerControllerShared;
     public function addCategory(Request $request)
     {
         $storeId = $request->input('storeId');
