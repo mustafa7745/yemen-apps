@@ -69,9 +69,8 @@ class StoreManagerControllerDelete extends Controller
                 return response()->json(['message' => "لايمكنك الحذف في حال وجود صور للمنتجات ", 'code' => 0], 409);
             }
 
-            $id = $request->input('id');
             $countDeleted = DB::table(Products::$tableName)
-                ->whereIn(Products::$id, $id)
+                ->whereIn(Products::$id, $ids)
                 ->delete();
             if ($countDeleted != count($ids)) {
                 return response()->json("Error Remove", 400);
