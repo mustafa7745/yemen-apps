@@ -38,7 +38,7 @@ Route::prefix('v1')->group(function () {
 
 Route::prefix('v1/storeManager')->group(function () {
 
-    Route::post('/readMain', [StoreManagerControllerGet::class, 'readMain']);
+    Route::post('/getMain', [StoreManagerControllerGet::class, 'getMain']);
     Route::post('/getStores', [StoreManagerControllerGet::class, 'getStores']);
     Route::post('/getCategories', [StoreManagerControllerGet::class, 'getCategories']);
     Route::post('/getStoreCategories', [StoreManagerControllerGet::class, 'getStoreCategories']);
@@ -46,7 +46,7 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/getSecionsStoreCategories', [StoreManagerControllerGet::class, 'getSecionsStoreCategories']);
     Route::post('/getStoreNestedSections', [StoreManagerControllerGet::class, 'getStoreNestedSections']);
     Route::post('/getNestedSections', [StoreManagerControllerGet::class, 'getNestedSections']);
-    Route::post('/readOptions', [StoreManagerControllerGet::class, 'readOptions']);
+    Route::post('/getOptions', [StoreManagerControllerGet::class, 'getOptions']);
     Route::post('/getProducts', [StoreManagerControllerGet::class, 'getProducts']);
 
     Route::post('/addCategory', [StoreManagerController2::class, 'addCategory']);

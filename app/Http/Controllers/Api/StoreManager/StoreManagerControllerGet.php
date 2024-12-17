@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Validator;
 class StoreManagerControllerGet extends Controller
 {
     private $appId = 1;
-    public function readMain(Request $request)
+    public function getMain(Request $request)
     {
         // Define validation rules
         $validator = Validator::make($request->all(), [
@@ -246,27 +246,10 @@ class StoreManagerControllerGet extends Controller
 
         return response()->json(array_values($products));
     }
-    public function readOptions()
+    public function getOptions()
     {
         $options = DB::table(table: Options::$tableName)->get();
         return response()->json($options);
-    }
-    public function readStoreCategories()
-    {
-        $result = DB::table(table: StoreCategories::$tableName)
-            ->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, '=', 1)
-            ->join(
-                Categories::$tableName,
-                Categories::$tableName . '.' . Categories::$id,
-                '=',
-                StoreCategories::$tableName . '.' . StoreCategories::$categoryId
-            )
-            ->get([
-                StoreCategories::$tableName . '.' . StoreCategories::$id . ' as storeCategoryId',
-                Categories::$tableName . '.' . Categories::$id . ' as categoryId',
-                Categories::$tableName . '.' . Categories::$name . ' as categoryName',
-            ]);
-        return response()->json($result);
     }
     public function getStores(Request $request)
     {
