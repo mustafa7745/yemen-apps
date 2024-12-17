@@ -291,13 +291,19 @@ class StoreManagerControllerAdd extends Controller
                     )
                     ->first();
 
+                    $images = DB::table(table: ProductImages::$tableName)->where(ProductImages::$tableName . '.' . ProductImages::$productId, '=', $$product->productId)
+                    ->get([
+                        ProductImages::$tableName . '.' . ProductImages::$id ,
+                        ProductImages::$tableName . '.' . ProductImages::$image 
+                    ]);
+
                 $result = [
                     'productId' => $product->productId,
                     'storeNestedSectionId' => $product->storeNestedSectionId,
                     'productName' => $product->productName,
                     'productDescription' => $product->productDescription,
                     'options' => [['optionId' => $product->optionId, 'storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price]],
-                    'images' => []
+                    'images' => $images
                 ];
                 return response()->json($result);
 
