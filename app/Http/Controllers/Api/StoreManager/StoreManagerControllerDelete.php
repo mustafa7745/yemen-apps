@@ -38,7 +38,7 @@ class StoreManagerControllerDelete extends Controller
             if ($count > 0) {
                 return response()->json(["success" => "yes"]);
             } else {
-                return response()->json(data: ['message' => "لا يمكن الحذف حدث خطأ", 'code' => 0], 409);
+                return response()->json(['message' => "لا يمكن الحذف حدث خطأ", 'code' => 0], 409);
 
             }
 
@@ -74,7 +74,7 @@ class StoreManagerControllerDelete extends Controller
                 ->whereIn(Products::$id, $ids)
                 ->delete();
             if ($countDeleted != count($ids)) {
-                return response()->json(data: ['message' => "لا يمكن الحذف حدث خطأ", 'code' => 0], 409);
+                return response()->json(['message' => "لا يمكن الحذف حدث خطأ", 'code' => 0], 409);
             }
             return response()->json(["success" => "yes"]);
 
