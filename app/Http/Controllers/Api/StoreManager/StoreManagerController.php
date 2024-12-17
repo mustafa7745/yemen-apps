@@ -719,7 +719,7 @@ class StoreManagerController extends Controller
         $validator = Validator::make($request->all(), [
             'accessToken' => 'required|string|max:255',
             'deviceId' => 'required|string|max:255',
-            'icon' => 'required|image|mimes:jpg|max:80',
+            'logo' => 'required|image|mimes:jpg|max:80',
             'name' => 'required|string|max:100',
             'typeId' => 'required|string|max:1',
             'cover' => 'required|image|mimes:jpg|max:100',
@@ -757,18 +757,18 @@ class StoreManagerController extends Controller
 
             $name = $request->input('name');
             $typeId = $request->input('typeId');
-            $icon = $request->file('icon');
+            $logo = $request->file('logo');
             $cover = $request->file('cover');
 
-            if ($icon->isValid() == false) {
-                return response()->json(['error' => 'Invalid Icon file.'], 400);
+            if ($logo->isValid() == false) {
+                return response()->json(['error' => 'Invalid Logo file.'], 400);
             }
 
             if ($cover->isValid() == false) {
                 return response()->json(['error' => 'Invalid Cover file.'], 400);
             }
 
-            $iconName = Str::random(10) . '_' . time() . '.jpg';
+            $logoName = Str::random(10) . '_' . time() . '.jpg';
             $coverName = Str::random(10) . '_' . time() . '.jpg';
 
             $insertedId = DB::table(table: Stores::$tableName)
@@ -777,18 +777,18 @@ class StoreManagerController extends Controller
                     Stores::$name => $name,
                     Stores::$userId => $accessToken->userId,
                     Stores::$typeId => $typeId,
-                    Stores::$icon => $iconName,
+                    Stores::$logo => $logoName,
                     Stores::$cover => $coverName,
                     Stores::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                     Stores::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
 
             try {
-                $pathIcon = Storage::disk('s3')->put('stores/icons/' . $iconName, fopen($icon, 'r+'));
+                $pathLogo = Storage::disk('s3')->put('stores/logos/' . $logoName, fopen($logo, 'r+'));
                 $pathCover = Storage::disk('s3')->put('stores/covers/' . $coverName, fopen($cover, 'r+'));
 
                 // Check if the file was uploaded successfully
-                if ($pathIcon && $pathCover) {
+                if ($pathLogo && $pathCover) {
                     $addedRecord = DB::table(Stores::$tableName)
                         ->where(Stores::$id, '=', $insertedId)
                         ->first();
