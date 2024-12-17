@@ -326,8 +326,9 @@ class StoreManagerControllerAdd extends Controller
             }
         } catch (QueryException $e) {
             if ($e->getCode() == '23000') {
-                return response()->json(['message' => "لا يمكن لكمال العملية السجل الذي تعمل عليه غير موجود", 'code' => 0], 409);
+                return response()->json(['message' => "لا يمكن اكمال العملية السجل الذي تعمل عليه غير موجود", 'code' => 0], 409);
             }
+            return response()->json(['message' => "لا يمكن ", 'code' => 0], 409);
 
 
         }
