@@ -57,6 +57,7 @@ class StoreManagerController2 extends Controller
                 Stores::$tableName . '.' . Stores::$name,
                 Stores::$tableName . '.' . Stores::$typeId,
                 Stores::$tableName . '.' . Stores::$logo,
+                Stores::$tableName . '.' . Stores::$cover,
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$categories,
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$sections,
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$nestedSections,
