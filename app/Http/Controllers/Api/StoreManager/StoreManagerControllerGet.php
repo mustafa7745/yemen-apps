@@ -5,21 +5,269 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use App\Models\NestedSections;
-use App\Models\Products;
-use App\Models\StoreSections;
-use App\Models\StoreNestedSections;
 use App\Models\Sections;
+use App\Models\StoreNestedSections;
+use App\Models\Options;
+use App\Models\Post;
+use App\Models\ProductImages;
+use App\Models\Products;
 use App\Models\SharedStoresConfigs;
-use App\Models\Stores;
 use App\Models\StoreCategories;
+use App\Models\StoreProducts;
+use App\Models\Stores;
+use App\Models\StoreSections;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
-class StoreManagerController2 extends Controller
+class StoreManagerControllerGet extends Controller
 {
     private $appId = 1;
+    public function readMain(Request $request)
+    {
+        // Define validation rules
+        $validator = Validator::make($request->all(), [
+            'accessToken' => 'required|string|max:255',
+            'deviceId' => 'required|string|max:255',
+            'storeId' => 'required|integer|max:2147483647',
+            'storeNestedSectionId' => 'required|integer|max:2147483647',
+
+        ]);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            // Return a JSON response with validation errors
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+                'code' => 0
+            ], 422);  // 422 Unprocessable Entity
+        }
+
+        $loginController = (new LoginController($this->appId));
+        $token = $request->input('accessToken');
+        $deviceId = $request->input('deviceId');
+        $storeId = $request->input('storeId');
+        $storeNestedSectionId = $request->input('storeNestedSectionId');
+
+        // print_r($request->all());
+        $myResult = $loginController->readAccessToken($token, $deviceId);
+        if ($myResult->isSuccess == false) {
+            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
+        }
+        $accessToken = $myResult->message;
+
+        $store = DB::table(Stores::$tableName)
+            ->where(Stores::$tableName . '.' . Stores::$userId, '=', $accessToken->userId)
+            ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)
+            ->first([
+                Stores::$tableName . '.' . Stores::$id,
+                Stores::$tableName . '.' . Stores::$typeId
+
+            ]);
+        if ($store == null) {
+            return response()->json(['message' => "متجر غير مخول", 'code' => 0], 403);
+        }
+        $storeProductsIds = [];
+        if ($store->typeId == 1) {
+            $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
+                ->where(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, '=', $storeId)
+                ->first();
+            $storeProductsIds = json_decode($storeConfig->products);
+
+            $storeId = $storeConfig->storeIdReference;
+        }
+
+
+
+
+        // $categories = DB::table(StoreCategories::$tableName)
+        //     ->join(
+        //         Categories::$tableName,
+        //         Categories::$tableName . '.' . Categories::$id,
+        //         '=',
+        //         StoreCategories::$tableName . '.' . StoreCategories::$categoryId
+        //     )
+        //     ->where(
+        //         StoreCategories::$tableName . '.' . StoreCategories::$storeId,
+        //         '=',
+        //         $storeId
+        //     )
+        //     ->select(
+        //         StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as StoreNestedSectionsId',
+        //         Categories::$tableName . '.' . Categories::$id . ' as categoryId',
+        //         Categories::$tableName . '.' . Categories::$name . ' as categoryName'
+        //     )
+        //     ->get()->toArray();
+        // 
+        $storeProducts = DB::table(StoreProducts::$tableName)
+            // ->where(StoreProducts::$storeId, $storeId)
+            ->join(
+                Products::$tableName,
+                Products::$tableName . '.' . Products::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$productId
+            )
+            ->join(
+                Options::$tableName,
+                Options::$tableName . '.' . Options::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$optionId
+            )
+            ->join(
+                StoreNestedSections::$tableName,
+                StoreNestedSections::$tableName . '.' . StoreNestedSections::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$storeNestedSectionId
+            )
+            // ->join(
+            //     Categories::$tableName,
+            //     Categories::$tableName . '.' . Categories::$id,
+            //     '=',
+            //     StoreCategories::$tableName . '.' . StoreCategories::$categoryId
+            // )
+            ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
+            ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeNestedSectionId, '=', $storeNestedSectionId)
+            ->whereNotIn(StoreProducts::$tableName . '.' . StoreProducts::$id, $storeProductsIds)
+            ->select(
+                StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
+                StoreProducts::$tableName . '.' . StoreProducts::$storeNestedSectionId . ' as storeNestedSectionId',
+                Products::$tableName . '.' . Products::$id . ' as productId',
+                Products::$tableName . '.' . Products::$name . ' as productName',
+                Products::$tableName . '.' . Products::$description . ' as productDescription',
+                StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
+                // 
+                Options::$tableName . '.' . Options::$id . ' as optionId',
+                Options::$tableName . '.' . Options::$name . ' as optionName',
+                // 
+
+                // Categories::$tableName . '.' . Categories::$id . ' as categoryId',
+                // Categories::$tableName . '.' . Categories::$name . ' as categoryName',
+
+            )
+            ->get();
+        $productIds = [];
+        foreach ($storeProducts as $product) {
+            $productIds[] = $product->productId;
+        }
+        $productImages = DB::table(ProductImages::$tableName)
+            ->whereIn(ProductImages::$productId, $productIds)
+            ->select(
+                ProductImages::$tableName . '.' . ProductImages::$id,
+
+                ProductImages::$tableName . '.' . ProductImages::$productId,
+                ProductImages::$tableName . '.' . ProductImages::$image,
+            )
+            ->get();
+        // 
+        // print_r($categories);
+        $final = [];
+        // for ($i = 0; $i < count($categories); $i++) {
+        //     print_r($categories[$i]->id);
+        //     print_r($categories[$i]->name);
+        // }
+
+        // foreach ($categories as $category) {
+
+        $result = [];
+
+        foreach ($storeProducts as $product) {
+
+            if (!isset($result[$product->productId])) {
+                $result[$product->productId] = [
+                    'productId' => $product->productId,
+                    'storeNestedSectionId' => $product->storeNestedSectionId,
+                    'productName' => $product->productName,
+                    'productDescription' => $product->productDescription,
+                    'options' => [],
+                    'images' => []
+                ];
+                $images = [];
+                foreach ($productImages as $index => $image) {
+                    if ($image->productId == $product->productId) {
+                        $images[] = ['image' => $image->image, 'id' => $image->id];
+                        // unset($productImages[$index]);
+                    }
+                }
+                $result[$product->productId]['images'] = $images;
+            }
+
+
+
+            // if ($product->categoryId == $category->categoryId)
+            // Add the option to the options array
+            $result[$product->productId]['options'][] = ['optionId' => $product->optionId, 'storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price];
+
+
+
+        }
+        // $value =  array_values($result);
+        // array_push($final, $value);
+        // }
+
+        // $result = [];
+
+        // foreach ($storeProducts as $product) {
+
+        //     $options = [];
+        //     if (!isset($result[$product->productId])) {
+        //         $result[$product->productId] = [
+        //             'productId' => $product->productId,
+        //             'productName' => $product->productName,
+        //             'options' => []
+        //         ];
+        //     }
+
+        //     // Add the option to the options array
+        //     $result[$product->productId]['options'][] = ['price' => $product->price, 'name' => $product->optionName];
+        // }
+        return response()->json(array_values($result));
+        // return new JsonResponse([
+        //     'data' => 88888
+        // ]);
+
+        // return Post::all();
+    }
+    public function getProducts(Request $request)
+    {
+        $storeId  = $request->input('storeId');
+        $nestedSectionId = $request->input('nestedSectionId');
+        $products = DB::table(Products::$tableName)
+            ->whereIn(Products::$tableName . '.' . Products::$storeId, [$storeId, 1])
+            ->where(Products::$tableName . '.' . Products::$nestedSectionId, $nestedSectionId)
+            ->get(
+                [
+                    Products::$tableName . '.' . Products::$id,
+                    Products::$tableName . '.' . Products::$name,
+                    Products::$tableName . '.' . Products::$acceptedStatus,
+
+                ]
+            )->toArray();
+
+        return response()->json(array_values($products));
+    }
+    public function readOptions()
+    {
+        $options = DB::table(table: Options::$tableName)->get();
+        return response()->json($options);
+    }
+    public function readStoreCategories()
+    {
+        $result = DB::table(table: StoreCategories::$tableName)
+            ->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, '=', 1)
+            ->join(
+                Categories::$tableName,
+                Categories::$tableName . '.' . Categories::$id,
+                '=',
+                StoreCategories::$tableName . '.' . StoreCategories::$categoryId
+            )
+            ->get([
+                StoreCategories::$tableName . '.' . StoreCategories::$id . ' as storeCategoryId',
+                Categories::$tableName . '.' . Categories::$id . ' as categoryId',
+                Categories::$tableName . '.' . Categories::$name . ' as categoryName',
+            ]);
+        return response()->json($result);
+    }
     public function getStores(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -356,230 +604,16 @@ class StoreManagerController2 extends Controller
         return response()->json($storeCategories);
     }
 
-    public function addCategory(Request $request)
+    public function login(Request $request)
     {
-        $storeId = $request->input('storeId');
-        $name = $request->input('name');
-        $insertedId = DB::table(table: Categories::$tableName)
-            ->insertGetId([
-                Categories::$id => null,
-                Categories::$storeId => $storeId,
-                Categories::$name => $name,
-                Categories::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                Categories::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-            ]);
-
-        $category = DB::table(Categories::$tableName)
-            ->where(Categories::$tableName . '.' . Categories::$id, '=', $insertedId)
-            ->sole([
-                Categories::$tableName . '.' . Categories::$id,
-                Categories::$tableName . '.' . Categories::$name,
-                Categories::$tableName . '.' . Categories::$acceptedStatus,
-            ]);
-        return response()->json($category);
+        return (new LoginController($this->appId))->login($request);
     }
-    public function addSection(Request $request)
+    public function refreshToken(Request $request)
     {
-        $storeId = $request->input('storeId');
-        $categoryId = $request->input('categoryId');
-        $name = $request->input('name');
-        $insertedId = DB::table(table: Sections::$tableName)
-            ->insertGetId([
-                Sections::$id => null,
-                Sections::$storeId => $storeId,
-                Sections::$categoryId => $categoryId,
-                Sections::$name => $name,
-                Sections::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                Sections::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-            ]);
+        $token = $request->input('accessToken');
+        $deviceId = $request->input('deviceId');
 
-        $category = DB::table(Sections::$tableName)
-            ->where(Sections::$tableName . '.' . Sections::$id, '=', $insertedId)
-            ->sole([
-                Sections::$tableName . '.' . Sections::$id,
-                Sections::$tableName . '.' . Sections::$name,
-                Sections::$tableName . '.' . Sections::$acceptedStatus,
-            ]);
-        return response()->json($category);
-    }
-    public function addNestedSection(Request $request)
-    {
-        $storeId = $request->input('storeId');
-        $sectionId = $request->input('sectionId');
-        $name = $request->input('name');
-        $insertedId = DB::table(table: NestedSections::$tableName)
-            ->insertGetId([
-                NestedSections::$id => null,
-                NestedSections::$storeId => $storeId,
-                NestedSections::$sectionId => $sectionId,
-                NestedSections::$name => $name,
-                NestedSections::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                NestedSections::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-            ]);
-
-        $category = DB::table(NestedSections::$tableName)
-            ->where(NestedSections::$tableName . '.' . NestedSections::$id, '=', $insertedId)
-            ->sole([
-                NestedSections::$tableName . '.' . NestedSections::$id,
-                NestedSections::$tableName . '.' . NestedSections::$name,
-                NestedSections::$tableName . '.' . NestedSections::$acceptedStatus,
-            ]);
-        return response()->json($category);
-    }
-    public function addStoreCategory(Request $request)
-    {
-        $storeId = $request->input('storeId');
-        $categoryId = $request->input('categoryId');
-        $insertedId = DB::table(table: StoreCategories::$tableName)
-            ->insertGetId([
-                StoreCategories::$id => null,
-                StoreCategories::$categoryId => $categoryId,
-                StoreCategories::$storeId => $storeId,
-                StoreCategories::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                StoreCategories::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-            ]);
-        $storeCategory = DB::table(table: StoreCategories::$tableName)->where(StoreCategories::$tableName . '.' . StoreCategories::$id, '=', $insertedId)
-            ->join(
-                Categories::$tableName,
-                Categories::$tableName . '.' . Categories::$id,
-                '=',
-                StoreCategories::$tableName . '.' . StoreCategories::$categoryId
-            )
-            ->first(
-                [
-                    StoreCategories::$tableName . '.' . StoreCategories::$id . ' as id',
-                    Categories::$tableName . '.' . Categories::$id . ' as categoryId',
-                    Categories::$tableName . '.' . Categories::$name . ' as categoryName'
-                ]
-            );
-
-        return response()->json($storeCategory);
-    }
-    public function addStoreSection(Request $request)
-    {
-        $storeId = $request->input('storeId');
-        $storeCategoryId = $request->input('storeCategoryId');
-        $sectionId = $request->input('sectionId');
-
-        $insertedId = DB::table(table: StoreSections::$tableName)
-            ->insertGetId([
-                StoreSections::$id => null,
-                StoreSections::$sectionId => $sectionId,
-                StoreSections::$storeCategoryId => $storeCategoryId,
-                StoreSections::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                StoreSections::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-            ]);
-        $storeCategory = DB::table(table: StoreSections::$tableName)->where(StoreSections::$tableName . '.' . StoreSections::$id, '=', $insertedId)
-            ->join(
-                Sections::$tableName,
-                Sections::$tableName . '.' . Sections::$id,
-                '=',
-                StoreSections::$tableName . '.' . StoreSections::$sectionId
-
-            )
-            ->first(
-                [
-                    StoreSections::$tableName . '.' . StoreSections::$id . ' as id',
-                    Sections::$tableName . '.' . Sections::$id . ' as sectionId',
-                    Sections::$tableName . '.' . Sections::$name . ' as sectionName',
-                    StoreSections::$tableName . '.' . StoreSections::$storeCategoryId . ' as storeCategoryId'
-
-                ]
-            );
-
-        return response()->json($storeCategory);
-    }
-    public function addProduct(Request $request)
-    {
-        $storeId = $request->input('storeId');
-        $nestedSectionId = $request->input('nestedSectionId');
-        $name = $request->input('name');
-        $description = $request->input('description');
-
-        $insertedId = DB::table(table: Products::$tableName)
-            ->insertGetId([
-                Products::$id => null,
-                Products::$nestedSectionId => $nestedSectionId,
-                Products::$name => $name,
-                Products::$storeId => $storeId,
-                Products::$description => $description,
-                Products::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                Products::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-            ]);
-        $product = DB::table(table: Products::$tableName)->where(Products::$tableName . '.' . Products::$id, '=', $insertedId)
-            ->first(
-                [
-                    Products::$tableName . '.' . Products::$id,
-                    Products::$tableName . '.' . Products::$name,
-                    Products::$tableName . '.' . Products::$description,
-                    Products::$tableName . '.' . Products::$acceptedStatus,
-                ]
-            );
-
-        return response()->json($product);
-    }
-    public function addStoreNestedSection(Request $request)
-    {
-        $storeId = 1;
-        $storeSectionId = $request->input('storeSectionId');
-        $nestedSectionId = $request->input('nestedSectionId');
-
-        $insertedId = DB::table(table: StoreNestedSections::$tableName)
-            ->insertGetId([
-                StoreNestedSections::$id => null,
-                StoreNestedSections::$nestedSectionId => $nestedSectionId,
-                StoreNestedSections::$storeSectionId => $storeSectionId,
-                StoreNestedSections::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                StoreNestedSections::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-            ]);
-        $storeCategory = DB::table(table: StoreNestedSections::$tableName)->where(StoreNestedSections::$tableName . '.' . StoreNestedSections::$id, '=', $insertedId)
-            ->join(
-                NestedSections::$tableName,
-                NestedSections::$tableName . '.' . NestedSections::$id,
-                '=',
-                StoreNestedSections::$tableName . '.' . StoreNestedSections::$nestedSectionId
-            )
-            ->first(
-                [
-                    StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as id',
-                    StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId . ' as storeSectionId',
-                    NestedSections::$tableName . '.' . NestedSections::$id . ' as nestedSectionId',
-                    NestedSections::$tableName . '.' . NestedSections::$name . ' as nestedSectionName',
-                ]
-            );
-
-        return response()->json($storeCategory);
-    }
-    public function updateStoreConfig(Request $request)
-    {
-        $storeId = $request->input('storeId');
-        $products = $request->input('products');
-        $nestedSections = $request->input('nestedSections');
-        $sections = $request->input('sections');
-        $categories = $request->input('categories');
-
-
-
-        DB::table(table: SharedStoresConfigs::$tableName)
-            ->where(SharedStoresConfigs::$storeId, '=', $storeId)
-            ->update(
-                [
-                    SharedStoresConfigs::$categories => $categories,
-                    SharedStoresConfigs::$sections => $sections,
-                    SharedStoresConfigs::$nestedSections => $nestedSections,
-                    SharedStoresConfigs::$products => $products,
-
-                ]
-            );
-        $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
-            ->where(SharedStoresConfigs::$storeId, '=', $storeId)
-            ->first(
-            );
-
-        $categories = json_decode($storeConfig->categories);
-        $sections = json_decode($storeConfig->sections);
-        $nestedSections = json_decode($storeConfig->nestedSections);
-        $products = json_decode($storeConfig->products);
-        return response()->json(['storeIdReference' => $storeConfig->storeIdReference, 'categories' => $categories, 'sections' => $sections, 'nestedSections' => $nestedSections, 'products' => $products]);
+        $loginController = (new LoginController($this->appId));
+        return $loginController->readAndRefreshAccessToken($token, $deviceId);
     }
 }

@@ -238,30 +238,7 @@ class StoreManagerController extends Controller
 
         // return Post::all();
     }
-    // public function getStoreCategories()
-    // {
-    //     $storeId = 1;
-    //     $categories = DB::table(StoreCategories::$tableName)
-    //         ->join(
-    //             Categories::$tableName,
-    //             Categories::$tableName . '.' . Categories::$id,
-    //             '=',
-    //             StoreCategories::$tableName . '.' . StoreCategories::$categoryId
-    //         )
-    //         ->where(
-    //             StoreCategories::$tableName . '.' . StoreCategories::$storeId,
-    //             '=',
-    //             $storeId
-    //         )
-    //         ->select(
-    //             StoreCategories::$tableName . '.' . StoreCategories::$id . ' as storeCategoryId',
-    //             Categories::$tableName . '.' . Categories::$id . ' as categoryId',
-    //             Categories::$tableName . '.' . Categories::$name . ' as categoryName'
-    //         )
-    //         ->get()->toArray();
-    //     return response()->json($categories);
-    // }
-
+   
     public function getMyCategories()
     {
         $storeId = 1;
