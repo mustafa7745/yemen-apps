@@ -15,6 +15,7 @@ use App\Models\Sections;
 use App\Models\Stores;
 use App\Models\StoreCategories;
 use App\Traits\StoreManagerControllerShared;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -230,98 +231,107 @@ class StoreManagerControllerAdd extends Controller
         $getWithProduct = $request->input(key: 'getWithProduct');
         $storeId = $request->input('storeId');
 
-        $insertedId = DB::table(table: StoreProducts::$tableName)
-            ->insertGetId([
-                StoreProducts::$id => null,
-                StoreProducts::$optionId => $optionId,
-                StoreProducts::$productId => $productId,
-                StoreProducts::$price => $price,
-                StoreProducts::$storeNestedSectionId => $storeNestedSectionId,
-                StoreProducts::$storeId => $storeId,
-                StoreProducts::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                StoreProducts::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-            ]);
+        try {
+            $insertedId = DB::table(table: StoreProducts::$tableName)
+                ->insertGetId([
+                    StoreProducts::$id => null,
+                    StoreProducts::$optionId => $optionId,
+                    StoreProducts::$productId => $productId,
+                    StoreProducts::$price => $price,
+                    StoreProducts::$storeNestedSectionId => $storeNestedSectionId,
+                    StoreProducts::$storeId => $storeId,
+                    StoreProducts::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    StoreProducts::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ]);
 
-        $productOption = null;
-        if ($getWithProduct == 1) {
-            $product = DB::table(StoreProducts::$tableName)
-                // ->where(StoreProducts::$storeId, $storeId)
-                ->join(
-                    Products::$tableName,
-                    Products::$tableName . '.' . Products::$id,
-                    '=',
-                    StoreProducts::$tableName . '.' . StoreProducts::$productId
-                )
-                ->join(
-                    Options::$tableName,
-                    Options::$tableName . '.' . Options::$id,
-                    '=',
-                    StoreProducts::$tableName . '.' . StoreProducts::$optionId
-                )
-                ->join(
-                    StoreNestedSections::$tableName,
-                    StoreNestedSections::$tableName . '.' . StoreNestedSections::$id,
-                    '=',
-                    StoreProducts::$tableName . '.' . StoreProducts::$storeNestedSectionId
-                )
-                // ->join(
-                //     Categories::$tableName,
-                //     Categories::$tableName . '.' . Categories::$id,
-                //     '=',
-                //     StoreCategories::$tableName . '.' . StoreCategories::$categoryId
-                // )
-                ->where(StoreProducts::$tableName . '.' . StoreProducts::$id, '=', $insertedId)
-                ->select(
-                    StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
-                    StoreProducts::$tableName . '.' . StoreProducts::$storeNestedSectionId . ' as storeNestedSectionId',
-                    Products::$tableName . '.' . Products::$id . ' as productId',
-                    Products::$tableName . '.' . Products::$name . ' as productName',
-                    Products::$tableName . '.' . Products::$description . ' as productDescription',
-                    StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
-                        // 
-                    Options::$tableName . '.' . Options::$id . ' as optionId',
-                    Options::$tableName . '.' . Options::$name . ' as optionName',
-                    // 
-
-                    // Categories::$tableName . '.' . Categories::$id . ' as categoryId',
-                    // Categories::$tableName . '.' . Categories::$name . ' as categoryName',
-
-                )
-                ->first();
-
-            $result = [
-                'productId' => $product->productId,
-                'storeNestedSectionId' => $product->storeNestedSectionId,
-                'productName' => $product->productName,
-                'productDescription' => $product->productDescription,
-                'options' => [['optionId' => $product->optionId, 'storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price]],
-                'images' => []
-            ];
-            return response()->json($result);
-
-        } else {
-            $productOption = DB::table(table: StoreProducts::$tableName)->where(StoreProducts::$tableName . '.' . StoreProducts::$id, '=', $insertedId)
-                ->join(
-                    Options::$tableName,
-                    Options::$tableName . '.' . Options::$id,
-                    '=',
-                    StoreProducts::$tableName . '.' . StoreProducts::$optionId
-                )
-                ->first(
-                    [
+            $productOption = null;
+            if ($getWithProduct == 1) {
+                $product = DB::table(StoreProducts::$tableName)
+                    // ->where(StoreProducts::$storeId, $storeId)
+                    ->join(
+                        Products::$tableName,
+                        Products::$tableName . '.' . Products::$id,
+                        '=',
+                        StoreProducts::$tableName . '.' . StoreProducts::$productId
+                    )
+                    ->join(
+                        Options::$tableName,
+                        Options::$tableName . '.' . Options::$id,
+                        '=',
+                        StoreProducts::$tableName . '.' . StoreProducts::$optionId
+                    )
+                    ->join(
+                        StoreNestedSections::$tableName,
+                        StoreNestedSections::$tableName . '.' . StoreNestedSections::$id,
+                        '=',
+                        StoreProducts::$tableName . '.' . StoreProducts::$storeNestedSectionId
+                    )
+                    // ->join(
+                    //     Categories::$tableName,
+                    //     Categories::$tableName . '.' . Categories::$id,
+                    //     '=',
+                    //     StoreCategories::$tableName . '.' . StoreCategories::$categoryId
+                    // )
+                    ->where(StoreProducts::$tableName . '.' . StoreProducts::$id, '=', $insertedId)
+                    ->select(
+                        StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
+                        StoreProducts::$tableName . '.' . StoreProducts::$storeNestedSectionId . ' as storeNestedSectionId',
+                        Products::$tableName . '.' . Products::$id . ' as productId',
+                        Products::$tableName . '.' . Products::$name . ' as productName',
+                        Products::$tableName . '.' . Products::$description . ' as productDescription',
+                        StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
+                            // 
                         Options::$tableName . '.' . Options::$id . ' as optionId',
                         Options::$tableName . '.' . Options::$name . ' as optionName',
-                        StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
-                        StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
-                    ]
-                );
-            return response()->json([
-                'optionId' => $productOption->optionId,
-                'storeProductId' => $productOption->storeProductId,
-                'name' => $productOption->optionName,
-                'price' => $productOption->price
-            ]);
+                        // 
+
+                        // Categories::$tableName . '.' . Categories::$id . ' as categoryId',
+                        // Categories::$tableName . '.' . Categories::$name . ' as categoryName',
+
+                    )
+                    ->first();
+
+                $result = [
+                    'productId' => $product->productId,
+                    'storeNestedSectionId' => $product->storeNestedSectionId,
+                    'productName' => $product->productName,
+                    'productDescription' => $product->productDescription,
+                    'options' => [['optionId' => $product->optionId, 'storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price]],
+                    'images' => []
+                ];
+                return response()->json($result);
+
+            } else {
+                $productOption = DB::table(table: StoreProducts::$tableName)->where(StoreProducts::$tableName . '.' . StoreProducts::$id, '=', $insertedId)
+                    ->join(
+                        Options::$tableName,
+                        Options::$tableName . '.' . Options::$id,
+                        '=',
+                        StoreProducts::$tableName . '.' . StoreProducts::$optionId
+                    )
+                    ->first(
+                        [
+                            Options::$tableName . '.' . Options::$id . ' as optionId',
+                            Options::$tableName . '.' . Options::$name . ' as optionName',
+                            StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
+                            StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
+                        ]
+                    );
+                return response()->json([
+                    'optionId' => $productOption->optionId,
+                    'storeProductId' => $productOption->storeProductId,
+                    'name' => $productOption->optionName,
+                    'price' => $productOption->price
+                ]);
+            }
+        } catch (QueryException $e) {
+            if ($e->getCode() == '23000') {
+                return response()->json(['message' => "لا يمكن لكمال العملية السجل الذي تعمل عليه غير موجود", 'code' => 0], 409);
+            }
+
+
         }
+
 
 
 
