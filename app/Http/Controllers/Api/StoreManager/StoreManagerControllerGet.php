@@ -8,7 +8,6 @@ use App\Models\NestedSections;
 use App\Models\Sections;
 use App\Models\StoreNestedSections;
 use App\Models\Options;
-use App\Models\Post;
 use App\Models\ProductImages;
 use App\Models\Products;
 use App\Models\SharedStoresConfigs;
@@ -22,7 +21,7 @@ use Illuminate\Support\Facades\Validator;
 
 class StoreManagerControllerGet extends Controller
 {
-    private $appId = 1;
+    use \StoreManagerControllerShared;
     public function getMain(Request $request)
     {
         // Define validation rules
@@ -136,7 +135,7 @@ class StoreManagerControllerGet extends Controller
                 Products::$tableName . '.' . Products::$name . ' as productName',
                 Products::$tableName . '.' . Products::$description . ' as productDescription',
                 StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
-                // 
+                    // 
                 Options::$tableName . '.' . Options::$id . ' as optionId',
                 Options::$tableName . '.' . Options::$name . ' as optionName',
                 // 
@@ -230,7 +229,7 @@ class StoreManagerControllerGet extends Controller
     }
     public function getProducts(Request $request)
     {
-        $storeId  = $request->input('storeId');
+        $storeId = $request->input('storeId');
         $nestedSectionId = $request->input('nestedSectionId');
         $products = DB::table(Products::$tableName)
             ->whereIn(Products::$tableName . '.' . Products::$storeId, [$storeId, 1])

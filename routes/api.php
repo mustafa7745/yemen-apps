@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\Api\StoreManager\StoreManagerController;
-use App\Http\Controllers\Api\StoreManager\StoreManagerController2;
+use App\Http\Controllers\Api\StoreManager\StoreManagerControllerAdd;
+use App\Http\Controllers\Api\StoreManager\StoreManagerControllerDelete;
 use App\Http\Controllers\Api\StoreManager\StoreManagerControllerGet;
+use App\Http\Controllers\Api\StoreManager\StoreManagerControllerUpdate;
 use App\Http\Controllers\Api\Users\UserController;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -49,56 +49,27 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/getOptions', [StoreManagerControllerGet::class, 'getOptions']);
     Route::post('/getProducts', [StoreManagerControllerGet::class, 'getProducts']);
 
-    Route::post('/addCategory', [StoreManagerController2::class, 'addCategory']);
-    Route::post('/addSection', [StoreManagerController2::class, 'addSection']);
-    Route::post('/addNestedSection', [StoreManagerController2::class, 'addNestedSection']);
-    Route::post('/addStoreSection', [StoreManagerController2::class, 'addStoreSection']);
-    Route::post('/addStoreNestedSection', [StoreManagerController2::class, 'addStoreNestedSection']);
-    Route::post('/addProduct', [StoreManagerController2::class, 'addProduct']);
-    Route::post('/addStoreCategory', [StoreManagerController2::class, 'addStoreCategory']);
-    Route::post('/addProductImage', [StoreManagerController::class, 'addProductImage']);
-    Route::post('/addProductOption', [StoreManagerController::class, 'addProductOption']);
-    Route::post('/addStore', [StoreManagerController::class, 'addStore']);
+    Route::post('/addCategory', [StoreManagerControllerAdd::class, 'addCategory']);
+    Route::post('/addSection', [StoreManagerControllerAdd::class, 'addSection']);
+    Route::post('/addNestedSection', [StoreManagerControllerAdd::class, 'addNestedSection']);
+    Route::post('/addStoreSection', [StoreManagerControllerAdd::class, 'addStoreSection']);
+    Route::post('/addStoreNestedSection', [StoreManagerControllerAdd::class, 'addStoreNestedSection']);
+    Route::post('/addProduct', [StoreManagerControllerAdd::class, 'addProduct']);
+    Route::post('/addStoreCategory', [StoreManagerControllerAdd::class, 'addStoreCategory']);
+    Route::post('/addProductImage', [StoreManagerControllerAdd::class, 'addProductImage']);
+    Route::post('/addProductOption', [StoreManagerControllerAdd::class, 'addProductOption']);
+    Route::post('/addStore', [StoreManagerControllerAdd::class, 'addStore']);
 
-    Route::post('/updateStoreConfig', [StoreManagerController2::class, 'updateStoreConfig']);
-    Route::post('/updateProductName', [StoreManagerController::class, 'updateProductName']);
-    Route::post('/updateProductDescription', [StoreManagerController::class, 'updateProductDescription']);
-    Route::post('/updateProductOptionName', [StoreManagerController::class, 'updateProductOptionName']);
-    Route::post('/updateProductOptionPrice', [StoreManagerController::class, 'updateProductOptionPrice']);
-    Route::post('/updateProductImage', [StoreManagerController::class, 'updateProductImage']);
+    Route::post('/updateStoreConfig', [StoreManagerControllerUpdate::class, 'updateStoreConfig']);
+    Route::post('/updateProductName', [StoreManagerControllerUpdate::class, 'updateProductName']);
+    Route::post('/updateProductDescription', [StoreManagerControllerUpdate::class, 'updateProductDescription']);
+    Route::post('/updateProductOptionName', [StoreManagerControllerUpdate::class, 'updateProductOptionName']);
+    Route::post('/updateProductOptionPrice', [StoreManagerControllerUpdate::class, 'updateProductOptionPrice']);
+    Route::post('/updateProductImage', [StoreManagerControllerUpdate::class, 'updateProductImage']);
 
-    Route::post('/deleteProductImage', [StoreManagerController::class, 'deleteProductImage']);
-    Route::post('/deleteProductOptions', [StoreManagerController::class, 'deleteProductOptions']);
-
-
-    // Route::apiResource('/', StoreManagerController::class);
-
-
-
-
-
-
-
-
-
-
-    // 
-    // 
-
-
-    //
-    // Route::post('/getMyProducts', [StoreManagerController::class, 'getMyProducts']);
-    // Route::post('/getMyCategories', [StoreManagerController::class, 'getMyCategories']);
-
-    // Route::post('/addMyProduct', [StoreManagerController::class, 'addMyProduct']);
-    // Route::post('/addMyCategory', [StoreManagerController::class, 'addMyCategory']);
-    // 
-
-    // Route::post('/getCategories1', [StoreManagerController::class, 'getCategories1']);
-    // 
-
-    // Route::post('/readStoreCategories', [StoreManagerController::class, 'readStoreCategories']);
-
+    Route::post('/deleteProductImage', [StoreManagerControllerDelete::class, 'deleteProductImage']);
+    Route::post('/deleteProductOptions', [StoreManagerControllerDelete::class, 'deleteProductOptions']);
+    Route::post('/deleteProducts', [StoreManagerControllerDelete::class, 'deleteProducts']);
 
     Route::post('/login', [StoreManagerControllerGet::class, 'login']);
     Route::post('/refreshToken', [StoreManagerControllerGet::class, 'refreshToken']);
