@@ -49,6 +49,7 @@ class StoreManagerControllerDelete extends Controller
     {
         return DB::transaction(function () use ($request) {
             $ids = $request->input('ids');
+            $ids = json_decode($ids);
 
             // check if have store products related
             $count = DB::table(StoreProducts::$tableName)
