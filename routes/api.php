@@ -70,6 +70,16 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/deleteProductImage', [StoreManagerControllerDelete::class, 'deleteProductImage']);
     Route::post('/deleteProductOptions', [StoreManagerControllerDelete::class, 'deleteProductOptions']);
     Route::post('/deleteProducts', [StoreManagerControllerDelete::class, 'deleteProducts']);
+    Route::post('/deleteStores', [StoreManagerControllerDelete::class, 'deleteStores']);
+    Route::post('/deleteProducts', [StoreManagerControllerDelete::class, 'deleteProducts']);
+    Route::post('/deleteStoreCategories', [StoreManagerControllerDelete::class, 'deleteStoreCategories']);
+    Route::post('/deleteCategories', [StoreManagerControllerDelete::class, 'deleteCategories']);
+    Route::post('/deleteStoreSections', [StoreManagerControllerDelete::class, 'deleteStoreSections']);
+    Route::post('/deleteSections', [StoreManagerControllerDelete::class, 'deleteSections']);
+    Route::post('/deleteStoreNestedSections', [StoreManagerControllerDelete::class, 'deleteStoreNestedSections']);
+    Route::post('/deleteNestedSections', [StoreManagerControllerDelete::class, 'deleteNestedSections']);
+
+
 
     Route::post('/login', [StoreManagerControllerGet::class, 'login']);
     Route::post('/refreshToken', [StoreManagerControllerGet::class, 'refreshToken']);
