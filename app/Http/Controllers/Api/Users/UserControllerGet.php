@@ -23,7 +23,7 @@ class UserControllerGet extends Controller
 {
     use UserControllerShared;
     public function index()
-    { 
+    {
         $stores = DB::table(Stores::$tableName)->get();
         return response()->json($stores);
     }
@@ -122,13 +122,49 @@ class UserControllerGet extends Controller
             // Add the option to the options array
             $result[$product->productId]['options'][] = ['storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price];
         }
-     
- 
+
+
         return response()->json(array_values($result));
     }
     public function getStores(Request $request)
     {
-        $stores = DB::table(Stores::$tableName)->get();
+
+        $stores = DB::table(Stores::$tableName)
+            // ->where(Stores::$tableName . '.' . Stores::$userId, '=', $accessToken->userId)
+            ->get()->toArray();
+
+        $storeIds = [];
+        foreach ($stores as $store) {
+            if ($store->typeId == 1) {
+                $storeIds[] = $store->id;
+            }
+        }
+
+        $storeConfigs = DB::table(table: SharedStoresConfigs::$tableName)
+            ->whereIn(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, $storeIds)
+            ->get();
+
+        // print_r($storeConfigs);
+
+
+
+
+
+        foreach ($storeConfigs as $storeConfig) {
+            foreach ($stores as $index => $store) {
+                // print_r($storeConfig);
+                if ($storeConfig->storeId == $store->id && $store->typeId == 1) {
+                    $categories = json_decode($storeConfig->categories);
+                    $sections = json_decode($storeConfig->sections);
+                    $nestedSections = json_decode($storeConfig->nestedSections);
+                    $products = json_decode($storeConfig->products);
+                    // $stores[$index] = (array)$stores[$index];
+                    $stores[$index]->storeConfig = ['storeIdReference' => $storeConfig->storeIdReference, 'categories' => $categories, 'sections' => $sections, 'nestedSections' => $nestedSections, 'products' => $products];
+                } else
+                    $stores[$index]->storeConfig = null;
+            }
+        }
+
         return response()->json($stores);
     }
     public function getHome(Request $request)
