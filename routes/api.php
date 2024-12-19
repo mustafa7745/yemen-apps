@@ -28,12 +28,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('v1')->group(function () {
     Route::apiResource('/', UserControllerGet::class);
-    Route::post('/upload-image', [UserControllerGet::class, 'uploadImage']);    
+    Route::post('/getHome', [UserControllerGet::class, 'getHome']);
+    // 
     Route::post('/login', [UserControllerGet::class, 'login']);
     Route::post('/refreshToken', [UserControllerGet::class, 'refreshToken']);
     Route::post('/getProducts', [UserControllerGet::class, 'getProducts']);
-    // Route::post('/readMain', [UserController::class, 'readMain']);
-
 });
 
 
