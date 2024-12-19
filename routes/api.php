@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\StoreManager\StoreManagerControllerDelete;
 use App\Http\Controllers\Api\StoreManager\StoreManagerControllerGet;
 use App\Http\Controllers\Api\StoreManager\StoreManagerControllerUpdate;
 use App\Http\Controllers\Api\Users\UserController;
+use App\Http\Controllers\Api\Users\UserControllerGet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,10 +27,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::prefix('v1')->group(function () {
-    Route::apiResource('/', UserController::class);
-    Route::post('/upload-image', [UserController::class, 'uploadImage']);
-    Route::post('/login', [UserController::class, 'login']);
-    Route::post('/getProducts', [UserController::class, 'getProducts']);
+    Route::apiResource('/', UserControllerGet::class);
+    Route::post('/upload-image', [UserControllerGet::class, 'uploadImage']);    
+    Route::post('/login', [UserControllerGet::class, 'login']);
+    Route::post('/refreshToken', [UserControllerGet::class, 'refreshToken']);
+    Route::post('/getProducts', [UserControllerGet::class, 'getProducts']);
     // Route::post('/readMain', [UserController::class, 'readMain']);
 
 });

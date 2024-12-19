@@ -3,31 +3,23 @@ namespace App\Http\Controllers\Api\Users;
 
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
-use App\Models\Categories;
-use App\Models\Categories1;
-use App\Models\Categories3;
 use App\Models\StoreNestedSections;
 use App\Models\Options;
-use App\Models\Post;
+use App\Models\Stores;
 use App\Models\ProductImages;
 use App\Models\Products;
 use App\Models\Sections;
 use App\Models\SectionsStoreCategory;
-use App\Models\StoreCategories;
 use App\Models\StoreProducts;
+use App\Traits\UserControllerShared;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use Aws\S3\S3Client;
-use Illuminate\Support\Facades\Log;
 
-class UserController extends Controller
+class UserControllerGet extends Controller
 {
-    private $appId = 2;
+    use UserControllerShared;
     public function index()
-    {
+    { 
         $storeId = 1;
         $storeCategories = DB::table(Categories1::$tableName)
 
@@ -96,7 +88,6 @@ class UserController extends Controller
 
         // return Post::all();
     }
-
     public function getProducts(Request $request)
     {
         $StoreNestedSectionsId = $request->input('StoreNestedSectionsId');
@@ -195,6 +186,11 @@ class UserController extends Controller
      
  
         return response()->json(array_values($result));
+    }
+    public function getStores(Request $request)
+    {
+        $stores = DB::table(Stores::$tableName)->get();
+        return response()->json($stores);
     }
     public function login(Request $request)
     {
