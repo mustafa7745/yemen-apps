@@ -26,18 +26,8 @@ class UserControllerGet extends Controller
     {
      
         $stores = DB::table(Stores::$tableName)
-        
-            ->get([
-                Stores::$tableName . '.' . Stores::$id,
-                Stores::$tableName . '.' . Stores::$name,
-                Stores::$tableName . '.' . Stores::$typeId,
-                Stores::$tableName . '.' . Stores::$logo,
-                Stores::$tableName . '.' . Stores::$cover,
-                // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$categories,
-                // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$sections,
-                // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$nestedSections,
-                // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$products,
-            ])->toArray();
+
+            ->get()->toArray();
 
         $storeIds = [];
         foreach ($stores as $store) {
