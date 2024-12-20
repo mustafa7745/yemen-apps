@@ -24,7 +24,7 @@ class UserControllerGet extends Controller
     use UserControllerShared;
     public function index()
     {
-     
+
         $stores = DB::table(Stores::$tableName)
 
             ->get()->toArray();
@@ -65,7 +65,7 @@ class UserControllerGet extends Controller
     }
     public function getProducts(Request $request)
     {
-        $StoreNestedSectionsId = $request->input('StoreNestedSectionsId');
+        $storeNestedSectionId = $request->input('storeNestedSectionId');
         $storeId = 1;
 
         // 
@@ -93,7 +93,7 @@ class UserControllerGet extends Controller
                 StoreNestedSections::$tableName,
                 StoreNestedSections::$tableName . '.' . StoreNestedSections::$id,
                 '=',
-                StoreProducts::$tableName . '.' . StoreProducts::$StoreNestedSectionsId
+                StoreProducts::$tableName . '.' . StoreProducts::$storeNestedSectionId
             )
             // ->join(
             //     Categories::$tableName,
@@ -102,7 +102,7 @@ class UserControllerGet extends Controller
             //     StoreCategories::$tableName . '.' . StoreCategories::$categoryId
             // )
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
-            ->where(StoreProducts::$tableName . '.' . StoreProducts::$StoreNestedSectionsId, '=', $StoreNestedSectionsId)
+            ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeNestedSectionId, '=', $storeNestedSectionId)
             ->select(
                 StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
                 Products::$tableName . '.' . Products::$id . ' as productId',
@@ -113,7 +113,7 @@ class UserControllerGet extends Controller
                 Options::$tableName . '.' . Options::$id . ' as optionId',
                 Options::$tableName . '.' . Options::$name . ' as optionName',
                     //
-                StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as StoreNestedSectionsId',
+                StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as storeNestedSectionId',
 
 
 
@@ -138,7 +138,7 @@ class UserControllerGet extends Controller
             if (!isset($result[$product->productId])) {
                 $result[$product->productId] = [
                     'productId' => $product->productId,
-                    'StoreNestedSectionsId' => $product->StoreNestedSectionsId,
+                    'storeNestedSectionId' => $product->storeNestedSectionId,
                     'productName' => $product->productName,
                     'productDescription' => $product->productDescription,
                     'options' => [],

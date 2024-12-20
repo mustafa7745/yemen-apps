@@ -310,7 +310,6 @@ class StoreManagerControllerUpdate extends Controller
                 ->where(Stores::$id, '=', $storeId)
                 ->update([
                     Stores::$name => $name,
-                    Stores::$typeId => $typeId,
                     Stores::$logo => $logoName,
                     Stores::$cover => $coverName,
                     Stores::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
