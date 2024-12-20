@@ -1,12 +1,15 @@
 <?php
 namespace App\Http\Controllers\Api\StoreManager;
 
+use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Options;
 use App\Models\ProductImages;
 use App\Models\Products;
+use App\Models\Stores;
 use App\Models\SharedStoresConfigs;
 use App\Models\StoreProducts;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -238,5 +241,114 @@ class StoreManagerControllerUpdate extends Controller
         $nestedSections = json_decode($storeConfig->nestedSections);
         $products = json_decode($storeConfig->products);
         return response()->json(['storeIdReference' => $storeConfig->storeIdReference, 'categories' => $categories, 'sections' => $sections, 'nestedSections' => $nestedSections, 'products' => $products]);
+    }
+
+    public function updateStore(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'storeId' => 'required|string|max:2',
+            'accessToken' => 'required|string|max:255',
+            'deviceId' => 'required|string|max:255',
+            'logo' => 'required|image|mimes:jpg|max:80',
+            'name' => 'required|string|max:100',
+            'typeId' => 'required|string|max:1',
+            'cover' => 'required|image|mimes:jpg|max:100',
+        ]);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            // Return a JSON response with validation errors
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+                'code' => 0
+            ], 422);  // 422 Unprocessable Entity
+        }
+
+
+        $loginController = (new LoginController($this->appId));
+        $token = $request->input('accessToken');
+        $deviceId = $request->input('deviceId');
+
+        // print_r($request->all());
+        $myResult = $loginController->readAccessToken($token, $deviceId);
+        if ($myResult->isSuccess == false) {
+            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
+        }
+        $accessToken = $myResult->message;
+
+
+
+
+
+
+
+        return DB::transaction(function () use ($request, $accessToken) {
+
+            $storeId = $request->input('storeId');
+            $name = $request->input('name');
+            $typeId = $request->input('typeId');
+            $logo = $request->file('logo');
+            $cover = $request->file('cover');
+
+            // if ($logo->isValid() == false) {
+            //     return response()->json(['error' => 'Invalid Logo file.'], 400);
+            // }
+
+            // if ($cover->isValid() == false) {
+            //     return response()->json(['error' => 'Invalid Cover file.'], 400);
+            // }
+
+            $logoName = Str::random(10) . '_' . time() . '.jpg';
+            $coverName = Str::random(10) . '_' . time() . '.jpg';
+
+            $previousRecord = DB::table(Stores::$tableName)
+                ->where(Stores::$id, '=', $storeId)
+                ->sole();
+
+            DB::table(table: Stores::$tableName)
+                ->where(Stores::$id, '=', $storeId)
+                ->update([
+                    Stores::$name => $name,
+                    Stores::$typeId => $typeId,
+                    Stores::$logo => $logoName,
+                    Stores::$cover => $coverName,
+                    Stores::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    Stores::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ]);
+
+            try {
+                Storage::disk('s3')->delete('stores/logos/' . $previousRecord->logo);
+                Storage::disk('s3')->delete('stores/covers/' . $previousRecord->cover);
+
+
+                $pathLogo = Storage::disk('s3')->put('stores/logos/' . $logoName, fopen($logo, 'r+'));
+                $pathCover = Storage::disk('s3')->put('stores/covers/' . $coverName, fopen($cover, 'r+'));
+
+                // Check if the file was uploaded successfully
+                if ($pathLogo && $pathCover) {
+                    $updatedRecord = DB::table(Stores::$tableName)
+                        ->where(Stores::$id, '=', $storeId)
+                        ->first();
+
+                    $updatedRecord->storeConfig = null;
+                    return response()->json($updatedRecord);
+
+                } else {
+                    DB::rollBack();
+                    // If the image is not valid, return a validation error response
+                    return response()->json([
+                        'error' => 'No valid image file uploaded.',
+                    ], 400);
+
+                }
+            } catch (\Exception $e) {
+                DB::rollBack();  // Manually trigger a rollback
+                return response()->json([
+                    'error' => 'An error occurred while uploading the image.',
+                    'message' => $e->getMessage(),
+                ], 500);
+            }
+        });
     }
 }
