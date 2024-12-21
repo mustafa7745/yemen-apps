@@ -137,10 +137,8 @@ class UserControllerGet extends Controller
         foreach ($storeProducts as $product) {
             if (!isset($result[$product->productId])) {
                 $result[$product->productId] = [
-                    'productId' => $product->productId,
+                    'product' => ['productId' => $product->productId, 'productName' => $product->productName, 'productDescription' => $product->productDescription,],
                     'storeNestedSectionId' => $product->storeNestedSectionId,
-                    'productName' => $product->productName,
-                    'productDescription' => $product->productDescription,
                     'options' => [],
                     'images' => []
                 ];
