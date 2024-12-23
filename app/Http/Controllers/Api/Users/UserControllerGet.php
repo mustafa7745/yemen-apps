@@ -145,7 +145,7 @@ class UserControllerGet extends Controller
                     }
                 }
                 $result[$product->productId] = [
-                    'product' => ['productId' => $product->productId, 'productName' => $product->productName, 'productDescription' => $product->productDescription, 'images' => []],
+                    'product' => ['productId' => $product->productId, 'productName' => $product->productName, 'productDescription' => $product->productDescription, 'images' => $images],
                     'storeNestedSectionId' => $product->storeNestedSectionId,
                     'options' => []
                 ];
