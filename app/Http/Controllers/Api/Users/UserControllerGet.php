@@ -136,12 +136,7 @@ class UserControllerGet extends Controller
         $result = [];
         foreach ($storeProducts as $product) {
             if (!isset($result[$product->productId])) {
-                $result[$product->productId] = [
-                    'product' => ['productId' => $product->productId, 'productName' => $product->productName, 'productDescription' => $product->productDescription,],
-                    'storeNestedSectionId' => $product->storeNestedSectionId,
-                    'options' => [],
-                    'images' => []
-                ];
+
                 $images = [];
                 foreach ($productImages as $index => $image) {
                     if ($image->productId == $product->productId) {
@@ -149,7 +144,13 @@ class UserControllerGet extends Controller
                         unset($productImages[$index]);
                     }
                 }
-                $result[$product->productId]['images'] = $images;
+                $result[$product->productId] = [
+                    'product' => ['productId' => $product->productId, 'productName' => $product->productName, 'productDescription' => $product->productDescription, 'images' => []],
+                    'storeNestedSectionId' => $product->storeNestedSectionId,
+                    'options' => []
+                ];
+
+                // $result[$product->productId]['images'] = $images;
             }
 
 
