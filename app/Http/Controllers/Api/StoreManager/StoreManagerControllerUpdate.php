@@ -256,6 +256,7 @@ class StoreManagerControllerUpdate extends Controller
         $store = DB::table(table: Stores::$tableName)
             ->where(Stores::$id, '=', $storeId)
             ->first(
+                [Stores::$id]
             );
         return response()->json($store);
     }
