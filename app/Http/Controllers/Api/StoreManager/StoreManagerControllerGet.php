@@ -289,6 +289,7 @@ class StoreManagerControllerGet extends Controller
                 Stores::$tableName . '.' . Stores::$typeId,
                 Stores::$tableName . '.' . Stores::$logo,
                 Stores::$tableName . '.' . Stores::$cover,
+                Stores::$tableName . '.' . Stores::$latLng,
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$categories,
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$sections,
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$nestedSections,
