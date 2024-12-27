@@ -242,7 +242,23 @@ class StoreManagerControllerUpdate extends Controller
         $products = json_decode($storeConfig->products);
         return response()->json(['storeIdReference' => $storeConfig->storeIdReference, 'categories' => $categories, 'sections' => $sections, 'nestedSections' => $nestedSections, 'products' => $products]);
     }
-
+    public function updateStoreLocation(Request $request)
+    {
+        $storeId = $request->input('storeId');
+        $latLng = $request->input('latLng');
+        DB::table(table: Stores::$tableName)
+            ->where(Stores::$id, '=', $storeId)
+            ->update(
+                [
+                    Stores::$latLng => $latLng,
+                ]
+            );
+        $store = DB::table(table: Stores::$tableName)
+            ->where(Stores::$id, '=', $storeId)
+            ->first(
+            );
+        return response()->json($store);
+    }
     public function updateStore(Request $request)
     {
         $validator = Validator::make($request->all(), [
