@@ -7,6 +7,7 @@ use App\Models\Categories;
 use App\Models\NestedSections;
 use App\Models\SharedStoresConfigs;
 use App\Models\StoreCategories;
+use App\Models\StoreInfo;
 use App\Models\StoreNestedSections;
 use App\Models\Options;
 use App\Models\Stores;
@@ -365,6 +366,18 @@ class UserControllerGet extends Controller
         }
 
     }
+    public function getStoreInfo(Request $request)
+    {
+        // $storeId = 1;
+        $storeId = $request->input('storeId');
+        $data = DB::table(table: StoreInfo::$tableName)
+            ->where(StoreInfo::$tableName . '.' . StoreInfo::$storeId, '=', $storeId)
+            ->get(
+            );
+
+        return response()->json($data);
+    }
+
     public function login(Request $request)
     {
         return (new LoginController($this->appId))->login($request);

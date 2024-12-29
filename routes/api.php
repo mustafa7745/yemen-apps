@@ -33,6 +33,8 @@ Route::prefix('v1')->group(function () {
     Route::post('/login', [UserControllerGet::class, 'login']);
     Route::post('/refreshToken', [UserControllerGet::class, 'refreshToken']);
     Route::post('/getProducts', [UserControllerGet::class, 'getProducts']);
+    Route::post('/getStoreInfo', [UserControllerGet::class, 'getStoreInfo']);
+
 });
 
 
@@ -49,6 +51,8 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/getNestedSections', [StoreManagerControllerGet::class, 'getNestedSections']);
     Route::post('/getOptions', [StoreManagerControllerGet::class, 'getOptions']);
     Route::post('/getProducts', [StoreManagerControllerGet::class, 'getProducts']);
+    Route::post('/getStoreInfo', [StoreManagerControllerGet::class, 'getStoreInfo']);
+
 
     Route::post('/addCategory', [StoreManagerControllerAdd::class, 'addCategory']);
     Route::post('/addSection', [StoreManagerControllerAdd::class, 'addSection']);
