@@ -37,7 +37,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/getStoreInfo', [UserControllerGet::class, 'getStoreInfo']);
     Route::post('/getLocations', [UserControllerGet::class, 'getLocations']);
 
-    Route::post('/addLocations', [UserControllerAdd::class, 'addLocation']);
+    Route::post('/addLocation', [UserControllerAdd::class, 'addLocation']);
 
 
 
