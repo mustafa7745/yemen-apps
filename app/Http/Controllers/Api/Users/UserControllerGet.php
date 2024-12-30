@@ -211,11 +211,7 @@ class UserControllerGet extends Controller
 
         $validator = Validator::make($request->all(), [
             'accessToken' => 'required|string|max:255',
-            'deviceId' => 'required|string|max:255',
-            'logo' => 'required|image|mimes:jpg|max:80',
-            'name' => 'required|string|max:100',
-            'typeId' => 'required|string|max:1',
-            'cover' => 'required|image|mimes:jpg|max:100',
+            'deviceId' => 'required|string|max:255'
         ]);
 
         // Check if validation fails
