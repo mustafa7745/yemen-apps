@@ -15,7 +15,7 @@ class UserControllerAdd extends Controller
 {
     use UserControllerShared;
 
-    public function addSection(Request $request)
+    public function addLocation(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'accessToken' => 'required|string|max:255',

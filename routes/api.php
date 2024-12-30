@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\StoreManager\StoreManagerControllerDelete;
 use App\Http\Controllers\Api\StoreManager\StoreManagerControllerGet;
 use App\Http\Controllers\Api\StoreManager\StoreManagerControllerUpdate;
 use App\Http\Controllers\Api\Users\UserController;
+use App\Http\Controllers\Api\Users\UserControllerAdd;
 use App\Http\Controllers\Api\Users\UserControllerGet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +35,11 @@ Route::prefix('v1')->group(function () {
     Route::post('/refreshToken', [UserControllerGet::class, 'refreshToken']);
     Route::post('/getProducts', [UserControllerGet::class, 'getProducts']);
     Route::post('/getStoreInfo', [UserControllerGet::class, 'getStoreInfo']);
+    Route::post('/getLocations', [UserControllerGet::class, 'getLocations']);
+
+    Route::post('/addLocations', [UserControllerAdd::class, 'addLocation']);
+
+
 
 });
 
