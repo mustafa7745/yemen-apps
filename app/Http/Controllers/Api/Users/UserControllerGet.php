@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Users;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
+use App\Models\Locations;
 use App\Models\NestedSections;
 use App\Models\SharedStoresConfigs;
 use App\Models\StoreCategories;
@@ -19,6 +20,7 @@ use App\Models\StoreSections;
 use App\Traits\UserControllerShared;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Validator;
 
 class UserControllerGet extends Controller
 {
@@ -202,6 +204,52 @@ class UserControllerGet extends Controller
         }
 
         return response()->json($stores);
+    }
+
+    public function getLocations(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'accessToken' => 'required|string|max:255',
+            'deviceId' => 'required|string|max:255',
+            'logo' => 'required|image|mimes:jpg|max:80',
+            'name' => 'required|string|max:100',
+            'typeId' => 'required|string|max:1',
+            'cover' => 'required|image|mimes:jpg|max:100',
+        ]);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            // Return a JSON response with validation errors
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+                'code' => 0
+            ], 422);  // 422 Unprocessable Entity
+        }
+
+
+        $loginController = (new LoginController($this->appId));
+        $token = $request->input('accessToken');
+        $deviceId = $request->input('deviceId');
+
+        // print_r($request->all());
+        $myResult = $loginController->readAccessToken($token, $deviceId);
+        if ($myResult->isSuccess == false) {
+            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
+        }
+
+        $accessToken = $myResult->message;
+
+        $data = DB::table(table: Locations::$tableName)
+            ->where(Locations::$tableName . '.' . Locations::$userId, '=', $accessToken->userId)
+            ->get(
+                [
+                    Locations::$tableName . '.' . Locations::$id,
+                    Locations::$tableName . '.' . Locations::$street,
+                ]
+            );
+        return response()->json($data);
     }
     public function getHome(Request $request)
     {
