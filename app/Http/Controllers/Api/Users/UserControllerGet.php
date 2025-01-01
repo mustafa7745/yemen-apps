@@ -37,4 +37,8 @@ class UserControllerGet extends Controller
     {
         return $this->getOurHome($request);
     }
+    public function getProducts(Request $request)
+    {
+        return $this->getOurProducts($request);
+    }
 }

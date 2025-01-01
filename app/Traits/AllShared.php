@@ -3,10 +3,14 @@ namespace App\Traits;
 use App\Models\AppStores;
 use App\Models\Categories;
 use App\Models\NestedSections;
+use App\Models\Options;
+use App\Models\ProductImages;
+use App\Models\Products;
 use App\Models\Sections;
 use App\Models\SharedStoresConfigs;
 use App\Models\StoreCategories;
 use App\Models\StoreNestedSections;
+use App\Models\StoreProducts;
 use App\Models\Stores;
 use App\Models\StoreSections;
 use DB;
@@ -233,5 +237,104 @@ trait AllShared
         // }
 
         return $data;
+    }
+
+    public function getOurProducts(Request $request)
+    {
+        $storeNestedSectionId = $request->input('storeNestedSectionId');
+        $storeId = 1;
+
+        // 
+        $storeProducts = DB::table(StoreProducts::$tableName)
+            // ->where(StoreProducts::$storeId, $storeId)
+            ->join(
+                Products::$tableName,
+                Products::$tableName . '.' . Products::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$productId
+            )
+            ->join(
+                Options::$tableName,
+                Options::$tableName . '.' . Options::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$optionId
+            )
+            // ->join(
+            //     StoreCategories::$tableName,
+            //     StoreCategories::$tableName . '.' . StoreCategories::$id,
+            //     '=',
+            //     StoreProducts::$tableName . '.' . StoreProducts::$StoreNestedSectionsId
+            // )
+            ->join(
+                StoreNestedSections::$tableName,
+                StoreNestedSections::$tableName . '.' . StoreNestedSections::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$storeNestedSectionId
+            )
+            // ->join(
+            //     Categories::$tableName,
+            //     Categories::$tableName . '.' . Categories::$id,
+            //     '=',
+            //     StoreCategories::$tableName . '.' . StoreCategories::$categoryId
+            // )
+            ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
+            ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeNestedSectionId, '=', $storeNestedSectionId)
+            ->select(
+                StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
+                Products::$tableName . '.' . Products::$id . ' as productId',
+                Products::$tableName . '.' . Products::$name . ' as productName',
+                Products::$tableName . '.' . Products::$description . ' as productDescription',
+                StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
+                    // 
+                Options::$tableName . '.' . Options::$id . ' as optionId',
+                Options::$tableName . '.' . Options::$name . ' as optionName',
+                    //
+                StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as storeNestedSectionId',
+
+
+
+            )
+            ->get();
+        $productIds = [];
+        foreach ($storeProducts as $product) {
+            $productIds[] = $product->productId;
+        }
+        $productImages = DB::table(ProductImages::$tableName)
+            ->whereIn(ProductImages::$productId, $productIds)
+            ->select(
+                ProductImages::$tableName . '.' . ProductImages::$productId,
+                ProductImages::$tableName . '.' . ProductImages::$image,
+            )
+            ->get();
+
+
+
+        $result = [];
+        foreach ($storeProducts as $product) {
+            if (!isset($result[$product->productId])) {
+
+                $images = [];
+                foreach ($productImages as $index => $image) {
+                    if ($image->productId == $product->productId) {
+                        $images[] = ['image' => $image->image];
+                        unset($productImages[$index]);
+                    }
+                }
+                $result[$product->productId] = [
+                    'product' => ['productId' => $product->productId, 'productName' => $product->productName, 'productDescription' => $product->productDescription, 'images' => $images],
+                    'storeNestedSectionId' => $product->storeNestedSectionId,
+                    'options' => []
+                ];
+
+                // $result[$product->productId]['images'] = $images;
+            }
+
+
+            // Add the option to the options array
+            $result[$product->productId]['options'][] = ['storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price];
+        }
+
+
+        return response()->json(array_values($result));
     }
 }
