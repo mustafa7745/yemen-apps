@@ -4,8 +4,9 @@ use App\Http\Controllers\Api\StoreManager\StoreManagerControllerAdd;
 use App\Http\Controllers\Api\StoreManager\StoreManagerControllerDelete;
 use App\Http\Controllers\Api\StoreManager\StoreManagerControllerGet;
 use App\Http\Controllers\Api\StoreManager\StoreManagerControllerUpdate;
-use App\Http\Controllers\Api\Users\UserController;
-use App\Http\Controllers\Api\Users\UserControllerAdd;
+use App\Http\Controllers\Api\Users\StoresControllerGet;
+use App\Http\Controllers\Api\Users\StoresControllerAdd;
+
 use App\Http\Controllers\Api\Users\UserControllerGet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -28,21 +29,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::prefix('v1')->group(function () {
-    Route::apiResource('/', UserControllerGet::class);
-    Route::post('/getHome', [UserControllerGet::class, 'getHome']);
+    Route::apiResource('/', StoresControllerGet::class);
+    Route::post('/getHome', [StoresControllerGet::class, 'getHome']);
     // 
-    Route::post('/login', [UserControllerGet::class, 'login']);
-    Route::post('/refreshToken', [UserControllerGet::class, 'refreshToken']);
-    Route::post('/getProducts', [UserControllerGet::class, 'getProducts']);
-    Route::post('/getStoreInfo', [UserControllerGet::class, 'getStoreInfo']);
-    Route::post('/getLocations', [UserControllerGet::class, 'getLocations']);
-
-    Route::post('/addLocation', [UserControllerAdd::class, 'addLocation']);
-
-
-
+    Route::post('/login', [StoresControllerGet::class, 'login']);
+    Route::post('/refreshToken', [StoresControllerGet::class, 'refreshToken']);
+    Route::post('/getProducts', [StoresControllerGet::class, 'getProducts']);
+    Route::post('/getStoreInfo', [StoresControllerGet::class, 'getStoreInfo']);
+    Route::post('/getLocations', [StoresControllerGet::class, 'getLocations']);
+    Route::post('/addLocation', [StoresControllerAdd::class, 'addLocation']);
 });
-
 
 
 Route::prefix('v1/storeManager')->group(function () {
@@ -98,4 +94,17 @@ Route::prefix('v1/storeManager')->group(function () {
 
     Route::post('/login', [StoreManagerControllerGet::class, 'login']);
     Route::post('/refreshToken', [StoreManagerControllerGet::class, 'refreshToken']);
+});
+
+Route::prefix('v1/u')->group(function () {
+    Route::post('/getApp', [UserControllerGet::class, 'getApp']);
+    Route::post('/getStores', [UserControllerGet::class, 'getStores']);
+
+    // 
+    // Route::post('/login', [StoresControllerGet::class, 'login']);
+    // Route::post('/refreshToken', [StoresControllerGet::class, 'refreshToken']);
+    // Route::post('/getProducts', [StoresControllerGet::class, 'getProducts']);
+    // Route::post('/getStoreInfo', [StoresControllerGet::class, 'getStoreInfo']);
+    // Route::post('/getLocations', [StoresControllerGet::class, 'getLocations']);
+    // Route::post('/addLocation', [StoresControllerAdd::class, 'addLocation']);
 });

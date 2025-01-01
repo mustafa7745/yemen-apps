@@ -1,7 +1,7 @@
 <?php
 namespace App\Traits;
 
-trait UserControllerShared
+trait StoresControllerShared
 {
     public $appId = 2;
 }
