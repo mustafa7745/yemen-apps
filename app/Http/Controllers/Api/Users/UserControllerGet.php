@@ -33,7 +33,7 @@ class UserControllerGet extends Controller
                 Stores::$tableName,
                 Stores::$tableName . '.' . Stores::$id,
                 '=',
-                AppStores::$tableName . '.' . AppStores::$appId
+                AppStores::$tableName . '.' . AppStores::$storeId
             )
 
             ->where(AppStores::$appId, $app->id)
