@@ -11,6 +11,10 @@ class Stores
    public static $latLng = "latLng";
    public static $logo = "logo";
    public static $userId = "userId";
+   public static $likes = "likes";
+   public static $stars = "stars";
+   public static $subscriptions = "subscriptions";
+   public static $reviews = "reviews";
    public static $typeId = "typeId";
    public static $createdAt = "createdAt";
    public static $updatedAt = "updatedAt";

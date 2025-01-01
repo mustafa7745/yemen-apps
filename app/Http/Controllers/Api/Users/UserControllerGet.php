@@ -40,6 +40,15 @@ class UserControllerGet extends Controller
             ->get([
                 Stores::$tableName . '.' . Stores::$id,
                 Stores::$tableName . '.' . Stores::$name,
+                Stores::$tableName . '.' . Stores::$logo,
+                Stores::$tableName . '.' . Stores::$cover,
+                Stores::$tableName . '.' . Stores::$typeId,
+                Stores::$tableName . '.' . Stores::$likes,
+                Stores::$tableName . '.' . Stores::$subscriptions,
+                Stores::$tableName . '.' . Stores::$stars,
+                Stores::$tableName . '.' . Stores::$reviews,
+
+
                 // Stores::$tableName . '.' . Stores::$,
                 // Stores::$tableName . '.' . Stores::$id,
                 // Stores::$tableName . '.' . Stores::$id,
