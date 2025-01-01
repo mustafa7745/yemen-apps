@@ -62,7 +62,7 @@ class UserControllerGet extends Controller
 
         foreach ($storeConfigs as $storeConfig) {
             foreach ($data as $index => $store) {
-                // print_r($storeConfig);
+                print_r($storeConfig);
                 if ($storeConfig->storeId == $store->id && $store->typeId == 1) {
                     $categories = json_decode($storeConfig->categories);
                     $sections = json_decode($storeConfig->sections);
