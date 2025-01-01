@@ -16,7 +16,6 @@ use App\Models\StoreCategories;
 use App\Models\StoreProducts;
 use App\Models\Stores;
 use App\Models\StoreSections;
-use App\Traits\AllShared;
 use App\Traits\StoreManagerControllerShared;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -25,7 +24,6 @@ use Illuminate\Support\Facades\Validator;
 class StoreManagerControllerGet extends Controller
 {
     use StoreManagerControllerShared;
-    use AllShared;
     public function getMain(Request $request)
     {
         // Define validation rules
@@ -256,7 +254,84 @@ class StoreManagerControllerGet extends Controller
     }
     public function getStores(Request $request)
     {
-        return $this->getOurStores($this->appId);
+        $validator = Validator::make($request->all(), [
+            'accessToken' => 'required|string|max:255',
+            'deviceId' => 'required|string|max:255',
+        ]);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            // Return a JSON response with validation errors
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+                'code' => 0
+            ], 422);  // 422 Unprocessable Entity
+        }
+
+        $loginController = (new LoginController($this->appId));
+        $token = $request->input('accessToken');
+        $deviceId = $request->input('deviceId');
+
+        // print_r($request->all());
+        $myResult = $loginController->readAccessToken($token, $deviceId);
+        if ($myResult->isSuccess == false) {
+            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
+        }
+        $accessToken = $myResult->message;
+
+
+        $data = DB::table(Stores::$tableName)
+            ->where(Stores::$tableName . '.' . Stores::$userId, '=', $accessToken->userId)
+
+            ->get([
+                Stores::$tableName . '.' . Stores::$id,
+                Stores::$tableName . '.' . Stores::$name,
+                Stores::$tableName . '.' . Stores::$typeId,
+                Stores::$tableName . '.' . Stores::$logo,
+                Stores::$tableName . '.' . Stores::$cover,
+                Stores::$tableName . '.' . Stores::$latLng,
+                // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$categories,
+                // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$sections,
+                // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$nestedSections,
+                // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$products,
+            ])->toArray();
+
+        $storeIds = [];
+        foreach ($data as $store) {
+            if ($store->typeId == 1) {
+                $storeIds[] = $store->id;
+            }
+        }
+
+        $storeConfigs = DB::table(table: SharedStoresConfigs::$tableName)
+            ->whereIn(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, $storeIds)
+            ->get();
+
+        // print_r($storeConfigs);
+
+
+
+
+
+        foreach ($data as $index => $store) {
+            if ($store->typeId == 1) {
+                foreach ($storeConfigs as $storeConfig) {
+                    if ($storeConfig->storeId == $store->id) {
+                        $categories = json_decode($storeConfig->categories);
+                        $sections = json_decode($storeConfig->sections);
+                        $nestedSections = json_decode($storeConfig->nestedSections);
+                        $products = json_decode($storeConfig->products);
+                        // $stores[$index] = (array)$stores[$index];
+                        $data[$index]->storeConfig = ['storeIdReference' => $storeConfig->storeIdReference, 'categories' => $categories, 'sections' => $sections, 'nestedSections' => $nestedSections, 'products' => $products];
+                    }
+                }
+            } else {
+                $data[$index]->storeConfig = null;
+            }
+        }
+
+        return response()->json($data);
     }
     public function getCategories(Request $request)
     {
