@@ -82,4 +82,8 @@ class UserControllerGet extends Controller
 
         return $data;
     }
+    public function getHome(Request $request)
+    {
+        return $this->getOurHome($request);
+    }
 }

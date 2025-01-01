@@ -99,6 +99,8 @@ Route::prefix('v1/storeManager')->group(function () {
 Route::prefix('v1/u')->group(function () {
     Route::post('/getApp', [UserControllerGet::class, 'getApp']);
     Route::post('/getStores', [UserControllerGet::class, 'getStores']);
+    Route::post('/getHome', [UserControllerGet::class, 'getHome']);
+
     Route::post('/login', [UserControllerGet::class, 'login']);
     // Route::post('/refreshToken', [StoresControllerGet::class, 'refreshToken']);
     // Route::post('/getProducts', [StoresControllerGet::class, 'getProducts']);
