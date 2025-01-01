@@ -4,9 +4,9 @@ use App\Http\Controllers\Api\StoreManager\StoreManagerControllerAdd;
 use App\Http\Controllers\Api\StoreManager\StoreManagerControllerDelete;
 use App\Http\Controllers\Api\StoreManager\StoreManagerControllerGet;
 use App\Http\Controllers\Api\StoreManager\StoreManagerControllerUpdate;
+// use App\Http\Controllers\Api\Stores\StoresControllerGet;
+use App\Http\Controllers\Api\Stores\StoresControllerAdd; 
 use App\Http\Controllers\Api\Users\StoresControllerGet;
-use App\Http\Controllers\Api\Users\StoresControllerAdd;
-
 use App\Http\Controllers\Api\Users\UserControllerGet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
