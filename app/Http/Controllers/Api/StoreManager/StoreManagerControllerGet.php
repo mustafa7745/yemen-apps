@@ -256,7 +256,7 @@ class StoreManagerControllerGet extends Controller
     }
     public function getStores(Request $request)
     {
-        return $this->getOurStores($request);
+        return $this->getOurStores($this->appId);
     }
     public function getCategories(Request $request)
     {

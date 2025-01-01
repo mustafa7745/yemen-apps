@@ -178,9 +178,9 @@ trait AllShared
 
     }
 
-    public function getOurStores(Request $request)
+    public function getOurStores($appId)
     {
-        $app = $this->getMyApp($request);
+        // $app = $this->getMyApp($request);
         // 
         $data = DB::table(AppStores::$tableName)
             ->join(
@@ -190,7 +190,7 @@ trait AllShared
                 AppStores::$tableName . '.' . AppStores::$storeId
             )
 
-            ->where(AppStores::$appId, $app->id)
+            ->where(AppStores::$appId, $appId)
             ->get([
                 Stores::$tableName . '.' . Stores::$id,
                 Stores::$tableName . '.' . Stores::$name,
