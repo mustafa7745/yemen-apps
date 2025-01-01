@@ -60,23 +60,25 @@ class UserControllerGet extends Controller
             ->get();
 
 
-        foreach ($storeConfigs as $storeConfig) {
-            foreach ($data as $index => $store) {
-                print_r($storeConfig);
-                if ($storeConfig->storeId == $store->id && $store->typeId == 1) {
-                    $categories = json_decode($storeConfig->categories);
-                    $sections = json_decode($storeConfig->sections);
-                    $nestedSections = json_decode($storeConfig->nestedSections);
-                    $products = json_decode($storeConfig->products);
-                    // $stores[$index] = (array)$stores[$index];
-                    $data[$index]->storeConfig = ['storeIdReference' => $storeConfig->storeIdReference, 'categories' => $categories, 'sections' => $sections, 'nestedSections' => $nestedSections, 'products' => $products];
-                } else{
-                    $data[$index]->storeConfig = null;
-                    print_r("dffdf");
+        // 
+        foreach ($data as $index => $store) {
+
+            if ($store->typeId == 1) {
+                foreach ($storeConfigs as $storeConfig) {
+                    if ($storeConfig->storeId == $store->id) {
+                        $categories = json_decode($storeConfig->categories);
+                        $sections = json_decode($storeConfig->sections);
+                        $nestedSections = json_decode($storeConfig->nestedSections);
+                        $products = json_decode($storeConfig->products);
+                        // $stores[$index] = (array)$stores[$index];
+                        $data[$index]->storeConfig = ['storeIdReference' => $storeConfig->storeIdReference, 'categories' => $categories, 'sections' => $sections, 'nestedSections' => $nestedSections, 'products' => $products];
+                    }
                 }
-                    
+            } else {
+                $data[$index]->storeConfig = null;
             }
         }
+        // }
 
         return $data;
     }
