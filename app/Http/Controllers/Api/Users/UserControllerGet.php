@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AppStores;
 use App\Models\SharedStoresConfigs;
 use App\Models\Stores;
+use App\Traits\AllShared;
 use App\Traits\UsersControllerShared;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -13,6 +14,8 @@ use Illuminate\Http\Request;
 class UserControllerGet extends Controller
 {
     use UsersControllerShared;
+    use AllShared;
+
 
     public function getApp(Request $request)
     {
