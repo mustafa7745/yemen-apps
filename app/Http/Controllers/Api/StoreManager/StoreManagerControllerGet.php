@@ -16,6 +16,7 @@ use App\Models\StoreCategories;
 use App\Models\StoreProducts;
 use App\Models\Stores;
 use App\Models\StoreSections;
+use App\Traits\AllShared;
 use App\Traits\StoreManagerControllerShared;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -24,6 +25,7 @@ use Illuminate\Support\Facades\Validator;
 class StoreManagerControllerGet extends Controller
 {
     use StoreManagerControllerShared;
+    use AllShared;
     public function getMain(Request $request)
     {
         // Define validation rules
