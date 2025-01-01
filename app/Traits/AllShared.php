@@ -1,5 +1,6 @@
 <?php
 namespace App\Traits;
+use App\Models\AppStores;
 use App\Models\Categories;
 use App\Models\NestedSections;
 use App\Models\Sections;
@@ -175,5 +176,62 @@ trait AllShared
             return response()->json(['message' => 'Undefiend Store type', 'code' => 0], 400);
         }
 
+    }
+
+    public function getOurStores(Request $request)
+    {
+        $app = $this->getMyApp($request);
+        // 
+        $data = DB::table(AppStores::$tableName)
+            ->join(
+                Stores::$tableName,
+                Stores::$tableName . '.' . Stores::$id,
+                '=',
+                AppStores::$tableName . '.' . AppStores::$storeId
+            )
+
+            ->where(AppStores::$appId, $app->id)
+            ->get([
+                Stores::$tableName . '.' . Stores::$id,
+                Stores::$tableName . '.' . Stores::$name,
+                Stores::$tableName . '.' . Stores::$logo,
+                Stores::$tableName . '.' . Stores::$cover,
+                Stores::$tableName . '.' . Stores::$typeId,
+                Stores::$tableName . '.' . Stores::$likes,
+                Stores::$tableName . '.' . Stores::$subscriptions,
+                Stores::$tableName . '.' . Stores::$stars,
+                Stores::$tableName . '.' . Stores::$reviews,
+            ]);
+
+        $storeIds = [];
+        foreach ($data as $store) {
+            $storeIds[] = $store->id;
+        }
+
+        $storeConfigs = DB::table(table: SharedStoresConfigs::$tableName)
+            ->whereIn(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, $storeIds)
+            ->get();
+
+
+        // 
+        foreach ($data as $index => $store) {
+            if ($store->typeId == 1) {
+                foreach ($storeConfigs as $storeConfig) {
+                    if ($storeConfig->storeId == $store->id) {
+                        $categories = json_decode($storeConfig->categories);
+                        $sections = json_decode($storeConfig->sections);
+                        $nestedSections = json_decode($storeConfig->nestedSections);
+                        $products = json_decode($storeConfig->products);
+                        // $stores[$index] = (array)$stores[$index];
+                        $data[$index]->storeConfig = ['storeIdReference' => $storeConfig->storeIdReference, 'categories' => $categories, 'sections' => $sections, 'nestedSections' => $nestedSections, 'products' => $products];
+                    }
+                }
+            } else {
+                $data[$index]->storeConfig = null;
+            }
+        }
+        // }
+
+        return $data;
     }
 }
