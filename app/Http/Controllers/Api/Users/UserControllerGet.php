@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Api\Users;
 
 use App\Http\Controllers\Controller;
 use App\Models\AppStores;
+use App\Models\Stores;
 use App\Traits\UsersControllerShared;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -21,8 +22,23 @@ class UserControllerGet extends Controller
         $app = $this->getMyApp($request);
         // 
         $data = DB::table(AppStores::$tableName)
+            ->join(
+                Stores::$tableName,
+                Stores::$tableName . '.' . Stores::$id,
+                '=',
+                AppStores::$tableName . '.' . AppStores::$appId
+            )
+
             ->where(AppStores::$appId, $app->id)
-            ->get();
+            ->get([
+                Stores::$tableName . '.' . Stores::$id,
+                Stores::$tableName . '.' . Stores::$name,
+                // Stores::$tableName . '.' . Stores::$,
+                // Stores::$tableName . '.' . Stores::$id,
+                // Stores::$tableName . '.' . Stores::$id,
+                // Stores::$tableName . '.' . Stores::$id,
+                // Stores::$tableName . '.' . Stores::$id,
+            ]);
         return $data;
     }
 }
