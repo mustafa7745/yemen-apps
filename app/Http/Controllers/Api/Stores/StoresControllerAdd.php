@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\Api\Users;
+namespace App\Http\Controllers\Api\Stores;
 
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
