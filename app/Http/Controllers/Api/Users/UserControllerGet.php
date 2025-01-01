@@ -70,8 +70,11 @@ class UserControllerGet extends Controller
                     $products = json_decode($storeConfig->products);
                     // $stores[$index] = (array)$stores[$index];
                     $data[$index]->storeConfig = ['storeIdReference' => $storeConfig->storeIdReference, 'categories' => $categories, 'sections' => $sections, 'nestedSections' => $nestedSections, 'products' => $products];
-                } else
+                } else{
                     $data[$index]->storeConfig = null;
+                    print_r("dffdf");
+                }
+                    
             }
         }
 
