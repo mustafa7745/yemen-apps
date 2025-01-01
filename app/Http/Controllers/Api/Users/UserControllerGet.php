@@ -52,9 +52,7 @@ class UserControllerGet extends Controller
 
         $storeIds = [];
         foreach ($data as $store) {
-            if ($store->typeId == 1) {
-                $storeIds[] = $store->id;
-            }
+            $storeIds[] = $store->id;
         }
 
         $storeConfigs = DB::table(table: SharedStoresConfigs::$tableName)
