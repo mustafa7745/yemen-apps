@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Api\Users;
 
+use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\AppStores;
 use App\Models\Stores;
@@ -15,6 +16,12 @@ class UserControllerGet extends Controller
     public function getApp(Request $request)
     {
         return response()->json($this->getMyApp($request));
+    }
+
+    public function login(Request $request)
+    {
+        $app = $this->getMyApp($request);
+        return (new LoginController($app->id))->login($request);
     }
 
     public function getStores(Request $request)
