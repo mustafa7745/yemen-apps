@@ -242,7 +242,7 @@ trait AllShared
     public function getOurProducts(Request $request)
     {
         $storeNestedSectionId = $request->input('storeNestedSectionId');
-        $storeId = 1;
+        $storeId = $request->input('storeId');;
 
         // 
         $storeProducts = DB::table(StoreProducts::$tableName)
