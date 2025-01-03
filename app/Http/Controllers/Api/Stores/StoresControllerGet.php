@@ -111,44 +111,7 @@ class StoresControllerGet extends Controller
 
     public function getLocations(Request $request)
     {
-
-        $validator = Validator::make($request->all(), [
-            'accessToken' => 'required|string|max:255',
-            'deviceId' => 'required|string|max:255'
-        ]);
-
-        // Check if validation fails
-        if ($validator->fails()) {
-            // Return a JSON response with validation errors
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
-                'code' => 0
-            ], 422);  // 422 Unprocessable Entity
-        }
-
-
-        $loginController = (new LoginController($this->appId));
-        $token = $request->input('accessToken');
-        $deviceId = $request->input('deviceId');
-
-        // print_r($request->all());
-        $myResult = $loginController->readAccessToken($token, $deviceId);
-        if ($myResult->isSuccess == false) {
-            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
-        }
-
-        $accessToken = $myResult->message;
-
-        $data = DB::table(table: Locations::$tableName)
-            ->where(Locations::$tableName . '.' . Locations::$userId, '=', $accessToken->userId)
-            ->get(
-                [
-                    Locations::$tableName . '.' . Locations::$id,
-                    Locations::$tableName . '.' . Locations::$street,
-                ]
-            );
-        return response()->json($data);
+        $this->getOurLocations($request, $this->appId);
     }
     public function getHome(Request $request)
     {
@@ -173,11 +136,7 @@ class StoresControllerGet extends Controller
     }
     public function refreshToken(Request $request)
     {
-        $token = $request->input('accessToken');
-        $deviceId = $request->input('deviceId');
-
-        $loginController = (new LoginController($this->appId));
-        return $loginController->readAndRefreshAccessToken($token, $deviceId);
+        return $this->refreshOurToken($request, $this->appId);
     }
 
 }

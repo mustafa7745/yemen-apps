@@ -1,7 +1,9 @@
 <?php
 namespace App\Traits;
+use App\Http\Controllers\Api\LoginController;
 use App\Models\AppStores;
 use App\Models\Categories;
+use App\Models\Locations;
 use App\Models\NestedSections;
 use App\Models\Options;
 use App\Models\ProductImages;
@@ -13,8 +15,10 @@ use App\Models\StoreNestedSections;
 use App\Models\StoreProducts;
 use App\Models\Stores;
 use App\Models\StoreSections;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
+use Validator;
 
 trait AllShared
 {
@@ -242,7 +246,8 @@ trait AllShared
     public function getOurProducts(Request $request)
     {
         $storeNestedSectionId = $request->input('storeNestedSectionId');
-        $storeId = $request->input('storeId');;
+        $storeId = $request->input('storeId');
+        ;
 
         // 
         $storeProducts = DB::table(StoreProducts::$tableName)
@@ -337,4 +342,106 @@ trait AllShared
 
         return response()->json(array_values($result));
     }
+
+    public function getOurLocations(Request $request, $appId)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'accessToken' => 'required|string|max:255',
+            'deviceId' => 'required|string|max:255'
+        ]);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            // Return a JSON response with validation errors
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+                'code' => 0
+            ], 422);  // 422 Unprocessable Entity
+        }
+
+
+        $loginController = (new LoginController($appId));
+        $token = $request->input('accessToken');
+        $deviceId = $request->input('deviceId');
+
+        // print_r($request->all());
+        $myResult = $loginController->readAccessToken($token, $deviceId);
+        if ($myResult->isSuccess == false) {
+            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
+        }
+
+        $accessToken = $myResult->message;
+
+        $data = DB::table(table: Locations::$tableName)
+            ->where(Locations::$tableName . '.' . Locations::$userId, '=', $accessToken->userId)
+            ->get(
+                [
+                    Locations::$tableName . '.' . Locations::$id,
+                    Locations::$tableName . '.' . Locations::$street,
+                ]
+            );
+        return response()->json($data);
+    }
+    public function addOurLocation(Request $request, $appId)
+    {
+        $validator = Validator::make($request->all(), [
+            'accessToken' => 'required|string|max:255',
+            'deviceId' => 'required|string|max:255',
+            'latLng' => 'required|string|max:100',
+            'street' => 'required|string|max:100',
+        ]);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            // Return a JSON response with validation errors
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+                'code' => 0
+            ], 422);  // 422 Unprocessable Entity
+        }
+
+
+        $loginController = (new LoginController($this->appId));
+        $token = $request->input('accessToken');
+        $deviceId = $request->input('deviceId');
+
+        // print_r($request->all());
+        $myResult = $loginController->readAccessToken($token, $deviceId);
+        if ($myResult->isSuccess == false) {
+            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
+        }
+        $accessToken = $myResult->message;
+        // 
+        $latLng = $request->input('latLng');
+        $street = $request->input('street');
+        $insertedId = DB::table(table: Locations::$tableName)
+            ->insertGetId([
+                Locations::$id => null,
+                Locations::$userId => $accessToken->userId,
+                Locations::$latLng => $latLng,
+                Locations::$street => $street,
+                Locations::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                Locations::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+
+        $category = DB::table(Locations::$tableName)
+            ->where(Locations::$tableName . '.' . Sections::$id, '=', $insertedId)
+            ->sole([
+                Locations::$tableName . '.' . Locations::$id,
+                Locations::$tableName . '.' . Locations::$street,
+            ]);
+        return response()->json($category);
+    }
+    public function refreshOurToken(Request $request, $appId)
+    {
+        $token = $request->input('accessToken');
+        $deviceId = $request->input('deviceId');
+
+        $loginController = (new LoginController($appId));
+        return $loginController->readAndRefreshAccessToken($token, $deviceId);
+    }
+
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\StoreManager\StoreManagerControllerGet;
 use App\Http\Controllers\Api\StoreManager\StoreManagerControllerUpdate;
 use App\Http\Controllers\Api\Stores\StoresControllerAdd;
 use App\Http\Controllers\Api\Stores\StoresControllerGet;
+use App\Http\Controllers\Api\Users\UserControllerAdd;
 use App\Http\Controllers\Api\Users\UserControllerGet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -100,10 +101,14 @@ Route::prefix('v1/u')->group(function () {
     Route::post('/getStores', [UserControllerGet::class, 'getStores']);
     Route::post('/getHome', [UserControllerGet::class, 'getHome']);
     Route::post('/getProducts', [UserControllerGet::class, 'getProducts']);
+    Route::post('/getLocations', [UserControllerGet::class, 'getLocations']);
+    Route::post('/addLocation', [UserControllerAdd::class, 'addLocation']);
+
+
 
 
     Route::post('/login', [UserControllerGet::class, 'login']);
-    // Route::post('/refreshToken', [StoresControllerGet::class, 'refreshToken']);
+    Route::post('/refreshToken', [UserControllerGet::class, 'refreshToken']);
     // Route::post('/getProducts', [StoresControllerGet::class, 'getProducts']);
     // Route::post('/getStoreInfo', [StoresControllerGet::class, 'getStoreInfo']);
     // Route::post('/getLocations', [StoresControllerGet::class, 'getLocations']);

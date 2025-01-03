@@ -27,6 +27,11 @@ class UserControllerGet extends Controller
         $app = $this->getMyApp($request);
         return (new LoginController($app->id))->login($request);
     }
+    public function refreshToken(Request $request)
+    {
+        $app = $this->getMyApp($request);
+        return $this->refreshOurToken($request, $app->appId);
+    }
 
     public function getStores(Request $request)
     {
@@ -40,5 +45,10 @@ class UserControllerGet extends Controller
     public function getProducts(Request $request)
     {
         return $this->getOurProducts($request);
+    }
+    public function getLocations(Request $request)
+    {
+        $app = $this->getMyApp($request);
+        $this->getOurLocations($request, $app->id);
     }
 }
