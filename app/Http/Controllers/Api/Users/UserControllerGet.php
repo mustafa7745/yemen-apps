@@ -49,6 +49,6 @@ class UserControllerGet extends Controller
     public function getLocations(Request $request)
     {
         $app = $this->getMyApp($request);
-        $this->getOurLocations($request, $app->id);
+        return $this->getOurLocations($request, $app->id);
     }
 }
