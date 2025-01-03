@@ -404,7 +404,7 @@ trait AllShared
         }
 
 
-        $loginController = (new LoginController($this->appId));
+        $loginController = (new LoginController($appId));
         $token = $request->input('accessToken');
         $deviceId = $request->input('deviceId');
 
