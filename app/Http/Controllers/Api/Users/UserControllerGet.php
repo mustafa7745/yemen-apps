@@ -30,7 +30,7 @@ class UserControllerGet extends Controller
     public function refreshToken(Request $request)
     {
         $app = $this->getMyApp($request);
-        return $this->refreshOurToken($request, $app->appId);
+        return $this->refreshOurToken($request, $app->id);
     }
 
     public function getStores(Request $request)
