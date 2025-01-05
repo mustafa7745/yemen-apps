@@ -388,10 +388,13 @@ trait AllShared
     {
         $accessToken = $this->getAccessToken($request, $appId);
 
-        $this->validRequest($request, [
+        $validation = $this->validRequest($request, [
             'latLng' => 'required|string|max:100',
             'street' => 'required|string|max:100',
         ]);
+        if ($validation != null) {
+            return $validation;
+        }
         // 
         $latLng = $request->input('latLng');
         $street = $request->input('street');
