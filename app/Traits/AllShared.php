@@ -386,34 +386,12 @@ trait AllShared
     }
     public function addOurLocation(Request $request, $appId)
     {
-        $validator = Validator::make($request->all(), [
-            'accessToken' => 'required|string|max:255',
-            'deviceId' => 'required|string|max:255',
+        $accessToken = $this->getAccessToken($request, $appId);
+
+        $this->validRequest($request, [
             'latLng' => 'required|string|max:100',
             'street' => 'required|string|max:100',
         ]);
-
-        // Check if validation fails
-        if ($validator->fails()) {
-            // Return a JSON response with validation errors
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
-                'code' => 0
-            ], 422);  // 422 Unprocessable Entity
-        }
-
-
-        $loginController = (new LoginController($appId));
-        $token = $request->input('accessToken');
-        $deviceId = $request->input('deviceId');
-
-        // print_r($request->all());
-        $myResult = $loginController->readAccessToken($token, $deviceId);
-        if ($myResult->isSuccess == false) {
-            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
-        }
-        $accessToken = $myResult->message;
         // 
         $latLng = $request->input('latLng');
         $street = $request->input('street');
@@ -442,6 +420,54 @@ trait AllShared
 
         $loginController = (new LoginController($appId));
         return $loginController->readAndRefreshAccessToken($token, $deviceId);
+    }
+
+
+    public function getAccessToken(Request $request, $appId)
+    {
+        $validator = Validator::make($request->all(), [
+            'accessToken' => 'required|string|max:255',
+            'deviceId' => 'required|string|max:255'
+        ]);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            // Return a JSON response with validation errors
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+                'code' => 0
+            ], 422);  // 422 Unprocessable Entity
+        }
+
+
+        $loginController = (new LoginController($appId));
+        $token = $request->input('accessToken');
+        $deviceId = $request->input('deviceId');
+
+        // print_r($request->all());
+        $myResult = $loginController->readAccessToken($token, $deviceId);
+        if ($myResult->isSuccess == false) {
+            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
+        }
+        $accessToken = $myResult->message;
+
+        return $accessToken;
+    }
+
+    public function validRequest(Request $request, $rule)
+    {
+        $validator = Validator::make($request->all(), $rule);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            // Return a JSON response with validation errors
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+                'code' => 0
+            ], 422);  // 422 Unprocessable Entity
+        }
     }
 
 }
