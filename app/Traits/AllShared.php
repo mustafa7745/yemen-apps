@@ -387,7 +387,6 @@ trait AllShared
     public function addOurLocation(Request $request, $appId)
     {
         $accessToken = $this->getAccessToken($request, $appId);
-
         $validation = $this->validRequest($request, [
             'latLng' => 'required|string|max:100',
             'street' => 'required|string|max:100',
@@ -429,7 +428,7 @@ trait AllShared
     public function getAccessToken(Request $request, $appId)
     {
         $validator = Validator::make($request->all(), [
-            'accessToken' => 'required|string|max:255',
+            'accessTokenn' => 'required|string|max:255',
             'deviceId' => 'required|string|max:255'
         ]);
 
