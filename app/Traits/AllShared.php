@@ -486,6 +486,8 @@ trait AllShared
                     Orders::$id => null,
                     Orders::$storeId => $storeId,
                     Orders::$userId => $accessToken->userId,
+                    Orders::$situationId => 1,
+
                     Orders::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                     Orders::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
