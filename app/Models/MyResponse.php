@@ -4,11 +4,11 @@ namespace App\Models;
 
 class MyResponse
 {
-   public  $isSuccess;
-   public  $message;
-   public  $responseCode;
-   public  $code;
-
+   public $isSuccess;
+   public $message;
+   public $responseCode;
+   public $code;
+   public $errors = [];
 
    public function __construct($isSuccess, $message, $responseCode, $code)
    {

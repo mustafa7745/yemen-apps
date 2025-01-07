@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Models\AppStores;
 use App\Models\Categories;
 use App\Models\Locations;
+use App\Models\MyResponse;
 use App\Models\NestedSections;
 use App\Models\Options;
 use App\Models\ProductImages;
@@ -386,13 +387,19 @@ trait AllShared
     }
     public function addOurLocation(Request $request, $appId)
     {
-        $accessToken = $this->getAccessToken($request, $appId);
+        $resultAccessToken = $this->getAccessToken($request, $appId);
+        if ($resultAccessToken->isSuccess == false) {
+            return $this->responseError($resultAccessToken);
+        }
+
+        $accessToken = $resultAccessToken->message;
+
         $validation = $this->validRequest($request, [
-            'latLngd' => 'required|string|max:100',
+            'latLng' => 'required|string|max:100',
             'street' => 'required|string|max:100',
         ]);
         if ($validation != null) {
-            return $validation;
+            return $this->responseError($validation);
         }
         // 
         $latLng = $request->input('latLng');
@@ -427,20 +434,14 @@ trait AllShared
 
     public function getAccessToken(Request $request, $appId)
     {
-        $validator = Validator::make($request->all(), [
+        $validation = $this->validRequest($request, [
             'accessTokenn' => 'required|string|max:255',
             'deviceId' => 'required|string|max:255'
         ]);
-
-        // Check if validation fails
-        if ($validator->fails()) {
-            // Return a JSON response with validation errors
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
-                'code' => 0
-            ], 422);  // 422 Unprocessable Entity
+        if ($validation != null) {
+            return $validation;
         }
+
 
 
         $loginController = (new LoginController($appId));
@@ -448,13 +449,14 @@ trait AllShared
         $deviceId = $request->input('deviceId');
 
         // print_r($request->all());
-        $myResult = $loginController->readAccessToken($token, $deviceId);
-        if ($myResult->isSuccess == false) {
-            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
-        }
-        $accessToken = $myResult->message;
+        // $myResult = 
+        return $loginController->readAccessToken($token, $deviceId);
+        // if ($myResult->isSuccess == false) {
+        //     return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
+        // }
+        // $accessToken = $myResult->message;
 
-        return $accessToken;
+        // return $accessToken;
     }
 
     public function validRequest(Request $request, $rule)
@@ -463,13 +465,17 @@ trait AllShared
 
         // Check if validation fails
         if ($validator->fails()) {
-            // Return a JSON response with validation errors
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
-                'code' => 0
-            ], 422);  // 422 Unprocessable Entity
+            $message = 'Validation failed';
+            $errors = $validator->errors();
+            //
+            $res = new MyResponse(false, $message, 422, 0);
+            $res->errors = $errors;
+            return $res;
         }
     }
 
+    function responseError($response)
+    {
+        return response()->json(['message' => $response->message, 'errors' => $response->errors, 'code' => $response->code], $response->responseCode);
+    }
 }
