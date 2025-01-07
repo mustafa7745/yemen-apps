@@ -515,6 +515,8 @@ trait AllShared
                     OrdersProducts::$productPrice => $storeProduct->price,
                     OrdersProducts::$productQuantity => $productQuantity,
                     OrdersProducts::$orderId => $orderId,
+                    OrdersProducts::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    OrdersProducts::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
 
                 ];
             }
