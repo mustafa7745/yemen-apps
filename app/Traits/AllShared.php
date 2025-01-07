@@ -468,7 +468,7 @@ trait AllShared
         // Check if validation fails
         if ($validator->fails()) {
             $message = 'Validation failed';
-            $errors = $validator->errors();
+            $errors = $validator->errors()->all();;
             //
             $res = new MyResponse(false, $message, 422, 0);
             $res->errors = $errors;
