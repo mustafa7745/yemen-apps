@@ -435,9 +435,8 @@ trait AllShared
     public function getAccessToken(Request $request, $appId)
     {
         $validation = $this->validRequest($request, [
-            'accessTokenn' => 'required|string|max:255',
-            'deviceId' => 'required|string|max:255',
-            'deviceId2' => 'required|string|max:255'
+            'accessToken' => 'required|string|max:255',
+            'deviceId' => 'required|string|max:255'
 
         ]);
         if ($validation != null) {
