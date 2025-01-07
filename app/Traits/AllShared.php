@@ -514,6 +514,8 @@ trait AllShared
                     OrdersProducts::$storeProductId => $storeProduct->id,
                     OrdersProducts::$productPrice => $storeProduct->price,
                     OrdersProducts::$productQuantity => $productQuantity,
+                    OrdersProducts::$orderId => $orderId,
+
                 ];
             }
 
