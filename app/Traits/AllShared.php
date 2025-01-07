@@ -445,6 +445,8 @@ trait AllShared
 
         $storeId = $request->input('storeId');
         $orderProducts = $request->input('orderProducts');
+        $locationId = $request->input('locationId');
+
         $orderProducts = json_decode($orderProducts);
 
         $ids = [];
@@ -479,18 +481,24 @@ trait AllShared
             return "error";
         }
 
-        return DB::transaction(function () use ($accessToken, $storeId, $storeProducts, $orderProducts) {
+        return DB::transaction(function () use ($accessToken, $storeId, $storeProducts, $orderProducts, $locationId) {
 
-            $orderId = DB::table(table: Orders::$tableName)
-                ->insertGetId([
-                    Orders::$id => null,
-                    Orders::$storeId => $storeId,
-                    Orders::$userId => $accessToken->userId,
-                    Orders::$situationId => 1,
+            $orderData = [
+                Orders::$id => null,
+                Orders::$storeId => $storeId,
+                Orders::$userId => $accessToken->userId,
+                Orders::$situationId => 1,
+                Orders::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                Orders::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ];
 
-                    Orders::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                    Orders::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-                ]);
+            // إضافة Orders::$situationId بحالة معينة إذا كان $locationId غير null
+            if ($locationId != null) {
+                $orderData[Orders::$inStore] = $locationId; // أو أي قيمة أخرى بناءً على متطلباتك
+            }
+
+            $orderId = DB::table(Orders::$tableName)
+                ->insertGetId($orderData);
 
             // Initialize an empty array to hold the insert data
             $insertData = [];
