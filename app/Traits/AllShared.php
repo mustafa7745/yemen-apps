@@ -7,6 +7,8 @@ use App\Models\Locations;
 use App\Models\MyResponse;
 use App\Models\NestedSections;
 use App\Models\Options;
+use App\Models\Orders;
+use App\Models\OrdersProducts;
 use App\Models\ProductImages;
 use App\Models\Products;
 use App\Models\Sections;
@@ -186,7 +188,6 @@ trait AllShared
         }
 
     }
-
     public function getOurStores($appId)
     {
         // $app = $this->getMyApp($request);
@@ -243,13 +244,10 @@ trait AllShared
 
         return $data;
     }
-
     public function getOurProducts(Request $request)
     {
         $storeNestedSectionId = $request->input('storeNestedSectionId');
         $storeId = $request->input('storeId');
-        ;
-
         // 
         $storeProducts = DB::table(StoreProducts::$tableName)
             // ->where(StoreProducts::$storeId, $storeId)
@@ -343,7 +341,6 @@ trait AllShared
 
         return response()->json(array_values($result));
     }
-
     public function getOurLocations(Request $request, $appId)
     {
 
@@ -430,8 +427,116 @@ trait AllShared
         $loginController = (new LoginController($appId));
         return $loginController->readAndRefreshAccessToken($token, $deviceId);
     }
+    public function confirmOurOrder(Request $request, $appId)
+    {
+        $validation = $this->validRequest($request, [
+            'storeId' => 'required|string|max:100',
+            'orderProducts' => 'required|string|max:200',
+        ]);
+        if ($validation != null) {
+            return $this->responseError($validation);
+        }
+
+        $resultAccessToken = $this->getAccessToken($request, $appId);
+        if ($resultAccessToken->isSuccess == false) {
+            return $this->responseError($resultAccessToken);
+        }
+        $accessToken = $resultAccessToken->message;
+
+        $storeId = $request->input('storeId');
+        $orderProducts = $request->input('orderProducts');
+        $orderProducts = json_decode($orderProducts);
+
+        $ids = [];
+
+        foreach ($orderProducts as $orderProduct) {
+            array_push($ids, $orderProduct->id);
+        }
+
+        $storeProducts = DB::table(StoreProducts::$tableName)
+            ->whereIn(StoreProducts::$tableName . '.' . StoreProducts::$id, $ids)
+            ->join(
+                Products::$tableName,
+                Products::$tableName . '.' . Products::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$productId
+            )
+            ->join(
+                Options::$tableName,
+                Options::$tableName . '.' . Options::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$optionId
+            )
+            ->get([
+                StoreProducts::$tableName . '.' . StoreProducts::$id,
+                StoreProducts::$tableName . '.' . StoreProducts::$price,
+                Products::$tableName . '.' . Products::$name . ' as productName',
+                Options::$tableName . '.' . Options::$name . ' as optionName',
+            ]);
 
 
+        if (count($storeProducts) != count($orderProduct)) {
+            return "error";
+        }
+
+        return DB::transaction(function () use ($accessToken, $storeId, $storeProducts, $orderProducts) {
+
+            $orderId = DB::table(table: Orders::$tableName)
+                ->insertGetId([
+                    Orders::$id => null,
+                    Orders::$storeId => $storeId,
+                    Orders::$userId => $accessToken->userId,
+                    Orders::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    Orders::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ]);
+
+
+            $order = DB::table(table: Orders::$tableName)
+                ->insert([
+                    Orders::$id => null,
+                    Orders::$storeId => $storeId,
+                    Orders::$userId => $accessToken->userId,
+                    Orders::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    Orders::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ]);
+
+            // Initialize an empty array to hold the insert data
+            $insertData = [];
+
+            foreach ($storeProducts as $storeProduct) {
+                // Initialize productQuantity to a default value, e.g., 0
+                $productQuantity = 0;
+
+                // Find the quantity from the orderProducts
+                foreach ($orderProducts as $orderProduct) {
+                    if ($orderProduct->id == $storeProduct->id) {
+                        $productQuantity = $orderProduct->qnt;
+                        break; // Exit the loop once we find the matching product
+                    }
+                }
+
+                // Add the product to the insert array
+                $insertData[] = [
+                    OrdersProducts::$id => null, // Assuming auto-incremented ID
+                    OrdersProducts::$productName => $storeProduct->productName,
+                    OrdersProducts::$storeProductId => $storeProduct->id,
+                    OrdersProducts::$productPrice => $storeProduct->price,
+                    OrdersProducts::$productQuantity => $productQuantity,
+                ];
+            }
+
+            // Perform the bulk insert if there is any data to insert
+            if (!empty($insertData)) {
+                DB::table(OrdersProducts::$tableName)->insert($insertData);
+            }
+
+            $order = DB::table(Orders::$tableName)
+                ->where(Orders::$id, $orderId)
+                ->first();
+            return response()->json($order);
+        });
+    }
+    /////
     public function getAccessToken(Request $request, $appId)
     {
         $validation = $this->validRequest($request, [
@@ -459,7 +564,6 @@ trait AllShared
 
         // return $accessToken;
     }
-
     public function validRequest(Request $request, $rule)
     {
         $validator = Validator::make($request->all(), $rule);
@@ -467,14 +571,14 @@ trait AllShared
         // Check if validation fails
         if ($validator->fails()) {
             $message = 'Validation failed';
-            $errors = $validator->errors()->all();;
+            $errors = $validator->errors()->all();
+            ;
             //
             $res = new MyResponse(false, $message, 422, 0);
             $res->errors = $errors;
             return $res;
         }
     }
-
     function responseError($response)
     {
         return response()->json(['message' => $response->message, 'errors' => $response->errors, 'code' => $response->code], $response->responseCode);
