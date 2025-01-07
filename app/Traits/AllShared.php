@@ -492,16 +492,6 @@ trait AllShared
                     Orders::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
 
-
-            $order = DB::table(table: Orders::$tableName)
-                ->insert([
-                    Orders::$id => null,
-                    Orders::$storeId => $storeId,
-                    Orders::$userId => $accessToken->userId,
-                    Orders::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                    Orders::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-                ]);
-
             // Initialize an empty array to hold the insert data
             $insertData = [];
 
