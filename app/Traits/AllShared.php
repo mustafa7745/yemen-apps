@@ -475,7 +475,7 @@ trait AllShared
             ]);
 
 
-        if (count($storeProducts) != count($orderProduct)) {
+        if (count($storeProducts) != count($orderProducts)) {
             return "error";
         }
 
