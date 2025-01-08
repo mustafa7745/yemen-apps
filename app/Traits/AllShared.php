@@ -9,6 +9,7 @@ use App\Models\MyResponse;
 use App\Models\NestedSections;
 use App\Models\Options;
 use App\Models\Orders;
+use App\Models\OrdersAmounts;
 use App\Models\OrdersProducts;
 use App\Models\ProductImages;
 use App\Models\Products;
@@ -479,6 +480,12 @@ trait AllShared
                 StoreProducts::$tableName . '.' . StoreProducts::$productId
             )
             ->join(
+                Currencies::$tableName,
+                Currencies::$tableName . '.' . Currencies::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$currencyId
+            )
+            ->join(
                 Options::$tableName,
                 Options::$tableName . '.' . Options::$id,
                 '=',
@@ -487,6 +494,7 @@ trait AllShared
             ->get([
                 StoreProducts::$tableName . '.' . StoreProducts::$id,
                 StoreProducts::$tableName . '.' . StoreProducts::$price,
+                Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
                 Products::$tableName . '.' . Products::$name . ' as productName',
                 Options::$tableName . '.' . Options::$name . ' as optionName',
             ]);
@@ -512,24 +520,53 @@ trait AllShared
                 $orderData[Orders::$inStore] = $locationId; // أو أي قيمة أخرى بناءً على متطلباتك
             }
 
-
+            $orderId = DB::table(Orders::$tableName)
+                ->insertGetId($orderData);
 
             // Initialize an empty array to hold the insert data
             $insertData = [];
 
-            $orderProductAmountSum = 0.0;
-
+            $orderProductAmountCurrencies = [];
             foreach ($storeProducts as $storeProduct) {
+                $orderProductAmountSum = 0.0;
                 foreach ($orderProducts as $orderProduct) {
                     if ($orderProduct->id == $storeProduct->id) {
                         $orderProductAmountSum += $storeProduct->price * $orderProduct->qnt;
+
+                        $currencyId = $storeProduct->currencyId;
+
+                        if (isset($orderProductAmountCurrencies[$currencyId])) {
+                            $orderProductAmountCurrencies[$currencyId]['amount'] += $orderProductAmountSum;
+                        } else {
+                            // Otherwise, add the new currency entry
+                            $orderProductAmountCurrencies[$currencyId] = [
+                                'id' => $currencyId,
+                                'amount' => $orderProductAmountSum
+                            ];
+                        }
                         break; // Exit the loop once we find the matching product
                     }
                 }
             }
-            $orderData[Orders::$amount] = $orderProductAmountSum;
-            $orderId = DB::table(Orders::$tableName)
-                ->insertGetId($orderData);
+
+
+
+            $insertOrderAmount = [];
+            foreach ($orderProductAmountCurrencies as $key => $item) {
+                $insertOrderAmount[] = [
+                    OrdersAmounts::$id => null, // Assuming auto-incremented ID
+                    OrdersAmounts::$amount => $item['amount'],
+                    OrdersAmounts::$currencyId => $item['id'],
+                    OrdersAmounts::$orderId => $orderId,
+                    OrdersAmounts::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    OrdersAmounts::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ];
+            }
+
+            if (!empty($insertOrderAmount)) {
+                DB::table(OrdersAmounts::$tableName)->insert($insertOrderAmount);
+            }
+
 
             foreach ($storeProducts as $storeProduct) {
                 // Initialize productQuantity to a default value, e.g., 0
