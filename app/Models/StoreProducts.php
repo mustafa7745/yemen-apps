@@ -15,6 +15,8 @@ class StoreProducts
    public static $likes = "likes";
    public static $stars = "stars";
    public static $reviews = "reviews";
+   public static $currencyId = "currencyId";
+
    public static $createdAt = "createdAt";
    public static $updatedAt = "updatedAt";
 }

@@ -3,6 +3,7 @@ namespace App\Traits;
 use App\Http\Controllers\Api\LoginController;
 use App\Models\AppStores;
 use App\Models\Categories;
+use App\Models\Currencies;
 use App\Models\Locations;
 use App\Models\MyResponse;
 use App\Models\NestedSections;
@@ -263,6 +264,12 @@ trait AllShared
                 '=',
                 StoreProducts::$tableName . '.' . StoreProducts::$optionId
             )
+            ->join(
+                Currencies::$tableName,
+                Currencies::$tableName . '.' . Currencies::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$currencyId
+            )
             // ->join(
             //     StoreCategories::$tableName,
             //     StoreCategories::$tableName . '.' . StoreCategories::$id,
@@ -292,6 +299,10 @@ trait AllShared
                     // 
                 Options::$tableName . '.' . Options::$id . ' as optionId',
                 Options::$tableName . '.' . Options::$name . ' as optionName',
+                    //
+                Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
+                Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
+                Currencies::$tableName . '.' . Currencies::$sign . ' as currencySign',
                     //
                 StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as storeNestedSectionId',
 
