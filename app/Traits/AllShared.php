@@ -510,7 +510,7 @@ trait AllShared
             foreach ($storeProducts as $storeProduct) {
                 foreach ($orderProducts as $orderProduct) {
                     if ($orderProduct->id == $storeProduct->id) {
-                        $orderProductAmountSum += $storeProduct->price;
+                        $orderProductAmountSum += $storeProduct->price * $orderProduct->qnt;
                         break; // Exit the loop once we find the matching product
                     }
                 }
