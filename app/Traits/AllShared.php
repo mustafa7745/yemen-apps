@@ -431,6 +431,7 @@ trait AllShared
     {
         $validation = $this->validRequest($request, [
             'storeId' => 'required|string|max:100',
+            'paid' => 'required|string|max:100',
             'orderProducts' => 'required|string|max:200',
         ]);
         if ($validation != null) {
@@ -446,6 +447,8 @@ trait AllShared
         $storeId = $request->input('storeId');
         $orderProducts = $request->input('orderProducts');
         $locationId = $request->input('locationId');
+        $paid = $request->input('paid');
+
 
         $orderProducts = json_decode($orderProducts);
 
@@ -481,13 +484,14 @@ trait AllShared
             return "error";
         }
 
-        return DB::transaction(function () use ($accessToken, $storeId, $storeProducts, $orderProducts, $locationId) {
+        return DB::transaction(function () use ($accessToken, $storeId, $storeProducts, $orderProducts, $locationId, $paid) {
 
             $orderData = [
                 Orders::$id => null,
                 Orders::$storeId => $storeId,
                 Orders::$userId => $accessToken->userId,
                 Orders::$situationId => 1,
+                Orders::$paid => $paid,
                 Orders::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                 Orders::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ];
