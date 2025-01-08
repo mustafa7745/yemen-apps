@@ -344,9 +344,10 @@ trait AllShared
                 // $result[$product->productId]['images'] = $images;
             }
 
+            $currency = ['id' => $product->currencyId, 'name' => $product->currencyName, 'sign' => $product->currencyName];
 
             // Add the option to the options array
-            $result[$product->productId]['options'][] = ['storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price];
+            $result[$product->productId]['options'][] = ['storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price, 'currency' => $currency];
         }
 
 
