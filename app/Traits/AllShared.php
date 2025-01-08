@@ -496,16 +496,28 @@ trait AllShared
                 Orders::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ];
 
-            // إضافة Orders::$situationId بحالة معينة إذا كان $locationId غير null
             if ($locationId != null) {
                 $orderData[Orders::$inStore] = $locationId; // أو أي قيمة أخرى بناءً على متطلباتك
             }
 
-            $orderId = DB::table(Orders::$tableName)
-                ->insertGetId($orderData);
+
 
             // Initialize an empty array to hold the insert data
             $insertData = [];
+
+            $orderProductAmountSum = 0.0;
+
+            foreach ($storeProducts as $storeProduct) {
+                foreach ($orderProducts as $orderProduct) {
+                    if ($orderProduct->id == $storeProduct->id) {
+                        $orderProductAmountSum += $storeProduct->price;
+                        break; // Exit the loop once we find the matching product
+                    }
+                }
+            }
+            $orderData[Orders::$amount] = $orderProductAmountSum;
+            $orderId = DB::table(Orders::$tableName)
+                ->insertGetId($orderData);
 
             foreach ($storeProducts as $storeProduct) {
                 // Initialize productQuantity to a default value, e.g., 0
@@ -514,6 +526,7 @@ trait AllShared
                 // Find the quantity from the orderProducts
                 foreach ($orderProducts as $orderProduct) {
                     if ($orderProduct->id == $storeProduct->id) {
+                        $orderProductAmountSum += $storeProduct->price;
                         $productQuantity = $orderProduct->qnt;
                         break; // Exit the loop once we find the matching product
                     }

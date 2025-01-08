@@ -12,6 +12,7 @@ class Orders
    public static $situationId = "situationId";
    public static $withApp = "withApp";
    public static $inStore = "inStore";
+   public static $amount = "amount";
    public static $paid = "paid";
    public static $createdAt = "createdAt";
    public static $updatedAt = "updatedAt";
