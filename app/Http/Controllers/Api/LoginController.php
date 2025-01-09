@@ -208,8 +208,32 @@ class LoginController
     private function getAccessTokenByUserSessionId($userSessionId)
     {
         $accessToken = DB::table(table: AccessTokens1::$tableName)
+            ->join(
+                UsersSessions::$tableName,
+                UsersSessions::$tableName . '.' . UsersSessions::$id,
+                '=',
+                AccessTokens1::$tableName . '.' . AccessTokens1::$userSessionId
+            )
+            ->join(
+                Users::$tableName,
+                Users::$tableName . '.' . Users::$id,
+                '=',
+                UsersSessions::$tableName . '.' . UsersSessions::$userId
+            )
             ->where(AccessTokens1::$tableName . '.' . AccessTokens1::$userSessionId, '=', $userSessionId)
-            ->first();
+            ->first([
+                AccessTokens1::$tableName . '.' . AccessTokens1::$id . ' as id',
+                AccessTokens1::$tableName . '.' . AccessTokens1::$token . ' as token',
+                AccessTokens1::$tableName . '.' . AccessTokens1::$expireAt . ' as expireAt',
+                    //
+                Users::$tableName . '.' . Users::$id . ' as userId',
+                Users::$tableName . '.' . Users::$firstName . ' as firstName',
+                Users::$tableName . '.' . Users::$lastName . ' as lastName',
+                Users::$tableName . '.' . Users::$logo . ' as logo',
+                    //
+                DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
+                DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',
+            ]);
 
         if ($accessToken == null) {
             $insertedId = DB::table(AccessTokens1::$tableName)->insertGetId([
@@ -265,12 +289,12 @@ class LoginController
                 AccessTokens1::$tableName . '.' . AccessTokens1::$id . ' as id',
                 AccessTokens1::$tableName . '.' . AccessTokens1::$token . ' as token',
                 AccessTokens1::$tableName . '.' . AccessTokens1::$expireAt . ' as expireAt',
-                //
+                    //
                 Users::$tableName . '.' . Users::$id . ' as userId',
                 Users::$tableName . '.' . Users::$firstName . ' as firstName',
                 Users::$tableName . '.' . Users::$lastName . ' as lastName',
                 Users::$tableName . '.' . Users::$logo . ' as logo',
-                //
+                    //
                 DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
                 DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',
             ]);
