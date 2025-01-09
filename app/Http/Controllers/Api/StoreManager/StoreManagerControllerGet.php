@@ -641,7 +641,8 @@ class StoreManagerControllerGet extends Controller
             ->get(
                 [
                     OrdersAmounts::$tableName . '.' . OrdersAmounts::$id . ' as id',
-                    OrdersAmounts::$tableName . '.' . OrdersAmounts::$amount . ' as userName',
+                    OrdersAmounts::$tableName . '.' . OrdersAmounts::$amount . ' as amount',
+                    OrdersAmounts::$tableName . '.' . OrdersAmounts::$amount . ' as orderId',
                     Currencies::$tableName . '.' . Currencies::$name . ' as currencyName'
                 ]
             );
