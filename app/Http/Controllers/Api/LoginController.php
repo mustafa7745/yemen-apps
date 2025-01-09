@@ -230,9 +230,6 @@ class LoginController
                 Users::$tableName . '.' . Users::$firstName . ' as firstName',
                 Users::$tableName . '.' . Users::$lastName . ' as lastName',
                 Users::$tableName . '.' . Users::$logo . ' as logo',
-                    //
-                DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
-                DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',
             ]);
 
         if ($accessToken == null) {
