@@ -667,52 +667,23 @@ class StoreManagerControllerGet extends Controller
         $dataOrderProducts = DB::table(table: OrdersProducts::$tableName)
             ->where(OrdersProducts::$tableName . '.' . OrdersProducts::$orderId, '=', $orderId)
             ->join(
-                StoreProducts::$tableName,
-                StoreProducts::$tableName . '.' . StoreProducts::$id,
-                '=',
-                Orders::$tableName . '.' . Orders::$userId
-            )
-            ->get(
-                [
-                    Users::$tableName . '.' . Users::$firstName . ' as userName',
-                    Users::$tableName . '.' . Users::$phone . ' as userPhone',
-                    Orders::$tableName . '.' . Orders::$id . ' as id',
-                ]
-            );
-
-        $orderIds = [];
-        foreach ($dataOrders as $key => $order) {
-            $orderIds[] = $order->id;
-        }
-
-        $dataOrderAmounts = DB::table(table: OrdersAmounts::$tableName)
-            ->whereIn(OrdersAmounts::$tableName . '.' . OrdersAmounts::$orderId, $orderIds)
-            ->join(
                 Currencies::$tableName,
                 Currencies::$tableName . '.' . Currencies::$id,
                 '=',
-                OrdersAmounts::$tableName . '.' . OrdersAmounts::$currencyId
+                OrdersProducts::$tableName . '.' . OrdersProducts::$currencyId
             )
             ->get(
                 [
-                    OrdersAmounts::$tableName . '.' . OrdersAmounts::$id . ' as id',
-                    OrdersAmounts::$tableName . '.' . OrdersAmounts::$amount . ' as amount',
-                    OrdersAmounts::$tableName . '.' . OrdersAmounts::$orderId . ' as orderId',
-                    Currencies::$tableName . '.' . Currencies::$name . ' as currencyName'
+                    Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
+                    OrdersProducts::$tableName . '.' . OrdersProducts::$productName . ' as productName',
+                    OrdersProducts::$tableName . '.' . OrdersProducts::$storeProductId . ' as storeProductId',
+                    OrdersProducts::$tableName . '.' . OrdersProducts::$productPrice . ' as price',
+                    OrdersProducts::$tableName . '.' . OrdersProducts::$productQuantity . ' as quantity',
+                    OrdersProducts::$tableName . '.' . OrdersProducts::$optionName,
+                    OrdersProducts::$tableName . '.' . OrdersProducts::$id,
                 ]
             );
-
-        foreach ($dataOrders as $key1 => $order) {
-            $amounts = [];
-            foreach ($dataOrderAmounts as $key2 => $amount) {
-                if ($order->id == $amount->orderId) {
-                    $amounts[] = $amount;
-                }
-            }
-            $dataOrders[$key1]->amounts = $amounts;
-        }
-
-        return response()->json($dataOrders);
+        return response()->json($dataOrderProducts);
     }
 
     public function login(Request $request)
