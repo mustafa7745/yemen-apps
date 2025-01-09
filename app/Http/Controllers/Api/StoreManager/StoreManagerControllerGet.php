@@ -647,6 +647,10 @@ class StoreManagerControllerGet extends Controller
                 ]
             );
 
+        print_r($orderIds);
+        print_r($dataOrderAmounts);
+
+
         foreach ($dataOrders as $key1 => $order) {
             $amounts = [];
             foreach ($dataOrderAmounts as $key2 => $amount) {
