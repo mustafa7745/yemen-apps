@@ -9,6 +9,7 @@ class Users
    public static $firstName = "firstName";
    public static $lastName = "lastName";
    public static $phone = "phone";
+   public static $logo = "logo";
    public static $password = "password";
    public static $createdAt = "createdAt";
    public static $updatedAt = "updatedAt";

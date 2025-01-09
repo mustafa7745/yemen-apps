@@ -250,6 +250,12 @@ class LoginController
                 UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId
             )
             ->join(
+                Users::$tableName,
+                Users::$tableName . '.' . Users::$id,
+                '=',
+                UsersSessions::$tableName . '.' . UsersSessions::$userId
+            )
+            ->join(
                 Devices::$tableName,
                 Devices::$tableName . '.' . Devices::$id,
                 '=',
@@ -259,9 +265,12 @@ class LoginController
                 AccessTokens1::$tableName . '.' . AccessTokens1::$id . ' as id',
                 AccessTokens1::$tableName . '.' . AccessTokens1::$token . ' as token',
                 AccessTokens1::$tableName . '.' . AccessTokens1::$expireAt . ' as expireAt',
-                    //
-                UsersSessions::$tableName . '.' . UsersSessions::$userId . ' as userId',
-                    //
+                //
+                Users::$tableName . '.' . Users::$id . ' as userId',
+                Users::$tableName . '.' . Users::$firstName . ' as firstName',
+                Users::$tableName . '.' . Users::$lastName . ' as lastName',
+                Users::$tableName . '.' . Users::$logo . ' as logo',
+                //
                 DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
                 DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',
             ]);
