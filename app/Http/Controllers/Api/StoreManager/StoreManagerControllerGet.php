@@ -642,13 +642,13 @@ class StoreManagerControllerGet extends Controller
                 [
                     OrdersAmounts::$tableName . '.' . OrdersAmounts::$id . ' as id',
                     OrdersAmounts::$tableName . '.' . OrdersAmounts::$amount . ' as amount',
-                    OrdersAmounts::$tableName . '.' . OrdersAmounts::$amount . ' as orderId',
+                    OrdersAmounts::$tableName . '.' . OrdersAmounts::$orderId . ' as orderId',
                     Currencies::$tableName . '.' . Currencies::$name . ' as currencyName'
                 ]
             );
 
-        print_r($orderIds);
-        print_r($dataOrderAmounts);
+        // print_r($orderIds);
+        // print_r($dataOrderAmounts);
 
 
         foreach ($dataOrders as $key1 => $order) {
