@@ -55,7 +55,7 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/getProducts', [StoreManagerControllerGet::class, 'getProducts']);
     Route::post('/getStoreInfo', [StoreManagerControllerGet::class, 'getStoreInfo']);
     Route::post('/getOrders', [StoreManagerControllerGet::class, 'getOrders']);
-
+    Route::post('/getOrderProducts', [StoreManagerControllerGet::class, 'getOrderProducts']);
 
 
     Route::post('/addCategory', [StoreManagerControllerAdd::class, 'addCategory']);
