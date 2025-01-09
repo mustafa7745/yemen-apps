@@ -654,7 +654,7 @@ class StoreManagerControllerGet extends Controller
                     $amounts[] = $amount;
                 }
             }
-            $dataOrders[$key1]['amounts'] = $amounts;
+            $dataOrders[$key1]->amounts = $amounts;
         }
 
         return response()->json($dataOrders);
