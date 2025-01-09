@@ -7,6 +7,8 @@ class OrdersProducts
    public static $tableName = "ordersProducts";
    public static $id = "id";
    public static $orderId = "orderId";
+   public static $currencyId = "currencyId";
+   public static $optionName = "optionName";
    public static $storeProductId = "storeProductId";
    public static $productName = "productName";
    public static $productPrice = "productPrice";
