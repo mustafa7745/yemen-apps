@@ -380,7 +380,7 @@ trait AllShared
         // print_r($request->all());
         $myResult = $loginController->readAccessToken($token, $deviceId);
         if ($myResult->isSuccess == false) {
-            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
+            return response()->json(['message' => $myResult->message, 'code' => $myResult->code, 'errors' => []], $myResult->responseCode);
         }
 
         $accessToken = $myResult->message;
