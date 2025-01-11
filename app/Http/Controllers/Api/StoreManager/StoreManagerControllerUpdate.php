@@ -288,12 +288,19 @@ class StoreManagerControllerUpdate extends Controller
             if ($orderProduct->productQuantity == $qnt) {
                 return response()->json($orderProduct);
             } elseif ($orderProduct->productQuantity > $qnt) {
-                // Increase the amount
-                $update[OrdersAmounts::$amount] = DB::raw(OrdersAmounts::$amount . " + $qnt");
+
+                $update[] = [OrdersAmounts::$amount => DB::raw(OrdersAmounts::$amount . "+ $qnt")];
             } else {
-                // Decrease the amount
-                $update[OrdersAmounts::$amount] = DB::raw(OrdersAmounts::$amount . " - $qnt");
+                $update[] = [OrdersAmounts::$amount => DB::raw(OrdersAmounts::$amount . "- $qnt")];
             }
+
+            DB::table(table: OrdersAmounts::$tableName)
+                ->where(OrdersAmounts::$orderId, '=', $orderProduct->orderId)
+                ->where(OrdersAmounts::$currencyId, '=', $orderProduct->currencyId)
+                ->update(
+                    $update
+                );
+
 
             $data = DB::table(table: OrdersProducts::$tableName)
                 ->where(OrdersProducts::$id, '=', $id)
