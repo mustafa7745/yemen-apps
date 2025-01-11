@@ -296,13 +296,13 @@ class StoreManagerControllerUpdate extends Controller
             } else {
                 $newAmount = ($orderProduct->productQuantity - $qnt) * $orderProduct->productPrice;
                 // Decrease the amount
-                $update[OrdersAmounts::$amount] = DB::raw(OrdersAmounts::$amount . " - ($qnt * $orderProduct->productPrice)");
+                $update[OrdersAmounts::$amount] = DB::raw(OrdersAmounts::$amount . " - ($newAmount)");
             }
 
             DB::table(table: OrdersAmounts::$tableName)
                 ->where(OrdersAmounts::$orderId, '=', $orderProduct->orderId)
                 ->where(OrdersAmounts::$currencyId, '=', $orderProduct->currencyId)
-                ->update( $update);
+                ->update($update);
 
 
 
