@@ -306,7 +306,7 @@ class StoreManagerControllerUpdate extends Controller
 
 
             $data = DB::table(table: OrdersProducts::$tableName)
-                ->where(OrdersProducts::$id, '=', $id)
+                ->where(OrdersProducts::$tableName . '.' . OrdersProducts::$id, '=', $id)
                 ->join(
                     Currencies::$tableName,
                     Currencies::$tableName . '.' . Currencies::$id,
