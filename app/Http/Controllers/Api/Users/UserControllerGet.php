@@ -53,6 +53,13 @@ class UserControllerGet extends Controller
     }
     public function getOrders(Request $request)
     {
-        return $this->getOurOrders($request);
+        $app = $this->getMyApp($request);
+        $resultAccessToken = $this->getAccessToken($request, $app->id);
+        if ($resultAccessToken->isSuccess == false) {
+            return $this->responseError($resultAccessToken);
+        }
+        $accessToken = $resultAccessToken->message;
+
+        return $this->getOurOrders($request, $accessToken->userId);
     }
 }

@@ -396,24 +396,26 @@ trait AllShared
             );
         return response()->json($data);
     }
-    public function getOurOrders(Request $request)
+    public function getOurOrders(Request $request, $userId = null)
     {
         $storeId = $request->input('storeId');
-        $dataOrders = DB::table(table: Orders::$tableName)
+        $dataOrders = DB::table(Orders::$tableName)
             ->where(Orders::$tableName . '.' . Orders::$storeId, '=', $storeId)
+            ->when($userId != null, function ($query) use ($userId) {
+                return $query->where(Orders::$tableName . '.' . Orders::$userId, '=', $userId);
+            })
             ->join(
                 Users::$tableName,
                 Users::$tableName . '.' . Users::$id,
                 '=',
                 Orders::$tableName . '.' . Orders::$userId
             )
-            ->get(
-                [
-                    Users::$tableName . '.' . Users::$firstName . ' as userName',
-                    Users::$tableName . '.' . Users::$phone . ' as userPhone',
-                    Orders::$tableName . '.' . Orders::$id . ' as id',
-                ]
-            );
+            ->get([
+                Users::$tableName . '.' . Users::$firstName . ' as userName',
+                Users::$tableName . '.' . Users::$phone . ' as userPhone',
+                Orders::$tableName . '.' . Orders::$id . ' as id',
+            ]);
+
 
         $orderIds = [];
         foreach ($dataOrders as $key => $order) {
