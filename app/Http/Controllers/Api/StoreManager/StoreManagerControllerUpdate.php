@@ -267,7 +267,7 @@ class StoreManagerControllerUpdate extends Controller
     {
 
 
-        DB::transaction(function () use ($request) {
+        return DB::transaction(function () use ($request) {
 
             $id = $request->input('id');
             $qnt = $request->input('qnt');
