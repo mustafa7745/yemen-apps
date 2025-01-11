@@ -290,12 +290,13 @@ class StoreManagerControllerDelete extends Controller
                 ->get();
 
 
+            print_r($orderAmounts);
             foreach ($orderProducts as $key => $orderProduct) {
                 $amount = $orderProduct->productPrice * $orderProduct->productQuantity;
                 foreach ($orderAmounts as $key2 => $orderAmount) {
                     # code...
                     if ($orderProduct->orderId == $orderAmount->orderId && $orderProduct->currencyId == $orderAmount->currencyId) {
-                        $orderAmounts[$key2]->$amount -= $amount;
+                        $orderAmounts[$key2]->amount -= $amount;
                         break;
                     }
                 }
