@@ -614,28 +614,7 @@ class StoreManagerControllerGet extends Controller
     }
     public function getOrderProducts(Request $request)
     {
-        $orderId = $request->input('orderId');
-
-        $dataOrderProducts = DB::table(table: OrdersProducts::$tableName)
-            ->where(OrdersProducts::$tableName . '.' . OrdersProducts::$orderId, '=', $orderId)
-            ->join(
-                Currencies::$tableName,
-                Currencies::$tableName . '.' . Currencies::$id,
-                '=',
-                OrdersProducts::$tableName . '.' . OrdersProducts::$currencyId
-            )
-            ->get(
-                [
-                    Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
-                    OrdersProducts::$tableName . '.' . OrdersProducts::$productName . ' as productName',
-                    OrdersProducts::$tableName . '.' . OrdersProducts::$storeProductId . ' as storeProductId',
-                    OrdersProducts::$tableName . '.' . OrdersProducts::$productPrice . ' as price',
-                    OrdersProducts::$tableName . '.' . OrdersProducts::$productQuantity . ' as quantity',
-                    OrdersProducts::$tableName . '.' . OrdersProducts::$optionName,
-                    OrdersProducts::$tableName . '.' . OrdersProducts::$id,
-                ]
-            );
-        return response()->json($dataOrderProducts);
+       $this->getOurOrderProducts($request);
     }
 
     public function login(Request $request)

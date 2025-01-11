@@ -62,4 +62,9 @@ class UserControllerGet extends Controller
 
         return $this->getOurOrders($request, $accessToken->userId);
     }
+
+    public function getOrderProducts(Request $request)
+    {
+        $this->getOurOrderProducts($request);
+    }
 }
