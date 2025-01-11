@@ -285,12 +285,12 @@ class StoreManagerControllerDelete extends Controller
                 $orderIds[] = $value->orderId;
             }
 
-            $orderAmounts = DB::table(table: OrdersProducts::$tableName)
-                ->whereIn(OrdersProducts::$orderId, $orderIds)
+            $orderAmounts = DB::table(table: OrdersAmounts::$tableName)
+                ->whereIn(OrdersAmounts::$orderId, $orderIds)
                 ->get();
 
 
-            print_r($orderAmounts);
+            // print_r($orderAmounts);
             foreach ($orderProducts as $key => $orderProduct) {
                 $amount = $orderProduct->productPrice * $orderProduct->productQuantity;
                 foreach ($orderAmounts as $key2 => $orderAmount) {
