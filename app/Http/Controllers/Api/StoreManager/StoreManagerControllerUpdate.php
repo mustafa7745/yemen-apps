@@ -284,14 +284,17 @@ class StoreManagerControllerUpdate extends Controller
                     ]
                 );
 
+            $diff = $orderProduct->productQuantity - $qnt;
             $update = [];
 
             if ($orderProduct->productQuantity == $qnt) {
                 return response()->json($orderProduct);
-            } elseif ($orderProduct->productQuantity > $qnt) {
+            } elseif ($qnt > $orderProduct->productQuantity) {
+                $newAmount = ($qnt - $orderProduct->productQuantity) * $orderProduct->productPrice;
                 // Increase the amount
-                $update[OrdersAmounts::$amount] = DB::raw(OrdersAmounts::$amount . " + ($qnt * $orderProduct->productPrice)");
+                $update[OrdersAmounts::$amount] = DB::raw(OrdersAmounts::$amount . " + ($newAmount)");
             } else {
+                $newAmount = ($orderProduct->productQuantity - $qnt) * $orderProduct->productPrice;
                 // Decrease the amount
                 $update[OrdersAmounts::$amount] = DB::raw(OrdersAmounts::$amount . " - ($qnt * $orderProduct->productPrice)");
             }
@@ -299,9 +302,7 @@ class StoreManagerControllerUpdate extends Controller
             DB::table(table: OrdersAmounts::$tableName)
                 ->where(OrdersAmounts::$orderId, '=', $orderProduct->orderId)
                 ->where(OrdersAmounts::$currencyId, '=', $orderProduct->currencyId)
-                ->update(
-                    $update
-                );
+                ->update( $update);
 
 
 

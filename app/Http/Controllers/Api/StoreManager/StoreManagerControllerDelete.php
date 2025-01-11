@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\StoreManager;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use App\Models\NestedSections;
+use App\Models\OrdersAmounts;
 use App\Models\OrdersProducts;
 use App\Models\ProductImages;
 use App\Models\Products;
@@ -275,12 +276,38 @@ class StoreManagerControllerDelete extends Controller
             $ids = json_decode($ids);
 
             $orderProducts = DB::table(table: OrdersProducts::$tableName)
-            ->whereIn(OrdersProducts::$id, $ids)
-            ->get();
+                ->whereIn(OrdersProducts::$id, $ids)
+                ->get();
 
+            $orderIds = [];
 
             foreach ($orderProducts as $key => $value) {
-                
+                $orderIds[] = $value->orderId;
+            }
+
+            $orderAmounts = DB::table(table: OrdersProducts::$tableName)
+                ->whereIn(OrdersProducts::$orderId, $orderIds)
+                ->get();
+
+
+            foreach ($orderProducts as $key => $orderProduct) {
+                $amount = $orderProduct->productPrice * $orderProduct->productQuantity;
+                foreach ($orderAmounts as $key2 => $orderAmount) {
+                    # code...
+                    if ($orderProduct->orderId == $orderAmount->orderId && $orderProduct->currencyId == $orderAmount->currencyId) {
+                        $orderAmounts[$key2]->amount -= $amount;
+                        break;
+                    }
+                }
+            }
+
+            foreach ($orderAmounts as $key2 => $orderAmount) {
+                DB::table(table: OrdersAmounts::$tableName)
+                    ->where(OrdersAmounts::$orderId, '=', $orderProduct->orderId)
+                    ->where(OrdersAmounts::$currencyId, '=', $orderProduct->currencyId)
+                    ->update([
+                        OrdersAmounts::$amount => $orderAmount->amount,
+                    ]);
             }
 
             $countDeleted = DB::table(OrdersProducts::$tableName)
