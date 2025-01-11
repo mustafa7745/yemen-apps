@@ -25,7 +25,7 @@ class LoginController
     {
         $app = $this->getApp($request);
         if ($app->isSuccess == false) {
-            return response()->json(["message" => $app->message, 'code' => $app->code], $app->responseCode);
+            return response()->json(["message" => $app->message, 'code' => $app->code, , 'errors' => []], $app->responseCode);
         }
         $phone = $request->input('phone');
         $password = $request->input('password');
@@ -39,7 +39,7 @@ class LoginController
             ->where(Users::$tableName . '.' . Users::$password, '=', $password)
             ->first();
         if ($user == null) {
-            return response()->json(["message" => "Phone Or Password Error", 'code' => 0 , 'errors'=>[]], 400);
+            return response()->json(["message" => "Phone Or Password Error", 'code' => 0, 'errors' => []], 400);
         }
         $this->updateAppToken($request, $deviceSession);
 
