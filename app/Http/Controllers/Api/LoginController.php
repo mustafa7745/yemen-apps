@@ -45,7 +45,9 @@ class LoginController
 
         $userSession = $this->getUserFinalSession($user->id, $deviceSession->id);
         if ($userSession == false) {
-            return response()->json(["message" => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل", 'code' => 0,'errors' => []], 400);
+            return response()->json(["message" => "other signin?", 'code' => 0,'errors' => []], 400);
+
+            // return response()->json(["message" => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل", 'code' => 0,'errors' => []], 400);
         }
 
         $accessToken = $this->getAccessTokenByUserSessionId($userSession->id);
