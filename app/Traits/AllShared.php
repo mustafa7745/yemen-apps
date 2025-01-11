@@ -20,6 +20,7 @@ use App\Models\StoreNestedSections;
 use App\Models\StoreProducts;
 use App\Models\Stores;
 use App\Models\StoreSections;
+use App\Models\Users;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
@@ -394,6 +395,59 @@ trait AllShared
                 ]
             );
         return response()->json($data);
+    }
+    public function getOurOrders(Request $request)
+    {
+        $storeId = $request->input('storeId');
+        $dataOrders = DB::table(table: Orders::$tableName)
+            ->where(Orders::$tableName . '.' . Orders::$storeId, '=', $storeId)
+            ->join(
+                Users::$tableName,
+                Users::$tableName . '.' . Users::$id,
+                '=',
+                Orders::$tableName . '.' . Orders::$userId
+            )
+            ->get(
+                [
+                    Users::$tableName . '.' . Users::$firstName . ' as userName',
+                    Users::$tableName . '.' . Users::$phone . ' as userPhone',
+                    Orders::$tableName . '.' . Orders::$id . ' as id',
+                ]
+            );
+
+        $orderIds = [];
+        foreach ($dataOrders as $key => $order) {
+            $orderIds[] = $order->id;
+        }
+
+        $dataOrderAmounts = DB::table(table: OrdersAmounts::$tableName)
+            ->whereIn(OrdersAmounts::$tableName . '.' . OrdersAmounts::$orderId, $orderIds)
+            ->join(
+                Currencies::$tableName,
+                Currencies::$tableName . '.' . Currencies::$id,
+                '=',
+                OrdersAmounts::$tableName . '.' . OrdersAmounts::$currencyId
+            )
+            ->get(
+                [
+                    OrdersAmounts::$tableName . '.' . OrdersAmounts::$id . ' as id',
+                    OrdersAmounts::$tableName . '.' . OrdersAmounts::$amount . ' as amount',
+                    OrdersAmounts::$tableName . '.' . OrdersAmounts::$orderId . ' as orderId',
+                    Currencies::$tableName . '.' . Currencies::$name . ' as currencyName'
+                ]
+            );
+
+        foreach ($dataOrders as $key1 => $order) {
+            $amounts = [];
+            foreach ($dataOrderAmounts as $key2 => $amount) {
+                if ($order->id == $amount->orderId) {
+                    $amounts[] = $amount;
+                }
+            }
+            $dataOrders[$key1]->amounts = $amounts;
+        }
+
+        return response()->json($dataOrders);
     }
     public function addOurLocation(Request $request, $appId)
     {

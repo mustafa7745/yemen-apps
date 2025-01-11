@@ -51,4 +51,8 @@ class UserControllerGet extends Controller
         $app = $this->getMyApp($request);
         return $this->getOurLocations($request, $app->id);
     }
+    public function getOrders(Request $request)
+    {
+        return $this->getOurOrders($request);
+    }
 }
