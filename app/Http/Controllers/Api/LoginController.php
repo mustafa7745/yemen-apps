@@ -39,7 +39,7 @@ class LoginController
             ->where(Users::$tableName . '.' . Users::$password, '=', $password)
             ->first();
         if ($user == null) {
-            return response()->json(["message" => "Phone Or Password Error", 'code' => 0], 400);
+            return response()->json(["message" => "Phone Or Password Error", 'code' => 0 , 'eroors'=>[]], 400);
         }
         $this->updateAppToken($request, $deviceSession);
 
