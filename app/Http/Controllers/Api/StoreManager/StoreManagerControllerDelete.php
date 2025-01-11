@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\StoreManager;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use App\Models\NestedSections;
+use App\Models\OrdersProducts;
 use App\Models\ProductImages;
 use App\Models\Products;
 use App\Models\Stores;
@@ -258,6 +259,32 @@ class StoreManagerControllerDelete extends Controller
 
             $countDeleted = DB::table(Stores::$tableName)
                 ->whereIn(Stores::$id, $ids)
+                ->delete();
+            if ($countDeleted != count($ids)) {
+                return response()->json(['message' => "لا يمكن الحذف حدث خطأ", 'code' => 0], 409);
+            }
+            return response()->json(["success" => "yes"]);
+
+        });
+    }
+
+    public function deleteOrderProducts(Request $request)
+    {
+        return DB::transaction(function () use ($request) {
+            $ids = $request->input('ids');
+            $ids = json_decode($ids);
+
+            $orderProducts = DB::table(table: OrdersProducts::$tableName)
+            ->whereIn(OrdersProducts::$id, $ids)
+            ->get();
+
+
+            foreach ($orderProducts as $key => $value) {
+                
+            }
+
+            $countDeleted = DB::table(OrdersProducts::$tableName)
+                ->whereIn(OrdersProducts::$id, $ids)
                 ->delete();
             if ($countDeleted != count($ids)) {
                 return response()->json(['message' => "لا يمكن الحذف حدث خطأ", 'code' => 0], 409);

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\StoreManager;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Options;
+use App\Models\OrdersAmounts;
+use App\Models\OrdersProducts;
 use App\Models\ProductImages;
 use App\Models\Products;
 use App\Models\Stores;
@@ -260,6 +262,53 @@ class StoreManagerControllerUpdate extends Controller
             );
         return response()->json($store);
     }
+    public function updateOrderProductQuantity(Request $request)
+    {
+
+
+        DB::transaction(function () use ($request) {
+
+            $id = $request->input('id');
+            $qnt = $request->input('qnt');
+
+            $orderProduct = DB::table(table: OrdersProducts::$tableName)
+                ->where(OrdersProducts::$id, '=', $id)
+                ->sole();
+
+            DB::table(table: OrdersProducts::$tableName)
+                ->where(OrdersProducts::$id, '=', $id)
+                ->update(
+                    [
+                        OrdersProducts::$productQuantity => $qnt,
+                    ]
+                );
+
+            $update = [];
+
+            if ($orderProduct->productQuantity == $qnt) {
+                return response()->json($orderProduct);
+            } elseif ($orderProduct->productQuantity > $qnt) {
+
+                $update[] = [OrdersAmounts::$amount => DB::raw(OrdersAmounts::$amount . "+ $qnt")];
+            } else {
+                $update[] = [OrdersAmounts::$amount => DB::raw(OrdersAmounts::$amount . "- $qnt")];
+            }
+
+            DB::table(table: OrdersAmounts::$tableName)
+                ->where(OrdersAmounts::$orderId, '=', $orderProduct->orderId)
+                ->where(OrdersAmounts::$currencyId, '=', $orderProduct->currencyId)
+                ->update(
+                    $update
+                );
+            $data = DB::table(table: OrdersProducts::$tableName)
+                ->where(OrdersProducts::$id, '=', $id)
+                ->sole();
+            return response()->json($data);
+        });
+
+
+    }
+
     public function updateStore(Request $request)
     {
         $validator = Validator::make($request->all(), [
