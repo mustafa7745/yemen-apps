@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Api\StoreManager;
 
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
+use App\Models\Currencies;
 use App\Models\Options;
 use App\Models\OrdersAmounts;
 use App\Models\OrdersProducts;
@@ -289,10 +290,10 @@ class StoreManagerControllerUpdate extends Controller
                 return response()->json($orderProduct);
             } elseif ($orderProduct->productQuantity > $qnt) {
                 // Increase the amount
-                $update[OrdersAmounts::$amount] = DB::raw(OrdersAmounts::$amount . " + $qnt");
+                $update[OrdersAmounts::$amount] = DB::raw(OrdersAmounts::$amount . " + ($qnt * $orderProduct->productPrice)");
             } else {
                 // Decrease the amount
-                $update[OrdersAmounts::$amount] = DB::raw(OrdersAmounts::$amount . " - $qnt");
+                $update[OrdersAmounts::$amount] = DB::raw(OrdersAmounts::$amount . " - ($qnt * $orderProduct->productPrice)");
             }
 
             DB::table(table: OrdersAmounts::$tableName)
@@ -306,7 +307,23 @@ class StoreManagerControllerUpdate extends Controller
 
             $data = DB::table(table: OrdersProducts::$tableName)
                 ->where(OrdersProducts::$id, '=', $id)
-                ->sole();
+                ->join(
+                    Currencies::$tableName,
+                    Currencies::$tableName . '.' . Currencies::$id,
+                    '=',
+                    OrdersProducts::$tableName . '.' . OrdersProducts::$currencyId
+                )
+                ->sole(
+                    [
+                        Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
+                        OrdersProducts::$tableName . '.' . OrdersProducts::$productName . ' as productName',
+                        OrdersProducts::$tableName . '.' . OrdersProducts::$storeProductId . ' as storeProductId',
+                        OrdersProducts::$tableName . '.' . OrdersProducts::$productPrice . ' as price',
+                        OrdersProducts::$tableName . '.' . OrdersProducts::$productQuantity . ' as quantity',
+                        OrdersProducts::$tableName . '.' . OrdersProducts::$optionName,
+                        OrdersProducts::$tableName . '.' . OrdersProducts::$id,
+                    ]
+                );
             return response()->json($data);
         });
 
