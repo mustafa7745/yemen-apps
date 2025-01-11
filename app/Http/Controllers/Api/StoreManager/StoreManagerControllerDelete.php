@@ -295,7 +295,7 @@ class StoreManagerControllerDelete extends Controller
                 foreach ($orderAmounts as $key2 => $orderAmount) {
                     # code...
                     if ($orderProduct->orderId == $orderAmount->orderId && $orderProduct->currencyId == $orderAmount->currencyId) {
-                        $orderAmounts[$key2]->amount -= $amount;
+                        $orderAmounts[$key2]->$amount -= $amount;
                         break;
                     }
                 }
