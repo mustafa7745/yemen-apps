@@ -29,7 +29,7 @@ class DeliveryControllerGet extends Controller
 
         // print_r($res->message['token']);
         $token = $res->message['token'];
-        $userId = DB::table(table: AccessTokens1::$tableName)
+        $data = DB::table(table: AccessTokens1::$tableName)
             ->join(
                 UsersSessions::$tableName,
                 UsersSessions::$tableName . '.' . UsersSessions::$id,
@@ -42,6 +42,10 @@ class DeliveryControllerGet extends Controller
                     UsersSessions::$tableName . '.' . UsersSessions::$userId
                 ]
             );
+
+        $userId = $data->userId;
+
+
 
         $count = DB::table(table: DeliveryMen::$tableName)
             ->where(DeliveryMen::$tableName . '.' . DeliveryMen::$userId, '=', $userId)
