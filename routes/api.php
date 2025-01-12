@@ -131,6 +131,8 @@ Route::prefix('v1/u')->group(function () {
 
 Route::prefix('v1/delivery')->group(function () {
 
+    Route::post('/getStores', [DeliveryControllerGet::class, 'getStores']);
+
     Route::post('/login', [DeliveryControllerGet::class, 'login']);
     Route::post('/refreshToken', [DeliveryControllerGet::class, 'refreshToken']);
 });

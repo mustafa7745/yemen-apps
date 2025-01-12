@@ -5,6 +5,9 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\AccessTokens1;
 use App\Models\DeliveryMen;
+use App\Models\Stores;
+
+use App\Models\StoreDeliveryMen;
 use App\Models\UsersSessions;
 use App\Traits\AllShared;
 use App\Traits\DeliveryControllerShared;
@@ -72,5 +75,39 @@ class DeliveryControllerGet extends Controller
     public function refreshToken(Request $request)
     {
         return $this->refreshOurToken($request, $this->appId);
+    }
+
+    public function getStores(Request $request)
+    {
+        $resultAccessToken = $this->getAccessToken($request, $this->appId);
+        if ($resultAccessToken->isSuccess == false) {
+            return $this->responseError($resultAccessToken);
+        }
+
+        $accessToken = $resultAccessToken->message;
+
+        $stores = DB::table(table: StoreDeliveryMen::$tableName)
+            ->join(
+                DeliveryMen::$tableName,
+                DeliveryMen::$tableName . '.' . DeliveryMen::$id,
+                '=',
+                StoreDeliveryMen::$tableName . '.' . StoreDeliveryMen::$deliveryManId
+            )
+            ->join(
+                Stores::$tableName,
+                Stores::$tableName . '.' . Stores::$id,
+                '=',
+                StoreDeliveryMen::$tableName . '.' . StoreDeliveryMen::$storeId
+            )
+            ->where(DeliveryMen::$tableName . '.' . DeliveryMen::$userId, '=', $accessToken->userId)
+            ->get(
+                [
+                    Stores::$tableName . '.' . Stores::$userId,
+                    Stores::$tableName . '.' . Stores::$logo,
+                    Stores::$tableName . '.' . Stores::$name,
+                ]
+            );
+
+        return response()->json($stores);
     }
 }
