@@ -102,7 +102,7 @@ class DeliveryControllerGet extends Controller
             ->where(DeliveryMen::$tableName . '.' . DeliveryMen::$userId, '=', $accessToken->userId)
             ->get(
                 [
-                    Stores::$tableName . '.' . Stores::$userId,
+                    Stores::$tableName . '.' . Stores::$id,
                     Stores::$tableName . '.' . Stores::$logo,
                     Stores::$tableName . '.' . Stores::$name,
                 ]
