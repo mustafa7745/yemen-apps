@@ -27,7 +27,7 @@ class DeliveryControllerGet extends Controller
         }
 
 
-        print_r($res->message);
+        print_r($res->message['token']);
         $userId = DB::table(table: AccessTokens1::$tableName)
             ->join(
                 UsersSessions::$tableName,
@@ -35,7 +35,7 @@ class DeliveryControllerGet extends Controller
                 '=',
                 AccessTokens1::$tableName . '.' . AccessTokens1::$userSessionId
             )
-            ->where(AccessTokens1::$tableName . '.' . AccessTokens1::$token, '=', $res->message->token)
+            ->where(AccessTokens1::$tableName . '.' . AccessTokens1::$token, '=', $res->message['token'])
             ->first(
                 [
                     UsersSessions::$tableName . '.' . UsersSessions::$userId
