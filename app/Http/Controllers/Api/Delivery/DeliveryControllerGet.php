@@ -26,6 +26,8 @@ class DeliveryControllerGet extends Controller
             return response()->json(["message" => $res->message, 'code' => $res->code, 'errors' => []], $res->responseCode);
         }
 
+
+        print_r($res->message);
         $userId = DB::table(table: AccessTokens1::$tableName)
             ->join(
                 UsersSessions::$tableName,
@@ -33,7 +35,7 @@ class DeliveryControllerGet extends Controller
                 '=',
                 AccessTokens1::$tableName . '.' . AccessTokens1::$userSessionId
             )
-            ->where(AccessTokens1::$tableName . '.' . AccessTokens1::$token, '=', $res->message->accessToken)
+            ->where(AccessTokens1::$tableName . '.' . AccessTokens1::$token, '=', $res->message['accessToken'])
             ->first(
                 [
                     UsersSessions::$tableName . '.' . UsersSessions::$userId
