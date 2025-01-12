@@ -9,6 +9,7 @@ use App\Models\DevicesSessions;
 use App\Models\MyResponse;
 use App\Models\Users;
 use App\Models\UsersSessions;
+use App\Traits\AllShared;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\JsonResponse;
@@ -16,6 +17,7 @@ use Illuminate\Http\Request;
 
 class LoginController
 {
+    use AllShared;
     private $appId;
     public function __construct($appId)
     {
@@ -45,7 +47,7 @@ class LoginController
 
         $userSession = $this->getUserFinalSession($user->id, $deviceSession->id);
         if ($userSession == false) {
-            return response()->json(["message" => "other signin?", 'code' => 0,'errors' => []], 400);
+            return response()->json(["message" => "other signin?", 'code' => 0, 'errors' => []], 400);
 
             // return response()->json(["message" => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل", 'code' => 0,'errors' => []], 400);
         }
@@ -54,6 +56,48 @@ class LoginController
         return response()->json(["token" => $accessToken->token, 'expireAt' => $accessToken->expireAt]);
     }
 
+
+    public function loginNew(Request $request)
+    {
+        $appResponse = $this->getApp($request);
+        if ($appResponse->isSuccess == false) {
+            return $appResponse;
+        }
+
+        $validation = $this->validRequest($request, [
+            'phone' => 'required|string|max:9',
+            'password' => 'required|string|max:20'
+        ]);
+        if ($validation != null) {
+            return $validation;
+        }
+
+        $phone = $request->input('phone');
+        $password = $request->input('password');
+
+        $device = $this->getDevice(request: $request);
+        $deviceSession = $this->getDeviceSession($request, $device->id);
+
+
+        $user = DB::table(table: Users::$tableName)
+            ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
+            ->where(Users::$tableName . '.' . Users::$password, '=', $password)
+            ->first();
+        if ($user == null) {
+            return (new MyResponse(false, "Phone Or Password Error", 400, 0));
+            // return response()->json(["message" => , 'code' => 0, 'errors' => []], 400);
+        }
+        $this->updateAppToken($request, $deviceSession);
+
+        $userSession = $this->getUserFinalSession($user->id, $deviceSession->id);
+        if ($userSession == false) {
+            return (new MyResponse(false, "other signin?", 400, 0));
+            // return response()->json(["message" => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل", 'code' => 0,'errors' => []], 400);
+        }
+
+        $accessToken = $this->getAccessTokenByUserSessionId($userSession->id);
+        return (new MyResponse(true, ["token" => $accessToken->token, 'expireAt' => $accessToken->expireAt], 0, 0));
+    }
     private function getDevice(Request $request)
     {
         $deviceId = $request->input('deviceId');
