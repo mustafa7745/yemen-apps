@@ -20,7 +20,7 @@ class DeliveryControllerGet extends Controller
 
     public function login(Request $request)
     {
-        return DB::transaction(function () {
+        return DB::transaction(function () use ($request) {
             $loginController = (new LoginController($this->appId));
             $res = $loginController->loginNew($request);
             if ($res == false) {
@@ -30,7 +30,7 @@ class DeliveryControllerGet extends Controller
 
             // print_r($res->message['token']);
             $token = $res->message['token'];
-            $data = DB::table(table: AccessTokens1::$tableName)
+            $userId = DB::table(table: AccessTokens1::$tableName)
                 ->join(
                     UsersSessions::$tableName,
                     UsersSessions::$tableName . '.' . UsersSessions::$id,
@@ -44,7 +44,7 @@ class DeliveryControllerGet extends Controller
                     ]
                 );
 
-            $userId = $data->userId;
+            // $userId = $data->userId;
 
 
 
