@@ -35,7 +35,7 @@ class DeliveryControllerGet extends Controller
                 '=',
                 AccessTokens1::$tableName . '.' . AccessTokens1::$userSessionId
             )
-            ->where(AccessTokens1::$tableName . '.' . AccessTokens1::$token, '=', $res->message['accessToken'])
+            ->where(AccessTokens1::$tableName . '.' . AccessTokens1::$token, '=', $res->message['token'])
             ->first(
                 [
                     UsersSessions::$tableName . '.' . UsersSessions::$userId
