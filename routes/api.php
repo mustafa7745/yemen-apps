@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Delivery\DeliveryControllerGet;
 use App\Http\Controllers\Api\StoreManager\StoreManagerControllerAdd;
 use App\Http\Controllers\Api\StoreManager\StoreManagerControllerDelete;
 use App\Http\Controllers\Api\StoreManager\StoreManagerControllerGet;
@@ -126,4 +127,10 @@ Route::prefix('v1/u')->group(function () {
     // Route::post('/getStoreInfo', [StoresControllerGet::class, 'getStoreInfo']);
     // Route::post('/getLocations', [StoresControllerGet::class, 'getLocations']);
     // Route::post('/addLocation', [StoresControllerAdd::class, 'addLocation']);
+});
+
+Route::prefix('v1/delivery')->group(function () {
+
+    Route::post('/login', [DeliveryControllerGet::class, 'login']);
+    Route::post('/refreshToken', [DeliveryControllerGet::class, 'refreshToken']);
 });
