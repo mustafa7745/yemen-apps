@@ -514,6 +514,7 @@ class StoreManagerControllerAdd extends Controller
                 return response()->json([
                     'errors' => [],
                     'message' => $e->getMessage(),
+                    'code' => 0
                 ], 500);
             }
 
