@@ -33,6 +33,7 @@ class StoreManagerControllerAdd extends Controller
 
     use StoreManagerControllerShared;
     use ErrorShared;
+    use AllShared;
     public function addCategory(Request $request)
     {
         $storeId = $request->input('storeId');
