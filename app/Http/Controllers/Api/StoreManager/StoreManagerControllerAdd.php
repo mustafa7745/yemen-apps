@@ -472,6 +472,7 @@ class StoreManagerControllerAdd extends Controller
         $accessToken = $myResult->message;
 
 
+
         return DB::transaction(function () use ($request, $accessToken) {
 
             $phone = $request->input('phone');
@@ -485,7 +486,7 @@ class StoreManagerControllerAdd extends Controller
                     DeliveryMen::$tableName . '.' . DeliveryMen::$userId
                 )
                 ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
-                ->sole(
+                ->first(
                     [
                         DeliveryMen::$tableName . '.' . DeliveryMen::$id,
                             // Users::$tableName . '.' . Users::$id . 'as userId',
