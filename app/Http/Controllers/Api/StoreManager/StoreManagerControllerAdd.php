@@ -17,6 +17,7 @@ use App\Models\Sections;
 use App\Models\Stores;
 use App\Models\StoreCategories;
 use App\Models\Users;
+use App\Traits\AllShared;
 use App\Traits\StoreManagerControllerShared;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -30,6 +31,7 @@ class StoreManagerControllerAdd extends Controller
 {
 
     use StoreManagerControllerShared;
+    use AllShared;
     public function addCategory(Request $request)
     {
         $storeId = $request->input('storeId');
@@ -506,7 +508,7 @@ class StoreManagerControllerAdd extends Controller
                     StoreDeliveryMen::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
 
-                return response()->json($deliveryMan);
+            return response()->json($deliveryMan);
         });
     }
     public function addProductImage(Request $request)
