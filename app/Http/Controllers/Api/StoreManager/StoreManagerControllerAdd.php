@@ -504,13 +504,9 @@ class StoreManagerControllerAdd extends Controller
                     ]);
 
                 return response()->json($deliveryMan);
-            } catch (\Exception $e) {
-                DB::rollBack();  // Manually trigger a rollback
-                return response()->json([
-                    'errors' => [],
-                    'message' => $e->getMessage(),
-                    'code' => 0
-                ], 500);
+            } catch (QueryException $e) {
+                  // Manually trigger a rollback
+                return $this->queryEX($e);
             }
 
 
