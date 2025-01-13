@@ -497,18 +497,29 @@ class StoreManagerControllerAdd extends Controller
                         Users::$tableName . '.' . Users::$phone,
                     ]
                 );
+            try {
+
+                $insertedId = DB::table(table: StoreDeliveryMen::$tableName)
+                    ->insertGetId([
+                        StoreDeliveryMen::$id => null,
+                        StoreDeliveryMen::$storeId => $storeId,
+                        StoreDeliveryMen::$deliveryManId => $deliveryMan->id,
+                        StoreDeliveryMen::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                        StoreDeliveryMen::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    ]);
+
+                return response()->json($deliveryMan);
+            } catch (\Exception $e) {
+                DB::rollBack();  // Manually trigger a rollback
+                return response()->json([
+                    'errors' => [],
+                    'message' => $e->getMessage(),
+                ], 500);
+            }
 
 
-            $insertedId = DB::table(table: StoreDeliveryMen::$tableName)
-                ->insertGetId([
-                    StoreDeliveryMen::$id => null,
-                    StoreDeliveryMen::$storeId => $storeId,
-                    StoreDeliveryMen::$deliveryManId => $deliveryMan->id,
-                    StoreDeliveryMen::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                    StoreDeliveryMen::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-                ]);
 
-            return response()->json($deliveryMan);
+
         });
     }
     public function addProductImage(Request $request)
