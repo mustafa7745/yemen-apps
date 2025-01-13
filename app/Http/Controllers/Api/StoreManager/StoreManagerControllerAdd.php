@@ -18,6 +18,7 @@ use App\Models\Stores;
 use App\Models\StoreCategories;
 use App\Models\Users;
 use App\Traits\AllShared;
+use App\Traits\ErrorShared;
 use App\Traits\StoreManagerControllerShared;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -31,7 +32,7 @@ class StoreManagerControllerAdd extends Controller
 {
 
     use StoreManagerControllerShared;
-    use AllShared;
+    use ErrorShared;
     public function addCategory(Request $request)
     {
         $storeId = $request->input('storeId');
@@ -492,6 +493,10 @@ class StoreManagerControllerAdd extends Controller
                         Users::$tableName . '.' . Users::$phone,
                     ]
                 );
+
+            if ($deliveryMan == null) {
+                return $this->soleEX();
+            }
             try {
 
                 $insertedId = DB::table(table: StoreDeliveryMen::$tableName)
@@ -505,7 +510,7 @@ class StoreManagerControllerAdd extends Controller
 
                 return response()->json($deliveryMan);
             } catch (QueryException $e) {
-                  // Manually trigger a rollback
+                // Manually trigger a rollback
                 return $this->queryEX($e);
             }
 

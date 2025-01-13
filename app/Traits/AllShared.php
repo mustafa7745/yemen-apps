@@ -739,10 +739,6 @@ trait AllShared
         return response()->json(['message' => $response->message, 'errors' => $response->errors, 'code' => $response->code], $response->responseCode);
     }
     ///
-    function queryEX(QueryException $e){
-        if ($e->getCode() == 23000) {
-            return response()->json(['message' => "duplicate", 'code' => 0, 'errors' => []], 409);
-        }
-        return response()->json(['message' => "D Unkwon ", 'code' => 0, 'errors' => []], 409);
-    }
+  
+   
 }
