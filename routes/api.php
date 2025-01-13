@@ -57,6 +57,8 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/getStoreInfo', [StoreManagerControllerGet::class, 'getStoreInfo']);
     Route::post('/getOrders', [StoreManagerControllerGet::class, 'getOrders']);
     Route::post('/getOrderProducts', [StoreManagerControllerGet::class, 'getOrderProducts']);
+    Route::post('/getDeliveryMen', [StoreManagerControllerGet::class, 'getDeliveryMen']);
+
 
 
     Route::post('/addCategory', [StoreManagerControllerAdd::class, 'addCategory']);
@@ -69,6 +71,8 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/addProductImage', [StoreManagerControllerAdd::class, 'addProductImage']);
     Route::post('/addProductOption', [StoreManagerControllerAdd::class, 'addProductOption']);
     Route::post('/addStore', [StoreManagerControllerAdd::class, 'addStore']);
+    Route::post('/addDeliveryManToStore', [StoreManagerControllerAdd::class, 'addDeliveryManToStore']);
+
 
     Route::post('/updateStoreConfig', [StoreManagerControllerUpdate::class, 'updateStoreConfig']);
     Route::post('/updateProductName', [StoreManagerControllerUpdate::class, 'updateProductName']);
@@ -132,6 +136,7 @@ Route::prefix('v1/u')->group(function () {
 Route::prefix('v1/delivery')->group(function () {
 
     Route::post('/getStores', [DeliveryControllerGet::class, 'getStores']);
+
 
     Route::post('/login', [DeliveryControllerGet::class, 'login']);
     Route::post('/refreshToken', [DeliveryControllerGet::class, 'refreshToken']);

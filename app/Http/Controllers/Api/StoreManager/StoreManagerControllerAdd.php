@@ -4,16 +4,19 @@ namespace App\Http\Controllers\Api\StoreManager;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
+use App\Models\DeliveryMen;
 use App\Models\NestedSections;
 use App\Models\Options;
 use App\Models\ProductImages;
 use App\Models\Products;
+use App\Models\StoreDeliveryMen;
 use App\Models\StoreProducts;
 use App\Models\StoreSections;
 use App\Models\StoreNestedSections;
 use App\Models\Sections;
 use App\Models\Stores;
 use App\Models\StoreCategories;
+use App\Models\Users;
 use App\Traits\StoreManagerControllerShared;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -291,10 +294,10 @@ class StoreManagerControllerAdd extends Controller
                     )
                     ->first();
 
-                    $images = DB::table(table: ProductImages::$tableName)->where(ProductImages::$tableName . '.' . ProductImages::$productId, '=', $product->productId)
+                $images = DB::table(table: ProductImages::$tableName)->where(ProductImages::$tableName . '.' . ProductImages::$productId, '=', $product->productId)
                     ->get([
-                        ProductImages::$tableName . '.' . ProductImages::$id ,
-                        ProductImages::$tableName . '.' . ProductImages::$image 
+                        ProductImages::$tableName . '.' . ProductImages::$id,
+                        ProductImages::$tableName . '.' . ProductImages::$image
                     ]);
 
                 $result = [
@@ -442,6 +445,68 @@ class StoreManagerControllerAdd extends Controller
                     'message' => $e->getMessage(),
                 ], 500);
             }
+        });
+    }
+    public function addDeliveryManToStore(Request $request)
+    {
+        $validation = $this->validRequest($request, [
+            'phone' => 'required|string|max:9',
+            'storeId' => 'required|string|max:9'
+        ]);
+
+
+        if ($validation != null) {
+            return $this->responseError($validation);
+        }
+
+
+
+        $loginController = (new LoginController($this->appId));
+        $token = $request->input('accessToken');
+        $deviceId = $request->input('deviceId');
+
+        // print_r($request->all());
+        $myResult = $loginController->readAccessToken($token, $deviceId);
+        if ($myResult->isSuccess == false) {
+            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
+        }
+        $accessToken = $myResult->message;
+
+
+        return DB::transaction(function () use ($request, $accessToken) {
+
+            $phone = $request->input('phone');
+            $storeId = $request->input('storeId');
+
+            $deliveryMan = DB::table(table: DeliveryMen::$tableName)
+                ->join(
+                    Users::$tableName,
+                    Users::$tableName . '.' . Users::$id,
+                    '=',
+                    DeliveryMen::$tableName . '.' . DeliveryMen::$userId
+                )
+                ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
+                ->sole(
+                    [
+                        DeliveryMen::$tableName . '.' . DeliveryMen::$id,
+                            // Users::$tableName . '.' . Users::$id . 'as userId',
+                        Users::$tableName . '.' . Users::$firstName,
+                        Users::$tableName . '.' . Users::$lastName,
+                        Users::$tableName . '.' . Users::$phone,
+                    ]
+                );
+
+
+            $insertedId = DB::table(table: Stores::$tableName)
+                ->insertGetId([
+                    StoreDeliveryMen::$id => null,
+                    StoreDeliveryMen::$storeId => $storeId,
+                    StoreDeliveryMen::$deliveryManId => $deliveryMan->id,
+                    StoreDeliveryMen::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    StoreDeliveryMen::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ]);
+
+                return response()->json($deliveryMan);
         });
     }
     public function addProductImage(Request $request)

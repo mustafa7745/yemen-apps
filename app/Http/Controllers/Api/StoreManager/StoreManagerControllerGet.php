@@ -5,11 +5,13 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use App\Models\Currencies;
+use App\Models\DeliveryMen;
 use App\Models\NestedSections;
 use App\Models\Orders;
 use App\Models\OrdersAmounts;
 use App\Models\OrdersProducts;
 use App\Models\Sections;
+use App\Models\StoreDeliveryMen;
 use App\Models\StoreInfo;
 use App\Models\StoreNestedSections;
 use App\Models\Options;
@@ -614,7 +616,37 @@ class StoreManagerControllerGet extends Controller
     }
     public function getOrderProducts(Request $request)
     {
-       $this->getOurOrderProducts($request);
+        $this->getOurOrderProducts($request);
+    }
+    public function getDeliveryMen(Request $request)
+    {
+
+        $storeId = $request->input('storeId');
+
+        $data = DB::table(table: StoreDeliveryMen::$tableName)
+            ->join(
+                DeliveryMen::$tableName,
+                DeliveryMen::$tableName . '.' . DeliveryMen::$id,
+                '=',
+                StoreDeliveryMen::$tableName . '.' . StoreDeliveryMen::$deliveryManId
+            )
+            ->join(
+                Users::$tableName,
+                Users::$tableName . '.' . Users::$id,
+                '=',
+                DeliveryMen::$tableName . '.' . DeliveryMen::$userId
+            )
+            ->where(StoreDeliveryMen::$tableName . '.' . StoreDeliveryMen::$storeId, '=', $storeId)
+            ->get(
+                [
+                    DeliveryMen::$tableName . '.' . DeliveryMen::$id,
+                    Users::$tableName . '.' . Users::$firstName,
+                    Users::$tableName . '.' . Users::$lastName,
+                    Users::$tableName . '.' . Users::$phone,
+                ]
+            );
+
+        return response()->json($data);
     }
 
     public function login(Request $request)
