@@ -499,7 +499,7 @@ class StoreManagerControllerAdd extends Controller
                 );
 
 
-            $insertedId = DB::table(table: Stores::$tableName)
+            $insertedId = DB::table(table: StoreDeliveryMen::$tableName)
                 ->insertGetId([
                     StoreDeliveryMen::$id => null,
                     StoreDeliveryMen::$storeId => $storeId,
