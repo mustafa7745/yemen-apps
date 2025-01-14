@@ -4,12 +4,14 @@ use App\Http\Controllers\Api\LoginController;
 use App\Models\AppStores;
 use App\Models\Categories;
 use App\Models\Currencies;
+use App\Models\DeliveryMen;
 use App\Models\Locations;
 use App\Models\MyResponse;
 use App\Models\NestedSections;
 use App\Models\Options;
 use App\Models\Orders;
 use App\Models\OrdersAmounts;
+use App\Models\OrdersDelivery;
 use App\Models\OrdersProducts;
 use App\Models\ProductImages;
 use App\Models\Products;
@@ -453,6 +455,50 @@ trait AllShared
         return response()->json($dataOrders);
     }
 
+    public function getOurOrderDelivery(Request $request)
+    {
+        $orderId = $request->input('orderId');
+
+        $data = DB::table(table: OrdersDelivery::$tableName)
+            ->where(OrdersDelivery::$tableName . '.' . OrdersDelivery::$orderId, '=', $orderId)
+            ->join(
+                Locations::$tableName,
+                Locations::$tableName . '.' . Locations::$id,
+                '=',
+                OrdersDelivery::$tableName . '.' . OrdersDelivery::$locationId
+            )->first(
+                columns: [
+                    OrdersDelivery::$tableName . '.' . OrdersDelivery::$id . ' as id',
+                    Locations::$tableName . '.' . Locations::$latLng . ' as latLng',
+                    Locations::$tableName . '.' . Locations::$street . ' as street',
+                    OrdersDelivery::$tableName . '.' . OrdersDelivery::$deliveryManId,
+                    OrdersDelivery::$tableName . '.' . OrdersDelivery::$createdAt,
+                    OrdersDelivery::$tableName . '.' . OrdersDelivery::$updatedAt
+                ]
+            );
+        if ($data != null) {
+            if ($data->deliveryManId != null) {
+                $deliveryMan = DB::table(table: DeliveryMen::$tableName)
+                    ->where(DeliveryMen::$tableName . '.' . DeliveryMen::$id, '=', $data->deliveryManId)
+                    ->join(
+                        Users::$tableName,
+                        Users::$tableName . '.' . Users::$id,
+                        '=',
+                        DeliveryMen::$tableName . '.' . DeliveryMen::$userId
+                    )->sole(
+                        columns: [
+                            DeliveryMen::$tableName . '.' . DeliveryMen::$id,
+                            Users::$tableName . '.' . Users::$firstName,
+                            Users::$tableName . '.' . Users::$lastName,
+                            Users::$tableName . '.' . Users::$phone,
+                        ]
+                    );
+                $data->deliveryMan = $deliveryMan;
+            }
+        }
+
+        return $data;
+    }
     public function getOurOrderProducts(Request $request)
     {
         $orderId = $request->input('orderId');
@@ -476,7 +522,7 @@ trait AllShared
                     OrdersProducts::$tableName . '.' . OrdersProducts::$id,
                 ]
             );
-        return response()->json($dataOrderProducts);
+        return $dataOrderProducts;
     }
     public function addOurLocation(Request $request, $appId)
     {
@@ -739,6 +785,6 @@ trait AllShared
         return response()->json(['message' => $response->message, 'errors' => $response->errors, 'code' => $response->code], $response->responseCode);
     }
     ///
-  
-   
+
+
 }
