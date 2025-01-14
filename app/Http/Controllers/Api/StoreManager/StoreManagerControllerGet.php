@@ -616,7 +616,7 @@ class StoreManagerControllerGet extends Controller
     }
     public function getOrderProducts(Request $request)
     {
-        $this->getOurOrderProducts($request);
+       return $this->getOurOrderProducts($request);
     }
     public function getDeliveryMen(Request $request)
     {
