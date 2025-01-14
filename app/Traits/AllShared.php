@@ -494,8 +494,7 @@ trait AllShared
                         ]
                     );
                 $data->deliveryMan = $deliveryMan;
-            }
-            else{
+            } else {
                 $data->deliveryMan = null;
             }
         }
@@ -548,20 +547,20 @@ trait AllShared
         $street = $request->input('street');
         $insertedId = DB::table(table: Locations::$tableName)
             ->insertGetId([
-                Locations::$id => null,
-                Locations::$userId => $accessToken->userId,
-                Locations::$latLng => $latLng,
-                Locations::$street => $street,
-                Locations::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                Locations::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-            ]);
+            Locations::$id => null,
+            Locations::$userId => $accessToken->userId,
+            Locations::$latLng => $latLng,
+            Locations::$street => $street,
+            Locations::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+            Locations::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+        ]);
 
         $category = DB::table(Locations::$tableName)
             ->where(Locations::$tableName . '.' . Sections::$id, '=', $insertedId)
             ->sole([
-                Locations::$tableName . '.' . Locations::$id,
-                Locations::$tableName . '.' . Locations::$street,
-            ]);
+                    Locations::$tableName . '.' . Locations::$id,
+                    Locations::$tableName . '.' . Locations::$street,
+                ]);
         return response()->json($category);
     }
     public function refreshOurToken(Request $request, $appId)
@@ -624,12 +623,12 @@ trait AllShared
                 StoreProducts::$tableName . '.' . StoreProducts::$optionId
             )
             ->get([
-                StoreProducts::$tableName . '.' . StoreProducts::$id,
-                StoreProducts::$tableName . '.' . StoreProducts::$price,
-                Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
-                Products::$tableName . '.' . Products::$name . ' as productName',
-                Options::$tableName . '.' . Options::$name . ' as optionName',
-            ]);
+                    StoreProducts::$tableName . '.' . StoreProducts::$id,
+                    StoreProducts::$tableName . '.' . StoreProducts::$price,
+                    Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
+                    Products::$tableName . '.' . Products::$name . ' as productName',
+                    Options::$tableName . '.' . Options::$name . ' as optionName',
+                ]);
 
 
         if (count($storeProducts) != count($orderProducts)) {
@@ -657,12 +656,12 @@ trait AllShared
 
             DB::table(OrdersDelivery::$tableName)
                 ->insertGetId([
-                    OrdersDelivery::$id => null,
-                    OrdersDelivery::$orderId => $orderId,
-                    OrdersDelivery::$locationId => $locationId,
-                    OrdersDelivery::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                    OrdersDelivery::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-                ]);
+                        OrdersDelivery::$id => null,
+                        OrdersDelivery::$orderId => $orderId,
+                        OrdersDelivery::$locationId => $locationId,
+                        OrdersDelivery::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                        OrdersDelivery::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    ]);
 
 
 

@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Currencies;
 use App\Models\Options;
 use App\Models\OrdersAmounts;
+use App\Models\OrdersDelivery;
 use App\Models\OrdersProducts;
 use App\Models\ProductImages;
 use App\Models\Products;
 use App\Models\Stores;
 use App\Models\SharedStoresConfigs;
 use App\Models\StoreProducts;
+use App\Traits\AllShared;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -23,6 +25,8 @@ use Illuminate\Support\Facades\Validator;
 class StoreManagerControllerUpdate extends Controller
 {
     private $appId = 1;
+
+    use AllShared;
 
     public function updateProductImage(Request $request)
     {
@@ -262,6 +266,20 @@ class StoreManagerControllerUpdate extends Controller
                 [Stores::$id]
             );
         return response()->json($store);
+    }
+    public function updateOrderDeliveryMan(Request $request)
+    {
+        $orderId = $request->input('orderId');
+        $deliveryManId = $request->input('deliveryManId');
+        DB::table(table: OrdersDelivery::$tableName)
+            ->where(OrdersDelivery::$orderId, '=', $orderId)
+            ->update(
+                [
+                    OrdersDelivery::$deliveryManId => $deliveryManId,
+                ]
+            );
+
+        return response()->json($this->getOurOrderDelivery($request));
     }
     public function updateOrderProductQuantity(Request $request)
     {
