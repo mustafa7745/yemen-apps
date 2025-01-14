@@ -495,6 +495,9 @@ trait AllShared
                     );
                 $data->deliveryMan = $deliveryMan;
             }
+            else{
+                $data->deliveryMan = null;
+            }
         }
 
         return $data;
