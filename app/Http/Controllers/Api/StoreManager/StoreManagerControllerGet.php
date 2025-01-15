@@ -644,8 +644,8 @@ class StoreManagerControllerGet extends Controller
                 DeliveryMen::$tableName . '.' . DeliveryMen::$userId
             )
             ->where(StoreDeliveryMen::$tableName . '.' . StoreDeliveryMen::$storeId, '=', $storeId)
-            ->when($deliveryManId != null, function ($query) use ($storeId) {
-                return $query->where(StoreDeliveryMen::$tableName . '.' . StoreDeliveryMen::$deliveryManId, '<>', $storeId);
+            ->when($deliveryManId != null, function ($query) use ($deliveryManId) {
+                return $query->where(StoreDeliveryMen::$tableName . '.' . StoreDeliveryMen::$deliveryManId, '<>', $deliveryManId);
             })
             ->get(
                 [
