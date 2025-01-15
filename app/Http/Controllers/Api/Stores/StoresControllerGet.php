@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Api\Stores;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Locations;
+use App\Models\PaymentTypes;
 use App\Models\SharedStoresConfigs;
 use App\Models\StoreInfo;
 use App\Models\StoreNestedSections;
 use App\Models\Options;
+use App\Models\StorePaymentTypes;
 use App\Models\Stores;
 use App\Models\ProductImages;
 use App\Models\Products;
@@ -111,7 +113,7 @@ class StoresControllerGet extends Controller
 
     public function getLocations(Request $request)
     {
-       return $this->getOurLocations($request, $this->appId);
+        return $this->getOurLocations($request, $this->appId);
     }
     public function getHome(Request $request)
     {
@@ -129,6 +131,8 @@ class StoresControllerGet extends Controller
 
         return response()->json($data);
     }
+
+   
 
     public function login(Request $request)
     {

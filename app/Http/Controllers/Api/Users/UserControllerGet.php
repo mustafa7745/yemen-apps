@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api\Users;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\AppStores;
+use App\Models\PaymentTypes;
 use App\Models\SharedStoresConfigs;
+use App\Models\StorePaymentTypes;
 use App\Models\Stores;
 use App\Traits\AllShared;
 use App\Traits\UsersControllerShared;
@@ -61,6 +63,26 @@ class UserControllerGet extends Controller
         $accessToken = $resultAccessToken->message;
 
         return $this->getOurOrders($request, $accessToken->userId);
+    }
+    public function getPaymentTypes(Request $request)
+    {
+        // $storeId = 1;
+        $storeId = $request->input('storeId');
+        $data = DB::table(table: StorePaymentTypes::$tableName)
+            ->join(
+                PaymentTypes::$tableName,
+                PaymentTypes::$tableName . '.' . PaymentTypes::$id,
+                '=',
+                StorePaymentTypes::$tableName . '.' . StorePaymentTypes::$paymentTypeId
+            )
+            ->where(StorePaymentTypes::$tableName . '.' . StorePaymentTypes::$storeId, '=', $storeId)
+            ->get([
+                PaymentTypes::$tableName . '.' . PaymentTypes::$id,
+                PaymentTypes::$tableName . '.' . PaymentTypes::$name,
+                PaymentTypes::$tableName . '.' . PaymentTypes::$image,
+            ]);
+
+        return response()->json($data);
     }
 
     public function getOrderProducts(Request $request)

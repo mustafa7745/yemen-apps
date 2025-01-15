@@ -118,6 +118,8 @@ Route::prefix('v1/u')->group(function () {
     Route::post('/getLocations', [UserControllerGet::class, 'getLocations']);
     Route::post('/getOrders', [UserControllerGet::class, 'getOrders']);
     Route::post('/getOrderProducts', [UserControllerGet::class, 'getOrderProducts']);
+    Route::post('/getPaymentTypes', [UserControllerGet::class, 'getPaymentTypes']);
+
 
 
     Route::post('/addLocation', [UserControllerAdd::class, 'addLocation']);
