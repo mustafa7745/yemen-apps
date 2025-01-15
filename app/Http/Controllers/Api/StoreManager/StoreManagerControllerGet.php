@@ -628,6 +628,7 @@ class StoreManagerControllerGet extends Controller
     {
 
         $storeId = $request->input('storeId');
+        $deliveryManId = $request->input('deliveryManId');
 
         $data = DB::table(table: StoreDeliveryMen::$tableName)
             ->join(
@@ -643,6 +644,9 @@ class StoreManagerControllerGet extends Controller
                 DeliveryMen::$tableName . '.' . DeliveryMen::$userId
             )
             ->where(StoreDeliveryMen::$tableName . '.' . StoreDeliveryMen::$storeId, '=', $storeId)
+            ->when($deliveryManId != null, function ($query) use ($storeId) {
+                return $query->where(StoreDeliveryMen::$tableName . '.' . StoreDeliveryMen::$deliveryManId, '<>', $storeId);
+            })
             ->get(
                 [
                     DeliveryMen::$tableName . '.' . DeliveryMen::$id,
