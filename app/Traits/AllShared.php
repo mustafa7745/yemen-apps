@@ -14,6 +14,7 @@ use App\Models\OrdersAmounts;
 use App\Models\OrdersDelivery;
 use App\Models\OrdersPayments;
 use App\Models\OrdersProducts;
+use App\Models\PaymentTypes;
 use App\Models\ProductImages;
 use App\Models\Products;
 use App\Models\Sections;
@@ -531,25 +532,34 @@ trait AllShared
     {
         $orderId = $request->input('orderId');
 
-        $dataOrderProducts = DB::table(table: OrdersProducts::$tableName)
-            ->where(OrdersProducts::$tableName . '.' . OrdersProducts::$orderId, '=', $orderId)
+        $dataOrderProducts = DB::table(table: OrdersPayments::$tableName)
+            ->where(OrdersPayments::$tableName . '.' . OrdersPayments::$orderId, '=', $orderId)
+
             ->join(
-                Currencies::$tableName,
-                Currencies::$tableName . '.' . Currencies::$id,
+                PaymentTypes::$tableName,
+                PaymentTypes::$tableName . '.' . PaymentTypes::$id,
                 '=',
-                OrdersProducts::$tableName . '.' . OrdersProducts::$currencyId
+                OrdersPayments::$tableName . '.' . OrdersPayments::$paymentId
             )
-            ->get(
+            ->first(
                 [
-                    Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
-                    OrdersProducts::$tableName . '.' . OrdersProducts::$productName . ' as productName',
-                    OrdersProducts::$tableName . '.' . OrdersProducts::$storeProductId . ' as storeProductId',
-                    OrdersProducts::$tableName . '.' . OrdersProducts::$productPrice . ' as price',
-                    OrdersProducts::$tableName . '.' . OrdersProducts::$productQuantity . ' as quantity',
-                    OrdersProducts::$tableName . '.' . OrdersProducts::$optionName,
-                    OrdersProducts::$tableName . '.' . OrdersProducts::$id,
+                    OrdersPayments::$tableName . '.' . OrdersPayments::$id,
+                    PaymentTypes::$tableName . '.' . PaymentTypes::$id . ' as paymentId',
+                    PaymentTypes::$tableName . '.' . PaymentTypes::$name . ' as paymentName',
+                    PaymentTypes::$tableName . '.' . PaymentTypes::$image . ' as paymentImage',
+                    OrdersPayments::$tableName . '.' . OrdersPayments::$createdAt,
+                    OrdersPayments::$tableName . '.' . OrdersPayments::$updatedAt,
                 ]
             );
+        return $dataOrderProducts;
+    }
+    public function getOurOrderDetail(Request $request)
+    {
+        $orderId = $request->input('orderId');
+
+        $dataOrderProducts = DB::table(table: Orders::$tableName)
+            ->where(Orders::$tableName . '.' . Orders::$id, '=', $orderId)
+            ->sole();
         return $dataOrderProducts;
     }
     public function addOurLocation(Request $request, $appId)
@@ -681,6 +691,9 @@ trait AllShared
                 ->insertGetId($orderData);
 
             if ($paid != 0) {
+                // if (condition) {
+                //     # code...
+                // }
                 DB::table(OrdersPayments::$tableName)
                     ->insert(
                         [

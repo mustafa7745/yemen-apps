@@ -618,11 +618,11 @@ class StoreManagerControllerGet extends Controller
     {
         $orderDelivery = $this->getOurOrderDelivery($request);
         $orderProducts = $this->getOurOrderProducts($request);
-        $orderPayment = $this->getOurOrderProducts($request);
-        $orderDetail = $this->getOurOrderProducts($request);
+        $orderPayment = $this->getOurOrderPayment($request);
+        $orderDetail = $this->getOurOrderDetail($request);
 
 
-        return response()->json(['orderDelivery' => $orderDelivery, 'orderProducts' => $orderProducts]);
+        return response()->json(['orderDelivery' => $orderDelivery, 'orderProducts' => $orderProducts, 'orderPayment' => $orderPayment, 'orderDetail' => $orderDetail]);
     }
     public function getDeliveryMen(Request $request)
     {
