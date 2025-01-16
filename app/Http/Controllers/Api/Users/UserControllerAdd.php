@@ -31,12 +31,16 @@ class UserControllerAdd extends Controller
         $orderId = $request->input('orderId');
 
         if ($paidCode == '123456') {
+            $data = DB::table(Orders::$tableName)->where(Orders::$id, '=', $orderId)->first([
+                Orders::$tableName . "." . Orders::$paid
+            ]);
+
             DB::table(OrdersPayments::$tableName)
                 ->insert(
                     [
                         OrdersPayments::$id => null,
                         OrdersPayments::$orderId => $orderId,
-                        OrdersPayments::$paymentId => $paid,
+                        OrdersPayments::$paymentId => $data->paid,
                         OrdersPayments::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                         OrdersPayments::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                     ]
