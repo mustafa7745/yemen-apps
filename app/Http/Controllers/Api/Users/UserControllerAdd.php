@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Users;
 use App\Http\Controllers\Controller;
 use App\Models\Options;
 use App\Models\Orders;
+use App\Models\OrdersPayments;
 use App\Models\Products;
 use App\Models\StoreProducts;
 use App\Traits\AllShared;
@@ -21,6 +22,29 @@ class UserControllerAdd extends Controller
     {
         $app = $this->getMyApp($request);
         return $this->addOurLocation($request, $app->id);
+    }
+    public function addPaidCode(Request $request)
+    {
+        $app = $this->getMyApp($request);
+        $paidCode = $request->input('paidCode');
+        $paid = $request->input('paid');
+        $orderId = $request->input('orderId');
+
+        if ($paidCode == '123456') {
+            DB::table(OrdersPayments::$tableName)
+                ->insert(
+                    [
+                        OrdersPayments::$id => null,
+                        OrdersPayments::$orderId => $orderId,
+                        OrdersPayments::$paymentId => $paid,
+                        OrdersPayments::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                        OrdersPayments::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    ]
+                );
+            return response()->json($this->getOurOrderPayment($request));
+        }
+        return response()->json(['message' => "رقم كود الشراء غير صحيح", 'errors' => [], 'code' => 0], 403);
+
     }
     public function confirmOrder(Request $request)
     {

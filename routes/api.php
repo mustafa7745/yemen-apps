@@ -123,6 +123,8 @@ Route::prefix('v1/u')->group(function () {
 
 
     Route::post('/addLocation', [UserControllerAdd::class, 'addLocation']);
+    Route::post('/addPaidCode', [UserControllerAdd::class, 'addPaidCode']);
+
     Route::post('/confirmOrder', [UserControllerAdd::class, 'confirmOrder']);
 
 
