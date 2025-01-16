@@ -671,7 +671,7 @@ trait AllShared
             return "error";
         }
 
-        return DB::transaction(function () use ($accessToken, $storeId, $storeProducts, $orderProducts, $locationId, $paid) {
+        return DB::transaction(function () use ($request, $accessToken, $storeId, $storeProducts, $orderProducts, $locationId, $paid) {
 
             $orderData = [
                 Orders::$id => null,
@@ -691,19 +691,20 @@ trait AllShared
                 ->insertGetId($orderData);
 
             if ($paid != 0) {
-                // if (condition) {
-                //     # code...
-                // }
-                DB::table(OrdersPayments::$tableName)
-                    ->insert(
-                        [
-                            OrdersPayments::$id => null,
-                            OrdersPayments::$orderId => $orderId,
-                            OrdersPayments::$paymentId => $paid,
-                            OrdersPayments::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                            OrdersPayments::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-                        ]
-                    );
+                $paidCode = $request->input('paidCode');
+
+                if ($paidCode == '123456') {
+                    DB::table(OrdersPayments::$tableName)
+                        ->insert(
+                            [
+                                OrdersPayments::$id => null,
+                                OrdersPayments::$orderId => $orderId,
+                                OrdersPayments::$paymentId => $paid,
+                                OrdersPayments::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                                OrdersPayments::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                            ]
+                        );
+                }
             }
 
             DB::table(OrdersDelivery::$tableName)
