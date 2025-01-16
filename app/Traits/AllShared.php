@@ -684,7 +684,7 @@ trait AllShared
             ];
 
             if ($locationId != null) {
-                $orderData[Orders::$inStore] = $locationId; // أو أي قيمة أخرى بناءً على متطلباتك
+                $orderData[Orders::$inStore] = $locationId; // 
             }
 
             $orderId = DB::table(Orders::$tableName)
@@ -692,7 +692,6 @@ trait AllShared
 
             if ($paid != 0) {
                 $paidCode = $request->input('paidCode');
-
                 if ($paidCode == '123456') {
                     DB::table(OrdersPayments::$tableName)
                         ->insert(

@@ -87,6 +87,13 @@ class UserControllerGet extends Controller
 
     public function getOrderProducts(Request $request)
     {
-        return $this->getOurOrderProducts($request);
+        $orderDelivery = $this->getOurOrderDelivery($request);
+        $orderProducts = $this->getOurOrderProducts($request);
+        $orderPayment = $this->getOurOrderPayment($request);
+        $orderDetail = $this->getOurOrderDetail($request);
+
+
+        return response()->json(['orderDelivery' => $orderDelivery, 'orderProducts' => $orderProducts, 'orderPayment' => $orderPayment, 'orderDetail' => $orderDetail]);
+        // return $this->getOurOrderProducts($request);
     }
 }
