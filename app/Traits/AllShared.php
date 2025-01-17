@@ -17,6 +17,7 @@ use App\Models\OrdersProducts;
 use App\Models\PaymentTypes;
 use App\Models\ProductImages;
 use App\Models\Products;
+use App\Models\ProductViews;
 use App\Models\Sections;
 use App\Models\SharedStoresConfigs;
 use App\Models\StoreCategories;
@@ -303,6 +304,8 @@ trait AllShared
                 Products::$tableName . '.' . Products::$name . ' as productName',
                 Products::$tableName . '.' . Products::$description . ' as productDescription',
                 StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
+                StoreProducts::$tableName . '.' . StoreProducts::$productViewId . ' as productViewId',
+
                     // 
                 Options::$tableName . '.' . Options::$id . ' as optionId',
                 Options::$tableName . '.' . Options::$name . ' as optionName',
@@ -343,7 +346,7 @@ trait AllShared
                     }
                 }
                 $result[$product->productId] = [
-                    'product' => ['productId' => $product->productId, 'productName' => $product->productName, 'productDescription' => $product->productDescription, 'images' => $images],
+                    'product' => ['productId' => $product->productId, 'productName' => $product->productName, 'productDescription' => $product->productDescription, 'images' => $images, 'productViewId' => $product->productViewId],
                     'storeNestedSectionId' => $product->storeNestedSectionId,
                     'options' => []
                 ];
@@ -357,8 +360,27 @@ trait AllShared
             $result[$product->productId]['options'][] = ['storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price, 'currency' => $currency];
         }
 
+        $productViews = DB::table(ProductViews::$tableName)->get(
+            [
+                ProductViews::$tableName . '.' . ProductViews::$id,
+                ProductViews::$tableName . '.' . ProductViews::$name,
+            ]
+        );
 
-        return response()->json(array_values($result));
+        $data = [];
+
+        foreach ($productViews as $key => $productView) {
+            $products = [];
+            foreach ($result as $key2 => $storeProduct) {
+                if ($productView->id == $storeProduct['product']['productViewId']) {
+                    $products[] = $storeProduct;
+                }
+            }
+            $data[] = ['id' => $productView->id, 'name' => $productView->name, 'products' => $products];
+        }
+
+
+        return response()->json(array_values($data));
     }
     public function getOurLocations(Request $request, $appId)
     {
