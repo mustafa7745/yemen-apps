@@ -281,6 +281,24 @@ class StoreManagerControllerUpdate extends Controller
 
         return response()->json($this->getOurOrderDelivery($request));
     }
+    public function updateProductView(Request $request)
+    {
+        $storeId = $request->input('storeId');
+        $productId = $request->input('productId');
+        $productViewId = $request->input('productViewId');
+
+        DB::table(table: StoreProducts::$tableName)
+            ->where(StoreProducts::$storeId, '=', $storeId)
+            ->where(StoreProducts::$productId, '=', $productId)
+
+            ->update(
+                [
+                    StoreProducts::$productViewId => $productViewId,
+                ]
+            );
+
+        return response()->json([]);
+    }
     public function updateOrderProductQuantity(Request $request)
     {
 
