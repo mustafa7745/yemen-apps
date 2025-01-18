@@ -10,6 +10,7 @@ use App\Models\NestedSections;
 use App\Models\Orders;
 use App\Models\OrdersAmounts;
 use App\Models\OrdersProducts;
+use App\Models\ProductViews;
 use App\Models\Sections;
 use App\Models\StoreDeliveryMen;
 use App\Models\StoreInfo;
@@ -119,6 +120,12 @@ class StoreManagerControllerGet extends Controller
                 StoreProducts::$tableName . '.' . StoreProducts::$productId
             )
             ->join(
+                ProductViews::$tableName,
+                ProductViews::$tableName . '.' . ProductViews::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$productViewId
+            )
+            ->join(
                 Options::$tableName,
                 Options::$tableName . '.' . Options::$id,
                 '=',
@@ -147,6 +154,11 @@ class StoreManagerControllerGet extends Controller
                 Products::$tableName . '.' . Products::$description . ' as productDescription',
                 StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
                     // 
+                ProductViews::$tableName . '.' . ProductViews::$id . ' as productViewId',
+                ProductViews::$tableName . '.' . ProductViews::$name . ' as productViewName',
+
+
+                    //
                 Options::$tableName . '.' . Options::$id . ' as optionId',
                 Options::$tableName . '.' . Options::$name . ' as optionName',
                 // 
@@ -186,6 +198,8 @@ class StoreManagerControllerGet extends Controller
             if (!isset($result[$product->productId])) {
                 $result[$product->productId] = [
                     'productId' => $product->productId,
+                    'productViewName' => $product->productViewName,
+                    'productViewId' => $product->productViewId,
                     'storeNestedSectionId' => $product->storeNestedSectionId,
                     'productName' => $product->productName,
                     'productDescription' => $product->productDescription,
