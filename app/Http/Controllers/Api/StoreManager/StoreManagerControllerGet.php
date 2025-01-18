@@ -275,6 +275,11 @@ class StoreManagerControllerGet extends Controller
         $options = DB::table(table: Options::$tableName)->get();
         return response()->json($options);
     }
+    public function getProductViews()
+    {
+        $options = DB::table(table: ProductViews::$tableName)->get();
+        return response()->json($options);
+    }
     public function getStores(Request $request)
     {
         $validator = Validator::make($request->all(), [

@@ -58,6 +58,8 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/getOrders', [StoreManagerControllerGet::class, 'getOrders']);
     Route::post('/getOrderProducts', [StoreManagerControllerGet::class, 'getOrderProducts']);
     Route::post('/getDeliveryMen', [StoreManagerControllerGet::class, 'getDeliveryMen']);
+    Route::post('/getProductViews', [StoreManagerControllerGet::class, 'getProductViews']);
+
 
 
 
