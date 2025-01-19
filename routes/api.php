@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\Stores\StoresControllerAdd;
 use App\Http\Controllers\Api\Stores\StoresControllerGet;
 use App\Http\Controllers\Api\Users\UserControllerAdd;
 use App\Http\Controllers\Api\Users\UserControllerGet;
+use App\Http\Controllers\Api\Users\UserControllerUpdate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -124,9 +125,11 @@ Route::prefix('v1/u')->group(function () {
     Route::post('/getOrderProducts', [UserControllerGet::class, 'getOrderProducts']);
     Route::post('/getPaymentTypes', [UserControllerGet::class, 'getPaymentTypes']);
     Route::post('/getUserProfile', [UserControllerGet::class, 'getUserProfile']);
+    Route::post('/search', [UserControllerGet::class, 'search']);
 
 
-    Route::post('/logout', [UserControllerGet::class, 'logout']);
+
+    Route::post('/logout', [UserControllerUpdate::class, 'logout']);
 
 
 
