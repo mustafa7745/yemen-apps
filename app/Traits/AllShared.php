@@ -427,8 +427,7 @@ trait AllShared
             // )
             ->where(Products::$tableName . '.' . Products::$name, 'LIKE', '%' . $search . '%')
             ->orWhere(Options::$tableName . '.' . Options::$name, 'LIKE', '%' . $search . '%')
-
-            // ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
+            ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
             ->select(
                 StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
                 Products::$tableName . '.' . Products::$id . ' as productId',
