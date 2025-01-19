@@ -123,7 +123,7 @@ class UserControllerGet extends Controller
 
         return DB::transaction(function () use ($accessToken) {
             DB::table(table: UsersSessions::$tableName)
-                ->where(UsersSessions::$userId, '=', $accessToken->userId)
+                ->where(UsersSessions::$id, '=', $accessToken->usersSessionId)
                 ->update([
                     UsersSessions::$isLogin => 0,
                     UsersSessions::$logoutCount => DB::raw(UsersSessions::$logoutCount . ' + 1'),
