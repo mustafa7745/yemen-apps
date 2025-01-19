@@ -7,6 +7,9 @@ class Users
    public static $tableName = "users";
    public static $id = "id";
    public static $firstName = "firstName";
+   public static $secondName = "secondName";
+   public static $thirdName = "thirdName";
+
    public static $lastName = "lastName";
    public static $phone = "phone";
    public static $logo = "logo";

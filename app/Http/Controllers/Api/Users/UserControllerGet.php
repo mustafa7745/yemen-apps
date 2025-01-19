@@ -8,6 +8,7 @@ use App\Models\PaymentTypes;
 use App\Models\SharedStoresConfigs;
 use App\Models\StorePaymentTypes;
 use App\Models\Stores;
+use App\Models\Users;
 use App\Traits\AllShared;
 use App\Traits\UsersControllerShared;
 use Illuminate\Support\Facades\DB;
@@ -80,6 +81,29 @@ class UserControllerGet extends Controller
                 PaymentTypes::$tableName . '.' . PaymentTypes::$id,
                 PaymentTypes::$tableName . '.' . PaymentTypes::$name,
                 PaymentTypes::$tableName . '.' . PaymentTypes::$image,
+            ]);
+
+        return response()->json($data);
+    }
+    public function getUserProfile(Request $request)
+    {
+
+        $app = $this->getMyApp($request);
+        $resultAccessToken = $this->getAccessToken($request, $app->id);
+        if ($resultAccessToken->isSuccess == false) {
+            return $this->responseError($resultAccessToken);
+        }
+        $accessToken = $resultAccessToken->message;
+
+        $data = DB::table(table: Users::$tableName)
+            ->where(Users::$tableName . '.' . Users::$id, '=', $accessToken->userId)
+            ->first([
+                Users::$tableName . '.' . Users::$id,
+                Users::$tableName . '.' . Users::$firstName,
+                Users::$tableName . '.' . Users::$secondName,
+                Users::$tableName . '.' . Users::$thirdName,
+                Users::$tableName . '.' . Users::$lastName,
+                Users::$tableName . '.' . Users::$logo,
             ]);
 
         return response()->json($data);
