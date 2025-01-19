@@ -331,6 +331,7 @@ class LoginController
             ->first([
                 AccessTokens1::$tableName . '.' . AccessTokens1::$id . ' as id',
                 AccessTokens1::$tableName . '.' . AccessTokens1::$token . ' as token',
+                AccessTokens1::$tableName . '.' . AccessTokens1::$userSessionId . ' as userSessionId',
                 AccessTokens1::$tableName . '.' . AccessTokens1::$expireAt . ' as expireAt',
                     //
                 Users::$tableName . '.' . Users::$id . ' as userId',

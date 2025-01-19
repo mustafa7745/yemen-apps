@@ -121,7 +121,7 @@ class UserControllerGet extends Controller
         }
         $accessToken = $resultAccessToken->message;
 
-        print_r($accessToken);
+        // print_r($accessToken);
 
         return DB::transaction(function () use ($accessToken) {
             DB::table(table: UsersSessions::$tableName)
