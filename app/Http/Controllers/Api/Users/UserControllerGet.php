@@ -9,8 +9,10 @@ use App\Models\SharedStoresConfigs;
 use App\Models\StorePaymentTypes;
 use App\Models\Stores;
 use App\Models\Users;
+use App\Models\UsersSessions;
 use App\Traits\AllShared;
 use App\Traits\UsersControllerShared;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -109,14 +111,35 @@ class UserControllerGet extends Controller
         return response()->json($data);
     }
 
+    public function logout(Request $request)
+    {
+
+        $app = $this->getMyApp($request);
+        $resultAccessToken = $this->getAccessToken($request, $app->id);
+        if ($resultAccessToken->isSuccess == false) {
+            return $this->responseError($resultAccessToken);
+        }
+        $accessToken = $resultAccessToken->message;
+
+        return DB::transaction(function () use ($accessToken) {
+            DB::table(table: UsersSessions::$tableName)
+                ->where(UsersSessions::$userId, '=', $accessToken->userId)
+                ->update([
+                    UsersSessions::$isLogin => 0,
+                    UsersSessions::$logoutCount => DB::raw(UsersSessions::$logoutCount . ' + 1'),
+                    UsersSessions::$lastLogoutAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    UsersSessions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s')
+                ]);
+            return response()->json([]);
+        });
+    }
+
     public function getOrderProducts(Request $request)
     {
         $orderDelivery = $this->getOurOrderDelivery($request);
         $orderProducts = $this->getOurOrderProducts($request);
         $orderPayment = $this->getOurOrderPayment($request);
         $orderDetail = $this->getOurOrderDetail($request);
-
-
         return response()->json(['orderDelivery' => $orderDelivery, 'orderProducts' => $orderProducts, 'orderPayment' => $orderPayment, 'orderDetail' => $orderDetail]);
         // return $this->getOurOrderProducts($request);
     }

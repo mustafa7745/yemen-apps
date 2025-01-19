@@ -10,6 +10,8 @@ class UsersSessions
    public static $userId = "userId";
    public static $isLogin = "isLogin";
    public static $lastLoginAt = "lastLoginAt";
+   public static $lastLogoutAt = "lastLogoutAt";
+   public static $logoutCount = "logoutCount";
    public static $loginCount = "loginCount";
    public static $createdAt = "createdAt";
    public static $updatedAt = "updatedAt";

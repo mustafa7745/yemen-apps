@@ -126,6 +126,10 @@ Route::prefix('v1/u')->group(function () {
     Route::post('/getUserProfile', [UserControllerGet::class, 'getUserProfile']);
 
 
+    Route::post('/logout', [UserControllerGet::class, 'logout']);
+
+
+
 
 
     Route::post('/addLocation', [UserControllerAdd::class, 'addLocation']);
