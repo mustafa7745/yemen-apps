@@ -387,6 +387,7 @@ trait AllShared
         $search = $request->input('search');
         $storeId = $request->input('storeId');
         // 
+        print_r("storeId" . $storeId);
         $storeProducts = DB::table(StoreProducts::$tableName)
             // ->where(StoreProducts::$storeId, $storeId)
             ->join(
