@@ -690,7 +690,6 @@ class StoreManagerControllerGet extends Controller
     }
     public function getUserProfile(Request $request)
     {
-        $app = $this->getMyApp($request);
-        return $this->getOurUserProfile($request, $app->id);
+        return $this->getOurUserProfile($request, $this->appId);
     }
 }
