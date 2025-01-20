@@ -93,26 +93,8 @@ class UserControllerGet extends Controller
     }
     public function getUserProfile(Request $request)
     {
-
         $app = $this->getMyApp($request);
-        $resultAccessToken = $this->getAccessToken($request, $app->id);
-        if ($resultAccessToken->isSuccess == false) {
-            return $this->responseError($resultAccessToken);
-        }
-        $accessToken = $resultAccessToken->message;
-
-        $data = DB::table(table: Users::$tableName)
-            ->where(Users::$tableName . '.' . Users::$id, '=', $accessToken->userId)
-            ->first([
-                Users::$tableName . '.' . Users::$id,
-                Users::$tableName . '.' . Users::$firstName,
-                Users::$tableName . '.' . Users::$secondName,
-                Users::$tableName . '.' . Users::$thirdName,
-                Users::$tableName . '.' . Users::$lastName,
-                Users::$tableName . '.' . Users::$logo,
-            ]);
-
-        return response()->json($data);
+        return $this->getOurUserProfile($request, $app->id);
     }
 
 

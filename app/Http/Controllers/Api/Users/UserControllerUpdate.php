@@ -20,29 +20,10 @@ class UserControllerUpdate extends Controller
     use AllShared;
 
 
-    
+
     public function logout(Request $request)
     {
-
         $app = $this->getMyApp($request);
-        $resultAccessToken = $this->getAccessToken($request, $app->id);
-        if ($resultAccessToken->isSuccess == false) {
-            return $this->responseError($resultAccessToken);
-        }
-        $accessToken = $resultAccessToken->message;
-
-        // print_r($accessToken);
-
-        return DB::transaction(function () use ($accessToken) {
-            DB::table(table: UsersSessions::$tableName)
-                ->where(UsersSessions::$id, '=', $accessToken->userSessionId)
-                ->update([
-                    UsersSessions::$isLogin => 0,
-                    UsersSessions::$logoutCount => DB::raw(UsersSessions::$logoutCount . ' + 1'),
-                    UsersSessions::$lastLogoutAt => Carbon::now()->format('Y-m-d H:i:s'),
-                    UsersSessions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s')
-                ]);
-            return response()->json([]);
-        });
+        return $this->ourLogout($request, $app->id);
     }
 }

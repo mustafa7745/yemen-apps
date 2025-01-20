@@ -26,6 +26,7 @@ use App\Models\StoreProducts;
 use App\Models\Stores;
 use App\Models\StoreSections;
 use App\Models\Users;
+use App\Models\UsersSessions;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Database\QueryException;
@@ -34,6 +35,49 @@ use Validator;
 
 trait AllShared
 {
+    public function ourLogout(Request $request, $appId)
+    {
+        $resultAccessToken = $this->getAccessToken($request, $appId);
+        if ($resultAccessToken->isSuccess == false) {
+            return $this->responseError($resultAccessToken);
+        }
+        $accessToken = $resultAccessToken->message;
+
+        // print_r($accessToken);
+
+        return DB::transaction(function () use ($accessToken) {
+            DB::table(table: UsersSessions::$tableName)
+                ->where(UsersSessions::$id, '=', $accessToken->userSessionId)
+                ->update([
+                    UsersSessions::$isLogin => 0,
+                    UsersSessions::$logoutCount => DB::raw(UsersSessions::$logoutCount . ' + 1'),
+                    UsersSessions::$lastLogoutAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    UsersSessions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s')
+                ]);
+            return response()->json([]);
+        });
+    }
+    public function getOurUserProfile(Request $request, $appId)
+    {
+        $resultAccessToken = $this->getAccessToken($request, $appId);
+        if ($resultAccessToken->isSuccess == false) {
+            return $this->responseError($resultAccessToken);
+        }
+        $accessToken = $resultAccessToken->message;
+
+        $data = DB::table(table: Users::$tableName)
+            ->where(Users::$tableName . '.' . Users::$id, '=', $accessToken->userId)
+            ->first([
+                Users::$tableName . '.' . Users::$id,
+                Users::$tableName . '.' . Users::$firstName,
+                Users::$tableName . '.' . Users::$secondName,
+                Users::$tableName . '.' . Users::$thirdName,
+                Users::$tableName . '.' . Users::$lastName,
+                Users::$tableName . '.' . Users::$logo,
+            ]);
+
+        return response()->json($data);
+    }
     public function getOurHome(Request $request)
     {
         $storeId = $request->input('storeId');
@@ -429,7 +473,7 @@ trait AllShared
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
             ->where(Products::$tableName . '.' . Products::$name, 'LIKE', '%' . $search . '%')
             ->orWhere(Options::$tableName . '.' . Options::$name, 'LIKE', '%' . $search . '%')
-          
+
             ->select(
                 StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
                 Products::$tableName . '.' . Products::$id . ' as productId',

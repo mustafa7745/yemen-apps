@@ -60,8 +60,7 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/getOrderProducts', [StoreManagerControllerGet::class, 'getOrderProducts']);
     Route::post('/getDeliveryMen', [StoreManagerControllerGet::class, 'getDeliveryMen']);
     Route::post('/getProductViews', [StoreManagerControllerGet::class, 'getProductViews']);
-
-
+    Route::post('/getUserProfile', [StoreManagerControllerGet::class, 'getUserProfile']);
 
 
     Route::post('/addCategory', [StoreManagerControllerAdd::class, 'addCategory']);
@@ -88,10 +87,7 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/updateOrderProductQuantity', [StoreManagerControllerUpdate::class, 'updateOrderProductQuantity']);
     Route::post('/updateOrderDeliveryMan', [StoreManagerControllerUpdate::class, 'updateOrderDeliveryMan']);
     Route::post('/updateProductView', [StoreManagerControllerUpdate::class, 'updateProductView']);
-
-
-
-
+    Route::post('/logout', [StoreManagerControllerUpdate::class, 'logout']);
 
 
     Route::post('/deleteProductImage', [StoreManagerControllerDelete::class, 'deleteProductImage']);

@@ -474,4 +474,9 @@ class StoreManagerControllerUpdate extends Controller
             }
         });
     }
+
+    public function logout(Request $request)
+    {
+        return $this->ourLogout($request, $this->appId);
+    }
 }
