@@ -11,6 +11,8 @@ class SharedStoresConfigs
    public static $nestedSections = "nestedSections";
    public static $products = "products";
    public static $storeId = "storeId";
+   public static $storeIdReference = "storeIdReference";
+
    public static $createdAt = "createdAt";
    public static $updatedAt = "updatedAt";
 }

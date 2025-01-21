@@ -324,16 +324,16 @@ trait AllShared
 
         $storeProducts = DB::table(StoreProducts::$tableName)
 
-            ->when($store->typeId == 1, function ($query) use ($store) {
-                $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
-                    ->where(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, '=', $store->id)
-                    ->first();
+            // ->when($store->typeId == 1, function ($query) use ($store) {
+            //     $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
+            //         ->where(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, '=', $store->id)
+            //         ->first();
 
-                $productIds = json_decode($storeConfig->products);
-                // print_r($productIds);fe
+            //     $productIds = json_decode($storeConfig->products);
+            //     // print_r($productIds);fe
 
-                return $query->whereNotIn(StoreProducts::$tableName . '.' . StoreProducts::$id, $productIds);
-            })
+            //     return $query->whereNotIn(StoreProducts::$tableName . '.' . StoreProducts::$id, $productIds);
+            // })
             ->join(
                 Products::$tableName,
                 Products::$tableName . '.' . Products::$id,
@@ -370,7 +370,21 @@ trait AllShared
             //     '=',
             //     StoreCategories::$tableName . '.' . StoreCategories::$categoryId
             // )
-            ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
+            ->when($store->typeId == 1, function ($query) use ($store) {
+                $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
+                    ->where(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, '=', $store->id)
+                    ->first();
+
+                $productIds = json_decode($storeConfig->products);
+                // print_r($productIds);fe
+    
+                return $query->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeConfig->storeIdReference)
+                    ->whereNotIn(StoreProducts::$tableName . '.' . StoreProducts::$id, $productIds);
+            })
+            ->when($store->typeId == 2, function ($query) use ($storeId) {
+                return $query->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId);
+            })
+
             ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeNestedSectionId, '=', $storeNestedSectionId)
             ->select(
                 StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
