@@ -108,7 +108,7 @@ trait AllShared
 
 
         $storeCategories = DB::table(table: StoreCategories::$tableName)
-            ->when(count($categories) > 0, function ($query) use ($categories, $storeIdReference) {
+            ->when($typeId == 1 && count($categories) > 0, function ($query) use ($categories, $storeIdReference) {
                 // print_r($categories);
                 return $query->whereNotIn(StoreCategories::$tableName . '.' . StoreCategories::$id, $categories)
                     ->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $storeIdReference);
@@ -142,7 +142,7 @@ trait AllShared
                 $storeCategoriesIds
 
             )
-            ->when(count($sections) > 0, function ($query) use ($sections) {
+            ->when($typeId == 1 && count($sections) > 0, function ($query) use ($sections) {
                 return $query->whereNotIn(StoreSections::$tableName . '.' . StoreSections::$id, $sections);
             })
             ->join(
@@ -190,7 +190,7 @@ trait AllShared
             )
 
             ->whereIn(StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId, $storeCategoriesSectionsIds)
-            ->when(count(value: $nestedSections) > 0, function ($query) use ($nestedSections) {
+            ->when($typeId == 1 && count($nestedSections) > 0, function ($query) use ($nestedSections) {
                 // print_r()
                 return $query->whereNotIn(StoreNestedSections::$tableName . '.' . StoreNestedSections::$id, $nestedSections);
             })
