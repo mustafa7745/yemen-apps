@@ -107,6 +107,7 @@ trait AllShared
 
         $storeCategories = DB::table(table: StoreCategories::$tableName)
             ->when($typeId == 1, function ($query) use ($categories) {
+                print_r($categories);
                 return $query->whereNotIn(StoreCategories::$tableName . '.' . StoreCategories::$id, $categories);
             })
             ->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $storeId)
