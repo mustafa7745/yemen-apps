@@ -330,6 +330,8 @@ trait AllShared
         $store = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)
             ->first([
+                Stores::$tableName . '.' . Stores::$id,
+
                 Stores::$tableName . '.' . Stores::$typeId
             ]);
 
