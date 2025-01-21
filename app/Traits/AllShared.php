@@ -319,7 +319,7 @@ trait AllShared
             ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)
             ->first();
 
-        print_r($store);
+        // print_r($store);
 
 
         $storeProducts = DB::table(StoreProducts::$tableName)
@@ -330,7 +330,7 @@ trait AllShared
                     ->first();
 
                 $productIds = json_decode($storeConfig->products);
-                print_r($productIds);
+                // print_r($productIds);fe
 
                 return $query->whereNotIn(StoreProducts::$tableName . '.' . StoreProducts::$id, $productIds);
             })
