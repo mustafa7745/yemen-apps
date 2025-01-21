@@ -315,8 +315,22 @@ trait AllShared
         $storeNestedSectionId = $request->input('storeNestedSectionId');
         $storeId = $request->input('storeId');
         // 
+        $store = DB::table(Stores::$tableName)
+            ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)
+            ->first();
+
+
         $storeProducts = DB::table(StoreProducts::$tableName)
-            // ->where(StoreProducts::$storeId, $storeId)
+
+            ->when($store->typeId == 1, function ($query) use ($store) {
+                $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
+                    ->where(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, '=', $store->id)
+                    ->first();
+
+                $productIds = json_decode($storeConfig->products);
+
+                return $query->whereNotIn(StoreProducts::$tableName . '.' . StoreProducts::$id, $productIds);
+            })
             ->join(
                 Products::$tableName,
                 Products::$tableName . '.' . Products::$id,
