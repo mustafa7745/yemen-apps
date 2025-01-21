@@ -108,13 +108,13 @@ trait AllShared
 
 
         $storeCategories = DB::table(table: StoreCategories::$tableName)
-            ->when($typeId == 1 && count($categories) > 0, function ($query) use ($categories, $storeIdReference) {
-                // print_r($categories);
-                return $query->whereNotIn(StoreCategories::$tableName . '.' . StoreCategories::$id, $categories)
-                    ->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $storeIdReference);
+            ->when($typeId == 1, function ($query) use ($categories, $storeIdReference) {
+                if (count($categories) > 0) {
+                    $query->whereNotIn(StoreCategories::$tableName . '.' . StoreCategories::$id, $categories);
+                }
+                return $query->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $storeIdReference);
             })
             ->when($typeId == 2, function ($query) use ($storeId) {
-                // print_r($categories);
                 return $query->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $storeId);
             })
 
