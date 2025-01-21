@@ -328,6 +328,7 @@ trait AllShared
                     ->first();
 
                 $productIds = json_decode($storeConfig->products);
+                print_r($productIds);
 
                 return $query->whereNotIn(StoreProducts::$tableName . '.' . StoreProducts::$id, $productIds);
             })
