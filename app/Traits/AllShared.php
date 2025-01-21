@@ -319,6 +319,8 @@ trait AllShared
             ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)
             ->first();
 
+        print_r($store);
+
 
         $storeProducts = DB::table(StoreProducts::$tableName)
 
