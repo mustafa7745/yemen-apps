@@ -124,7 +124,7 @@ trait AllShared
             foreach ($storeCategories as $storeCategory) {
                 $storeCategoriesIds[] = $storeCategory->id;
             }
-            $storeCategoriesSections = DB::table(StoreSections::$tableName)
+            $storeSections = DB::table(StoreSections::$tableName)
                 ->whereIn(
                     StoreSections::$tableName . '.' . StoreSections::$storeCategoryId,
                     $storeCategoriesIds
@@ -146,11 +146,11 @@ trait AllShared
                 ->get()->toArray();
 
             $storeCategoriesSectionsIds = [];
-            foreach ($storeCategoriesSections as $storeCategorySection) {
+            foreach ($storeSections as $storeCategorySection) {
                 $storeCategoriesSectionsIds[] = $storeCategorySection->id;
             }
 
-            $csps = DB::table(StoreNestedSections::$tableName)
+            $storeNestedSections = DB::table(StoreNestedSections::$tableName)
                 ->join(
                     NestedSections::$tableName,
                     NestedSections::$tableName . '.' . NestedSections::$id,
@@ -168,7 +168,7 @@ trait AllShared
                 )
                 ->get();
 
-            return response()->json(['storeCategories' => $storeCategories, 'storeCategoriesSections' => $storeCategoriesSections, 'csps' => $csps]);
+            return response()->json(['storeCategories' => $storeCategories, 'storeSections' => $storeSections, 'storeNestedSections' => $storeNestedSections]);
 
             // return response()->json($storeCategories);
         }
@@ -193,7 +193,7 @@ trait AllShared
             foreach ($storeCategories as $storeCategory) {
                 $storeCategoriesIds[] = $storeCategory->id;
             }
-            $storeCategoriesSections = DB::table(StoreSections::$tableName)
+            $storeSections = DB::table(StoreSections::$tableName)
                 ->whereIn(
                     StoreSections::$tableName . '.' . StoreSections::$storeCategoryId,
                     $storeCategoriesIds
@@ -214,11 +214,11 @@ trait AllShared
                 ->get()->toArray();
 
             $storeCategoriesSectionsIds = [];
-            foreach ($storeCategoriesSections as $storeCategorySection) {
+            foreach ($storeSections as $storeCategorySection) {
                 $storeCategoriesSectionsIds[] = $storeCategorySection->id;
             }
 
-            $csps = DB::table(StoreNestedSections::$tableName)
+            $storeNestedSections = DB::table(StoreNestedSections::$tableName)
                 ->join(
                     NestedSections::$tableName,
                     NestedSections::$tableName . '.' . NestedSections::$id,
@@ -235,7 +235,7 @@ trait AllShared
                 )
                 ->get();
 
-            return response()->json(['storeCategories' => $storeCategories, 'storeSections' => $storeCategoriesSections, 'storeNestedSections' => $csps]);
+            return response()->json(['storeCategories' => $storeCategories, 'storeSections' => $storeSections, 'storeNestedSections' => $storeNestedSections]);
         } else {
             return response()->json(['message' => 'Undefiend Store type', 'code' => 0], 400);
         }
