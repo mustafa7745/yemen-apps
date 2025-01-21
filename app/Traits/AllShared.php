@@ -97,15 +97,11 @@ trait AllShared
             $categories = json_decode($storeConfig->categories);
             $sections = json_decode($storeConfig->sections);
             $nestedSections = json_decode($storeConfig->nestedSections);
-            $products = json_decode($storeConfig->products);
-            // print_r($categories);
-            // print_r($sections);
-            // print_r($nestedSections);
-            // print_r($products);
+
 
             $storeCategories = DB::table(table: StoreCategories::$tableName)
                 ->whereNotIn(StoreCategories::$tableName . '.' . StoreCategories::$id, $categories)
-                ->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, 1)
+                ->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $storeId)
                 ->join(
                     Categories::$tableName,
                     Categories::$tableName . '.' . Categories::$id,
@@ -168,22 +164,22 @@ trait AllShared
             //     )
             //     ->get();
             $storeNestedSections = DB::table(StoreNestedSections::$tableName)
-            ->join(
-                NestedSections::$tableName,
-                NestedSections::$tableName . '.' . NestedSections::$id,
-                '=',
-                StoreNestedSections::$tableName . '.' . StoreNestedSections::$nestedSectionId
-            )
+                ->join(
+                    NestedSections::$tableName,
+                    NestedSections::$tableName . '.' . NestedSections::$id,
+                    '=',
+                    StoreNestedSections::$tableName . '.' . StoreNestedSections::$nestedSectionId
+                )
 
-            ->whereIn(StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId, $storeCategoriesSectionsIds)
-            ->whereNotIn(StoreNestedSections::$tableName . '.' . StoreNestedSections::$id, $nestedSections)
-            ->select(
-                StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as id',
-                StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId . ' as storeSectionId',
-                StoreNestedSections::$tableName . '.' . StoreNestedSections::$nestedSectionId . ' as nestedSectionId',
-                NestedSections::$tableName . '.' . NestedSections::$name . ' as nestedSectionName',
-            )
-            ->get();
+                ->whereIn(StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId, $storeCategoriesSectionsIds)
+                ->whereNotIn(StoreNestedSections::$tableName . '.' . StoreNestedSections::$id, $nestedSections)
+                ->select(
+                    StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as id',
+                    StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId . ' as storeSectionId',
+                    StoreNestedSections::$tableName . '.' . StoreNestedSections::$nestedSectionId . ' as nestedSectionId',
+                    NestedSections::$tableName . '.' . NestedSections::$name . ' as nestedSectionName',
+                )
+                ->get();
 
             return response()->json(['storeCategories' => $storeCategories, 'storeSections' => $storeSections, 'storeNestedSections' => $storeNestedSections]);
 
