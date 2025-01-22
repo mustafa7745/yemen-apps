@@ -470,7 +470,7 @@ trait AllShared
             $currency = ['id' => $product->currencyId, 'name' => $product->currencyName, 'sign' => $product->currencyName];
 
             // Add the option to the options array
-            $result[$product->productId]['options'][] = ['storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price, 'currency' => $currency];
+            $result[$product->productId]['options'][] = ['optionId' => $product->optionId, 'storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price, 'currency' => $currency];
         }
 
         $productViews = DB::table(ProductViews::$tableName)->get(
