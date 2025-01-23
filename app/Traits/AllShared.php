@@ -442,6 +442,8 @@ trait AllShared
             ->select(
                 ProductImages::$tableName . '.' . ProductImages::$productId,
                 ProductImages::$tableName . '.' . ProductImages::$image,
+                ProductImages::$tableName . '.' . ProductImages::$id,
+
             )
             ->get();
 
@@ -454,7 +456,7 @@ trait AllShared
                 $images = [];
                 foreach ($productImages as $index => $image) {
                     if ($image->productId == $product->productId) {
-                        $images[] = ['image' => $image->image];
+                        $images[] = ['id' => $image->id, 'image' => $image->image];
                         unset($productImages[$index]);
                     }
                 }
