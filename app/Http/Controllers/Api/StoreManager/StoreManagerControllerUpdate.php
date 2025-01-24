@@ -315,6 +315,22 @@ class StoreManagerControllerUpdate extends Controller
 
         return response()->json([]);
     }
+    public function updateProductOrder(Request $request)
+    {
+        $productId = $request->input('productId');
+        $orderNo = $request->input('orderNo');
+
+        DB::table(table: Products::$tableName)
+            ->where(Products::$id, '=', $productId)
+            ->update(
+                [
+                    Products::$orderNo => $orderNo,
+                    Products::$orderAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ]
+            );
+
+        return response()->json([]);
+    }
 
 
     public function updateOrderProductQuantity(Request $request)
