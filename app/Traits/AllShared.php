@@ -389,7 +389,7 @@ trait AllShared
                 '=',
                 StoreProducts::$tableName . '.' . StoreProducts::$storeNestedSectionId
             )
-            ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId);
+            ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId)
             // ->join(
             //     Categories::$tableName,
             //     Categories::$tableName . '.' . Categories::$id,
