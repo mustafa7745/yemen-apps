@@ -331,6 +331,176 @@ trait AllShared
 
         return $data;
     }
+    public function getOurProducts2(Request $request)
+    {
+        $storeNestedSectionId = $request->input('storeNestedSectionId');
+        $storeId = $request->input('storeId');
+        // 
+        $store = DB::table(Stores::$tableName)
+            ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)
+            ->first([
+                Stores::$tableName . '.' . Stores::$id,
+
+                Stores::$tableName . '.' . Stores::$typeId
+            ]);
+
+        // print_r($store);
+
+
+        $storeProducts = DB::table(StoreProducts::$tableName)
+
+            // ->when($store->typeId == 1, function ($query) use ($store) {
+            //     $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
+            //         ->where(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, '=', $store->id)
+            //         ->first();
+
+            //     $productIds = json_decode($storeConfig->products);
+            //     // print_r($productIds);fe
+
+            //     return $query->whereNotIn(StoreProducts::$tableName . '.' . StoreProducts::$id, $productIds);
+            // })
+            ->join(
+                Products::$tableName,
+                Products::$tableName . '.' . Products::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$productId
+            )
+            ->join(
+                Options::$tableName,
+                Options::$tableName . '.' . Options::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$optionId
+            )
+            ->join(
+                Currencies::$tableName,
+                Currencies::$tableName . '.' . Currencies::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$currencyId
+            )
+            // ->join(
+            //     StoreCategories::$tableName,
+            //     StoreCategories::$tableName . '.' . StoreCategories::$id,
+            //     '=',
+            //     StoreProducts::$tableName . '.' . StoreProducts::$StoreNestedSectionsId
+            // )
+            ->join(
+                StoreNestedSections::$tableName,
+                StoreNestedSections::$tableName . '.' . StoreNestedSections::$id,
+                '=',
+                StoreProducts::$tableName . '.' . StoreProducts::$storeNestedSectionId
+            )
+            ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId);
+            // ->join(
+            //     Categories::$tableName,
+            //     Categories::$tableName . '.' . Categories::$id,
+            //     '=',
+            //     StoreCategories::$tableName . '.' . StoreCategories::$categoryId
+            // )
+            //////
+            // ->when($store->typeId == 1, function ($query) use ($store) {
+            //     $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
+            //         ->where(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, '=', $store->id)
+            //         ->first();
+
+            //     $productIds = json_decode($storeConfig->products);
+            //     // print_r($productIds);
+    
+            //     return $query->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeConfig->storeIdReference)
+            //         ->whereNotIn(StoreProducts::$tableName . '.' . StoreProducts::$id, $productIds);
+            // })
+            // ->when($store->typeId == 2, function ($query) use ($storeId) {
+            //     return $query->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeId);
+            // })
+
+            ->where(StoreProducts::$tableName . '.' . StoreProducts::$storeNestedSectionId, '=', $storeNestedSectionId)
+            ->select(
+                StoreProducts::$tableName . '.' . StoreProducts::$id . ' as storeProductId',
+                Products::$tableName . '.' . Products::$id . ' as productId',
+                Products::$tableName . '.' . Products::$name . ' as productName',
+                Products::$tableName . '.' . Products::$description . ' as productDescription',
+                StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
+                StoreProducts::$tableName . '.' . StoreProducts::$productViewId . ' as productViewId',
+
+                    // 
+                Options::$tableName . '.' . Options::$id . ' as optionId',
+                Options::$tableName . '.' . Options::$name . ' as optionName',
+                    //
+                Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
+                Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
+                Currencies::$tableName . '.' . Currencies::$sign . ' as currencySign',
+                    //
+                StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as storeNestedSectionId',
+
+
+
+            )
+            ->orderBy(StoreProducts::$orderNo)   // Sort by orderNo column
+            ->orderBy(StoreProducts::$orderAt,'desc')
+            ->get();
+        $productIds = [];
+        foreach ($storeProducts as $product) {
+            $productIds[] = $product->productId;
+        }
+        $productImages = DB::table(ProductImages::$tableName)
+            ->whereIn(ProductImages::$productId, $productIds)
+            ->select(
+                ProductImages::$tableName . '.' . ProductImages::$productId,
+                ProductImages::$tableName . '.' . ProductImages::$image,
+                ProductImages::$tableName . '.' . ProductImages::$id,
+
+            )
+            ->get();
+
+
+
+        $result = [];
+        foreach ($storeProducts as $product) {
+            if (!isset($result[$product->productId])) {
+
+                $images = [];
+                foreach ($productImages as $index => $image) {
+                    if ($image->productId == $product->productId) {
+                        $images[] = ['id' => $image->id, 'image' => $image->image];
+                        unset($productImages[$index]);
+                    }
+                }
+                $result[$product->productId] = [
+                    'product' => ['productId' => $product->productId, 'productName' => $product->productName, 'productDescription' => $product->productDescription, 'images' => $images, 'productViewId' => $product->productViewId],
+                    'storeNestedSectionId' => $product->storeNestedSectionId,
+                    'options' => []
+                ];
+
+                // $result[$product->productId]['images'] = $images;
+            }
+
+            $currency = ['id' => $product->currencyId, 'name' => $product->currencyName, 'sign' => $product->currencyName];
+
+            // Add the option to the options array
+            $result[$product->productId]['options'][] = ['optionId' => $product->optionId, 'storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price, 'currency' => $currency];
+        }
+
+        $productViews = DB::table(ProductViews::$tableName)->get(
+            [
+                ProductViews::$tableName . '.' . ProductViews::$id,
+                ProductViews::$tableName . '.' . ProductViews::$name,
+            ]
+        );
+
+        $data = [];
+
+        foreach ($productViews as $key => $productView) {
+            $products = [];
+            foreach ($result as $key2 => $storeProduct) {
+                if ($productView->id == $storeProduct['product']['productViewId']) {
+                    $products[] = $storeProduct;
+                }
+            }
+            $data[] = ['id' => $productView->id, 'name' => $productView->name, 'products' => $products];
+        }
+
+
+        return response()->json(array_values($data));
+    }
     public function getOurProducts(Request $request)
     {
         $storeNestedSectionId = $request->input('storeNestedSectionId');
