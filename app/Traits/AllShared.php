@@ -432,13 +432,8 @@ trait AllShared
 
 
             )
-            ->orderBy(
-                [
-                    StoreProducts::$tableName . '.' . StoreProducts::$orderNo,
-                StoreProducts::$tableName . '.' . StoreProducts::$orderAt
-                ],
-                
-            )
+            ->orderBy(StoreProducts::$orderNo)   // Sort by orderNo column
+            ->orderBy(StoreProducts::$orderAt)
             ->get();
         $productIds = [];
         foreach ($storeProducts as $product) {
