@@ -404,7 +404,7 @@ trait AllShared
 
             //     $productIds = json_decode($storeConfig->products);
             //     // print_r($productIds);
-    
+
             //     return $query->where(StoreProducts::$tableName . '.' . StoreProducts::$storeId, '=', $storeConfig->storeIdReference)
             //         ->whereNotIn(StoreProducts::$tableName . '.' . StoreProducts::$id, $productIds);
             // })
@@ -418,9 +418,14 @@ trait AllShared
                 Products::$tableName . '.' . Products::$id . ' as productId',
                 Products::$tableName . '.' . Products::$name . ' as productName',
                 Products::$tableName . '.' . Products::$description . ' as productDescription',
+                    //
+                Products::$tableName . '.' . Products::$orderNo . ' as productOrder',
+                Products::$tableName . '.' . Products::$orderAt . ' as productOrderAt',
+                    //
                 StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
                 StoreProducts::$tableName . '.' . StoreProducts::$productViewId . ' as productViewId',
-
+                StoreProducts::$tableName . '.' . StoreProducts::$orderNo . ' as storeProductOrder',
+                StoreProducts::$tableName . '.' . StoreProducts::$orderAt . ' as storeProductOrderAt',
                     // 
                 Options::$tableName . '.' . Options::$id . ' as optionId',
                 Options::$tableName . '.' . Options::$name . ' as optionName',
@@ -434,8 +439,8 @@ trait AllShared
 
 
             )
-            ->orderBy(StoreProducts::$orderNo)   // Sort by orderNo column
-            ->orderBy(StoreProducts::$orderAt,'desc')
+            ->orderBy(Products::$tableName . '.' . Products::$orderNo )   // Sort by orderNo column
+            ->orderBy(Products::$tableName . '.' . Products::$orderAt , 'desc')
             ->get();
         $productIds = [];
         foreach ($storeProducts as $product) {
@@ -603,7 +608,7 @@ trait AllShared
 
             )
             ->orderBy(StoreProducts::$orderNo)   // Sort by orderNo column
-            ->orderBy(StoreProducts::$orderAt,'desc')
+            ->orderBy(StoreProducts::$orderAt, 'desc')
             ->get();
         $productIds = [];
         foreach ($storeProducts as $product) {

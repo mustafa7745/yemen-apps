@@ -11,6 +11,8 @@ class Products
    public static $storeId = "storeId";
    public static $nestedSectionId = "nestedSectionId";
    public static $description = "description";
+   public static $orderNo = "orderNo";
+   public static $orderAt = "orderAt";
    public static $createdAt = "createdAt";
    public static $updatedAt = "updatedAt";
 }
