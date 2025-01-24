@@ -440,8 +440,8 @@ trait AllShared
             )
             ->orderBy(Products::$tableName . '.' . Products::$orderNo,)
             ->orderBy(Products::$tableName . '.' . Products::$orderAt, 'desc')
-            // ->orderBy(StoreProducts::$tableName . '.' . StoreProducts::$orderNo,'desc')
-            // ->orderBy(StoreProducts::$tableName . '.' . StoreProducts::$orderAt, 'desc')
+            ->orderBy(StoreProducts::$tableName . '.' . StoreProducts::$orderNo)
+            ->orderBy(StoreProducts::$tableName . '.' . StoreProducts::$orderAt, 'desc')
             ->get();
         $productIds = [];
         foreach ($storeProducts as $product) {
