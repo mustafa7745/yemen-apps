@@ -258,6 +258,10 @@ class StoreManagerControllerAdd extends Controller
                     StoreProducts::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
 
+            $currency = DB::table(Currencies::$tableName)
+                ->where(Currencies::$id, '=', $currencyId)
+                ->first();
+
             $productOption = null;
             if ($getWithProduct == 1) {
                 $product = DB::table(StoreProducts::$tableName)
@@ -311,9 +315,7 @@ class StoreManagerControllerAdd extends Controller
                         ProductImages::$tableName . '.' . ProductImages::$image
                     ]);
 
-                $currency = DB::table(Currencies::$tableName)
-                    ->where(Currencies::$id, '=', $currencyId)
-                    ->first();
+
 
                 $result = [
                     'productId' => $product->productId,
@@ -345,7 +347,8 @@ class StoreManagerControllerAdd extends Controller
                     'optionId' => $productOption->optionId,
                     'storeProductId' => $productOption->storeProductId,
                     'name' => $productOption->optionName,
-                    'price' => $productOption->price
+                    'price' => $productOption->price,
+                    'currency' => $currency
                 ]);
             }
         } catch (QueryException $e) {
