@@ -181,6 +181,8 @@ class StoreManagerControllerAdd extends Controller
                 Products::$name => $name,
                 Products::$storeId => $storeId,
                 Products::$description => $description,
+                Products::$orderNo => 9000,
+                Products::$orderAt => Carbon::now()->format('Y-m-d H:i:s'),
                 Products::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                 Products::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
