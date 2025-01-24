@@ -36,8 +36,8 @@ class StoreManagerControllerGet extends Controller
     use AllShared;
     public function getMain(Request $request)
     {
-        return $this->getOurProducts($request);
-        
+        return $this->getOurProducts2($request);
+
         // Define validation rules
         $validator = Validator::make($request->all(), [
             'accessToken' => 'required|string|max:255',
