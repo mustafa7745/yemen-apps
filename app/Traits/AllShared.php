@@ -425,7 +425,6 @@ trait AllShared
                 StoreProducts::$tableName . '.' . StoreProducts::$price . ' as price',
                 StoreProducts::$tableName . '.' . StoreProducts::$productViewId . ' as productViewId',
                 StoreProducts::$tableName . '.' . StoreProducts::$orderNo . ' as storeProductOrder',
-                StoreProducts::$tableName . '.' . StoreProducts::$orderAt . ' as storeProductOrderAt',
                     // 
                 Options::$tableName . '.' . Options::$id . ' as optionId',
                 Options::$tableName . '.' . Options::$name . ' as optionName',
@@ -439,8 +438,8 @@ trait AllShared
 
 
             )
-            ->orderBy(Products::$tableName . '.' . Products::$orderNo )   // Sort by orderNo column
-            ->orderBy(Products::$tableName . '.' . Products::$orderAt , 'desc')
+            ->orderBy(Products::$tableName . '.' . Products::$orderNo)   // Sort by orderNo column
+            ->orderBy(Products::$tableName . '.' . Products::$orderAt, 'desc')
             ->get();
         $productIds = [];
         foreach ($storeProducts as $product) {
@@ -481,7 +480,7 @@ trait AllShared
             $currency = ['id' => $product->currencyId, 'name' => $product->currencyName, 'sign' => $product->currencyName];
 
             // Add the option to the options array
-            $result[$product->productId]['options'][] = ['optionId' => $product->optionId, 'storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price, 'currency' => $currency];
+            $result[$product->productId]['options'][] = ['optionId' => $product->optionId, 'storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price, 'currency' => $currency, 'storeProductOrder' => $product->storeProductOrder];
         }
 
         $productViews = DB::table(ProductViews::$tableName)->get(
