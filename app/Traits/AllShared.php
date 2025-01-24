@@ -431,6 +431,9 @@ trait AllShared
 
 
 
+            )->orderBy(
+                StoreProducts::$tableName . '.' . StoreProducts::$orderNo,
+                StoreProducts::$tableName . '.' . StoreProducts::$orderAt
             )
             ->get();
         $productIds = [];
