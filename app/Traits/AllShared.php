@@ -439,7 +439,7 @@ trait AllShared
 
             )
             ->orderBy(Products::$tableName . '.' . Products::$orderNo,)
-            ->orderBy(Products::$tableName . '.' . Products::$orderAt, 'desc')
+            ->orderBy(Products::$tableName . '.' . Products::$orderAt,)
             // ->orderBy(StoreProducts::$tableName . '.' . StoreProducts::$orderNo,'desc')
             // ->orderBy(StoreProducts::$tableName . '.' . StoreProducts::$orderAt, 'desc')
             ->get();
