@@ -332,6 +332,26 @@ class StoreManagerControllerUpdate extends Controller
         return response()->json([]);
     }
 
+    public function updateCurrency(Request $request)
+    {
+        $storeProductId = $request->input('storeProductId');
+        $currencyId = $request->input('currencyId');
+
+        DB::table(table: StoreProducts::$tableName)
+            ->where(StoreProducts::$id, '=', $storeProductId)
+            ->update(
+                [
+                    StoreProducts::$currencyId => $currencyId,
+                    StoreProducts::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ]
+            );
+        $data = DB::table(Currencies::$tableName)
+            ->where(Currencies::$id, '=', $currencyId)
+            ->first();
+
+        return response()->json($data);
+    }
+
 
     public function updateOrderProductQuantity(Request $request)
     {
