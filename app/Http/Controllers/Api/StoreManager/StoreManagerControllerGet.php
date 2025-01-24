@@ -272,14 +272,7 @@ class StoreManagerControllerGet extends Controller
 
         return response()->json(array_values($products));
     }
-    public function getCurrencies(Request $request)
-    {
-        // $nestedSectionId = $request->input('nestedSectionId');
-        $data = DB::table(Currencies::$tableName)
-            ->get();
-
-        return response()->json($data);
-    }
+   
     public function getOptions()
     {
         $options = DB::table(table: Options::$tableName)->get();
@@ -701,5 +694,13 @@ class StoreManagerControllerGet extends Controller
     public function getUserProfile(Request $request)
     {
         return $this->getOurUserProfile($request, $this->appId);
+    }
+    public function getCurrencies(Request $request)
+    {
+        // $nestedSectionId = $request->input('nestedSectionId');
+        $data = DB::table(Currencies::$tableName)
+            ->get();
+
+        return response()->json($data);
     }
 }
