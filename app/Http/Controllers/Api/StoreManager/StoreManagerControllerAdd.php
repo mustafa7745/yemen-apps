@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\StoreManager;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
+use App\Models\Currencies;
 use App\Models\DeliveryMen;
 use App\Models\NestedSections;
 use App\Models\Options;
@@ -235,6 +236,7 @@ class StoreManagerControllerAdd extends Controller
     {
         $productId = $request->input('productId');
         $optionId = $request->input('optionId');
+        $currencyId = $request->input('currencyId');
         $price = $request->input('price');
         $storeNestedSectionId = $request->input(key: 'storeNestedSectionId');
         $getWithProduct = $request->input(key: 'getWithProduct');
@@ -247,6 +249,7 @@ class StoreManagerControllerAdd extends Controller
                     StoreProducts::$optionId => $optionId,
                     StoreProducts::$productId => $productId,
                     StoreProducts::$price => $price,
+                    StoreProducts::$currencyId => $currencyId,
                     StoreProducts::$storeNestedSectionId => $storeNestedSectionId,
                     StoreProducts::$storeId => $storeId,
                     StoreProducts::$orderNo => 9000,
@@ -308,12 +311,16 @@ class StoreManagerControllerAdd extends Controller
                         ProductImages::$tableName . '.' . ProductImages::$image
                     ]);
 
+                $currency = DB::table(Currencies::$tableName)
+                    ->where(Currencies::$id, '=', $currencyId)
+                    ->first();
+
                 $result = [
                     'productId' => $product->productId,
                     'storeNestedSectionId' => $product->storeNestedSectionId,
                     'productName' => $product->productName,
                     'productDescription' => $product->productDescription,
-                    'options' => [['optionId' => $product->optionId, 'storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price]],
+                    'options' => [['optionId' => $product->optionId, 'storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price, 'currency' => $currency]],
                     'images' => $images
                 ];
                 return response()->json($result);
