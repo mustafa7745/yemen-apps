@@ -39,6 +39,8 @@ Route::prefix('v1')->group(function () {
     Route::post('/getProducts', [StoresControllerGet::class, 'getProducts']);
     Route::post('/getStoreInfo', [StoresControllerGet::class, 'getStoreInfo']);
     Route::post('/getLocations', [StoresControllerGet::class, 'getLocations']);
+    Route::post('/getPaymentTypes', [StoresControllerGet::class, 'getPaymentTypes']);
+
     Route::post('/addLocation', [StoresControllerAdd::class, 'addLocation']);
 });
 
@@ -63,7 +65,7 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/getUserProfile', [StoreManagerControllerGet::class, 'getUserProfile']);
     Route::post('/getCurrencies', [StoreManagerControllerGet::class, 'getCurrencies']);
 
-    
+
 
 
     Route::post('/addCategory', [StoreManagerControllerAdd::class, 'addCategory']);

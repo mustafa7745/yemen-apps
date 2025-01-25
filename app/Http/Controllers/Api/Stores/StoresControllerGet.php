@@ -132,7 +132,7 @@ class StoresControllerGet extends Controller
         return response()->json($data);
     }
 
-   
+
 
     public function login(Request $request)
     {
@@ -141,6 +141,10 @@ class StoresControllerGet extends Controller
     public function refreshToken(Request $request)
     {
         return $this->refreshOurToken($request, $this->appId);
+    }
+    public function getPaymentTypes(Request $request)
+    {
+        return $this->getOurPaymentTypes($request);
     }
 
 }

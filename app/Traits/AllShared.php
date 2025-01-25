@@ -22,6 +22,7 @@ use App\Models\Sections;
 use App\Models\SharedStoresConfigs;
 use App\Models\StoreCategories;
 use App\Models\StoreNestedSections;
+use App\Models\StorePaymentTypes;
 use App\Models\StoreProducts;
 use App\Models\Stores;
 use App\Models\StoreSections;
@@ -35,6 +36,26 @@ use Validator;
 
 trait AllShared
 {
+    public function getOurPaymentTypes(Request $request)
+    {
+        // $storeId = 1;
+        $storeId = $request->input('storeId');
+        $data = DB::table(table: StorePaymentTypes::$tableName)
+            ->join(
+                PaymentTypes::$tableName,
+                PaymentTypes::$tableName . '.' . PaymentTypes::$id,
+                '=',
+                StorePaymentTypes::$tableName . '.' . StorePaymentTypes::$paymentTypeId
+            )
+            ->where(StorePaymentTypes::$tableName . '.' . StorePaymentTypes::$storeId, '=', $storeId)
+            ->get([
+                PaymentTypes::$tableName . '.' . PaymentTypes::$id,
+                PaymentTypes::$tableName . '.' . PaymentTypes::$name,
+                PaymentTypes::$tableName . '.' . PaymentTypes::$image,
+            ]);
+
+        return response()->json($data);
+    }
     public function ourLogout(Request $request, $appId)
     {
         $resultAccessToken = $this->getAccessToken($request, $appId);

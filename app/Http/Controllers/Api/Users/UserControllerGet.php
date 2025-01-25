@@ -73,23 +73,7 @@ class UserControllerGet extends Controller
     }
     public function getPaymentTypes(Request $request)
     {
-        // $storeId = 1;
-        $storeId = $request->input('storeId');
-        $data = DB::table(table: StorePaymentTypes::$tableName)
-            ->join(
-                PaymentTypes::$tableName,
-                PaymentTypes::$tableName . '.' . PaymentTypes::$id,
-                '=',
-                StorePaymentTypes::$tableName . '.' . StorePaymentTypes::$paymentTypeId
-            )
-            ->where(StorePaymentTypes::$tableName . '.' . StorePaymentTypes::$storeId, '=', $storeId)
-            ->get([
-                PaymentTypes::$tableName . '.' . PaymentTypes::$id,
-                PaymentTypes::$tableName . '.' . PaymentTypes::$name,
-                PaymentTypes::$tableName . '.' . PaymentTypes::$image,
-            ]);
-
-        return response()->json($data);
+        return $this->getOurPaymentTypes($request);
     }
     public function getUserProfile(Request $request)
     {
