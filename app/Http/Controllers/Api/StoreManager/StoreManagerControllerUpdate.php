@@ -492,7 +492,7 @@ class StoreManagerControllerUpdate extends Controller
                 $updatedData[Stores::$cover] = $cover;
             }
 
-            if ($name != null) {
+            if ($name != null && strlen($name) > 0) {
                 $updatedData[Stores::$name] = $name;
             }
 
