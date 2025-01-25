@@ -16,4 +16,8 @@ class StoresControllerAdd extends Controller
     {
         return $this->addOurLocation($request, $this->appId);
     }
+    public function confirmOrder(Request $request)
+    {
+        return $this->confirmOurOrder($request, $this->appId);
+    }
 }

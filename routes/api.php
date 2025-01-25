@@ -42,6 +42,8 @@ Route::prefix('v1')->group(function () {
     Route::post('/getPaymentTypes', [StoresControllerGet::class, 'getPaymentTypes']);
 
     Route::post('/addLocation', [StoresControllerAdd::class, 'addLocation']);
+    Route::post('/confirmOrder', [StoresControllerAdd::class, 'confirmOrder']);
+
 });
 
 
