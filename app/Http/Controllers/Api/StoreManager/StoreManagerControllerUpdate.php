@@ -476,9 +476,29 @@ class StoreManagerControllerUpdate extends Controller
             // if ($cover->isValid() == false) {
             //     return response()->json(['error' => 'Invalid Cover file.'], 400);
             // }
+            $updatedData = [
+                Stores::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                Stores::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ];
 
             $logoName = Str::random(10) . '_' . time() . '.jpg';
+            if ($logo != null) {
+                $updatedData[Stores::$logo] = $logoName;
+            }
+
             $coverName = Str::random(10) . '_' . time() . '.jpg';
+
+            if ($cover != null) {
+                $updatedData[Stores::$cover] = $cover;
+            }
+
+            if ($name != null) {
+                $updatedData[Stores::$name] = $name;
+            }
+
+            if (count($updatedData) == 2) {
+                return response()->json(['message' => "Cant update empty values", 'errors' => [], 'code' => 0], 400);
+            }
 
             $previousRecord = DB::table(Stores::$tableName)
                 ->where(Stores::$id, '=', $storeId)
@@ -486,39 +506,41 @@ class StoreManagerControllerUpdate extends Controller
 
             DB::table(table: Stores::$tableName)
                 ->where(Stores::$id, '=', $storeId)
-                ->update([
-                    Stores::$name => $name,
-                    Stores::$logo => $logoName,
-                    Stores::$cover => $coverName,
-                    Stores::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                    Stores::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-                ]);
+                ->update(
+                    $updatedData
+                    //     [
+                    //     Stores::$name => $name,
+                    //     Stores::$logo => $logoName,
+                    //     Stores::$cover => $coverName,
+                    //     Stores::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    //     Stores::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    // ]
+
+                );
 
             try {
-                Storage::disk('s3')->delete('stores/logos/' . $previousRecord->logo);
-                Storage::disk('s3')->delete('stores/covers/' . $previousRecord->cover);
-
-
-                $pathLogo = Storage::disk('s3')->put('stores/logos/' . $logoName, fopen($logo, 'r+'));
-                $pathCover = Storage::disk('s3')->put('stores/covers/' . $coverName, fopen($cover, 'r+'));
-
-                // Check if the file was uploaded successfully
-                if ($pathLogo && $pathCover) {
-                    $updatedRecord = DB::table(Stores::$tableName)
-                        ->where(Stores::$id, '=', $storeId)
-                        ->first();
-
-                    $updatedRecord->storeConfig = null;
-                    return response()->json($updatedRecord);
-
-                } else {
-                    DB::rollBack();
-                    // If the image is not valid, return a validation error response
-                    return response()->json([
-                        'error' => 'No valid image file uploaded.',
-                    ], 400);
-
+                if ($logo != null) {
+                    Storage::disk('s3')->delete('stores/logos/' . $previousRecord->logo);
+                    $pathLogo = Storage::disk('s3')->put('stores/logos/' . $logoName, fopen($logo, 'r+'));
+                    if ($pathLogo == false) {
+                        DB::rollBack();
+                        return $this->responseError2('No valid Logo uploaded.', [], 0, 400);
+                    }
                 }
+                if ($cover != null) {
+                    Storage::disk('s3')->delete('stores/covers/' . $previousRecord->cover);
+                    $pathCover = Storage::disk('s3')->put('stores/covers/' . $coverName, fopen($cover, 'r+'));
+                    if ($pathCover == false) {
+                        DB::rollBack();
+                        return $this->responseError2('No valid Caver uploaded.', [], 0, 400);
+                    }
+                }
+                $updatedRecord = DB::table(Stores::$tableName)
+                    ->where(Stores::$id, '=', $storeId)
+                    ->first();
+
+
+                return response()->json($updatedRecord);
             } catch (\Exception $e) {
                 DB::rollBack();  // Manually trigger a rollback
                 return response()->json([

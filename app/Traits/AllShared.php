@@ -459,7 +459,7 @@ trait AllShared
 
 
             )
-            ->orderBy(Products::$tableName . '.' . Products::$orderNo,)
+            ->orderBy(Products::$tableName . '.' . Products::$orderNo, )
             ->orderBy(Products::$tableName . '.' . Products::$orderAt, 'desc')
             ->orderBy(StoreProducts::$tableName . '.' . StoreProducts::$orderNo)
             ->orderBy(StoreProducts::$tableName . '.' . StoreProducts::$orderAt, 'desc')
@@ -1171,15 +1171,15 @@ trait AllShared
                 }
             }
 
-            if ($locationId != null){
-                 DB::table(OrdersDelivery::$tableName)
-                ->insert([
-                    OrdersDelivery::$id => null,
-                    OrdersDelivery::$orderId => $orderId,
-                    OrdersDelivery::$locationId => $locationId,
-                    OrdersDelivery::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                    OrdersDelivery::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-                ]);
+            if ($locationId != null) {
+                DB::table(OrdersDelivery::$tableName)
+                    ->insert([
+                        OrdersDelivery::$id => null,
+                        OrdersDelivery::$orderId => $orderId,
+                        OrdersDelivery::$locationId => $locationId,
+                        OrdersDelivery::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                        OrdersDelivery::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    ]);
             }
 
 
@@ -1314,6 +1314,10 @@ trait AllShared
     function responseError($response)
     {
         return response()->json(['message' => $response->message, 'errors' => $response->errors, 'code' => $response->code], $response->responseCode);
+    }
+    function responseError2($message, $errors, $messageCode, $responseCode)
+    {
+        return response()->json(['message' => $message, 'errors' => $errors, 'code' => $messageCode], $responseCode);
     }
     ///
 
