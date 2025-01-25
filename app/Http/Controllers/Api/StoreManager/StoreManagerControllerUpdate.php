@@ -539,6 +539,8 @@ class StoreManagerControllerUpdate extends Controller
                     ->where(Stores::$id, '=', $storeId)
                     ->first();
 
+                $updatedData['storeConfig'] = null;
+
 
                 return response()->json($updatedRecord);
             } catch (\Exception $e) {
