@@ -1171,7 +1171,8 @@ trait AllShared
                 }
             }
 
-            DB::table(OrdersDelivery::$tableName)
+            if ($locationId != null){
+                 DB::table(OrdersDelivery::$tableName)
                 ->insert([
                     OrdersDelivery::$id => null,
                     OrdersDelivery::$orderId => $orderId,
@@ -1179,7 +1180,7 @@ trait AllShared
                     OrdersDelivery::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                     OrdersDelivery::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
-
+            }
 
 
             // Initialize an empty array to hold the insert data
