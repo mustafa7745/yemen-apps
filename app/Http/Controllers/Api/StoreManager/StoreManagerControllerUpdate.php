@@ -489,7 +489,7 @@ class StoreManagerControllerUpdate extends Controller
             $coverName = Str::random(10) . '_' . time() . '.jpg';
 
             if ($cover != null) {
-                $updatedData[Stores::$cover] = $cover;
+                $updatedData[Stores::$cover] = $coverName;
             }
 
             if ($name != null && strlen($name) > 0) {
