@@ -49,7 +49,7 @@ class UserControllerGet extends Controller
     }
     public function getProducts(Request $request)
     {
-        return $this->getOurProducts($request);
+        return $this->getOurProducts2($request);
     }
     public function search(Request $request)
     {
