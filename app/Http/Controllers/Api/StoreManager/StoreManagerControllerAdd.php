@@ -18,6 +18,7 @@ use App\Models\Sections;
 use App\Models\Stores;
 use App\Models\StoreCategories;
 use App\Models\Users;
+use App\Services\FirebaseService;
 use App\Traits\AllShared;
 use App\Traits\ErrorShared;
 use App\Traits\StoreManagerControllerShared;
@@ -25,6 +26,8 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Kreait\Firebase\Messaging\CloudMessage;
+use Notification;
 use Storage;
 use Str;
 use Validator;
@@ -606,10 +609,43 @@ class StoreManagerControllerAdd extends Controller
         }
     }
 
+
+    protected $firebaseService;
+
+    public function __construct(FirebaseService $firebaseService)
+    {
+        $this->firebaseService = $firebaseService;
+    }
+
+
     public function addNotification(Request $request)
     {
         $title = $request->input('title');
         $description = $request->input('description');
-        return response()->json([]);
+
+
+        $response = $this->firebaseService->sendNotificationToTopic("app_2", $title, $description);
+
+        // Return the response to the client
+        return response()->json($response);
+
+
+
+        //     $notification = Notification::fromArray([
+        //         'title' => $title,
+        //         'body' => $description,
+        //     ]);
+
+        //     $message = CloudMessage::withTarget('token', 'user_device_token')
+        //     ->withNotification($notification);
+
+        // try {
+        //     $messaging->send($message);
+        //     return response()->json(['message' => 'Notification sent successfully!']);
+        // } catch (\Exception $e) {
+        //     return response()->json(['error' => $e->getMessage()]);
+        // }
+
+        // return response()->json([]);
     }
 }
