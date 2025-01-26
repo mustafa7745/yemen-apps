@@ -53,12 +53,12 @@ class FirebaseService
             return ['error' => $e->getMessage()];
         }
     }
-    public function sendNotificationToTopic($topic, $title, $message)
+    public function sendNotificationToTopic($topic, $title, $body)
     {
         // Create a notification instance
         $notification = Notification::fromArray([
             'title' => $title,
-            'body' => $message,
+            'body' => $body,
         ]);
 
         // Create a CloudMessage targeting the topic
@@ -66,10 +66,11 @@ class FirebaseService
             ->withNotification($notification);
 
         // Send the message
+        print_r($topic . $title . $body);
         try {
             $this->messaging->send($message);
             // print_r($r);
-            print_r($topic . $title . $message);
+
             return ['status' => 'Notification sent successfully to topic: ' . $topic];
         } catch (\Exception $e) {
             return ['error' => $e->getMessage()];
