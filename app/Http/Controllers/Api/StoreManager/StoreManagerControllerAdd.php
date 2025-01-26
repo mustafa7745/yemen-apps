@@ -624,7 +624,9 @@ class StoreManagerControllerAdd extends Controller
         $description = $request->input('description');
 
 
-        $response = $this->firebaseService->sendNotificationToTopic("app_2", $title, $description);
+        // $response = $this->firebaseService->sendNotificationToTopic("app_2", $title, $description);
+        $response = $this->firebaseService->sendNotification("d37lmIWyReq0Gno0g6iPb7:APA91bFCb8RDk3niIpLpxjw2sF0Zh9zZni3jbdBBaSCuwFNx9YQTsBrCjigisCkpktKk7K_AatCqbOmuWC1LKjWqhHj844BUu0YU0MiWNmwnhM_jjOPLvnU", $title, $description);
+
 
         // Return the response to the client
         return response()->json($response);
