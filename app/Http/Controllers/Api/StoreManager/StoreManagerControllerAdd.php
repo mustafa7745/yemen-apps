@@ -605,4 +605,11 @@ class StoreManagerControllerAdd extends Controller
             return response()->json(['error' => 'Image Not Found'], 400);
         }
     }
+
+    public function addNotification(Request $request)
+    {
+        $title = $request->input('title');
+        $description = $request->input('description');
+        return response()->json([]);
+    }
 }
