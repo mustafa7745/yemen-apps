@@ -32,6 +32,8 @@ use Carbon\Carbon;
 use DB;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Storage;
+use Str;
 use Validator;
 
 trait AllShared
@@ -1266,6 +1268,116 @@ trait AllShared
                 ->where(Orders::$id, $orderId)
                 ->first();
             return response()->json($order);
+        });
+    }
+    public function updateOurProfile(Request $request, $appId)
+    {
+        $resultAccessToken = $this->getAccessToken($request, $appId);
+        if ($resultAccessToken->isSuccess == false) {
+            return $this->responseError($resultAccessToken);
+        }
+        $accessToken = $resultAccessToken->message;
+
+
+
+
+
+        return DB::transaction(function () use ($request, $accessToken) {
+
+            $firstName = $request->input('firstName');
+            $secondName = $request->input('secondName');
+            $thirdName = $request->input('thirdName');
+            $lastName = $request->input('lastName');
+
+            $logo = $request->file('logo');
+            $cover = $request->file('cover');
+
+            // if ($logo->isValid() == false) {
+            //     return response()->json(['error' => 'Invalid Logo file.'], 400);
+            // }
+
+            // if ($cover->isValid() == false) {
+            //     return response()->json(['error' => 'Invalid Cover file.'], 400);
+            // }
+            $updatedData = [
+                Users::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ];
+
+            $logoName = Str::random(10) . '_' . time() . '.jpg';
+            if ($logo != null) {
+                $updatedData[Users::$logo] = $logoName;
+            }
+
+            // $coverName = Str::random(10) . '_' . time() . '.jpg';
+
+            // if ($cover != null) {
+            //     $updatedData[Stores::$cover] = $coverName;
+            // }
+
+            if ($firstName != null && strlen($firstName) > 0) {
+                $updatedData[Users::$firstName] = $firstName;
+            }
+            if ($lastName != null && strlen($lastName) > 0) {
+                $updatedData[Users::$lastName] = $lastName;
+            }
+            if ($thirdName != null && strlen($thirdName) > 0) {
+                $updatedData[Users::$thirdName] = $thirdName;
+            }
+            if ($secondName != null && strlen($secondName) > 0) {
+                $updatedData[Users::$secondName] = $secondName;
+            }
+
+            if (count($updatedData) == 2) {
+                return response()->json(['message' => "Cant update empty values", 'errors' => [], 'code' => 0], 400);
+            }
+
+            $previousRecord = null;
+            if ($logo != null) {
+                $previousRecord = DB::table(Users::$tableName)
+                    ->where(Users::$id, '=', $accessToken->userId)
+                    ->sole();
+            }
+
+
+            DB::table(table: Users::$tableName)
+                ->where(Users::$id, '=', $accessToken->userId)
+                ->update(
+                    $updatedData
+                );
+
+            try {
+                if ($logo != null) {
+                    Storage::disk('s3')->delete('users/logos/' . $previousRecord->logo);
+                    $pathLogo = Storage::disk('s3')->put('users/logos/' . $logoName, fopen($logo, 'r+'));
+                    if ($pathLogo == false) {
+                        DB::rollBack();
+                        return $this->responseError2('No valid Logo uploaded.', [], 0, 400);
+                    }
+                }
+                // if ($cover != null) {
+                //     Storage::disk('s3')->delete('stores/covers/' . $previousRecord->cover);
+                //     $pathCover = Storage::disk('s3')->put('stores/covers/' . $coverName, fopen($cover, 'r+'));
+                //     if ($pathCover == false) {
+                //         DB::rollBack();
+                //         return $this->responseError2('No valid Caver uploaded.', [], 0, 400);
+                //     }
+                // }
+                $updatedRecord = DB::table(Users::$tableName)
+                    ->where(Users::$id, '=', $accessToken->userId)
+                    ->first();
+
+                // $updatedRecord->storeConfig = null;
+
+
+                return response()->json($updatedRecord);
+            } catch (\Exception $e) {
+                DB::rollBack();  // Manually trigger a rollback
+                return response()->json([
+                    'error' => 'An error occurred while uploading the image.',
+                    'message' => $e->getMessage(),
+                ], 500);
+            }
         });
     }
     /////

@@ -141,6 +141,8 @@ Route::prefix('v1/u')->group(function () {
 
 
     Route::post('/logout', [UserControllerUpdate::class, 'logout']);
+    Route::post('/updateProfile', [UserControllerUpdate::class, 'updateProfile']);
+
 
 
 
