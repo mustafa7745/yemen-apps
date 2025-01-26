@@ -1,4 +1,4 @@
-<?
+<?php
 // app/Services/FirebaseService.php
 
 namespace App\Services;
