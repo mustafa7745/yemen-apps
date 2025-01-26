@@ -14,6 +14,7 @@ class FirebaseService
 
     public function __construct()
     {
+
         $this->firebase = (new Factory)->withServiceAccount([
             "type" => "service_account",
             "project_id" => "yemen-stores",
@@ -28,6 +29,7 @@ class FirebaseService
             "universe_domain" => "googleapis.com"
 
         ]);
+        print_r("mustafaffa");
         $this->messaging = $this->firebase->createMessaging();
     }
 
