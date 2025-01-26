@@ -67,8 +67,9 @@ class FirebaseService
 
         // Send the message
         try {
-             $this->messaging->send($message);
+            $this->messaging->send($message);
             // print_r($r);
+            print_r($topic . $title . $message);
             return ['status' => 'Notification sent successfully to topic: ' . $topic];
         } catch (\Exception $e) {
             return ['error' => $e->getMessage()];
