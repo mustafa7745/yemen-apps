@@ -66,7 +66,7 @@ class FirebaseService
             ->withNotification($notification);
 
         // Send the message
-        print_r($topic . $title . $body);
+        // print_r($topic . $title . $body);
         try {
             $this->messaging->send($message);
             // print_r($r);
