@@ -700,6 +700,14 @@ trait AllShared
     }
     public function searchOurProducts(Request $request)
     {
+        $validation = $this->validRequest($request, [
+            'storeId' => 'required|string|max:100',
+            'search' => 'required|string|min:1',
+        ]);
+        if ($validation != null) {
+            return $this->responseError($validation);
+        }
+
         $search = $request->input('search');
         $storeId = $request->input('storeId');
         // 
