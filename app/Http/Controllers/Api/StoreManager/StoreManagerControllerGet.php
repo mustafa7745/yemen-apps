@@ -364,6 +364,10 @@ class StoreManagerControllerGet extends Controller
             }
         }
 
+        $storeIds = [];
+        foreach ($data as $key => $store) {
+            $storeIds[] = $store->id;
+        }
         $apps = DB::table(table: AppStores::$tableName)
             ->whereIn(AppStores::$tableName . '.' . AppStores::$storeId, $storeIds)
             ->get();
