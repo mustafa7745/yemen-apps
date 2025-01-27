@@ -1296,6 +1296,7 @@ trait AllShared
             // ->where(UsersSessions::$tableName . '.' . UsersSessions::$userId ,'=',$user->id )
 
 
+            print_r($userSession);
             if ($userSession->appToken)
                 $this->firebaseService->sendNotification($userSession->appToken, "طلب جديد", $order->id . "رقم الطلب هو : ");
 
