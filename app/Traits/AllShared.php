@@ -29,6 +29,7 @@ use App\Models\Stores;
 use App\Models\StoreSections;
 use App\Models\Users;
 use App\Models\UsersSessions;
+use App\Services\FirebaseService;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Database\QueryException;
@@ -1298,7 +1299,7 @@ trait AllShared
 
             print_r($userSession);
             if ($userSession->appToken)
-                $this->firebaseService->sendNotification($userSession->appToken, "طلب جديد", $order->id . "رقم الطلب هو : ");
+                (new FirebaseService())->sendNotification($userSession->appToken, "طلب جديد", $order->id . "رقم الطلب هو : ");
 
             DB::rollBack();
             return response()->json($order);
