@@ -1288,7 +1288,7 @@ trait AllShared
                     '=',
                     UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId
                 )
-                ->where(UsersSessions::$tableName . '.' . UsersSessions::$userId, '=', $user->id)
+                ->where(UsersSessions::$tableName . '.' . UsersSessions::$userId, '=', $user->userId)
                 ->where(UsersSessions::$tableName . '.' . UsersSessions::$isLogin, '=', 1)
 
                 ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', 1)
@@ -1300,6 +1300,7 @@ trait AllShared
             if ($userSession->appToken)
                 $this->firebaseService->sendNotification($userSession->appToken, "طلب جديد", $order->id . "رقم الطلب هو : ");
 
+            DB::rollBack();
             return response()->json($order);
         });
     }
