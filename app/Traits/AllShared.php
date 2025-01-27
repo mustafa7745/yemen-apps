@@ -5,6 +5,7 @@ use App\Models\AppStores;
 use App\Models\Categories;
 use App\Models\Currencies;
 use App\Models\DeliveryMen;
+use App\Models\DevicesSessions;
 use App\Models\Locations;
 use App\Models\MyResponse;
 use App\Models\NestedSections;
@@ -1275,6 +1276,29 @@ trait AllShared
             $order = DB::table(Orders::$tableName)
                 ->where(Orders::$id, $orderId)
                 ->first();
+
+
+            $user = DB::table(Stores::$tableName)
+                ->where(Stores::$id, '=', $storeId)
+                ->first([Stores::$userId]);
+            $userSession = DB::table(UsersSessions::$tableName)
+                ->join(
+                    DevicesSessions::$tableName,
+                    DevicesSessions::$tableName . '.' . DevicesSessions::$id,
+                    '=',
+                    UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId
+                )
+                ->where(UsersSessions::$tableName . '.' . UsersSessions::$userId, '=', $user->id)
+                ->where(UsersSessions::$tableName . '.' . UsersSessions::$isLogin, '=', 1)
+
+                ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', 1)
+                ->first([DevicesSessions::$tableName . '.' . DevicesSessions::$appToken]);
+            // ->where(UsersSessions::$tableName . '.' . UsersSessions::$userId ,'=',$user->id )
+
+
+            if ($userSession->appToken)
+                $this->firebaseService->sendNotification($userSession->appToken, "طلب جديد", $order->id . "رقم الطلب هو : ");
+
             return response()->json($order);
         });
     }
