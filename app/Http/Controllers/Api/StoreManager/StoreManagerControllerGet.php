@@ -344,6 +344,11 @@ class StoreManagerControllerGet extends Controller
         // print_r($storeConfigs);
 
 
+        $apps = DB::table(table: AppStores::$tableName)
+            ->whereIn(AppStores::$tableName . '.' . AppStores::$storeId, $storeIds)
+            ->get();
+
+        print_r($apps);
 
 
 
@@ -364,11 +369,11 @@ class StoreManagerControllerGet extends Controller
             }
         }
 
-        $apps = DB::table( table: AppStores::$tableName)
-            ->whereIn(AppStores::$tableName . '.' . AppStores::$storeId, $storeIds)
-            ->get();
+        // $apps = DB::table( table: AppStores::$tableName)
+        //     ->whereIn(AppStores::$tableName . '.' . AppStores::$storeId, $storeIds)
+        //     ->get();
 
-        // print_r($apps);
+        // // print_r($apps);
         foreach ($data as $index => $store) {
             foreach ($apps as $key => $app) {
                 print_r($app);
