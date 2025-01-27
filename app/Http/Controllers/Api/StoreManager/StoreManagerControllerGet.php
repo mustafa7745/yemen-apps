@@ -364,9 +364,9 @@ class StoreManagerControllerGet extends Controller
             }
         }
 
-        $apps = DB::table(table: AppStores::$tableName)
+        $apps = DB::table( table: AppStores::$tableName)
             ->whereIn(AppStores::$tableName . '.' . AppStores::$storeId, $storeIds)
-            ->get();
+            ->first();
 
         print_r($apps);
         foreach ($data as $index => $store) {
