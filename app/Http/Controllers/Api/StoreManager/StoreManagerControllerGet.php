@@ -370,15 +370,15 @@ class StoreManagerControllerGet extends Controller
 
         // print_r($apps);
         foreach ($data as $index => $store) {
-            $app = null;
+            $myapp = null;
             foreach ($apps as $key => $app) {
                 // print_r($app);
                 if ($store->id == $app->storeId) {
-                    $data[$index]->app = ['id' => $app->appId];
+                    $myapp = ['id' => $app->appId];
                     break;
                 }
             }
-            $data[$index]->app = $app;
+            $data[$index]->app = $myapp;
         }
 
 
