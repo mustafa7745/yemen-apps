@@ -366,11 +366,12 @@ class StoreManagerControllerGet extends Controller
 
         $apps = DB::table( table: AppStores::$tableName)
             ->whereIn(AppStores::$tableName . '.' . AppStores::$storeId, $storeIds)
-            ->first();
+            ->get();
 
-        print_r($apps);
+        // print_r($apps);
         foreach ($data as $index => $store) {
             foreach ($apps as $key => $app) {
+                print_r($app);
                 if ($store->id == $app->storeId) {
                     $data[$index]->app = ['id' => $app->appId];
                 } else {
