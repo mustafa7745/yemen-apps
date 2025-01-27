@@ -372,7 +372,7 @@ class StoreManagerControllerGet extends Controller
             ->whereIn(AppStores::$tableName . '.' . AppStores::$storeId, $storeIds)
             ->get();
 
-        print_r($apps);
+        // print_r($apps);
         foreach ($data as $index => $store) {
             $myapp = null;
             foreach ($apps as $key => $app) {
