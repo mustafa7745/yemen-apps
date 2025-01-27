@@ -16,7 +16,7 @@ class FirebaseService
     {
 
         //Hidden added 
-        $this->firebase = (new Factory)->withServiceAccount();
+        $this->firebase = (new Factory)->withServiceAccount(storage_path('Fire/yemen-stores-firebase-adminsdk-7qbeo-d9befb63dc.json'));
         // print_r("mustafaffa");
         $this->messaging = $this->firebase->createMessaging();
     }
