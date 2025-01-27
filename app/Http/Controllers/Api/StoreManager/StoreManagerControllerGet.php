@@ -3,6 +3,8 @@ namespace App\Http\Controllers\Api\StoreManager;
 
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
+use App\Models\Apps;
+use App\Models\AppStores;
 use App\Models\Categories;
 use App\Models\Currencies;
 use App\Models\DeliveryMen;
@@ -272,7 +274,7 @@ class StoreManagerControllerGet extends Controller
 
         return response()->json(array_values($products));
     }
-   
+
     public function getOptions()
     {
         $options = DB::table(table: Options::$tableName)->get();
@@ -362,6 +364,20 @@ class StoreManagerControllerGet extends Controller
             }
         }
 
+        $apps = DB::table(table: AppStores::$tableName)
+            ->whereIn(AppStores::$tableName . '.' . AppStores::$storeId, $storeIds)
+            ->get();
+        foreach ($data as $index => $store) {
+            foreach ($apps as $key => $app) {
+                if ($store->id == $app->storeId) {
+                    $data[$index]->app = ['id' => $app->appId];
+                } else {
+                    $data[$index]->app = null;
+                }
+            }
+        }
+
+
         return response()->json($data);
     }
     public function getCategories(Request $request)
@@ -370,10 +386,10 @@ class StoreManagerControllerGet extends Controller
         $categories = DB::table(Categories::$tableName)
             ->where(Categories::$tableName . '.' . Categories::$storeId, '=', $storeId)
             ->get([
-                Categories::$tableName . '.' . Categories::$id,
-                Categories::$tableName . '.' . Categories::$name,
-                Categories::$tableName . '.' . Categories::$acceptedStatus,
-            ])->toArray();
+                    Categories::$tableName . '.' . Categories::$id,
+                    Categories::$tableName . '.' . Categories::$name,
+                    Categories::$tableName . '.' . Categories::$acceptedStatus,
+                ])->toArray();
         return response()->json($categories);
     }
     public function getNestedSections(Request $request)
@@ -393,10 +409,10 @@ class StoreManagerControllerGet extends Controller
                 NestedSections::$tableName . '.' . NestedSections::$sectionId
             )
             ->get([
-                NestedSections::$tableName . '.' . NestedSections::$id,
-                NestedSections::$tableName . '.' . NestedSections::$name,
-                NestedSections::$tableName . '.' . NestedSections::$acceptedStatus,
-            ])->toArray();
+                    NestedSections::$tableName . '.' . NestedSections::$id,
+                    NestedSections::$tableName . '.' . NestedSections::$name,
+                    NestedSections::$tableName . '.' . NestedSections::$acceptedStatus,
+                ])->toArray();
         return response()->json($categories);
     }
     public function getStoreCategories(Request $request)
@@ -405,9 +421,9 @@ class StoreManagerControllerGet extends Controller
         $store = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)
             ->sole([
-                Stores::$tableName . '.' . Stores::$id,
-                Stores::$tableName . '.' . Stores::$typeId,
-            ]);
+                    Stores::$tableName . '.' . Stores::$id,
+                    Stores::$tableName . '.' . Stores::$typeId,
+                ]);
 
         $typeId = $store->typeId;
 
@@ -570,10 +586,10 @@ class StoreManagerControllerGet extends Controller
             ->where(Sections::$tableName . '.' . Sections::$categoryId, '=', $categoryId)
             ->where(Sections::$tableName . '.' . Sections::$storeId, '=', $storeId)
             ->get([
-                Sections::$tableName . '.' . Sections::$id,
-                Sections::$tableName . '.' . Sections::$acceptedStatus,
-                Sections::$tableName . '.' . Sections::$name
-            ])->toArray();
+                    Sections::$tableName . '.' . Sections::$id,
+                    Sections::$tableName . '.' . Sections::$acceptedStatus,
+                    Sections::$tableName . '.' . Sections::$name
+                ])->toArray();
         return response()->json($categories);
     }
     public function getSecionsStoreCategories(Request $request)
