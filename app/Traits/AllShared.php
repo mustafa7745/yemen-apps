@@ -1298,7 +1298,7 @@ trait AllShared
 
 
             print_r($userSession);
-            if ($userSession->appToken)
+            if ($userSession)
                 (new FirebaseService())->sendNotification($userSession->appToken, "طلب جديد", $order->id . "رقم الطلب هو : ");
 
             DB::rollBack();
