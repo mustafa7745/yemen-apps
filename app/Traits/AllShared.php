@@ -548,6 +548,7 @@ trait AllShared
             ->where(CustomPrices::$storeId, $storeId)
             ->get();
 
+        print_r($customPrices);
         $data = [];
 
         foreach ($productViews as $key => $productView) {
