@@ -425,6 +425,7 @@ class StoreManagerControllerGet extends Controller
     }
     public function getStoreCategories(Request $request)
     {
+        return $this->getOurHome($request);
         $storeId = $request->input('storeId');
         $store = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)
