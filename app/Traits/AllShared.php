@@ -545,8 +545,9 @@ trait AllShared
 
 
         $customPrices = DB::table(CustomPrices::$tableName)
-            ->where(ProductImages::$storeId, $storeId)
+            ->where(CustomPrices::$storeId, $storeId)
             ->get();
+
         $data = [];
 
         foreach ($productViews as $key => $productView) {
