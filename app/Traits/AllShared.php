@@ -545,7 +545,7 @@ trait AllShared
 
 
         $customPrices = DB::table(CustomPrices::$tableName)
-            ->CustomPrices(ProductImages::$storeId, $storeId)
+            ->where(ProductImages::$storeId, $storeId)
             ->get();
         $data = [];
 
