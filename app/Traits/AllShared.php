@@ -553,24 +553,38 @@ trait AllShared
         foreach ($productViews as $key => $productView) {
             $products = [];
             foreach ($result as $storeProductIndex => $storeProduct) {
-                foreach ($storeProduct['options'] as $optionIndex => $option) {
+                // foreach ($storeProduct['options'] as $optionIndex => $option) {
+                //     foreach ($customPrices as $key => $customPrice) {
+
+
+
+                //         if ($option['storeProductId'] == $customPrice->storeProductId) {
+                //             // print_r($option['storeProductId']);
+                //             // print_r($customPrice->storeProductId);
+
+                //             print_r($result['product']);
+                //             $result[$storeProductIndex]['options'][$optionIndex]['isCustomPrice'] = true;
+                //             $result[$storeProductIndex]['options'][$optionIndex]['price'] = $customPrice->price;
+                //         }
+                //     }
+                // }
+                ///
+                if ($productView->id == $storeProduct['product']['productViewId']) {
+                    $products[] = $storeProduct;
+                }
+            }
+            foreach ($products as $storeProductIndex => $storeProduct) {
+                foreach ($storeProduct['product']['options'] as $optionIndex => $option) {
                     foreach ($customPrices as $key => $customPrice) {
-
-
-
                         if ($option['storeProductId'] == $customPrice->storeProductId) {
                             // print_r($option['storeProductId']);
                             // print_r($customPrice->storeProductId);
 
                             print_r($result['product']);
-                            $result[$storeProductIndex]['options'][$optionIndex]['isCustomPrice'] = true;
-                            $result[$storeProductIndex]['options'][$optionIndex]['price'] = $customPrice->price;
+                            $products[$storeProductIndex]['options'][$optionIndex]['isCustomPrice'] = true;
+                            $products[$storeProductIndex]['options'][$optionIndex]['price'] = $customPrice->price;
                         }
                     }
-                }
-                ///
-                if ($productView->id == $storeProduct['product']['productViewId']) {
-                    $products[] = $storeProduct;
                 }
             }
             $data[] = ['id' => $productView->id, 'name' => $productView->name, 'products' => $products];
