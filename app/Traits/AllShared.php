@@ -227,7 +227,16 @@ trait AllShared
             )
             ->get();
 
-        return response()->json(['storeCategories' => $storeCategories, 'storeSections' => $storeSections, 'storeNestedSections' => $storeNestedSections]);
+        $ads = [
+            ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg']
+        ];
+
+        return response()->json([
+            'ads' => $ads,
+            'storeCategories' => $storeCategories,
+            'storeSections' => $storeSections,
+            'storeNestedSections' => $storeNestedSections
+        ]);
 
         // return response()->json($storeCategories);
         // }
@@ -352,6 +361,11 @@ trait AllShared
                 $data[$index]->storeConfig = null;
             }
         }
+        $ads = [
+            ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg']
+        ];
+
+        
         // }
 
         return $data;
