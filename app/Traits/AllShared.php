@@ -555,11 +555,12 @@ trait AllShared
             foreach ($result as $storeProductIndex => $storeProduct) {
                 foreach ($storeProduct['options'] as $optionIndex => $option) {
                     foreach ($customPrices as $key => $customPrice) {
-                        print_r($option['storeProductId']);
-                        print_r($customPrice->storeProductId);
+
 
 
                         if ($option['storeProductId'] == $customPrice->storeProductId) {
+                            print_r($option['storeProductId']);
+                            print_r($customPrice->storeProductId);
                             $result[$storeProductIndex]['options'][$optionIndex]['isCustomPrice'] = true;
                             $result[$storeProductIndex]['options'][$optionIndex]['price'] = $customPrice->price;
                         }
