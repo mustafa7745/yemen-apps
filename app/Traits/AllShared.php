@@ -559,8 +559,10 @@ trait AllShared
 
 
                         if ($option['storeProductId'] == $customPrice->storeProductId) {
-                            print_r($option['storeProductId']);
-                            print_r($customPrice->storeProductId);
+                            // print_r($option['storeProductId']);
+                            // print_r($customPrice->storeProductId);
+
+                            print_r($result);
                             $result[$storeProductIndex]['options'][$optionIndex]['isCustomPrice'] = true;
                             $result[$storeProductIndex]['options'][$optionIndex]['price'] = $customPrice->price;
                         }
