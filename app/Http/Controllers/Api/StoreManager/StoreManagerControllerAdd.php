@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use App\Models\Currencies;
+use App\Models\CustomPrices;
 use App\Models\DeliveryMen;
 use App\Models\NestedSections;
 use App\Models\Options;
@@ -716,5 +717,23 @@ class StoreManagerControllerAdd extends Controller
         // }
 
         // return response()->json([]);
+    }
+    public function addCustomPrice(Request $request)
+    {
+        $storeId = $request->input('storeId');
+        $storeProductId = $request->input('storeProductId');
+        $price = $request->input('price');
+
+        $insertedId = DB::table(table: CustomPrices::$tableName)
+            ->insertGetId([
+                CustomPrices::$id => null,
+                CustomPrices::$storeId => $storeId,
+                CustomPrices::$price => $price,
+                CustomPrices::$storeProductId => $storeProductId,
+                CustomPrices::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                CustomPrices::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+
+        return response()->json([]);
     }
 }

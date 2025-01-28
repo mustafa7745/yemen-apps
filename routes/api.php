@@ -83,6 +83,8 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/addDeliveryManToStore', [StoreManagerControllerAdd::class, 'addDeliveryManToStore']);
     Route::post('/addNotification', [StoreManagerControllerAdd::class, 'addNotification']);
     Route::post('/addAds', [StoreManagerControllerAdd::class, 'addAds']);
+    Route::post('/addCustomPrice', [StoreManagerControllerAdd::class, 'addCustomPrice']);
+
 
 
 
@@ -101,6 +103,8 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/updateStoreProductOrder', [StoreManagerControllerUpdate::class, 'updateStoreProductOrder']);
     Route::post('/updateProductOrder', [StoreManagerControllerUpdate::class, 'updateProductOrder']);
     Route::post('/updateCurrency', [StoreManagerControllerUpdate::class, 'updateCurrency']);
+    Route::post('/updateCustomPrice', [StoreManagerControllerUpdate::class, 'updateCustomPrice']);
+
 
 
 

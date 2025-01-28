@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\StoreManager;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Currencies;
+use App\Models\CustomPrices;
 use App\Models\Options;
 use App\Models\OrdersAmounts;
 use App\Models\OrdersDelivery;
@@ -350,6 +351,25 @@ class StoreManagerControllerUpdate extends Controller
             ->first();
 
         return response()->json($data);
+    }
+    public function updateCustomPrice(Request $request)
+    {
+        $storeId = $request->input('storeId');
+
+        $storeProductId = $request->input('storeProductId');
+        $price = $request->input('price');
+
+        DB::table(table: CustomPrices::$tableName)
+            ->where(CustomPrices::$storeProductId, '=', $storeProductId)
+            ->where(CustomPrices::$storeId, '=', $storeId)
+
+            ->update(
+                [
+                    CustomPrices::$price => $price,
+                    CustomPrices::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ]
+            );
+        return response()->json([]);
     }
 
 
