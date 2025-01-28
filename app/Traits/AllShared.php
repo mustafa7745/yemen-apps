@@ -228,11 +228,11 @@ trait AllShared
             ->get();
 
         $ads = [
-            ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg','pid'=>1],
-            ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg','pid'=>2],
-            ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg','pid'=>3],
-            ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg','pid'=>4],
-            ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg','pid'=>5],
+            ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg', 'pid' => 43],
+            ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg', 'pid' => 45],
+            ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg', 'pid' => 3],
+            ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg', 'pid' => 4],
+            ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg', 'pid' => 5],
 
         ];
 
