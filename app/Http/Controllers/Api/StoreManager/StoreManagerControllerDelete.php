@@ -8,6 +8,7 @@ use App\Models\OrdersAmounts;
 use App\Models\OrdersProducts;
 use App\Models\ProductImages;
 use App\Models\Products;
+use App\Models\StoreAds;
 use App\Models\Stores;
 use App\Models\Sections;
 use App\Models\StoreCategories;
@@ -317,6 +318,21 @@ class StoreManagerControllerDelete extends Controller
             if ($countDeleted != count($ids)) {
                 return response()->json(['message' => "لا يمكن الحذف حدث خطأ", 'code' => 0], 409);
             }
+            return response()->json(["success" => "yes"]);
+
+        });
+    }
+    public function deleteAds(Request $request)
+    {
+        return DB::transaction(function () use ($request) {
+            $id = $request->input('id');
+            $previousRecord = DB::table(StoreAds::$tableName)
+                ->where(StoreAds::$id, '=', $id)
+                ->first();
+            Storage::disk('s3')->delete('stores/ads/' . $previousRecord->image);
+            DB::table(StoreAds::$tableName)
+                ->where(StoreAds::$id, '=', $id)
+                ->delete();
             return response()->json(["success" => "yes"]);
 
         });

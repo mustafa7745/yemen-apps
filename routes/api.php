@@ -119,6 +119,8 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/deleteStoreNestedSections', [StoreManagerControllerDelete::class, 'deleteStoreNestedSections']);
     Route::post('/deleteNestedSections', [StoreManagerControllerDelete::class, 'deleteNestedSections']);
     Route::post('/deleteOrderProducts', [StoreManagerControllerDelete::class, 'deleteOrderProducts']);
+    Route::post('/deleteAds', [StoreManagerControllerDelete::class, 'deleteAds']);
+
 
 
 
