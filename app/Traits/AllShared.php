@@ -555,7 +555,9 @@ trait AllShared
             foreach ($result as $storeProductIndex => $storeProduct) {
                 foreach ($storeProduct['options'] as $optionIndex => $option) {
                     foreach ($customPrices as $key => $customPrice) {
-                        print_r($customPrices);
+                        print_r($option['storeProductId']);
+                        print_r($customPrice->storeProductId);
+
 
                         if ($option['storeProductId'] == $customPrice->storeProductId) {
                             $result[$storeProductIndex]['options'][$optionIndex]['isCustomPrice'] = true;
