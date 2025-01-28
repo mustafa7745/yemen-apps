@@ -259,6 +259,9 @@ class StoreManagerControllerGet extends Controller
     public function getProducts(Request $request)
     {
         $storeId = $request->input('storeId');
+       
+
+
         $nestedSectionId = $request->input('nestedSectionId');
         $products = DB::table(Products::$tableName)
             ->whereIn(Products::$tableName . '.' . Products::$storeId, [$storeId, 1])
@@ -270,7 +273,8 @@ class StoreManagerControllerGet extends Controller
                     Products::$tableName . '.' . Products::$acceptedStatus,
 
                 ]
-            )->toArray();
+            );
+
 
         return response()->json(array_values($products));
     }
@@ -728,5 +732,5 @@ class StoreManagerControllerGet extends Controller
 
         return response()->json($data);
     }
-    
+
 }

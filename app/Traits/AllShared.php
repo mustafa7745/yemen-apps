@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Models\AppStores;
 use App\Models\Categories;
 use App\Models\Currencies;
+use App\Models\CustomPrices;
 use App\Models\DeliveryMen;
 use App\Models\DevicesSessions;
 use App\Models\Locations;
@@ -384,6 +385,7 @@ trait AllShared
     {
         $storeNestedSectionId = $request->input('storeNestedSectionId');
         $storeId = $request->input('storeId');
+        $shared = $request->input('shared');
         // 
         $store = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)
@@ -531,7 +533,7 @@ trait AllShared
             $currency = ['id' => $product->currencyId, 'name' => $product->currencyName, 'sign' => $product->currencyName];
 
             // Add the option to the options array
-            $result[$product->productId]['options'][] = ['optionId' => $product->optionId, 'storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price, 'currency' => $currency, 'storeProductOrder' => $product->storeProductOrder];
+            $result[$product->productId]['options'][] = ['optionId' => $product->optionId, 'storeProductId' => $product->storeProductId, 'name' => $product->optionName, 'price' => $product->price, 'currency' => $currency, 'storeProductOrder' => $product->storeProductOrder, 'isCustomPrice' => false];
         }
 
         $productViews = DB::table(ProductViews::$tableName)->get(
@@ -541,11 +543,24 @@ trait AllShared
             ]
         );
 
+
+        $customPrices = DB::table(CustomPrices::$tableName)
+            ->CustomPrices(ProductImages::$storeId, $storeId)
+            ->get();
         $data = [];
 
         foreach ($productViews as $key => $productView) {
             $products = [];
-            foreach ($result as $key2 => $storeProduct) {
+            foreach ($result as $storeProductIndex => $storeProduct) {
+                foreach ($storeProduct['options'] as $optionIndex => $option) {
+                    foreach ($customPrices as $key => $customPrice) {
+                        if ($option['storeProductId'] == $customPrice['storeProductId']) {
+                            $result[$storeProductIndex]['options'][$optionIndex]['isCustomPrice'] = true;
+                            $result[$storeProductIndex]['options'][$optionIndex]['price'] = $customPrice['price'];
+                        }
+                    }
+                }
+                ///
                 if ($productView->id == $storeProduct['product']['productViewId']) {
                     $products[] = $storeProduct;
                 }
