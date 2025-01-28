@@ -10,6 +10,7 @@ use App\Models\NestedSections;
 use App\Models\Options;
 use App\Models\ProductImages;
 use App\Models\Products;
+use App\Models\StoreAds;
 use App\Models\StoreDeliveryMen;
 use App\Models\StoreProducts;
 use App\Models\StoreSections;
@@ -607,6 +608,72 @@ class StoreManagerControllerAdd extends Controller
         } else {
             return response()->json(['error' => 'Image Not Found'], 400);
         }
+    }
+    public function addAds(Request $request)
+    {
+        $validation = $this->validRequest($request, [
+            'image' => 'required|image|mimes:jpg|max:300',
+            'storeId' => 'required|string|max:9'
+        ]);
+
+
+        if ($validation != null) {
+            return $this->responseError($validation);
+        }
+
+        return DB::transaction(function () use ($request) {
+            $image = $request->file('image');
+            $productId = $request->input('productId');
+            $storeId = $request->input('storeId');
+
+            if ($image->isValid() == false) {
+                return response()->json(['error' => 'Invalid image file.'], 400);
+            }
+
+
+            $fileName = Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
+            $insertedId = DB::table(StoreAds::$tableName)
+                ->insertGetId([
+                    StoreAds::$id => null,
+                    StoreAds::$image => $fileName,
+                    StoreAds::$productId => $productId,
+                    StoreAds::$storeId => $storeId,
+                    StoreAds::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    StoreAds::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    StoreAds::$expireAt => Carbon::now()->format('Y-m-d H:i:s'),
+
+                ]);
+
+
+            $addedRecord = DB::table(StoreAds::$tableName)
+                ->where(StoreAds::$id, '=', $insertedId)
+                ->first();
+
+            try {
+                $path = Storage::disk('s3')->put('stores/ads/' . $fileName, fopen($image, 'r+'));
+
+                // Check if the file was uploaded successfully
+                if ($path) {
+                    // Storage::disk('s3')->url($fileName);
+                    return response()->json($addedRecord);
+
+                } else {
+                    DB::rollBack();
+                    // If the image is not valid, return a validation error response
+                    return response()->json([
+                        'error' => 'No valid image file uploaded.',
+                    ], 400);
+
+                }
+            } catch (\Exception $e) {
+                DB::rollBack();  // Manually trigger a rollback
+                return response()->json([
+                    'error' => 'An error occurred while uploading the image.',
+                    'message' => $e->getMessage(),
+                ], 500);
+            }
+        });
+
     }
 
 

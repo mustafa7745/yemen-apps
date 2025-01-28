@@ -728,4 +728,5 @@ class StoreManagerControllerGet extends Controller
 
         return response()->json($data);
     }
+    
 }

@@ -21,6 +21,7 @@ use App\Models\Products;
 use App\Models\ProductViews;
 use App\Models\Sections;
 use App\Models\SharedStoresConfigs;
+use App\Models\StoreAds;
 use App\Models\StoreCategories;
 use App\Models\StoreNestedSections;
 use App\Models\StorePaymentTypes;
@@ -227,14 +228,18 @@ trait AllShared
             )
             ->get();
 
-        $ads = [
-            ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg', 'pid' => 43],
-            ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg', 'pid' => 45],
-            ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg', 'pid' => 3],
-            ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg', 'pid' => 4],
-            ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg', 'pid' => 5],
+        $ads = DB::table(StoreAds::$tableName)
+            ->where(StoreAds::$storeId, '=', $storeId)
+            ->get();
 
-        ];
+        // [
+        //     ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg', 'pid' => 43],
+        //     ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg', 'pid' => 45],
+        //     ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg', 'pid' => 3],
+        //     ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg', 'pid' => 4],
+        //     ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg', 'pid' => 5],
+
+        // ];
 
         return response()->json([
             'ads' => $ads,

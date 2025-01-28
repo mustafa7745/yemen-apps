@@ -82,6 +82,8 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/addStore', [StoreManagerControllerAdd::class, 'addStore']);
     Route::post('/addDeliveryManToStore', [StoreManagerControllerAdd::class, 'addDeliveryManToStore']);
     Route::post('/addNotification', [StoreManagerControllerAdd::class, 'addNotification']);
+    Route::post('/addAds', [StoreManagerControllerAdd::class, 'addAds']);
+
 
 
 
