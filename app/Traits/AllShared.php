@@ -580,7 +580,7 @@ trait AllShared
                             // print_r($option['storeProductId']);
                             // print_r($customPrice->storeProductId);
 
-                            print_r($result['product']);
+                            // print_r($result['product']);
                             $products[$storeProductIndex]['options'][$optionIndex]['isCustomPrice'] = true;
                             $products[$storeProductIndex]['options'][$optionIndex]['price'] = $customPrice->price;
                         }
