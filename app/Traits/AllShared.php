@@ -548,7 +548,6 @@ trait AllShared
             ->where(CustomPrices::$storeId, $storeId)
             ->get();
 
-        print_r($customPrices);
         $data = [];
 
         foreach ($productViews as $key => $productView) {
@@ -556,6 +555,8 @@ trait AllShared
             foreach ($result as $storeProductIndex => $storeProduct) {
                 foreach ($storeProduct['options'] as $optionIndex => $option) {
                     foreach ($customPrices as $key => $customPrice) {
+                        print_r($customPrices);
+
                         if ($option['storeProductId'] == $customPrice->storeProductId) {
                             $result[$storeProductIndex]['options'][$optionIndex]['isCustomPrice'] = true;
                             $result[$storeProductIndex]['options'][$optionIndex]['price'] = $customPrice->price;
