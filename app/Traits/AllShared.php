@@ -1530,5 +1530,20 @@ trait AllShared
     }
     ///
 
+    public function getCustomPrices(Request $request)
+    {
+        $storeId = $request->input('storeId');
+        $products = DB::table(CustomPrices::$tableName)
+            ->whereIn(CustomPrices::$tableName . '.' . CustomPrices::$storeId, '=', $storeId)
+            ->get(
+                [
+                    CustomPrices::$tableName . '.' . CustomPrices::$id,
+                    CustomPrices::$tableName . '.' . CustomPrices::$storeProductId,
+                    CustomPrices::$tableName . '.' . CustomPrices::$price,
+                ]
+            );
 
+
+        return response()->json($products);
+    }
 }
