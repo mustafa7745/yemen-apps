@@ -40,6 +40,8 @@ Route::prefix('v1')->group(function () {
     Route::post('/getStoreInfo', [StoresControllerGet::class, 'getStoreInfo']);
     Route::post('/getLocations', [StoresControllerGet::class, 'getLocations']);
     Route::post('/getPaymentTypes', [StoresControllerGet::class, 'getPaymentTypes']);
+    Route::post('/getCustomPrices', [StoresControllerGet::class, 'getCustomPrices']);
+
 
     Route::post('/addLocation', [StoresControllerAdd::class, 'addLocation']);
     Route::post('/confirmOrder', [StoresControllerAdd::class, 'confirmOrder']);
