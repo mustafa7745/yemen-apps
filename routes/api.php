@@ -146,6 +146,8 @@ Route::prefix('v1/u')->group(function () {
     Route::post('/getOrderProducts', [UserControllerGet::class, 'getOrderProducts']);
     Route::post('/getPaymentTypes', [UserControllerGet::class, 'getPaymentTypes']);
     Route::post('/getUserProfile', [UserControllerGet::class, 'getUserProfile']);
+    Route::post('/getCustomPrices', [UserControllerGet::class, 'getCustomPrices']);
+
     // Route::post('/getCurrencies', [UserControllerGet::class, 'getCurrencies']);
 
     Route::post('/search', [UserControllerGet::class, 'search']);
