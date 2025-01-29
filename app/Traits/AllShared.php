@@ -1534,7 +1534,7 @@ trait AllShared
     {
         $storeId = $request->input('storeId');
         $products = DB::table(CustomPrices::$tableName)
-            ->whereIn(CustomPrices::$tableName . '.' . CustomPrices::$storeId, '=', $storeId)
+            ->where(CustomPrices::$tableName . '.' . CustomPrices::$storeId, '=', $storeId)
             ->get(
                 [
                     CustomPrices::$tableName . '.' . CustomPrices::$id,
