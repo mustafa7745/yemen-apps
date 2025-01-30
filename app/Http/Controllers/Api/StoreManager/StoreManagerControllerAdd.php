@@ -697,7 +697,7 @@ class StoreManagerControllerAdd extends Controller
             ->where(Apps::$id, '=', $appId)
             ->first();
 
-        $serviceAccount = $app->serviceAcount;
+        $serviceAccount = $app->serviceAccount;
         if ($serviceAccount == null) {
             return $this->responseError2("لايوجد اعدادات الخدمة", [], 0, 405);
         }
