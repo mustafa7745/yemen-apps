@@ -374,8 +374,17 @@ class StoreManagerControllerGet extends Controller
             $storeIds[] = $store->id;
         }
         $apps = DB::table(table: AppStores::$tableName)
+            ->join(
+                Apps::$tableName,
+                Apps::$tableName . '.' . Apps::$id,
+                '=',
+                AppStores::$tableName . '.' . AppStores::$appId
+            )
             ->whereIn(AppStores::$tableName . '.' . AppStores::$storeId, $storeIds)
-            ->get();
+            ->get([
+                Apps::$tableName . '.' . Apps::$serviceAccount,
+                AppStores::$tableName . '.' . AppStores::$appId
+            ]);
 
         // print_r($apps);
         foreach ($data as $index => $store) {
@@ -383,7 +392,13 @@ class StoreManagerControllerGet extends Controller
             foreach ($apps as $key => $app) {
                 // print_r($app);
                 if ($store->id == $app->storeId) {
-                    $myapp = ['id' => $app->appId];
+
+                    $hasServiceAcount = false;
+                    if ($app->serviceAccount != null) {
+                        $hasServiceAcount = true;
+                    }
+
+                    $myapp = ['id' => $app->appId, 'hasServiceAcount' => $hasServiceAcount];
                     break;
                 }
             }
