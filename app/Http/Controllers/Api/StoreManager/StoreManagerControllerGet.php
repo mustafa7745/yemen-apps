@@ -383,7 +383,9 @@ class StoreManagerControllerGet extends Controller
             ->whereIn(AppStores::$tableName . '.' . AppStores::$storeId, $storeIds)
             ->get([
                 Apps::$tableName . '.' . Apps::$serviceAccount,
-                AppStores::$tableName . '.' . AppStores::$appId
+                AppStores::$tableName . '.' . AppStores::$appId,
+                AppStores::$tableName . '.' . AppStores::$storeId
+
             ]);
 
         // print_r($apps);
