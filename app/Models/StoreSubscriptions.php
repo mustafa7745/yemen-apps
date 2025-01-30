@@ -5,7 +5,7 @@ namespace App\Models;
 class StoreSubscriptions
 
 {
-   public static $tableName = "storeSubscription";
+   public static $tableName = "storeSubscriptions";
    public static $id = "id";
    public static $isPremuim = "isPremuim";
    public static $points = "points";
