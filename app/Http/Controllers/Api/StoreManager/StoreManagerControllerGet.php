@@ -25,6 +25,7 @@ use App\Models\StoreCategories;
 use App\Models\StoreProducts;
 use App\Models\Stores;
 use App\Models\StoreSections;
+use App\Models\StoreSubscriptions;
 use App\Models\Users;
 use App\Traits\AllShared;
 use App\Traits\StoreManagerControllerShared;
@@ -259,7 +260,7 @@ class StoreManagerControllerGet extends Controller
     public function getProducts(Request $request)
     {
         $storeId = $request->input('storeId');
-       
+
 
 
         $nestedSectionId = $request->input('nestedSectionId');
@@ -389,6 +390,21 @@ class StoreManagerControllerGet extends Controller
             $data[$index]->app = $myapp;
         }
 
+        $subscriptions = DB::table(table: StoreSubscriptions::$tableName)
+            ->whereIn(StoreSubscriptions::$tableName . '.' . StoreSubscriptions::$storeId, $storeIds)
+            ->get();
+
+        foreach ($data as $index => $store) {
+            $myapp = null;
+            foreach ($subscriptions as $key => $app) {
+                // print_r($app);
+                if ($store->id == $app->storeId) {
+                    $myapp = $app;
+                    break;
+                }
+            }
+            $data[$index]->subscription = $myapp;
+        }
 
         return response()->json($data);
     }
