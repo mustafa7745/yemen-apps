@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Api\StoreManager;
 
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
+use App\Models\Apps;
 use App\Models\Categories;
 use App\Models\Currencies;
 use App\Models\CustomPrices;
@@ -678,45 +679,34 @@ class StoreManagerControllerAdd extends Controller
     }
 
 
-    protected $firebaseService;
+    // protected 
 
-    public function __construct(FirebaseService $firebaseService)
-    {
-        $this->firebaseService = $firebaseService;
-    }
+    // public function __construct( $firebaseService)
+    // {
+    //     $this->firebaseService = $firebaseService;
+    // }
 
 
     public function addNotification(Request $request)
     {
+        $appId = $request->input('appId');
         $title = $request->input('title');
         $description = $request->input('description');
 
+        $app = DB::table(Apps::$tableName)
+            ->where(Apps::$id, '=', $appId)
+            ->first();
 
-        $response = $this->firebaseService->sendNotificationToTopic("app_2", $title, $description);
+        $serviceAccount = $app->serviceAcount;
+        if ($serviceAccount == null) {
+            return $this->responseError2("لايوجد اعدادات الخدمة", [], 0, 405);
+        }
+
+        $firebaseService = new FirebaseService($serviceAccount);
+
+        $response = $firebaseService->sendNotificationToTopic($app->id, $title, $description);
         // $response = $this->firebaseService->sendNotification("d37lmIWyReq0Gno0g6iPb7:APA91bFCb8RDk3niIpLpxjw2sF0Zh9zZni3jbdBBaSCuwFNx9YQTsBrCjigisCkpktKk7K_AatCqbOmuWC1LKjWqhHj844BUu0YU0MiWNmwnhM_jjOPLvnU", $title, $description);
-
-
-        // Return the response to the client
         return response()->json($response);
-
-
-
-        //     $notification = Notification::fromArray([
-        //         'title' => $title,
-        //         'body' => $description,
-        //     ]);
-
-        //     $message = CloudMessage::withTarget('token', 'user_device_token')
-        //     ->withNotification($notification);
-
-        // try {
-        //     $messaging->send($message);
-        //     return response()->json(['message' => 'Notification sent successfully!']);
-        // } catch (\Exception $e) {
-        //     return response()->json(['error' => $e->getMessage()]);
-        // }
-
-        // return response()->json([]);
     }
     public function addCustomPrice(Request $request)
     {

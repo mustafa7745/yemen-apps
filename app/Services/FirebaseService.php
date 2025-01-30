@@ -12,11 +12,13 @@ class FirebaseService
     protected $firebase;
     protected $messaging;
 
-    public function __construct()
+    public function __construct($serviceAccount)
     {
 
+        $this->firebase = (new Factory)->withServiceAccount($serviceAccount);
+
         //Hidden added 
-        $this->firebase = (new Factory)->withServiceAccount(storage_path('Fire/yemen-stores-firebase-adminsdk-7qbeo-d9befb63dc.json'));
+        // $this->firebase = (new Factory)->withServiceAccount(storage_path('Fire/yemen-stores-firebase-adminsdk-7qbeo-d9befb63dc.json'));
         // print_r("mustafaffa");
         $this->messaging = $this->firebase->createMessaging();
     }
