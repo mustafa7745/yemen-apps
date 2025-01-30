@@ -398,7 +398,7 @@ class StoreManagerControllerGet extends Controller
                         $hasServiceAcount = true;
                     }
 
-                    $myapp = ['id' => $app->appId, 'hasServiceAcount' => $hasServiceAcount];
+                    $myapp = ['id' => $app->appId, 'hasServiceAccount' => $hasServiceAcount];
                     break;
                 }
             }
