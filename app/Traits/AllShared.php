@@ -1549,23 +1549,23 @@ trait AllShared
         return response()->json($products);
     }
 
-    // protected $whatsapp;
+    protected $whatsapp;
 
-    // public function __construct(WhatsappService $whatsapp)
-    // {
-    //     $this->whatsapp = $whatsapp;
-    // }
+    public function __construct(WhatsappService $whatsapp)
+    {
+        $this->whatsapp = $whatsapp;
+    }
     public function whatsapp_webhook(Request $request)
     {
-        $verifyToken = '774519161'; // Replace with your verify token
-        $challenge = $request->query('hub_challenge');
-        $token = $request->query('hub_verify_token');
+        // $verifyToken = '774519161'; // Replace with your verify token
+        // $challenge = $request->query('hub_challenge');
+        // $token = $request->query('hub_verify_token');
 
-        if ($token === $verifyToken) {
-            return response($challenge, 200);
-        }
+        // if ($token === $verifyToken) {
+        //     return response($challenge, 200);
+        // }
 
-        return response()->json(['error' => 'Invalid verify token'], 403);
+        // return response()->json(['error' => 'Invalid verify token'], 403);
 
         // $hub_verify_token = "774519161";
         // if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['hub_challenge']) && isset($_GET['hub_verify_token']) && $_GET["hub_verify_token"] === $hub_verify_token) {
@@ -1584,5 +1584,24 @@ trait AllShared
         // // exit;
         // return response()->json(['success' => true]);
 
+        // Log the entire incoming request payload
+        Log::info('WhatsApp Webhook Payload:', $request->all());
+
+        // Process the webhook data
+        $payload = $request->all();
+
+        if (isset($payload['entry'][0]['changes'][0]['value']['messages'][0])) {
+            $message = $payload['entry'][0]['changes'][0]['value']['messages'][0];
+            $from = $message['from']; // Sender's phone number
+            $text = $message['text']['body']; // Message content
+
+            // Log the message details
+            Log::info("Received message from $from: $text");
+
+            // You can also save the message to the database or trigger other actions here
+        }
+
+        // Return a 200 OK response to acknowledge receipt of the webhook
+        return response()->json(['success' => true]);
     }
 }
