@@ -450,10 +450,10 @@ class StoreManagerControllerAdd extends Controller
                 $insertedIdShared = DB::table(table: SharedStoresConfigs::$tableName)
                     ->insertGetId([
                         SharedStoresConfigs::$id => null,
-                        SharedStoresConfigs::$products => [],
-                        SharedStoresConfigs::$categories => [],
-                        SharedStoresConfigs::$sections => [],
-                        SharedStoresConfigs::$nestedSections => [],
+                        SharedStoresConfigs::$products => json_encode([]),
+                        SharedStoresConfigs::$categories => json_encode([]),
+                        SharedStoresConfigs::$sections => json_encode([]),
+                        SharedStoresConfigs::$nestedSections => json_encode([]),
                         SharedStoresConfigs::$storeId => $insertedId,
                         SharedStoresConfigs::$storeIdReference => 1,
                         SharedStoresConfigs::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
