@@ -12,6 +12,7 @@ use App\Models\NestedSections;
 use App\Models\Options;
 use App\Models\ProductImages;
 use App\Models\Products;
+use App\Models\SharedStoresConfigs;
 use App\Models\StoreAds;
 use App\Models\StoreDeliveryMen;
 use App\Models\StoreProducts;
@@ -20,6 +21,7 @@ use App\Models\StoreNestedSections;
 use App\Models\Sections;
 use App\Models\Stores;
 use App\Models\StoreCategories;
+use App\Models\StoreSubscriptions;
 use App\Models\Users;
 use App\Services\FirebaseService;
 use App\Traits\AllShared;
@@ -399,12 +401,6 @@ class StoreManagerControllerAdd extends Controller
         }
         $accessToken = $myResult->message;
 
-
-
-
-
-
-
         return DB::transaction(function () use ($request, $accessToken) {
 
             $name = $request->input('name');
@@ -434,6 +430,39 @@ class StoreManagerControllerAdd extends Controller
                     Stores::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                     Stores::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
+            $insertedIdSubscribe = DB::table(table: StoreSubscriptions::$tableName)
+                ->insertGetId([
+                    StoreSubscriptions::$id => null,
+                    StoreSubscriptions::$isPremuim => 0,
+                    StoreSubscriptions::$storeId => $insertedId,
+                    StoreSubscriptions::$points => 250,
+                    StoreSubscriptions::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    StoreSubscriptions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    StoreSubscriptions::$expireAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ]);
+
+            $subscribe = DB::table(StoreSubscriptions::$tableName)
+                ->where(StoreSubscriptions::$id, '=', $insertedIdSubscribe)
+                ->first();
+
+            $storeConfig = null;
+            if ($typeId == 1) {
+                $insertedIdShared = DB::table(table: SharedStoresConfigs::$tableName)
+                    ->insertGetId([
+                        SharedStoresConfigs::$id => null,
+                        SharedStoresConfigs::$products => [],
+                        SharedStoresConfigs::$categories => [],
+                        SharedStoresConfigs::$sections => [],
+                        SharedStoresConfigs::$nestedSections => [],
+                        SharedStoresConfigs::$storeId => $insertedId,
+                        SharedStoresConfigs::$storeIdReference => 1,
+                        SharedStoresConfigs::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                        SharedStoresConfigs::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    ]);
+                $storeConfig = DB::table(SharedStoresConfigs::$tableName)
+                    ->where(SharedStoresConfigs::$id, '=', $insertedIdShared)
+                    ->first();
+            }
 
             try {
                 $pathLogo = Storage::disk('s3')->put('stores/logos/' . $logoName, fopen($logo, 'r+'));
@@ -445,7 +474,9 @@ class StoreManagerControllerAdd extends Controller
                         ->where(Stores::$id, '=', $insertedId)
                         ->first();
 
-                    $addedRecord->storeConfig = null;
+                    $addedRecord->storeConfig = $storeConfig;
+                    $addedRecord->app = null;
+                    $addedRecord->subscription = $subscribe;
 
                     return response()->json($addedRecord);
 
