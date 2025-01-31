@@ -42,7 +42,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/getPaymentTypes', [StoresControllerGet::class, 'getPaymentTypes']);
     Route::post('/getCustomPrices', [StoresControllerGet::class, 'getCustomPrices']);
 
-    Route::post('/whatsapp_webhook', [StoresControllerGet::class, 'whatsapp_webhook']);
+    Route::get('/whatsapp_webhook', [StoresControllerGet::class, 'whatsapp_webhook']);
 
 
 
