@@ -1580,7 +1580,9 @@ trait AllShared
         // $input = json_decode($input, true);
         // $message = $input['entry'][0]['changes'][0]['value']['messages'][0]['text']['body'];
         // $phone_number = $input['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id'];
-        $this->whatsapp->sendMessageText("967780222271", "Hello from laravel");
+        $phoneNumber = $request->input('entry.0.changes.0.value.messages.0.from');
+        $message = $request->input('entry.0.changes.0.value.messages.0.text.body');
+        $this->whatsapp->sendMessageText($phoneNumber, $message);
         // exit;
         return response()->json(['success' => true]);
 
@@ -1604,5 +1606,5 @@ trait AllShared
         // // Return a 200 OK response to acknowledge receipt of the webhook
         // return response()->json(['success' => true]);
     }
-   
+
 }
