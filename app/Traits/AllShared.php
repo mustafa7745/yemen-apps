@@ -37,6 +37,7 @@ use Carbon\Carbon;
 use DB;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Log;
 use Storage;
 use Str;
 use Validator;
@@ -1562,6 +1563,7 @@ trait AllShared
         //     exit;
         // }
 
+        Log::info('WhatsApp Webhook Payload:', $request->all());
 
         $input = file_get_contents('php://input');
         $input = json_decode($input, true);
