@@ -1608,6 +1608,7 @@ trait AllShared
                         Users::$firstName => $name,
                         Users::$lastName => $name,
                         Users::$phone => $phone,
+                        Users::$password => $hashedPassword,
                         Users::$countryCode => $countryCode,
                         Users::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                         Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
