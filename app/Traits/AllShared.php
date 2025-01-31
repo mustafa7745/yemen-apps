@@ -1563,7 +1563,7 @@ trait AllShared
         //     exit;
         // }
 
-        Log::info('WhatsApp Webhook Payload:', $request->all());
+        // Log::info('WhatsApp Webhook Payload:', $request->all());
  
 
         // $input = file_get_contents('php://input');
