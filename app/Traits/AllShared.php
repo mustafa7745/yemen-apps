@@ -1582,11 +1582,9 @@ trait AllShared
         // $phone_number = $input['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id'];
         $phoneNumber = $request->input('entry.0.changes.0.value.messages.0.from');
         $message = $request->input('entry.0.changes.0.value.messages.0.text.body');
-
-
-        // preg_match('/^\+(\d{1,4})/', $phoneNumber, $matches);
-        // $countryCode = $matches[1];
-        $this->whatsapp->sendMessageText($phoneNumber, substr($phoneNumber, 0, 3));
+        $countryCode = substr($phoneNumber, 0, 3);
+        $phone = substr($phoneNumber, 4);
+        $this->whatsapp->sendMessageText($phoneNumber, $phone);
         // exit;
         return response()->json(['success' => true]);
 
