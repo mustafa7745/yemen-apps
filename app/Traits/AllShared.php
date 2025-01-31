@@ -1557,22 +1557,22 @@ trait AllShared
     }
     public function whatsapp_webhook(Request $request)
     {
-        // $hub_verify_token = "774519161";
-        // if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['hub_challenge']) && isset($_GET['hub_verify_token']) && $_GET["hub_verify_token"] === $hub_verify_token) {
-        //     echo $_GET['hub_challenge'];
-        //     exit;
-        // }
+        $hub_verify_token = "774519161";
+        if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['hub_challenge']) && isset($_GET['hub_verify_token']) && $_GET["hub_verify_token"] === $hub_verify_token) {
+            echo $_GET['hub_challenge'];
+            exit;
+        }
 
         // Log::info('WhatsApp Webhook Payload:', $request->all());
  
 
-        // $input = file_get_contents('php://input');
-        // $input = json_decode($input, true);
-        // $message = $input['entry'][0]['changes'][0]['value']['messages'][0]['text']['body'];
-        // $phone_number = $input['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id'];
-        $this->whatsapp->sendMessageText("967780222271", "Hello from laravel");
-        // exit;
-        return response()->json(['success' => true]);
+        // // $input = file_get_contents('php://input');
+        // // $input = json_decode($input, true);
+        // // $message = $input['entry'][0]['changes'][0]['value']['messages'][0]['text']['body'];
+        // // $phone_number = $input['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id'];
+        // $this->whatsapp->sendMessageText("967780222271", "Hello from laravel");
+        // // exit;
+        // return response()->json(['success' => true]);
 
     }
 }
