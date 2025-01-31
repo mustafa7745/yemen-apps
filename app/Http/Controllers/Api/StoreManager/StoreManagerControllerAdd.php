@@ -433,7 +433,7 @@ class StoreManagerControllerAdd extends Controller
             $insertedIdSubscribe = DB::table(table: StoreSubscriptions::$tableName)
                 ->insertGetId([
                     StoreSubscriptions::$id => null,
-                    StoreSubscriptions::$isPremuim => 0,
+                    StoreSubscriptions::$isPremium => 0,
                     StoreSubscriptions::$storeId => $insertedId,
                     StoreSubscriptions::$points => 250,
                     StoreSubscriptions::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
