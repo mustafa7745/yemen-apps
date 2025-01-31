@@ -35,6 +35,7 @@ use App\Services\FirebaseService;
 use App\Services\WhatsappService;
 use Carbon\Carbon;
 use DB;
+use Hash;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Log;
@@ -1584,7 +1585,44 @@ trait AllShared
         $message = $request->input('entry.0.changes.0.value.messages.0.text.body');
         $countryCode = substr($phoneNumber, 0, 3);
         $phone = substr($phoneNumber, 3);
-        $this->whatsapp->sendMessageText($phoneNumber, $phone);
+        //
+        $user = DB::table(Users::$tableName)
+            ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
+            ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
+            ->first(
+                [
+                    Users::$tableName . '.' . Users::$id,
+                    Users::$tableName . '.' . Users::$firstName,
+                    Users::$tableName . '.' . Users::$lastName,
+                ]
+            );
+
+        if ($user == null) {
+            $name = $request->input('entry.0.changes.0.value.contacts.0.profile.name');
+            $password = $this->generateRandomPassword();
+            $hashedPassword = Hash::make($password);
+            $insertedId = DB::table(table: Users::$tableName)
+                ->insertGetId([
+                    Users::$id => null,
+                    Users::$firstName => $name,
+                    Users::$lastName => $name,
+                    Users::$phone => $phone,
+                    Users::$countryCode => $countryCode,
+                    Users::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ]);
+            $message = "تم اضافة هذا المستخدم بنجاح";
+            $message = $message . "\n";
+            $message = $message . "معلومات الدخول: ";
+            $message = $message . "\n";
+            $message = $message . "رقم الهاتف هو: " . $phone;
+            $message = $message . "الرقم السري هو: " . $password;
+            $this->whatsapp->sendMessageText($phoneNumber, $$message);
+        } else {
+            $message = "هذا المستخدم لديه حساب مسبق";
+            $this->whatsapp->sendMessageText($phoneNumber, $$message);
+        }
+
         // exit;
         return response()->json(['success' => true]);
 
@@ -1609,4 +1647,14 @@ trait AllShared
         // return response()->json(['success' => true]);
     }
 
+    function generateRandomPassword($length = 8)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()';
+        $charactersLength = strlen($characters);
+        $randomPassword = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomPassword .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomPassword;
+    }
 }

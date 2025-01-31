@@ -9,9 +9,9 @@ class Users
    public static $firstName = "firstName";
    public static $secondName = "secondName";
    public static $thirdName = "thirdName";
-
    public static $lastName = "lastName";
    public static $phone = "phone";
+   public static $countryCode = "countryCode";
    public static $logo = "logo";
    public static $password = "password";
    public static $createdAt = "createdAt";
