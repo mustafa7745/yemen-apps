@@ -1585,23 +1585,23 @@ trait AllShared
         // return response()->json(['success' => true]);
 
         // Log the entire incoming request payload
-        Log::info('WhatsApp Webhook Payload:', $request->all());
+        // Log::info('WhatsApp Webhook Payload:', $request->all());
 
-        // Process the webhook data
-        $payload = $request->all();
+        // // Process the webhook data
+        // $payload = $request->all();
 
-        if (isset($payload['entry'][0]['changes'][0]['value']['messages'][0])) {
-            $message = $payload['entry'][0]['changes'][0]['value']['messages'][0];
-            $from = $message['from']; // Sender's phone number
-            $text = $message['text']['body']; // Message content
+        // if (isset($payload['entry'][0]['changes'][0]['value']['messages'][0])) {
+        //     $message = $payload['entry'][0]['changes'][0]['value']['messages'][0];
+        //     $from = $message['from']; // Sender's phone number
+        //     $text = $message['text']['body']; // Message content
 
-            // Log the message details
-            Log::info("Received message from $from: $text");
+        //     // Log the message details
+        //     Log::info("Received message from $from: $text");
 
-            // You can also save the message to the database or trigger other actions here
-        }
+        //     // You can also save the message to the database or trigger other actions here
+        // }
 
-        // Return a 200 OK response to acknowledge receipt of the webhook
-        return response()->json(['success' => true]);
+        // // Return a 200 OK response to acknowledge receipt of the webhook
+        // return response()->json(['success' => true]);
     }
 }
