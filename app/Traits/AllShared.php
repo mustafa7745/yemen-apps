@@ -1586,41 +1586,43 @@ trait AllShared
         $countryCode = substr($phoneNumber, 0, 3);
         $phone = substr($phoneNumber, 3);
         //
-        $user = DB::table(Users::$tableName)
-            ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
-            ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
-            ->first(
-                [
-                    Users::$tableName . '.' . Users::$id,
-                    Users::$tableName . '.' . Users::$firstName,
-                    Users::$tableName . '.' . Users::$lastName,
-                ]
-            );
+        if ($message == "اشتراك") {
+            $user = DB::table(Users::$tableName)
+                ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
+                ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
+                ->first(
+                    [
+                        Users::$tableName . '.' . Users::$id,
+                        Users::$tableName . '.' . Users::$firstName,
+                        Users::$tableName . '.' . Users::$lastName,
+                    ]
+                );
 
-        if ($user == null) {
-            $name = $request->input('entry.0.changes.0.value.contacts.0.profile.name');
-            $password = $this->generateRandomPassword();
-            $hashedPassword = Hash::make($password);
-            $insertedId = DB::table(table: Users::$tableName)
-                ->insertGetId([
-                    Users::$id => null,
-                    Users::$firstName => $name,
-                    Users::$lastName => $name,
-                    Users::$phone => $phone,
-                    Users::$countryCode => $countryCode,
-                    Users::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                    Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-                ]);
-            $message = "تم اضافة هذا المستخدم بنجاح";
-            $message = $message . "\n";
-            $message = $message . "معلومات الدخول: ";
-            $message = $message . "\n";
-            $message = $message . "رقم الهاتف هو: " . $phone;
-            $message = $message . "الرقم السري هو: " . $password;
-            $this->whatsapp->sendMessageText($phoneNumber, $$message);
-        } else {
-            $message = "هذا المستخدم لديه حساب مسبق";
-            $this->whatsapp->sendMessageText($phoneNumber, $$message);
+            if ($user == null) {
+                $name = $request->input('entry.0.changes.0.value.contacts.0.profile.name');
+                $password = $this->generateRandomPassword();
+                $hashedPassword = Hash::make($password);
+                $insertedId = DB::table(table: Users::$tableName)
+                    ->insertGetId([
+                        Users::$id => null,
+                        Users::$firstName => $name,
+                        Users::$lastName => $name,
+                        Users::$phone => $phone,
+                        Users::$countryCode => $countryCode,
+                        Users::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                        Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    ]);
+                $message = "تم اضافة هذا المستخدم بنجاح";
+                $message = $message . "\n";
+                $message = $message . "معلومات الدخول: ";
+                $message = $message . "\n";
+                $message = $message . "رقم الهاتف هو: " . $phone;
+                $message = $message . "الرقم السري هو: " . $password;
+                $this->whatsapp->sendMessageText($phoneNumber, $$message);
+            } else {
+                $message = "هذا المستخدم لديه حساب مسبق";
+                $this->whatsapp->sendMessageText($phoneNumber, $$message);
+            }
         }
 
         // exit;
