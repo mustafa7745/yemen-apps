@@ -1583,7 +1583,7 @@ trait AllShared
         $phoneNumber = $request->input('entry.0.changes.0.value.messages.0.from');
         $message = $request->input('entry.0.changes.0.value.messages.0.text.body');
         $countryCode = substr($phoneNumber, 0, 3);
-        $phone = substr($phoneNumber, 4);
+        $phone = substr($phoneNumber, 3);
         $this->whatsapp->sendMessageText($phoneNumber, $phone);
         // exit;
         return response()->json(['success' => true]);
