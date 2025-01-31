@@ -12,6 +12,7 @@ use App\Models\UsersSessions;
 use App\Traits\AllShared;
 use Carbon\Carbon;
 use DB;
+use Hash;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -29,6 +30,8 @@ class LoginController
         if ($app->isSuccess == false) {
             return response()->json(["message" => $app->message, 'code' => $app->code, 'errors' => []], $app->responseCode);
         }
+
+        $countryCode = $request->input('countryCode');
         $phone = $request->input('phone');
         $password = $request->input('password');
 
@@ -38,10 +41,14 @@ class LoginController
 
         $user = DB::table(table: Users::$tableName)
             ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
-            ->where(Users::$tableName . '.' . Users::$password, '=', $password)
+            ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
             ->first();
         if ($user == null) {
             return response()->json(["message" => "Phone Or Password Error", 'code' => 0, 'errors' => []], 400);
+        }
+        if (Hash::check($password, $user->password) == false) {
+            return response()->json(["message" => "Phone or Password Error", 'code' => 0, 'errors' => []], 400);
+
         }
         $this->updateAppToken($request, $deviceSession);
 
