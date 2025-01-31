@@ -1549,12 +1549,12 @@ trait AllShared
         return response()->json($products);
     }
 
-    protected $whatsapp;
+    // protected $whatsapp;
 
-    public function __construct(WhatsappService $whatsapp)
-    {
-        $this->whatsapp = $whatsapp;
-    }
+    // public function __construct(WhatsappService $whatsapp)
+    // {
+    //     $this->whatsapp = $whatsapp;
+    // }
     public function whatsapp_webhook(Request $request)
     {
         $verifyToken = '774519161'; // Replace with your verify token
