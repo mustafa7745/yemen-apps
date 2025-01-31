@@ -1619,10 +1619,10 @@ trait AllShared
                 $message = $message . "\n";
                 $message = $message . "رقم الهاتف هو: " . $phone;
                 $message = $message . "الرقم السري هو: " . $password;
-                $this->whatsapp->sendMessageText($phoneNumber, $$message);
+                $this->whatsapp->sendMessageText($phoneNumber, $message);
             } else {
                 $message = "هذا المستخدم لديه حساب مسبق";
-                $this->whatsapp->sendMessageText($phoneNumber, $$message);
+                $this->whatsapp->sendMessageText($phoneNumber, $message);
             }
         }
 
