@@ -22,3 +22,7 @@ return new JsonResponse([
 Route::get('/read', function () {
     return view('welcome');
 });
+
+Route::get('/privacy', function () {
+    return view('privacy');
+});
