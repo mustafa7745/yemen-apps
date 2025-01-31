@@ -1586,7 +1586,7 @@ trait AllShared
 
         // preg_match('/^\+(\d{1,4})/', $phoneNumber, $matches);
         // $countryCode = $matches[1];
-        $this->whatsapp->sendMessageText($phoneNumber, $message);
+        $this->whatsapp->sendMessageText($phoneNumber, substr($phoneNumber, 0, 3));
         // exit;
         return response()->json(['success' => true]);
 
