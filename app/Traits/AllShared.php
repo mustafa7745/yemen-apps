@@ -1569,7 +1569,7 @@ trait AllShared
         $input = json_decode($input, true);
         $message = $input['entry'][0]['changes'][0]['value']['messages'][0]['text']['body'];
         $phone_number = $input['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id'];
-        $this->whatsapp->sendMessageText("967780222271", "Hello from laravel");
+        $this->whatsapp->sendMessageText($phone_number, "Hello from laravel");
         // exit;
         return response()->json(['success' => true]);
 
