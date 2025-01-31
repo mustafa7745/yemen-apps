@@ -5,7 +5,7 @@ namespace App\Services;
 class WhatsappService
 {
     private $TOKEN;
-    private $VERSION = "v22.0";
+    private $VERSION = "v25.0";
     private $PHONE_NUMBER_ID = "136302776242131";
     private $BUSINESS_ACCOUNT = "122387020968327";
 
