@@ -474,7 +474,18 @@ class StoreManagerControllerAdd extends Controller
                         ->where(Stores::$id, '=', $insertedId)
                         ->first();
 
-                    $addedRecord->storeConfig = $storeConfig;
+                    if ($storeConfig != null) {
+
+                        $categories = json_decode($storeConfig->categories);
+                        $sections = json_decode($storeConfig->sections);
+                        $nestedSections = json_decode($storeConfig->nestedSections);
+                        $products = json_decode($storeConfig->products);
+                        // $stores[$index] = (array)$stores[$index];
+                        $addedRecord->storeConfig = ['storeIdReference' => $storeConfig->storeIdReference, 'categories' => $categories, 'sections' => $sections, 'nestedSections' => $nestedSections, 'products' => $products];
+                    }else{
+                      $addedRecord->storeConfig = $storeConfig;  
+                    }
+                    
                     $addedRecord->app = null;
                     $addedRecord->subscription = $subscribe;
 
