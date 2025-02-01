@@ -1655,7 +1655,7 @@ trait AllShared
                             Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                         ]
                     );
-                $message = $message . "الرقم السري الجديد هو: ";
+                $message = "الرقم السري الجديد هو: ";
                 $this->whatsapp->sendMessageText($phoneNumber, $message);
                 $this->whatsapp->sendMessageText($phoneNumber, $password);
                 // $this->whatsapp->sendMessageText($phoneNumber, $message);
