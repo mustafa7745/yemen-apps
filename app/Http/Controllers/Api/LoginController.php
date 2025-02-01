@@ -110,7 +110,7 @@ class LoginController
             ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
             ->where(Users::$tableName . '.' . Users::$password, '=', $password)
             ->first();
-        if ($user == null) {
+        if ($user == null && Hash::check($password, $user->password) == false) {
             DB::table(FailProcesses::$tableName)->insert([
                 FailProcesses::$id => null,
                 FailProcesses::$myProcessId => $processResponse->message->id,
@@ -121,6 +121,18 @@ class LoginController
             return (new MyResponse(false, "Phone Or Password Error", 400, 0));
             // return response()->json(["message" => , 'code' => 0, 'errors' => []], 400);
         }
+
+        // if ($user == null) {
+        //     return response()->json(["message" => "Phone Or Password Error", 'code' => 0, 'errors' => []], 400);
+        // }
+        // if (Hash::check($password, $user->password) == false) {
+        //     return response()->json(["message" => "Phone or Password Error", 'code' => 0, 'errors' => []], 400);
+
+        // }
+
+
+
+
         $this->updateAppToken($request, $deviceSession);
 
         $userSession = $this->getUserFinalSession($user->id, $deviceSession->id);
