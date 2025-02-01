@@ -6,6 +6,8 @@ use App\Models\Apps;
 use App\Models\Categories;
 use App\Models\Devices;
 use App\Models\DevicesSessions;
+use App\Models\FailProcesses;
+use App\Models\MyProcesses;
 use App\Models\MyResponse;
 use App\Models\Users;
 use App\Models\UsersSessions;
@@ -26,6 +28,10 @@ class LoginController
     }
     public function login(Request $request)
     {
+
+
+
+
         $app = $this->getApp($request);
         if ($app->isSuccess == false) {
             return response()->json(["message" => $app->message, 'code' => $app->code, 'errors' => []], $app->responseCode);
@@ -36,6 +42,16 @@ class LoginController
         $password = $request->input('password');
 
         $device = $this->getDevice(request: $request);
+
+        $processResponse = $this->checkProcess('login', $device->id, null);
+        if ($processResponse->isSuccess == false) {
+            return $processResponse;
+        }
+
+        ////////
+
+        ///////////
+
         $deviceSession = $this->getDeviceSession($request, $device->id);
 
 

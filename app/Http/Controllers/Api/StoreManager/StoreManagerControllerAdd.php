@@ -373,7 +373,7 @@ class StoreManagerControllerAdd extends Controller
         $validator = Validator::make($request->all(), [
             'accessToken' => 'required|string|max:255',
             'deviceId' => 'required|string|max:255',
-            'logo' => 'required|image|max:80',
+            'logo' => 'required|image|max:100',
             'name' => 'required|string|max:100',
             'typeId' => 'required|string|max:1',
             'cover' => 'required|image|max:100',

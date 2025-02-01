@@ -7,7 +7,9 @@ use App\Models\Currencies;
 use App\Models\CustomPrices;
 use App\Models\DeliveryMen;
 use App\Models\DevicesSessions;
+use App\Models\FailProcesses;
 use App\Models\Locations;
+use App\Models\MyProcesses;
 use App\Models\MyResponse;
 use App\Models\NestedSections;
 use App\Models\Options;
@@ -1661,5 +1663,39 @@ trait AllShared
             $randomPassword .= $characters[rand(0, $charactersLength - 1)];
         }
         return $randomPassword;
+    }
+    function checkProcess($processName, $deviceId, $userId)
+    {
+
+        $myProcess = DB::table(table: MyProcesses::$tableName)
+            ->where(MyProcesses::$tableName . '.' . MyProcesses::$name, '=', $processName)
+            ->first();
+        if ($myProcess == null) {
+            $res = new MyResponse(false, "Process not in log", 422, 0);
+            return $res;
+        }
+        $now = Carbon::now();
+
+        $failProcesses = DB::table(table: FailProcesses::$tableName)
+            ->where(FailProcesses::$tableName . '.' . FailProcesses::$deviceId, '=', $deviceId)
+            ->whereBetween(FailProcesses::$tableName . '.' . FailProcesses::$createdAt, [$now->subMinutes(value: 1), $now])
+            ->when($userId != null, function ($query) use ($userId) {
+                return $query->where(FailProcesses::$tableName . '.' . FailProcesses::$userId, '==', $userId);
+            })
+            ->get([FailProcesses::$tableName . '.' . FailProcesses::$id]);
+
+        if (count($failProcesses) >= $myProcess->countFail5m) {
+            DB::table(FailProcesses::$tableName)->insert([
+                FailProcesses::$id => null,
+                FailProcesses::$myProcessId => $myProcess->id,
+                FailProcesses::$deviceId => $deviceId,
+                FailProcesses::$userId => $userId,
+                FailProcesses::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+            $res = new MyResponse(false, "Blocked", 302, 0);
+            return $res;
+        }
+        $res = new MyResponse(true, "", 200, 0);
+        return $res;
     }
 }
