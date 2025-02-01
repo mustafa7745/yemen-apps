@@ -750,7 +750,7 @@ class StoreManagerControllerGet extends Controller
             return $this->responseError2($res->message, [], $res->code, $res->responseCode);
 
         }
-        response()->json($res->message);
+        return response()->json($res->message);
     }
     public function refreshToken(Request $request)
     {
