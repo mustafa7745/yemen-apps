@@ -110,7 +110,7 @@ class LoginController
             ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
             ->where(Users::$tableName . '.' . Users::$password, '=', $password)
             ->first();
-        if ($user == null && Hash::check($password, $user->password) == false) {
+        if ($user == null || Hash::check($password, $user->password) == false) {
             DB::table(FailProcesses::$tableName)->insert([
                 FailProcesses::$id => null,
                 FailProcesses::$myProcessId => $processResponse->message->id,
