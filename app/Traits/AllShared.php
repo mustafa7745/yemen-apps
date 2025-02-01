@@ -1686,7 +1686,7 @@ trait AllShared
             })
             ->get([FailProcesses::$tableName . '.' . FailProcesses::$id]);
 
-        print_r($failProcesses);
+        // print_r($failProcesses);
         if (count($failProcesses) >= $myProcess->countFail5m) {
             $res = new MyResponse(false, "Blocked", 302, 0);
             return $res;
