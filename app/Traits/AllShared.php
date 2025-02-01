@@ -1687,17 +1687,10 @@ trait AllShared
             ->get([FailProcesses::$tableName . '.' . FailProcesses::$id]);
 
         if (count($failProcesses) >= $myProcess->countFail5m) {
-            DB::table(FailProcesses::$tableName)->insert([
-                FailProcesses::$id => null,
-                FailProcesses::$myProcessId => $myProcess->id,
-                FailProcesses::$deviceId => $deviceId,
-                FailProcesses::$userId => $userId,
-                FailProcesses::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-            ]);
             $res = new MyResponse(false, "Blocked", 302, 0);
             return $res;
         }
-        $res = new MyResponse(true, "", 200, 0);
+        $res = new MyResponse(true, $myProcess, 200, 0);
         return $res;
     }
 }

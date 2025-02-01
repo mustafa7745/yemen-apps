@@ -111,6 +111,13 @@ class LoginController
             ->where(Users::$tableName . '.' . Users::$password, '=', $password)
             ->first();
         if ($user == null) {
+            DB::table(FailProcesses::$tableName)->insert([
+                FailProcesses::$id => null,
+                FailProcesses::$myProcessId => $processResponse->message->id,
+                FailProcesses::$deviceId => $device->id,
+                FailProcesses::$userId => null,
+                FailProcesses::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
             return (new MyResponse(false, "Phone Or Password Error", 400, 0));
             // return response()->json(["message" => , 'code' => 0, 'errors' => []], 400);
         }
