@@ -743,7 +743,12 @@ class StoreManagerControllerGet extends Controller
 
     public function login(Request $request)
     {
-        return (new LoginController($this->appId))->login($request);
+        // return (new LoginController($this->appId))->login($request);
+        $loginController = (new LoginController($this->appId));
+        $res = $loginController->loginNew($request);
+        if ($res == false) {
+            return response()->json(["message" => $res->message, 'code' => $res->code, 'errors' => []], $res->responseCode);
+        }
     }
     public function refreshToken(Request $request)
     {
