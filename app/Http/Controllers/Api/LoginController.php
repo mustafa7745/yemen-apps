@@ -108,7 +108,6 @@ class LoginController
 
         $user = DB::table(table: Users::$tableName)
             ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
-            ->where(Users::$tableName . '.' . Users::$password, '=', $password)
             ->first();
         if ($user == null || Hash::check($password, $user->password) == false) {
             DB::table(FailProcesses::$tableName)->insert([
