@@ -746,7 +746,7 @@ class StoreManagerControllerGet extends Controller
         // return (new LoginController($this->appId))->login($request);
         $loginController = (new LoginController($this->appId));
         $res = $loginController->loginNew($request);
-        if ($res == false) {
+        if ($res->isSuccess == false) {
             return $this->responseError2($res->message, [], $res->code, $res->responseCode);
 
         }
