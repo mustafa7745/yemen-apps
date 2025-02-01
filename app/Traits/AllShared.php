@@ -1671,6 +1671,7 @@ trait AllShared
             ->where(MyProcesses::$tableName . '.' . MyProcesses::$name, '=', $processName)
             ->first();
         if ($myProcess == null) {
+            print_r("dffdf");
             $res = new MyResponse(false, "Process not in log", 422, 0);
             return $res;
         }
