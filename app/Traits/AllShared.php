@@ -1682,7 +1682,7 @@ trait AllShared
             ->where(FailProcesses::$tableName . '.' . FailProcesses::$deviceId, '=', $deviceId)
             ->whereBetween(FailProcesses::$tableName . '.' . FailProcesses::$createdAt, [$now->subMinutes(value: 1), $now])
             ->when($userId != null, function ($query) use ($userId) {
-                return $query->where(FailProcesses::$tableName . '.' . FailProcesses::$userId, '==', $userId);
+                return $query->where(FailProcesses::$tableName . '.' . FailProcesses::$userId, '=', $userId);
             })
             ->get([FailProcesses::$tableName . '.' . FailProcesses::$id]);
 
