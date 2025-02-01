@@ -88,6 +88,7 @@ class LoginController
         }
 
         $validation = $this->validRequest($request, [
+            'countryCode' => 'required|string|max:4',
             'phone' => 'required|string|max:9',
             'password' => 'required|string|max:20'
         ]);
@@ -95,6 +96,7 @@ class LoginController
             return $validation;
         }
 
+        $countryCode = $request->input('countryCode');
         $phone = $request->input('phone');
         $password = $request->input('password');
 
@@ -107,7 +109,7 @@ class LoginController
         }
 
         $user = DB::table(table: Users::$tableName)
-            ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
+            ->where(Users::$tableName . '.' . Users::$phone, '=', $countryCode . $phone)
             ->first();
         if ($user == null || Hash::check($password, $user->password) == false) {
             DB::table(FailProcesses::$tableName)->insert([
