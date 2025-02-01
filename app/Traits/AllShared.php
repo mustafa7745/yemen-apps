@@ -1667,12 +1667,12 @@ trait AllShared
     function checkProcess($processName, $deviceId, $userId)
     {
 
-        print_r("dffdfrfrgfr");
+        // print_r("dffdfrfrgfr");
         $myProcess = DB::table(table: MyProcesses::$tableName)
             ->where(MyProcesses::$tableName . '.' . MyProcesses::$name, '=', $processName)
             ->first();
         if ($myProcess == null) {
-            print_r("dffdf");
+            // print_r("dffdf");
             $res = new MyResponse(false, "Process not in log", 422, 0);
             return $res;
         }
