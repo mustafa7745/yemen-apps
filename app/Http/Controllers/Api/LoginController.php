@@ -101,6 +101,10 @@ class LoginController
         $device = $this->getDevice(request: $request);
         $deviceSession = $this->getDeviceSession($request, $device->id);
 
+        $processResponse = $this->checkProcess('login', $device->id, null);
+        if ($processResponse->isSuccess == false) {
+            return $processResponse;
+        }
 
         $user = DB::table(table: Users::$tableName)
             ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
