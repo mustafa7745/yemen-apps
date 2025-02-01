@@ -27,9 +27,10 @@ class DeliveryControllerGet extends Controller
             $loginController = (new LoginController($this->appId));
             $res = $loginController->loginNew($request);
             if ($res == false) {
-                return response()->json(["message" => $res->message, 'code' => $res->code, 'errors' => []], $res->responseCode);
-            }
+                return $this->responseError2($res->message, [], $res->code, $res->responseCode);
 
+            }
+            response()->json($res->message);
 
             // print_r($res->message['token']);
             $token = $res->message['token'];
