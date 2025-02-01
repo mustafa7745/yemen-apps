@@ -1667,6 +1667,7 @@ trait AllShared
     function checkProcess($processName, $deviceId, $userId)
     {
 
+        print_r("dffdfrfrgfr");
         $myProcess = DB::table(table: MyProcesses::$tableName)
             ->where(MyProcesses::$tableName . '.' . MyProcesses::$name, '=', $processName)
             ->first();
