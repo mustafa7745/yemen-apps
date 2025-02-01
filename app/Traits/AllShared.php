@@ -1585,13 +1585,13 @@ trait AllShared
         // $phone_number = $input['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id'];
         $phoneNumber = $request->input('entry.0.changes.0.value.messages.0.from');
         $message = $request->input('entry.0.changes.0.value.messages.0.text.body');
-        $countryCode = substr($phoneNumber, 0, 3);
-        $phone = substr($phoneNumber, 3);
+        // $countryCode = substr($phoneNumber, 0, 3);
+        // $phone = substr($phoneNumber, 3);
         //
         if ($message == "اشتراك") {
             $user = DB::table(Users::$tableName)
-                ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
-                ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
+                // ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
+                ->where(Users::$tableName . '.' . Users::$phone, '=', $phoneNumber)
                 ->first(
                     [
                         Users::$tableName . '.' . Users::$id,
@@ -1609,9 +1609,9 @@ trait AllShared
                         Users::$id => null,
                         Users::$firstName => $name,
                         Users::$lastName => $name,
-                        Users::$phone => $phone,
+                        Users::$phone => $phoneNumber,
                         Users::$password => $hashedPassword,
-                        Users::$countryCode => $countryCode,
+                            // Users::$countryCode => $countryCode,
                         Users::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                         Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                     ]);
@@ -1619,7 +1619,7 @@ trait AllShared
                 $message = $message . "\n";
                 $message = $message . "معلومات الدخول: ";
                 $message = $message . "\n";
-                $message = $message . "رقم الهاتف هو: " . $phone;
+                $message = $message . "رقم الهاتف هو: " . $phoneNumber;
                 $message = $message . "\n";
                 $message = $message . "الرقم السري هو: ";
                 $this->whatsapp->sendMessageText($phoneNumber, $message);
@@ -1628,6 +1628,39 @@ trait AllShared
                 $message = "هذا المستخدم لديه حساب مسبق";
                 $this->whatsapp->sendMessageText($phoneNumber, $message);
             }
+        } elseif ($message = "نسيت كلمة المرور") {
+            $user = DB::table(Users::$tableName)
+                // ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
+                ->where(Users::$tableName . '.' . Users::$phone, '=', $phoneNumber)
+                ->first(
+                    [
+                        Users::$tableName . '.' . Users::$id,
+                        Users::$tableName . '.' . Users::$firstName,
+                        Users::$tableName . '.' . Users::$lastName,
+                    ]
+                );
+
+            if ($user == null) {
+                $message = "يجب الاشتراك اولا";
+                $this->whatsapp->sendMessageText($phoneNumber, $message);
+            } else {
+                $password = $this->generateRandomPassword();
+                $hashedPassword = Hash::make($password);
+                ///
+                DB::table(table: Users::$tableName)
+                    ->where(Users::$id, '=', $user->id)
+                    ->update(
+                        [
+                            Users::$password => $hashedPassword,
+                            Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                        ]
+                    );
+                $message = $message . "الرقم السري الجديد هو: ";
+                $this->whatsapp->sendMessageText($phoneNumber, $message);
+                $this->whatsapp->sendMessageText($phoneNumber, $password);
+                // $this->whatsapp->sendMessageText($phoneNumber, $message);
+            }
+
         }
 
         // exit;
