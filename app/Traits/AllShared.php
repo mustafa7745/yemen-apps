@@ -985,8 +985,8 @@ trait AllShared
             $longitude2 = (float) $parts[1];
 
             $distance = $this->getDistance($latitude1, $longitude1, $latitude2, $longitude2);
-            print_r($store->deliveryPrice);
-            print_r($distance);
+            // print_r($store->deliveryPrice);
+            // print_r($distance);
 
             $deliveryPrice = 50 * round(num: ($distance * $store->deliveryPrice) / 50);
             $data[$key]->deliveryPrice = ['deliveryPrice' => $deliveryPrice, 'currencyId' => $store->currencyId, 'currencyName' => $store->currencyName,];
