@@ -461,28 +461,11 @@ class StoreManagerControllerGet extends Controller
             ])->toArray();
         return response()->json($categories);
     }
-    public function processPoints($storeId, $points = 1)
-    {
-        // $storeId = $request->input('storeId');
-        // $points = 1;
-        $subdcription = DB::table(StoreSubscriptions::$tableName)
-            ->where(StoreSubscriptions::$tableName . '.' . StoreSubscriptions::$storeId, '=', $storeId)
-            ->sole();
-
-        if ($points > $subdcription->points) {
-            return $this->responseError2("ليس لديك رصيد نقاط كافي للقراءة", [], 0, 403);
-        }
-        DB::table(StoreSubscriptions::$tableName)
-            ->where(StoreSubscriptions::$tableName . '.' . StoreSubscriptions::$storeId, '=', $storeId)
-            ->update([
-                StoreSubscriptions::$points => DB::raw(StoreSubscriptions::$points . "- $points"),
-                StoreSubscriptions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s')
-            ]);
-        return true;
-    }
+    
     public function getStoreCategories(Request $request)
     {
 
+        //original store id;
         $storeId = $request->input('ostoreId');
         $processPoints = $this->processPoints($storeId);
         if ($processPoints != true) {

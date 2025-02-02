@@ -31,6 +31,7 @@ use App\Models\StorePaymentTypes;
 use App\Models\StoreProducts;
 use App\Models\Stores;
 use App\Models\StoreSections;
+use App\Models\StoreSubscriptions;
 use App\Models\Users;
 use App\Models\UsersSessions;
 use App\Services\FirebaseService;
@@ -1696,6 +1697,28 @@ trait AllShared
             $randomPassword .= $characters[rand(0, $charactersLength - 1)];
         }
         return $randomPassword;
+    }
+    public function processPoints($storeId, $points = 1)
+    {
+        $subdcription = DB::table(StoreSubscriptions::$tableName)
+            ->where(StoreSubscriptions::$tableName . '.' . StoreSubscriptions::$storeId, '=', $storeId)
+            ->sole();
+
+        print_r("222");
+        if ($points > $subdcription->points) {
+            print_r("333");
+
+            return $this->responseError2("ليس لديك رصيد نقاط كافي للقراءة", [], 0, 403);
+        }
+        print_r("444");
+
+        DB::table(StoreSubscriptions::$tableName)
+            ->where(StoreSubscriptions::$tableName . '.' . StoreSubscriptions::$storeId, '=', $storeId)
+            ->update([
+                StoreSubscriptions::$points => DB::raw(StoreSubscriptions::$points . "- $points"),
+                StoreSubscriptions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s')
+            ]);
+        return true;
     }
     function checkProcess($processName, $deviceId, $userId)
     {
