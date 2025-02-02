@@ -349,6 +349,8 @@ trait AllShared
                 Stores::$tableName . '.' . Stores::$subscriptions,
                 Stores::$tableName . '.' . Stores::$stars,
                 Stores::$tableName . '.' . Stores::$reviews,
+                Stores::$tableName . '.' . Stores::$latLng,
+
             ]);
 
         $storeIds = [];
