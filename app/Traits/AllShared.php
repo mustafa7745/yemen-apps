@@ -929,6 +929,10 @@ trait AllShared
         $loginController = (new LoginController($appId));
         $token = $request->input('accessToken');
         $deviceId = $request->input('deviceId');
+        $storeId = $request->input('storeId');
+
+
+
 
         // print_r($request->all());
         $myResult = $loginController->readAccessToken($token, $deviceId);
@@ -944,8 +948,44 @@ trait AllShared
                 [
                     Locations::$tableName . '.' . Locations::$id,
                     Locations::$tableName . '.' . Locations::$street,
+                    Locations::$tableName . '.' . Locations::$latLng,
                 ]
             );
+
+        $store = DB::table(table: Stores::$tableName)
+            ->join(
+                Currencies::$tableName,
+                Currencies::$tableName . '.' . Currencies::$id,
+                '=',
+                Stores::$tableName . '.' . Stores::$deliveryPriceCurrency
+            )
+            ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)->first(
+                [
+                    Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
+                    Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
+                    Stores::$tableName . '.' . Stores::$deliveryPrice,
+                    Stores::$tableName . '.' . Stores::$latLng,
+                ]
+            );
+
+
+        foreach ($data as $key => $value) {
+            $parts = explode(",", $store->latLng);
+
+            // Extract the latitude and longitude
+            $latitude1 = (float) $parts[0];
+            $longitude1 = (float) $parts[1];
+            //
+            $parts = explode(",", $data->latLng);
+
+            // Extract the latitude and longitude
+            $latitude2 = (float) $parts[0];
+            $longitude2 = (float) $parts[1];
+
+            $distance = $this->getDistance($latitude1, $longitude1, $latitude2, $longitude2);
+            $deliveryPrice = 50 * round(num: ($distance * $store->deliveryPrice) / 50);
+            $data[$key]->deliveryPrice = $deliveryPrice;
+        }
         return response()->json($data);
     }
     public function getOurOrders(Request $request, $userId = null)
@@ -1751,5 +1791,28 @@ trait AllShared
         }
         $res = new MyResponse(true, $myProcess, 200, 0);
         return $res;
+    }
+
+    function getDistance($lat1, $lon1, $lat2, $lon2)
+    {
+        $radius = 6371; // Earth's radius in kilometers
+
+        // Calculate the differences in latitude and longitude
+        $delta_lat = $lat2 - $lat1;
+        $delta_lon = $lon2 - $lon1;
+
+        // Calculate the central angles between the two points
+        $alpha = $delta_lat / 2;
+        $beta = $delta_lon / 2;
+
+        // Use the Haversine formula to calculate the distance
+        $a = sin(deg2rad($alpha)) * sin(deg2rad($alpha)) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin(deg2rad($beta)) * sin(deg2rad($beta));
+        $c = asin(min(1, sqrt($a)));
+        $distance = 2 * $radius * $c;
+
+        // Round the distance to four decimal places
+        $distance = round($distance, 4);
+
+        return $distance;
     }
 }

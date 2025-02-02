@@ -16,6 +16,8 @@ class Stores
    public static $subscriptions = "subscriptions";
    public static $reviews = "reviews";
    public static $typeId = "typeId";
+   public static $deliveryPrice = "deliveryPrice";
+   public static $deliveryPriceCurrency = "deliveryPriceCurrency";
    public static $createdAt = "createdAt";
    public static $updatedAt = "updatedAt";
 }
