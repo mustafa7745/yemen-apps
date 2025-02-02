@@ -1708,7 +1708,7 @@ trait AllShared
         if ($points > $subdcription->points) {
             // print_r("333");
 
-            return $this->responseError2("ليس لديك رصيد نقاط كافي للقراءة", [], 0, 403);
+            return $this->responseError2("ليس لديك رصيد نقاط كافي للقراءة", [], 25, 403);
         }
         // print_r("444");
 
