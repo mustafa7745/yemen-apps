@@ -468,7 +468,7 @@ class StoreManagerControllerGet extends Controller
         //original store id;
         $storeId = $request->input('ostoreId');
         $processPoints = $this->processPoints($storeId);
-        if ($processPoints != true) {
+        if ($processPoints !== true) {
             return $processPoints;
         }
 

@@ -1704,13 +1704,13 @@ trait AllShared
             ->where(StoreSubscriptions::$tableName . '.' . StoreSubscriptions::$storeId, '=', $storeId)
             ->sole();
 
-        print_r("222");
+        // print_r("222");
         if ($points > $subdcription->points) {
-            print_r("333");
+            // print_r("333");
 
             return $this->responseError2("ليس لديك رصيد نقاط كافي للقراءة", [], 0, 403);
         }
-        print_r("444");
+        // print_r("444");
 
         DB::table(StoreSubscriptions::$tableName)
             ->where(StoreSubscriptions::$tableName . '.' . StoreSubscriptions::$storeId, '=', $storeId)
