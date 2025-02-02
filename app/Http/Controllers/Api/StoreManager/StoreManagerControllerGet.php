@@ -29,6 +29,7 @@ use App\Models\StoreSubscriptions;
 use App\Models\Users;
 use App\Traits\AllShared;
 use App\Traits\StoreManagerControllerShared;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -460,8 +461,35 @@ class StoreManagerControllerGet extends Controller
             ])->toArray();
         return response()->json($categories);
     }
+    public function processPoints($storeId, $points = 1)
+    {
+        // $storeId = $request->input('storeId');
+        // $points = 1;
+        $subdcription = DB::table(StoreSubscriptions::$tableName)
+            ->where(StoreSubscriptions::$tableName . '.' . StoreSubscriptions::$storeId, '=', $storeId)
+            ->sole();
+
+        if ($points > $subdcription->points) {
+            return $this->responseError2("ليس لديك رصيد نقاط كافي للقراءة", [], 0, 403);
+        }
+        DB::table(StoreSubscriptions::$tableName)
+            ->where(StoreSubscriptions::$tableName . '.' . StoreSubscriptions::$storeId, '=', $storeId)
+            ->update([
+                StoreSubscriptions::$points => DB::raw($points),
+                StoreSubscriptions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s')
+            ]);
+        return true;
+    }
     public function getStoreCategories(Request $request)
     {
+
+        $storeId = $request->input('storeId');
+        $processPoints = $this->processPoints($storeId);
+        if ($processPoints != true) {
+            return $processPoints;
+        }
+
+
         return $this->getOurHome($request);
         $storeId = $request->input('storeId');
         $store = DB::table(Stores::$tableName)
