@@ -912,7 +912,9 @@ trait AllShared
 
         $validator = Validator::make($request->all(), [
             'accessToken' => 'required|string|max:255',
-            'deviceId' => 'required|string|max:255'
+            'deviceId' => 'required|string|max:255',
+            'storeId' => 'required|string|max:5'
+
         ]);
 
         // Check if validation fails
