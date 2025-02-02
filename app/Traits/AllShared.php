@@ -971,14 +971,14 @@ trait AllShared
             );
 
 
-        foreach ($data as $key => $value) {
+        foreach ($data as $key => $location) {
             $parts = explode(",", $store->latLng);
 
             // Extract the latitude and longitude
             $latitude1 = (float) $parts[0];
             $longitude1 = (float) $parts[1];
             //
-            $parts = explode(",", $data->latLng);
+            $parts = explode(",", $location->latLng);
 
             // Extract the latitude and longitude
             $latitude2 = (float) $parts[0];
@@ -986,7 +986,7 @@ trait AllShared
 
             $distance = $this->getDistance($latitude1, $longitude1, $latitude2, $longitude2);
             $deliveryPrice = 50 * round(num: ($distance * $store->deliveryPrice) / 50);
-            $data[$key]->deliveryPrice = $deliveryPrice;
+            $data[$key]->deliveryPrice = ['deliveryPrice' => $deliveryPrice, 'currencyId' => $store->currencyId, 'currencyName' => $store->currencyName,];
         }
         return response()->json($data);
     }
