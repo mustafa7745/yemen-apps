@@ -475,7 +475,7 @@ class StoreManagerControllerGet extends Controller
         DB::table(StoreSubscriptions::$tableName)
             ->where(StoreSubscriptions::$tableName . '.' . StoreSubscriptions::$storeId, '=', $storeId)
             ->update([
-                StoreSubscriptions::$points => DB::raw($points),
+                StoreSubscriptions::$points => DB::raw(StoreSubscriptions::$points . "- $points"),
                 StoreSubscriptions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s')
             ]);
         return true;
@@ -483,7 +483,7 @@ class StoreManagerControllerGet extends Controller
     public function getStoreCategories(Request $request)
     {
 
-        $storeId = $request->input('storeId');
+        $storeId = $request->input('ostoreId');
         $processPoints = $this->processPoints($storeId);
         if ($processPoints != true) {
             return $processPoints;
