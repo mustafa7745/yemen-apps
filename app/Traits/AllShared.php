@@ -1,6 +1,7 @@
 <?php
 namespace App\Traits;
 use App\Http\Controllers\Api\LoginController;
+use App\Models\Apps;
 use App\Models\AppStores;
 use App\Models\Categories;
 use App\Models\Currencies;
@@ -1007,7 +1008,7 @@ trait AllShared
                 '=',
                 Orders::$tableName . '.' . Orders::$userId
             )
-            ->limit(5)
+            ->limit(10)
             ->orderByDesc(Orders::$tableName . '.' . Orders::$createdAt)
             ->get([
                 Users::$tableName . '.' . Users::$firstName . ' as userName',
@@ -1870,5 +1871,19 @@ trait AllShared
         $distance = round($distance, 4);
 
         return $distance;
+    }
+    public function getMyApp(Request $request)
+    {
+        $sha = $request->input('sha');
+        $packageName = $request->input('packageName');
+
+        // 
+        $app = DB::table(Apps::$tableName)
+            ->where(Apps::$sha, $sha)
+            ->where(Apps::$packageName, $packageName)
+            ->sole([
+                Apps::$tableName . '.' . Apps::$id
+            ]);
+        return $app;
     }
 }

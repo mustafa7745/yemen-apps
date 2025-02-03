@@ -482,10 +482,10 @@ class StoreManagerControllerAdd extends Controller
                         $products = json_decode($storeConfig->products);
                         // $stores[$index] = (array)$stores[$index];
                         $addedRecord->storeConfig = ['storeIdReference' => $storeConfig->storeIdReference, 'categories' => $categories, 'sections' => $sections, 'nestedSections' => $nestedSections, 'products' => $products];
-                    }else{
-                      $addedRecord->storeConfig = $storeConfig;  
+                    } else {
+                        $addedRecord->storeConfig = $storeConfig;
                     }
-                    
+
                     $addedRecord->app = null;
                     $addedRecord->subscription = $subscribe;
 
@@ -655,15 +655,20 @@ class StoreManagerControllerAdd extends Controller
     }
     public function addAds(Request $request)
     {
+        $this->getMyApp($request);
+        // 1) check parameters of request
         $validation = $this->validRequest($request, [
             'image' => 'required|image|mimes:jpg|max:300',
             'storeId' => 'required|string|max:9'
         ]);
-
-
         if ($validation != null) {
             return $this->responseError($validation);
         }
+        // // 2) check parameters of request
+        // $processResponse = $this->checkProcess('login', $device->id, null);
+        // if ($processResponse->isSuccess == false) {
+        //     return $processResponse;
+        // }
 
         return DB::transaction(function () use ($request) {
             $image = $request->file('image');
