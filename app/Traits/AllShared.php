@@ -1008,6 +1008,7 @@ trait AllShared
                 Orders::$tableName . '.' . Orders::$userId
             )
             ->limit(5)
+            ->orderBy(Orders::$tableName . '.' . Orders::$createdAt)
             ->get([
                 Users::$tableName . '.' . Users::$firstName . ' as userName',
                 Users::$tableName . '.' . Users::$phone . ' as userPhone',
