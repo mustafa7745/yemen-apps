@@ -1060,12 +1060,21 @@ trait AllShared
                 Locations::$tableName . '.' . Locations::$id,
                 '=',
                 OrdersDelivery::$tableName . '.' . OrdersDelivery::$locationId
-            )->first(
+            )
+            ->join(
+                Currencies::$tableName,
+                Currencies::$tableName . '.' . Currencies::$id,
+                '=',
+                OrdersDelivery::$tableName . '.' . OrdersDelivery::$deliveryPriceCurrency
+            )
+            ->first(
                 columns: [
                     OrdersDelivery::$tableName . '.' . OrdersDelivery::$id . ' as id',
                     Locations::$tableName . '.' . Locations::$latLng . ' as latLng',
                     Locations::$tableName . '.' . Locations::$street . ' as street',
                     OrdersDelivery::$tableName . '.' . OrdersDelivery::$deliveryManId,
+                    Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
+                    Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
                     OrdersDelivery::$tableName . '.' . OrdersDelivery::$createdAt,
                     OrdersDelivery::$tableName . '.' . OrdersDelivery::$updatedAt
                 ]
