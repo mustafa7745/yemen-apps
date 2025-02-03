@@ -1879,7 +1879,7 @@ trait AllShared
             ->where(MyProcesses::$tableName . '.' . MyProcesses::$name, '=', $processName)
             ->first();
         if ($myProcess == null) {
-            throw new CustomException("Process not in log", 0, 442, $errors);
+            throw new CustomException("Process not in log", 0, 442);
         }
 
         $failProcesses = DB::table(table: FailProcesses::$tableName)
