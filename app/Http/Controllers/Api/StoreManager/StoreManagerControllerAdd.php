@@ -669,6 +669,7 @@ class StoreManagerControllerAdd extends Controller
         // print_r($request->all());
         $accessToken = $loginController->readAccessTokenV1($token, $deviceId);
 
+        print_r($accessToken);
         // $userId = $accessToken->$userId;
 
         // // 2) check parameters of request
