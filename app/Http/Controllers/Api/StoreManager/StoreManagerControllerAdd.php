@@ -662,12 +662,8 @@ class StoreManagerControllerAdd extends Controller
             'storeId' => 'required|string|max:9'
         ]);
 
-        $loginController = (new LoginController($this->appId));
-        $token = $request->input('accessToken');
-        $deviceId = $request->input('deviceId');
+        $accessToken = (new LoginController($this->appId))->getAccessTokenByTokenV1($request);
 
-        // print_r($request->all());
-        $accessToken = $loginController->readAccessTokenV1($token, $deviceId);
 
         // print_r($accessToken->deviceId);
         // print_r($accessToken->userId);

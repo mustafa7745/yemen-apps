@@ -490,19 +490,17 @@ class LoginController
     }
 
 
-    function readAccessTokenV1($token, $deviceId)
+   
+    function getAccessTokenByTokenV1($request)
     {
-        $accessToken = $this->getAccessTokenByTokenV1($token, $deviceId);
+        $this->validRequestV1($request, [
+            'accessToken' => 'required|string|max:255',
+            'deviceId' => 'required|string|max:255'
+        ]);
+        $token = $request->input('accessToken');
+        $deviceId = $request->input('deviceId');
+        //
 
-        // print_r($myResult->message);
-        if ($this->compareExpiration($accessToken)) {
-            // print_r("sdsdsd");
-            throw new CustomException("Need Refresh", 1000, 405);
-        }
-        return $accessToken;
-    }
-    function getAccessTokenByTokenV1($token, $deviceId)
-    {
         $accessToken = DB::table(table: AccessTokens1::$tableName)
             ->where(AccessTokens1::$tableName . '.' . AccessTokens1::$token, '=', $token)
             ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $this->appId)
@@ -547,6 +545,10 @@ class LoginController
             ]);
         if ($accessToken == null) {
             throw new CustomException("Invalid Token", 2000, 403);
+        }
+        if ($this->compareExpiration($accessToken)) {
+            // print_r("sdsdsd");
+            throw new CustomException("Need Refresh", 1000, 405);
         }
         return $accessToken;
     }
