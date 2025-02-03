@@ -1299,10 +1299,47 @@ trait AllShared
             }
 
             if ($locationId != null) {
+                $store = DB::table(table: Stores::$tableName)
+                    ->join(
+                        Currencies::$tableName,
+                        Currencies::$tableName . '.' . Currencies::$id,
+                        '=',
+                        Stores::$tableName . '.' . Stores::$deliveryPriceCurrency
+                    )
+                    ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)->first(
+                        [
+                            Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
+                            Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
+                            Stores::$tableName . '.' . Stores::$deliveryPrice,
+                            Stores::$tableName . '.' . Stores::$latLng,
+                        ]
+                    );
+
+                $location = DB::table(table: Locations::$tableName)->where(Locations::$tableName . '.' . Locations::$id, '=', $locationId)->first([Locations::$tableName . '.' . Locations::$latLng]);
+                $parts = explode(",", $store->latLng);
+
+                // Extract the latitude and longitude
+                $latitude1 = (float) $parts[0];
+                $longitude1 = (float) $parts[1];
+                //
+                $parts = explode(",", $location->latLng);
+
+                // Extract the latitude and longitude
+                $latitude2 = (float) $parts[0];
+                $longitude2 = (float) $parts[1];
+
+                $distance = $this->getDistance($latitude1, $longitude1, $latitude2, $longitude2);
+                // print_r($store->deliveryPrice);
+                // print_r($distance);
+
+                $deliveryPrice = 50 * round(num: ($distance * $store->deliveryPrice) / 50);
+
                 DB::table(OrdersDelivery::$tableName)
                     ->insert([
                         OrdersDelivery::$id => null,
                         OrdersDelivery::$orderId => $orderId,
+                        OrdersDelivery::$deliveryPrice => $deliveryPrice,
+                        OrdersDelivery::$deliveryPriceCurrency => $store->currencyId,
                         OrdersDelivery::$locationId => $locationId,
                         OrdersDelivery::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                         OrdersDelivery::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
