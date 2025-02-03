@@ -1414,7 +1414,7 @@ trait AllShared
 
             // print_r($userSession);
             if ($userSession)
-                (new FirebaseService())->sendNotification($userSession->appToken, "طلب جديد", $order->id . "رقم الطلب هو : ");
+                (new FirebaseService(storage_path('Fire/yemen-stores-firebase-adminsdk-7qbeo-d9befb63dc.json')))->sendNotification($userSession->appToken, "طلب جديد", $order->id . "رقم الطلب هو : ");
 
             DB::rollBack();
             return response()->json($order);
