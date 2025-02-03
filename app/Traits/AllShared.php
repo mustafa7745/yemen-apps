@@ -1875,13 +1875,19 @@ trait AllShared
     }
     public function getMyApp(Request $request)
     {
-        // $sha = $request->input('sha');
-        // $packageName = $request->input('packageName');
+        $sha = $request->input('sha');
+        $packageName = $request->input('packageName');
 
+        if ($sha == null) {
+            $sha = 001;
+        }
+        if ($packageName == null) {
+            $packageName = 002;
+        }
         // 
         $app = DB::table(Apps::$tableName)
-            ->where(Apps::$sha, "34535")
-            ->where(Apps::$packageName, "gdfdd")
+            ->where(Apps::$sha, $sha)
+            ->where(Apps::$packageName, $packageName)
             ->first([
                 Apps::$tableName . '.' . Apps::$id
             ]);
