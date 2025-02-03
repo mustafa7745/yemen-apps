@@ -1873,6 +1873,39 @@ trait AllShared
 
         return $distance;
     }
+    function checkProcessV1($processName, $deviceId, $userId)
+    {
+        $myProcess = DB::table(table: MyProcesses::$tableName)
+            ->where(MyProcesses::$tableName . '.' . MyProcesses::$name, '=', $processName)
+            ->first();
+        if ($myProcess == null) {
+            throw new CustomException("Process not in log", 0, 442, $errors);
+        }
+
+        $failProcesses = DB::table(table: FailProcesses::$tableName)
+            ->where(FailProcesses::$tableName . '.' . FailProcesses::$deviceId, '=', $deviceId)
+            ->whereBetween(FailProcesses::$tableName . '.' . FailProcesses::$createdAt, [now()->subMinutes(5), now()])
+            ->when($userId != null, function ($query) use ($userId) {
+                return $query->where(FailProcesses::$tableName . '.' . FailProcesses::$userId, '=', $userId);
+            })
+            ->get([FailProcesses::$tableName . '.' . FailProcesses::$id]);
+
+        if (count($failProcesses) >= $myProcess->countFail5m) {
+            throw new CustomException("Blocked", 0, 442);
+        }
+        return $myProcess;
+    }
+    public function validRequestV1(Request $request, $rule)
+    {
+        $validator = Validator::make($request->all(), $rule);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            $message = 'Validation failed';
+            $errors = $validator->errors()->all();
+            throw new CustomException($message, 0, 442, $errors);
+        }
+    }
     public function getMyApp(Request $request)
     {
         $sha = $request->input('sha');
@@ -1892,7 +1925,7 @@ trait AllShared
                 Apps::$tableName . '.' . Apps::$id
             ]);
         if ($app == null) {
-            throw new CustomException("error app", 0, 443);
+            throw new CustomException("Error App", 0, 443);
         }
         return $app;
     }

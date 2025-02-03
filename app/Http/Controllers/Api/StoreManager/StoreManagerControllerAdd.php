@@ -657,18 +657,23 @@ class StoreManagerControllerAdd extends Controller
     {
         $this->getMyApp($request);
         // 1) check parameters of request
-        $validation = $this->validRequest($request, [
+        $this->validRequestV1($request, [
             'image' => 'required|image|mimes:jpg|max:300',
             'storeId' => 'required|string|max:9'
         ]);
-        if ($validation != null) {
-            return $this->responseError($validation);
-        }
+
+        $loginController = (new LoginController($this->appId));
+        $token = $request->input('accessToken');
+        $deviceId = $request->input('deviceId');
+
+        // print_r($request->all());
+        $accessToken = $loginController->readAccessTokenV1($token, $deviceId);
+
+        // $userId = $accessToken->$userId;
+
         // // 2) check parameters of request
-        // $processResponse = $this->checkProcess('login', $device->id, null);
-        // if ($processResponse->isSuccess == false) {
-        //     return $processResponse;
-        // }
+        $myProcess = $this->checkProcessV1('addAds', $accessToken->$deviceId, $accessToken->$userId);
+
 
         return DB::transaction(function () use ($request) {
             $image = $request->file('image');

@@ -36,7 +36,7 @@ class Handler extends ExceptionHandler
             return response()->json([
                 'message' => $exception->getMessage(),        // Message from the exception
                 'code' => $exception->getErrorCode(),         // Custom error code
-                'errors' => [],                               // Custom errors (empty array here)
+                'errors' => $exception->getErrors(),                               // Custom errors (empty array here)
                 'response_code' => $exception->getResponseCode(), // Custom response code
             ], $exception->getResponseCode());  // Use the response code from the exception
         }

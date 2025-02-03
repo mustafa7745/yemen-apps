@@ -15,6 +15,7 @@ use App\Traits\AllShared;
 use Carbon\Carbon;
 use DB;
 use Hash;
+use Illuminate\Database\CustomException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -486,5 +487,67 @@ class LoginController
         http_response_code($response_code);
         $res = json_encode(array("code" => $code, "message" => $message));
         die($res);
+    }
+
+
+    function readAccessTokenV1($token, $deviceId)
+    {
+        $accessToken = $this->getAccessTokenByTokenV1($token, $deviceId);
+
+        // print_r($myResult->message);
+        if ($this->compareExpiration($accessToken)) {
+            // print_r("sdsdsd");
+            throw new CustomException("Need Refresh", 1000, 405);
+        }
+        return $accessToken;
+    }
+    function getAccessTokenByTokenV1($token, $deviceId)
+    {
+        $accessToken = DB::table(table: AccessTokens1::$tableName)
+            ->where(AccessTokens1::$tableName . '.' . AccessTokens1::$token, '=', $token)
+            ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $this->appId)
+            ->where(Devices::$tableName . '.' . Devices::$deviceId, '=', $deviceId)
+            ->join(
+                UsersSessions::$tableName,
+                UsersSessions::$tableName . '.' . UsersSessions::$id,
+                '=',
+                AccessTokens1::$tableName . '.' . AccessTokens1::$userSessionId
+            )
+            ->join(
+                DevicesSessions::$tableName,
+                DevicesSessions::$tableName . '.' . DevicesSessions::$id,
+                '=',
+                UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId
+            )
+            ->join(
+                Users::$tableName,
+                Users::$tableName . '.' . Users::$id,
+                '=',
+                UsersSessions::$tableName . '.' . UsersSessions::$userId
+            )
+            ->join(
+                Devices::$tableName,
+                Devices::$tableName . '.' . Devices::$id,
+                '=',
+                DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId
+            )
+            ->first([
+                AccessTokens1::$tableName . '.' . AccessTokens1::$id . ' as id',
+                AccessTokens1::$tableName . '.' . AccessTokens1::$token . ' as token',
+                AccessTokens1::$tableName . '.' . AccessTokens1::$userSessionId . ' as userSessionId',
+                AccessTokens1::$tableName . '.' . AccessTokens1::$expireAt . ' as expireAt',
+                    //
+                Users::$tableName . '.' . Users::$id . ' as userId',
+                Users::$tableName . '.' . Users::$firstName . ' as firstName',
+                Users::$tableName . '.' . Users::$lastName . ' as lastName',
+                Users::$tableName . '.' . Users::$logo . ' as logo',
+                    //
+                DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
+                DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',
+            ]);
+        if ($accessToken == null) {
+            throw new CustomException("Invalid Token", 2000, 403);
+        }
+        return $accessToken;
     }
 }
