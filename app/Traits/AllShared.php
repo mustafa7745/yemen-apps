@@ -1919,8 +1919,8 @@ trait AllShared
         }
         // 
         $app = DB::table(Apps::$tableName)
-            ->where(Apps::$sha, $sha)
-            ->where(Apps::$packageName, $packageName)
+            ->where(Apps::$sha, '=', $sha)
+            ->where(Apps::$packageName, '=', $packageName)
             ->first([
                 Apps::$tableName . '.' . Apps::$id
             ]);
@@ -1928,5 +1928,21 @@ trait AllShared
             throw new CustomException("Error App", 0, 443);
         }
         return $app;
+    }
+    public function getMyStore(Request $request, $userId)
+    {
+        $this->validRequestV1($request, [
+            'storeId' => 'required|string|max:9'
+        ]);
+
+        $storeId = $request->input('storeId');
+        $store = DB::table(Stores::$tableName)
+            ->where(Stores::$userId, '=', $userId)
+            ->where(Stores::$id, $storeId)
+            ->first();
+        if ($store == null) {
+            throw new CustomException("This Store not for you", 0, 443);
+        }
+        return $store;
     }
 }

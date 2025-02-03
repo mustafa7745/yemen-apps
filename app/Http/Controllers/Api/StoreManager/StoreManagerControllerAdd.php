@@ -655,30 +655,25 @@ class StoreManagerControllerAdd extends Controller
     }
     public function addAds(Request $request)
     {
+        // 1) check app
         $this->getMyApp($request);
-        // 1) check parameters of request
-        $this->validRequestV1($request, [
-            'image' => 'required|image|mimes:jpg|max:300',
-            'storeId' => 'required|string|max:9'
-        ]);
-
-        $accessToken = (new LoginController($this->appId))->getAccessTokenByTokenV1($request);
-
-
-        // print_r($accessToken->deviceId);
-        // print_r($accessToken->userId);
-
-        // print_r($accessToken);
-        // $userId = $accessToken->$userId;
-
-        // // 2) check parameters of request
-        $myProcess = $this->checkProcessV1('addAds', $accessToken->deviceId, $accessToken->userId);
-
-
         return DB::transaction(function () use ($request) {
+
+            // 2) check accessToken
+            $accessToken = (new LoginController($this->appId))->getAccessTokenByTokenV1($request);
+            // 3) check owner store
+            $store = $this->getMyStore($request, $accessToken->userId);
+            $this->validRequestV1($request, [
+                'image' => 'required|image|mimes:jpg|max:300'
+            ]);
+
+            // // 2) check parameters of request
+            $myProcess = $this->checkProcessV1('addAds', $accessToken->deviceId, $accessToken->userId);
+
+
             $image = $request->file('image');
             $productId = $request->input('productId');
-            $storeId = $request->input('storeId');
+            // $storeId = $request->input('storeId');
 
             if ($image->isValid() == false) {
                 return response()->json(['error' => 'Invalid image file.'], 400);
@@ -691,7 +686,7 @@ class StoreManagerControllerAdd extends Controller
                     StoreAds::$id => null,
                     StoreAds::$image => $fileName,
                     StoreAds::$productId => $productId,
-                    StoreAds::$storeId => $storeId,
+                    StoreAds::$storeId => $store->id,
                     StoreAds::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                     StoreAds::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                     StoreAds::$expireAt => Carbon::now()->format('Y-m-d H:i:s'),
