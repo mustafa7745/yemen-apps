@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Database\CustomException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -27,4 +28,21 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    public function render($request, Throwable $exception)
+    {
+        // Check if the exception is a PhoneOrPasswordException
+        if ($exception instanceof CustomException) {
+            return response()->json([
+                'message' => $exception->getMessage(),        // Message from the exception
+                'code' => $exception->getErrorCode(),         // Custom error code
+                'errors' => [],                               // Custom errors (empty array here)
+                'response_code' => $exception->getResponseCode(), // Custom response code
+            ], $exception->getResponseCode());  // Use the response code from the exception
+        }
+
+        // For other exceptions, use default rendering
+        return parent::render($request, $exception);
+    }
+
 }

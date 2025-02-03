@@ -40,6 +40,7 @@ use App\Services\WhatsappService;
 use Carbon\Carbon;
 use DB;
 use Hash;
+use Illuminate\Database\CustomException;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Log;
@@ -1884,6 +1885,9 @@ trait AllShared
             ->sole([
                 Apps::$tableName . '.' . Apps::$id
             ]);
+        if ($app == null) {
+            throw new CustomException("error app", 0, 443);
+        }
         return $app;
     }
 }
