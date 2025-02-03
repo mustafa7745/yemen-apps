@@ -669,14 +669,14 @@ class StoreManagerControllerAdd extends Controller
         // print_r($request->all());
         $accessToken = $loginController->readAccessTokenV1($token, $deviceId);
 
-        print_r($accessToken->deviceId);
-        print_r($accessToken->userId);
+        // print_r($accessToken->deviceId);
+        // print_r($accessToken->userId);
 
-        print_r($accessToken);
+        // print_r($accessToken);
         // $userId = $accessToken->$userId;
 
         // // 2) check parameters of request
-        $myProcess = $this->checkProcessV1('addAds', $accessToken->$deviceId, $accessToken->$userId);
+        $myProcess = $this->checkProcessV1('addAds', $accessToken->deviceId, $accessToken->userId);
 
 
         return DB::transaction(function () use ($request) {
