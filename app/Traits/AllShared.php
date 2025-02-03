@@ -1874,13 +1874,13 @@ trait AllShared
     }
     public function getMyApp(Request $request)
     {
-        $sha = $request->input('sha');
-        $packageName = $request->input('packageName');
+        // $sha = $request->input('sha');
+        // $packageName = $request->input('packageName');
 
         // 
         $app = DB::table(Apps::$tableName)
-            ->where(Apps::$sha, $sha)
-            ->where(Apps::$packageName, $packageName)
+            ->where(Apps::$sha, "34535")
+            ->where(Apps::$packageName, "gdfdd")
             ->sole([
                 Apps::$tableName . '.' . Apps::$id
             ]);
