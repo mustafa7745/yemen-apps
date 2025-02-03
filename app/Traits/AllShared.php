@@ -1032,7 +1032,9 @@ trait AllShared
                     OrdersAmounts::$tableName . '.' . OrdersAmounts::$id . ' as id',
                     OrdersAmounts::$tableName . '.' . OrdersAmounts::$amount . ' as amount',
                     OrdersAmounts::$tableName . '.' . OrdersAmounts::$orderId . ' as orderId',
-                    Currencies::$tableName . '.' . Currencies::$name . ' as currencyName'
+                    Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
+                    Currencies::$tableName . '.' . Currencies::$id . ' as currencyId'
+
                 ]
             );
 
