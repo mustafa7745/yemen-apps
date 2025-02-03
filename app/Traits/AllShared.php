@@ -1007,6 +1007,7 @@ trait AllShared
                 '=',
                 Orders::$tableName . '.' . Orders::$userId
             )
+            ->limit(5)
             ->get([
                 Users::$tableName . '.' . Users::$firstName . ' as userName',
                 Users::$tableName . '.' . Users::$phone . ' as userPhone',
