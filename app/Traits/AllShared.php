@@ -1073,6 +1073,7 @@ trait AllShared
                     Locations::$tableName . '.' . Locations::$latLng . ' as latLng',
                     Locations::$tableName . '.' . Locations::$street . ' as street',
                     OrdersDelivery::$tableName . '.' . OrdersDelivery::$deliveryManId,
+                    OrdersDelivery::$tableName . '.' . OrdersDelivery::$deliveryPrice,
                     Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
                     Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
                     OrdersDelivery::$tableName . '.' . OrdersDelivery::$createdAt,
