@@ -1882,7 +1882,7 @@ trait AllShared
         $app = DB::table(Apps::$tableName)
             ->where(Apps::$sha, "34535")
             ->where(Apps::$packageName, "gdfdd")
-            ->sole([
+            ->first([
                 Apps::$tableName . '.' . Apps::$id
             ]);
         if ($app == null) {
