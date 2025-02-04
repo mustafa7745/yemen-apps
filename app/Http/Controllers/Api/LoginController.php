@@ -567,7 +567,7 @@ class LoginController
     }
     function readAccessToken($request)
     {
-        $accessToken = $this->getAccessTokenByToken($request);
+        $accessToken = $this->getAccessTokenByToken(request: $request);
         if ($this->compareExpiration($accessToken)) {
             throw new CustomException("LT Expired", 1000, 405);
         }
