@@ -42,7 +42,7 @@ class StoreManagerControllerAdd extends Controller
 
     use StoreManagerControllerShared;
     use ErrorShared;
-    use AllShared;
+    // use AllShared;
     public function addCategory(Request $request)
     {
         $storeId = $request->input('storeId');
@@ -655,20 +655,18 @@ class StoreManagerControllerAdd extends Controller
     }
     public function addAds(Request $request)
     {
-        // 1) check app
-        $this->getMyApp($request);
-        return DB::transaction(function () use ($request) {
 
-            // 2) check accessToken
-            $accessToken = (new LoginController($this->appId))->getAccessTokenByTokenV1($request);
-            // 3) check owner store
-            $store = $this->getMyStore($request, $accessToken->userId);
+
+        return DB::transaction(function () use ($request) {
+            $myData = $this->getMyData($request);
+            $accessToken = $myData['accessToken'];
+            $store = $myData['store'];
             $this->validRequestV1($request, [
                 'image' => 'required|image|mimes:jpg|max:300'
             ]);
 
-            // // 2) check parameters of request
-            $myProcess = $this->checkProcessV1('addAds', $accessToken->deviceId, $accessToken->userId);
+            // // // 2) check parameters of request
+            // $myProcess = $this->checkProcessV1('addAds', $accessToken->deviceId, $accessToken->userId);
 
 
             $image = $request->file('image');
