@@ -72,11 +72,8 @@ trait AllShared
     }
     public function ourLogout(Request $request, $appId)
     {
-        $resultAccessToken = $this->getAccessToken($request, $appId);
-        if ($resultAccessToken->isSuccess == false) {
-            return $this->responseError($resultAccessToken);
-        }
-        $accessToken = $resultAccessToken->message;
+        $accessToken = $this->getAccessToken($request, $appId);
+
 
         // print_r($accessToken);
 
