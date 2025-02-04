@@ -168,7 +168,7 @@ class StoreManagerControllerUpdate extends Controller
     public function updateProductName(Request $request)
     {
         $myData = $this->getMyData($request, true);
-        $accessToken = $myData['accessToken'];
+        // $accessToken = $myData['accessToken'];
         $store = $myData['app'];
 
         $this->validRequestV1($request, [
@@ -179,6 +179,7 @@ class StoreManagerControllerUpdate extends Controller
         $productId = $request->input('productId');
         $productName = $request->input('productName');
 
+        $this->checkIfProductInStore($productId, $store->id);
         DB::table(table: Products::$tableName)
             ->where(Products::$id, '=', $productId)
             ->update(

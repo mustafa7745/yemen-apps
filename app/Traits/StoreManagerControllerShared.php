@@ -1,6 +1,10 @@
 <?php
 namespace App\Traits;
 use App\Http\Controllers\Api\LoginController;
+use App\Models\Products;
+use App\Models\Stores;
+use DB;
+use Illuminate\Database\CustomException;
 
 trait StoreManagerControllerShared
 {
@@ -19,5 +23,26 @@ trait StoreManagerControllerShared
             $myProcess = $this->checkProcessV1($myProcessName, $accessToken->deviceId, $accessToken->userId);
         }
         return ['app' => $app, 'accessToken' => $accessToken, 'store' => $store, 'myProcess' => $myProcess];
+    }
+    public function checkIfProductInStore($productId, $storeId)
+    {
+        $data = DB::table(table: Products::$tableName)
+            ->join(
+                Stores::$tableName,
+                Stores::$tableName . '.' . Stores::$id,
+                '=',
+                Products::$tableName . '.' . Products::$storeId
+            )
+            ->where(Products::$storeId, '=', $storeId)
+            ->where(Products::$id, '=', $productId)
+            ->first(
+                [Products::$id]
+            );
+
+        if ($data == null) {
+            throw new CustomException("Not have permission to update this product ", 0, 403);
+            # code...
+        }
+
     }
 }
