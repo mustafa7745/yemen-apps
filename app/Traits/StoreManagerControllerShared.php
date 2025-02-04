@@ -8,7 +8,7 @@ trait StoreManagerControllerShared
     public $appId = 1;
     public function getMyData($request, $withStore = true, $myProcessName = null)
     {
-        $app = $this->getMyApp($request);
+        $app = $this->getMyApp($request, $this->appId);
         $accessToken = (new LoginController($this->appId))->getAccessTokenByToken($request);
         $store = null;
         if ($withStore === true) {

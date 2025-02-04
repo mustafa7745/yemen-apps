@@ -1892,7 +1892,7 @@ trait AllShared
             throw new CustomException($message, 0, 442, $errors);
         }
     }
-    public function getMyApp(Request $request)
+    public function getMyApp(Request $request, $appId = null)
     {
         $sha = $request->input('sha');
         $packageName = $request->input('packageName');
@@ -1912,6 +1912,9 @@ trait AllShared
             ]);
         if ($app == null) {
             throw new CustomException("Error App", 0, 443);
+        }
+        if ($appId != null && $appId != $app->id) {
+            throw new CustomException("Error App2", 0, 443);
         }
         return $app;
     }

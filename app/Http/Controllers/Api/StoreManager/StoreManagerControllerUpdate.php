@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Validator;
 
 class StoreManagerControllerUpdate extends Controller
 {
-    private $appId = 1;
+    // private $appId = 1;
 
     use StoreManagerControllerShared;
 
@@ -444,47 +444,20 @@ class StoreManagerControllerUpdate extends Controller
 
     public function updateStore(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'storeId' => 'required|string|max:2',
-            'accessToken' => 'required|string|max:255',
-            'deviceId' => 'required|string|max:255',
-            // 'logo' => 'required|image|max:200',
-            // 'name' => 'required|string|max:100',
-            // 'typeId' => 'required|string|max:1',
-            // 'cover' => 'required|image|max:200',
-        ]);
-
-        // Check if validation fails
-        if ($validator->fails()) {
-            // Return a JSON response with validation errors
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
-                'code' => 0
-            ], 422);  // 422 Unprocessable Entity
-        }
 
 
-        $loginController = (new LoginController($this->appId));
-        $token = $request->input('accessToken');
-        $deviceId = $request->input('deviceId');
+        return DB::transaction(function () use ($request) {
 
-        // print_r($request->all());
-        $myResult = $loginController->readAccessToken($token, $deviceId);
-        if ($myResult->isSuccess == false) {
-            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
-        }
-        $accessToken = $myResult->message;
+            $myData = $this->getMyData($request, true);
+            $accessToken = $myData['accessToken'];
+            $store = $myData['app'];
 
+            $this->validRequestV1($request, [
+                'name' => 'required|string|max:9',
+                'logo' => 'required|image|mimes:jpg|max:300'
+            ]);
 
-
-
-
-
-
-        return DB::transaction(function () use ($request, $accessToken) {
-
-            $storeId = $request->input('storeId');
+            $storeId = $store->id;
             $name = $request->input('name');
             $typeId = $request->input('typeId');
             $logo = $request->file('logo');
@@ -578,6 +551,6 @@ class StoreManagerControllerUpdate extends Controller
     {
         $myData = $this->getMyData($request, false);
         $accessToken = $myData['accessToken'];
-        return $this->ourLogout($$accessToken->userSessionId);
+        return $this->ourLogout($accessToken->userSessionId);
     }
 }
