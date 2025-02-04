@@ -7,7 +7,6 @@ use App\Models\Categories;
 use App\Models\Devices;
 use App\Models\DevicesSessions;
 use App\Models\FailProcesses;
-use App\Models\MyProcesses;
 use App\Models\MyResponse;
 use App\Models\Users;
 use App\Models\UsersSessions;
@@ -16,7 +15,6 @@ use Carbon\Carbon;
 use DB;
 use Hash;
 use Illuminate\Database\CustomException;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class LoginController
@@ -27,113 +25,392 @@ class LoginController
     {
         $this->appId = $appId;
     }
-    public function login(Request $request)
+    // public function login(Request $request)
+    // {
+
+
+
+
+    //     $app = $this->getApp($request);
+    //     if ($app->isSuccess == false) {
+    //         return response()->json(["message" => $app->message, 'code' => $app->code, 'errors' => []], $app->responseCode);
+    //     }
+
+    //     $countryCode = $request->input('countryCode');
+    //     $phone = $request->input('phone');
+    //     $password = $request->input('password');
+
+    //     $device = $this->getDevice(request: $request);
+
+    //     $processResponse = $this->checkProcess('login', $device->id, null);
+    //     if ($processResponse->isSuccess == false) {
+    //         return $processResponse;
+    //     }
+
+    //     ////////
+
+    //     ///////////
+
+    //     $deviceSession = $this->getDeviceSession($request, $device->id);
+
+
+    //     $user = DB::table(table: Users::$tableName)
+    //         ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
+    //         ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
+    //         ->first();
+    //     if ($user == null) {
+    //         return response()->json(["message" => "Phone Or Password Error", 'code' => 0, 'errors' => []], 400);
+    //     }
+    //     if (Hash::check($password, $user->password) == false) {
+    //         return response()->json(["message" => "Phone or Password Error", 'code' => 0, 'errors' => []], 400);
+
+    //     }
+    //     $this->updateAppToken($request, $deviceSession);
+
+    //     $userSession = $this->getUserFinalSession($user->id, $deviceSession->id);
+    //     if ($userSession == false) {
+    //         return response()->json(["message" => "other signin?", 'code' => 0, 'errors' => []], 400);
+
+    //         // return response()->json(["message" => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل", 'code' => 0,'errors' => []], 400);
+    //     }
+
+    //     $accessToken = $this->getAccessTokenByUserSessionId($userSession->id);
+    //     return response()->json(["token" => $accessToken->token, 'expireAt' => $accessToken->expireAt]);
+    // }
+    // public function loginNew(Request $request)
+    // {
+    //     $appResponse = $this->getApp($request);
+    //     if ($appResponse->isSuccess == false) {
+    //         return $appResponse;
+    //     }
+
+    //     $validation = $this->validRequest($request, [
+    //         'countryCode' => 'required|string|max:4',
+    //         'phone' => 'required|string|max:9',
+    //         'password' => 'required|string|max:20'
+    //     ]);
+    //     if ($validation != null) {
+    //         return $validation;
+    //     }
+
+    //     $countryCode = $request->input('countryCode');
+    //     $phone = $request->input('phone');
+    //     $password = $request->input('password');
+
+    //     $device = $this->getDevice(request: $request);
+    //     $deviceSession = $this->getDeviceSession($request, $device->id);
+
+    //     $processResponse = $this->checkProcess('login', $device->id, null);
+    //     if ($processResponse->isSuccess == false) {
+    //         return $processResponse;
+    //     }
+
+    //     $user = DB::table(table: Users::$tableName)
+    //         ->where(Users::$tableName . '.' . Users::$phone, '=', $countryCode . $phone)
+    //         ->first();
+    //     if ($user == null || Hash::check($password, $user->password) == false) {
+    //         DB::table(FailProcesses::$tableName)->insert([
+    //             FailProcesses::$id => null,
+    //             FailProcesses::$myProcessId => $processResponse->message->id,
+    //             FailProcesses::$deviceId => $device->id,
+    //             FailProcesses::$userId => null,
+    //             FailProcesses::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+    //         ]);
+    //         return (new MyResponse(false, "Phone Or Password Error", 400, 0));
+    //         // return response()->json(["message" => , 'code' => 0, 'errors' => []], 400);
+    //     }
+    //     //////
+    //     $this->updateAppToken($request, $deviceSession);
+
+    //     $userSession = $this->getUserFinalSession($user->id, $deviceSession->id);
+    //     if ($userSession == false) {
+    //         return (new MyResponse(false, "other signin?", 400, 0));
+    //         // return response()->json(["message" => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل", 'code' => 0,'errors' => []], 400);
+    //     }
+
+    //     $accessToken = $this->getAccessTokenByUserSessionId($userSession->id);
+    //     return (new MyResponse(true, ["token" => $accessToken->token, 'expireAt' => $accessToken->expireAt], 0, 0));
+    // }
+
+    // private function getUserSessionByUserIdAndDevicesSessionId($userId, $deviceSessionId)
+    // {
+    //     return DB::table(table: UsersSessions::$tableName)
+    //         ->where(UsersSessions::$tableName . '.' . UsersSessions::$userId, '=', $userId)
+    //         ->where(UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId, '=', $deviceSessionId)
+    //         ->get();
+    // }
+    private function updateAppToken(Request $request, $deviceSession)
     {
+        $this->validRequestV1($request, [
+            'appToken' => 'required|string|max:250'
+        ]);
 
-
-
-
-        $app = $this->getApp($request);
-        if ($app->isSuccess == false) {
-            return response()->json(["message" => $app->message, 'code' => $app->code, 'errors' => []], $app->responseCode);
+        $appToken = $request->input('appToken');
+        if ($appToken != $deviceSession->appToken) {
+            DB::table(table: DevicesSessions::$tableName)
+                ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$id, '=', $deviceSession->id)
+                ->update([
+                    DevicesSessions::$tableName . '.' . DevicesSessions::$appToken => $appToken,
+                    DevicesSessions::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ]);
         }
-
-        $countryCode = $request->input('countryCode');
-        $phone = $request->input('phone');
-        $password = $request->input('password');
-
-        $device = $this->getDevice(request: $request);
-
-        $processResponse = $this->checkProcess('login', $device->id, null);
-        if ($processResponse->isSuccess == false) {
-            return $processResponse;
-        }
-
-        ////////
-
-        ///////////
-
-        $deviceSession = $this->getDeviceSession($request, $device->id);
-
-
-        $user = DB::table(table: Users::$tableName)
-            ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
-            ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
+    }
+    private function updateLastLoginAt($userSession)
+    {
+        DB::table(table: UsersSessions::$tableName)
+            ->where(UsersSessions::$tableName . '.' . UsersSessions::$id, '=', $userSession->id)
+            ->update([
+                UsersSessions::$loginCount => DB::raw(UsersSessions::$loginCount . ' + 1'), //h
+                UsersSessions::$isLogin => 1,
+                UsersSessions::$lastLoginAt => Carbon::now()->format('Y-m-d H:i:s'),
+                UsersSessions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+        return $this->getUserSession($userSession->id);
+    }
+    private function getUserSession($id)
+    {
+        return DB::table(table: UsersSessions::$tableName)
+            ->where(UsersSessions::$tableName . '.' . UsersSessions::$id, '=', $id)
             ->first();
-        if ($user == null) {
-            return response()->json(["message" => "Phone Or Password Error", 'code' => 0, 'errors' => []], 400);
+    }
+    private function getApp(Request $request)
+    {
+        $sha = $request->input('sha');
+        $packageName = $request->input('packageName');
+
+        $app = DB::table(table: Apps::$tableName)
+            ->where(Apps::$tableName . '.' . Apps::$packageName, '=', $packageName)
+            ->where(Apps::$tableName . '.' . Apps::$sha, '=', $sha)
+            ->first();
+
+        if ($app == null) {
+            // return response()->json(["message" => "App not Auth", 'code' => 0], 403);
+
+            return (new MyResponse(false, "App not Auth", 403, 105));
         }
-        if (Hash::check($password, $user->password) == false) {
-            return response()->json(["message" => "Phone or Password Error", 'code' => 0, 'errors' => []], 400);
-
+        if ($app->id != $this->appId) {
+            // return response()->json(["message" => "App not in Auth", 'code' => 0], 403);
+            return (new MyResponse(false, "App not in Auth", 403, 106));
         }
-        $this->updateAppToken($request, $deviceSession);
-
-        $userSession = $this->getUserFinalSession($user->id, $deviceSession->id);
-        if ($userSession == false) {
-            return response()->json(["message" => "other signin?", 'code' => 0, 'errors' => []], 400);
-
-            // return response()->json(["message" => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل", 'code' => 0,'errors' => []], 400);
-        }
-
-        $accessToken = $this->getAccessTokenByUserSessionId($userSession->id);
-        return response()->json(["token" => $accessToken->token, 'expireAt' => $accessToken->expireAt]);
+        return (new MyResponse(true, $app, 200, 0));
     }
 
+    // function getAccessTokenByToken($token, $deviceId)
+    // {
+    //     $accessToken = DB::table(table: AccessTokens1::$tableName)
+    //         ->where(AccessTokens1::$tableName . '.' . AccessTokens1::$token, '=', $token)
+    //         ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $this->appId)
+    //         ->where(Devices::$tableName . '.' . Devices::$deviceId, '=', $deviceId)
+    //         ->join(
+    //             UsersSessions::$tableName,
+    //             UsersSessions::$tableName . '.' . UsersSessions::$id,
+    //             '=',
+    //             AccessTokens1::$tableName . '.' . AccessTokens1::$userSessionId
+    //         )
+    //         ->join(
+    //             DevicesSessions::$tableName,
+    //             DevicesSessions::$tableName . '.' . DevicesSessions::$id,
+    //             '=',
+    //             UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId
+    //         )
+    //         ->join(
+    //             Users::$tableName,
+    //             Users::$tableName . '.' . Users::$id,
+    //             '=',
+    //             UsersSessions::$tableName . '.' . UsersSessions::$userId
+    //         )
+    //         ->join(
+    //             Devices::$tableName,
+    //             Devices::$tableName . '.' . Devices::$id,
+    //             '=',
+    //             DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId
+    //         )
+    //         ->first([
+    //             AccessTokens1::$tableName . '.' . AccessTokens1::$id . ' as id',
+    //             AccessTokens1::$tableName . '.' . AccessTokens1::$token . ' as token',
+    //             AccessTokens1::$tableName . '.' . AccessTokens1::$userSessionId . ' as userSessionId',
+    //             AccessTokens1::$tableName . '.' . AccessTokens1::$expireAt . ' as expireAt',
+    //                 //
+    //             Users::$tableName . '.' . Users::$id . ' as userId',
+    //             Users::$tableName . '.' . Users::$firstName . ' as firstName',
+    //             Users::$tableName . '.' . Users::$lastName . ' as lastName',
+    //             Users::$tableName . '.' . Users::$logo . ' as logo',
+    //                 //
+    //             DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
+    //             DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',
+    //         ]);
+    //     // print_r($accessToken->toSql());
+    //     if ($accessToken == null) {
+    //         return new MyResponse(false, "Inv Tok", 403, 2000);
+    //     }
+    //     // print_r($accessToken);
+    //     return new MyResponse(true, $accessToken, 200, code: 0);
+    //     // return $accessToken;
+    // }
 
-    public function loginNew(Request $request)
+
+    private function compareExpiration($loginToken)
     {
-        $appResponse = $this->getApp($request);
-        if ($appResponse->isSuccess == false) {
-            return $appResponse;
+        // Get current time using Carbon
+        $currentDate = Carbon::now();
+
+        // Get the expiration date from the $loginToken object and convert it to a Carbon instance
+        $expireAt = Carbon::parse($loginToken->expireAt);
+
+        // Compare the dates
+        if ($currentDate->gt($expireAt)) {
+            // Current time is greater than expiration time (token expired)
+            return true;
+        } else {
+            // Token is still valid
+            return false;
         }
+    }
+    // function readAndRefreshAccessToken($preToken, $deviceId)
+    // {
+    //     $accessToken = $this->getAccessTokenByToken($preToken, $deviceId);
+    //     if ($this->compareExpiration($accessToken->message)) {
+    //         return $this->refreshAccessToken($preToken);
+    //     }
+    //     return $accessToken;
+    // }
+    // function readAccessToken($token, $deviceId)
+    // {
+    //     $myResult = $this->getAccessTokenByToken($token, $deviceId);
 
-        $validation = $this->validRequest($request, [
-            'countryCode' => 'required|string|max:4',
-            'phone' => 'required|string|max:9',
-            'password' => 'required|string|max:20'
-        ]);
-        if ($validation != null) {
-            return $validation;
+    //     if ($myResult->isSuccess == false) {
+    //         return $myResult;
+    //     }
+    //     // print_r($myResult->message);
+    //     if ($this->compareExpiration($myResult->message)) {
+    //         // print_r("sdsdsd");
+    //         return new MyResponse(false, "Need refresh", 405, 1000);
+    //     }
+
+
+    //     return $myResult;
+    // }
+    /////
+    private function getUserFinalSession($userId, $deviceSessionId)
+    {
+        $userSessions = $this->getUserSessions($userId);
+
+        foreach ($userSessions as $key => $userSession) {
+            if ($userSession->isLogin == 1) {
+                throw new CustomException("other signin?", 0, 403);
+            }
         }
-
-        $countryCode = $request->input('countryCode');
-        $phone = $request->input('phone');
-        $password = $request->input('password');
-
-        $device = $this->getDevice(request: $request);
-        $deviceSession = $this->getDeviceSession($request, $device->id);
-
-        $processResponse = $this->checkProcess('login', $device->id, null);
-        if ($processResponse->isSuccess == false) {
-            return $processResponse;
+        $userSession = null;
+        $count = 0;
+        foreach ($userSessions as $key => $vlaue) {
+            if ($vlaue->deviceSessionId == $deviceSessionId) {
+                $userSession = $vlaue;
+                $count += 1;
+            }
         }
+        if ($count > 1) {
+            throw new CustomException("multiple same device in this app", 0, 403);
+        } elseif ($count == 1) {
+            return $this->updateLastLoginAt($userSession);
+        } else {
+            $insertedId = DB::table(UsersSessions::$tableName)->insertGetId([
+                UsersSessions::$id => null,
+                UsersSessions::$userId => $userId,
+                UsersSessions::$deviceSessionId => $deviceSessionId,
+                UsersSessions::$lastLoginAt => now()->format('Y-m-d H:i:s'),
+                UsersSessions::$createdAt => now()->format('Y-m-d H:i:s'),
+                UsersSessions::$updatedAt => now()->format('Y-m-d H:i:s'),
 
-        $user = DB::table(table: Users::$tableName)
-            ->where(Users::$tableName . '.' . Users::$phone, '=', $countryCode . $phone)
-            ->first();
-        if ($user == null || Hash::check($password, $user->password) == false) {
-            DB::table(FailProcesses::$tableName)->insert([
-                FailProcesses::$id => null,
-                FailProcesses::$myProcessId => $processResponse->message->id,
-                FailProcesses::$deviceId => $device->id,
-                FailProcesses::$userId => null,
-                FailProcesses::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
-            return (new MyResponse(false, "Phone Or Password Error", 400, 0));
-            // return response()->json(["message" => , 'code' => 0, 'errors' => []], 400);
-        }
-        //////
-        $this->updateAppToken($request, $deviceSession);
-
-        $userSession = $this->getUserFinalSession($user->id, $deviceSession->id);
-        if ($userSession == false) {
-            return (new MyResponse(false, "other signin?", 400, 0));
-            // return response()->json(["message" => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل", 'code' => 0,'errors' => []], 400);
+            return $this->getUserSession($userSession->id);
         }
 
-        $accessToken = $this->getAccessTokenByUserSessionId($userSession->id);
-        return (new MyResponse(true, ["token" => $accessToken->token, 'expireAt' => $accessToken->expireAt], 0, 0));
+        // if (count($userSessions) == 1) {
+        //     if ($userSessions[0]->deviceSessionId != $deviceSessionId) {
+        //         throw new CustomException("other signin?", 0, 400);
+        //     }
+        //     return $this->updateLastLoginAt($userSessions[0]);
+        // } else {
+        //     $userSession = $this->getUserSessionByUserIdAndDevicesSessionId($userId, $deviceSessionId);
+        //     if (count($userSession) == 0) {
+        //         $insertedId = DB::table(UsersSessions::$tableName)->insertGetId([
+        //             UsersSessions::$id => null,
+        //             UsersSessions::$userId => $userId,
+        //             UsersSessions::$deviceSessionId => $deviceSessionId,
+        //             UsersSessions::$lastLoginAt => now()->format('Y-m-d H:i:s'),
+        //             UsersSessions::$createdAt => now()->format('Y-m-d H:i:s'),
+        //             UsersSessions::$updatedAt => now()->format('Y-m-d H:i:s'),
+
+        //         ]);
+        //         return DB::table(table: UsersSessions::$tableName)
+        //             ->where(UsersSessions::$tableName . '.' . UsersSessions::$id, '=', $insertedId)
+        //             ->first();
+        //     } elseif (count($userSession) == 1) {
+        //         return $this->updateLastLoginAt($userSession[0]);
+        //     } else {
+        //         abort(405, "error: 6748");
+        //     }
+
+        // }
+    }
+    //get all user sessions of this app
+    private function getUserSessions($userId)
+    {
+        return DB::table(table: UsersSessions::$tableName)
+            ->where(UsersSessions::$tableName . '.' . UsersSessions::$userId, '=', $userId)
+            ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $this->appId)
+            ->join(
+                DevicesSessions::$tableName,
+                DevicesSessions::$tableName . '.' . DevicesSessions::$id,
+                '=',
+                UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId
+            )
+            // ->where(UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId, '<>', $deviceSessionId)
+            ->get([
+                UsersSessions::$tableName . '.' . UsersSessions::$id . ' as id',
+                UsersSessions::$tableName . '.' . UsersSessions::$isLogin . ' as isLogin',
+                DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
+                DevicesSessions::$tableName . '.' . DevicesSessions::$id . ' as deviceSessionId',
+                UsersSessions::$tableName . '.' . UsersSessions::$userId . ' as userId',
+            ]);
+    }
+    private function getUniqueToken()
+    {
+        $baseToken = md5(uniqid(mt_rand(), true));
+
+        // Special characters to include in the token
+        $specialChars = '!@#$%^&*()-_=+[]{}|;:,.<>?/~';
+
+        // Number of special characters to insert
+        $numSpecialChars = 5; // For example, inserting 5 special characters
+
+        // Convert the token to an array of characters
+        $tokenArray = str_split($baseToken);
+
+        // Randomly insert special characters into the token
+        for ($i = 0; $i < $numSpecialChars; $i++) {
+            $randomPosition = mt_rand(0, count($tokenArray) - 1); // Choose random position
+            $randomSpecialChar = $specialChars[mt_rand(0, strlen($specialChars) - 1)]; // Choose random special char
+            array_splice($tokenArray, $randomPosition, 0, $randomSpecialChar); // Insert special char
+        }
+
+        // Convert the array back to a string
+        $uniqueTokenWithSpecialChars = implode('', $tokenArray);
+
+        return $uniqueTokenWithSpecialChars;
+    }
+    private function getRemainedMinute($minutes = null)
+    {
+        if ($minutes === null) {
+            // Get the end of the day (tomorrow at 00:00:00 - 1 second)
+            $end_of_day = Carbon::tomorrow()->startOfDay()->subSecond();
+            return $end_of_day->format('Y-m-d H:i:s');
+        } else {
+            // Add minutes to the current time
+            $date = Carbon::now()->addMinutes($minutes);
+            return $date->format('Y-m-d H:i:s');
+        }
+
     }
     private function getDevice(Request $request)
     {
@@ -191,39 +468,7 @@ class LoginController
         }
         return $deviceSession;
     }
-    private function getUserFinalSession($userId, $deviceSessionId)
-    {
-        $userSession = $this->getUserSession($userId);
-
-        if (count($userSession) == 1) {
-            if ($userSession[0]->deviceSessionId != $deviceSessionId) {
-                return false;
-            }
-            return $this->updateLastLoginAt($userSession[0]);
-        } else {
-            $userSession = $this->getUserSessionByUserIdAndDevicesSessionId($userId, $deviceSessionId);
-            if (count($userSession) == 0) {
-                $insertedId = DB::table(UsersSessions::$tableName)->insertGetId([
-                    UsersSessions::$id => null,
-                    UsersSessions::$userId => $userId,
-                    UsersSessions::$deviceSessionId => $deviceSessionId,
-                    UsersSessions::$lastLoginAt => Carbon::now()->format('Y-m-d H:i:s'),
-                    UsersSessions::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                    UsersSessions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-
-                ]);
-                return DB::table(table: UsersSessions::$tableName)
-                    ->where(UsersSessions::$tableName . '.' . UsersSessions::$id, '=', $insertedId)
-                    ->first();
-            } elseif (count($userSession) == 1) {
-                return $this->updateLastLoginAt($userSession[0]);
-            } else {
-                abort(405, "error: 6748");
-            }
-
-        }
-    }
-    private function getUserSession($userId)
+    private function getLoginedUserSession($userId)
     {
         return DB::table(table: UsersSessions::$tableName)
             ->where(UsersSessions::$tableName . '.' . UsersSessions::$userId, '=', $userId)
@@ -241,61 +486,7 @@ class LoginController
                 DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
                 DevicesSessions::$tableName . '.' . DevicesSessions::$id . ' as deviceSessionId',
                 UsersSessions::$tableName . '.' . UsersSessions::$userId . ' as userId',
-            ])->toArray();
-    }
-    private function getUserSessionByUserIdAndDevicesSessionId($userId, $deviceSessionId)
-    {
-        return DB::table(table: UsersSessions::$tableName)
-            ->where(UsersSessions::$tableName . '.' . UsersSessions::$userId, '=', $userId)
-            ->where(UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId, '=', $deviceSessionId)
-            ->get()->toArray();
-    }
-    private function updateAppToken(Request $request, $deviceSession)
-    {
-        $appToken = $request->input('appToken');
-        if ($appToken != $deviceSession->appToken) {
-            DB::table(table: DevicesSessions::$tableName)
-                ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$id, '=', $deviceSession->id)
-                ->update([
-                    DevicesSessions::$tableName . '.' . DevicesSessions::$appToken => $appToken,
-                    DevicesSessions::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                ]);
-        }
-    }
-    private function updateLastLoginAt($userSession)
-    {
-        DB::table(table: UsersSessions::$tableName)
-            ->where(UsersSessions::$tableName . '.' . UsersSessions::$id, '=', $userSession->id)
-            ->update([
-                UsersSessions::$loginCount => DB::raw(UsersSessions::$loginCount . ' + 1'), //h
-                UsersSessions::$isLogin => 1,
-                UsersSessions::$lastLoginAt => Carbon::now()->format('Y-m-d H:i:s'),
-                UsersSessions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
-        return DB::table(table: UsersSessions::$tableName)
-            ->where(UsersSessions::$tableName . '.' . UsersSessions::$id, '=', $userSession->id)
-            ->first();
-    }
-    private function getApp(Request $request)
-    {
-        $sha = $request->input('sha');
-        $packageName = $request->input('packageName');
-
-        $app = DB::table(table: Apps::$tableName)
-            ->where(Apps::$tableName . '.' . Apps::$packageName, '=', $packageName)
-            ->where(Apps::$tableName . '.' . Apps::$sha, '=', $sha)
-            ->first();
-
-        if ($app == null) {
-            // return response()->json(["message" => "App not Auth", 'code' => 0], 403);
-
-            return (new MyResponse(false, "App not Auth", 403, 105));
-        }
-        if ($app->id != $this->appId) {
-            // return response()->json(["message" => "App not in Auth", 'code' => 0], 403);
-            return (new MyResponse(false, "App not in Auth", 403, 106));
-        }
-        return (new MyResponse(true, $app, 200, 0));
     }
     private function getAccessTokenByUserSessionId($userSessionId)
     {
@@ -344,137 +535,20 @@ class LoginController
         return $accessToken;
 
     }
-    function getAccessTokenByToken($token, $deviceId)
+    // private function getUserSessionByUserIdAndDevicesSessionIdV1($userId, $deviceSessionId)
+    // {
+    //     return DB::table(table: UsersSessions::$tableName)
+    //         ->where(UsersSessions::$tableName . '.' . UsersSessions::$userId, '=', $userId)
+    //         ->where(UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId, '=', $deviceSessionId)
+    //         ->get()->toArray();
+    // }
+    function readAndRefreshAccessToken($request)
     {
-        $accessToken = DB::table(table: AccessTokens1::$tableName)
-            ->where(AccessTokens1::$tableName . '.' . AccessTokens1::$token, '=', $token)
-            ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $this->appId)
-            ->where(Devices::$tableName . '.' . Devices::$deviceId, '=', $deviceId)
-            ->join(
-                UsersSessions::$tableName,
-                UsersSessions::$tableName . '.' . UsersSessions::$id,
-                '=',
-                AccessTokens1::$tableName . '.' . AccessTokens1::$userSessionId
-            )
-            ->join(
-                DevicesSessions::$tableName,
-                DevicesSessions::$tableName . '.' . DevicesSessions::$id,
-                '=',
-                UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId
-            )
-            ->join(
-                Users::$tableName,
-                Users::$tableName . '.' . Users::$id,
-                '=',
-                UsersSessions::$tableName . '.' . UsersSessions::$userId
-            )
-            ->join(
-                Devices::$tableName,
-                Devices::$tableName . '.' . Devices::$id,
-                '=',
-                DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId
-            )
-            ->first([
-                AccessTokens1::$tableName . '.' . AccessTokens1::$id . ' as id',
-                AccessTokens1::$tableName . '.' . AccessTokens1::$token . ' as token',
-                AccessTokens1::$tableName . '.' . AccessTokens1::$userSessionId . ' as userSessionId',
-                AccessTokens1::$tableName . '.' . AccessTokens1::$expireAt . ' as expireAt',
-                    //
-                Users::$tableName . '.' . Users::$id . ' as userId',
-                Users::$tableName . '.' . Users::$firstName . ' as firstName',
-                Users::$tableName . '.' . Users::$lastName . ' as lastName',
-                Users::$tableName . '.' . Users::$logo . ' as logo',
-                    //
-                DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
-                DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',
-            ]);
-        // print_r($accessToken->toSql());
-        if ($accessToken == null) {
-            return new MyResponse(false, "Inv Tok", 403, 2000);
-        }
-        // print_r($accessToken);
-        return new MyResponse(true, $accessToken, 200, code: 0);
-        // return $accessToken;
-    }
-
-    private function getUniqueToken()
-    {
-        $baseToken = md5(uniqid(mt_rand(), true));
-
-        // Special characters to include in the token
-        $specialChars = '!@#$%^&*()-_=+[]{}|;:,.<>?/~';
-
-        // Number of special characters to insert
-        $numSpecialChars = 5; // For example, inserting 5 special characters
-
-        // Convert the token to an array of characters
-        $tokenArray = str_split($baseToken);
-
-        // Randomly insert special characters into the token
-        for ($i = 0; $i < $numSpecialChars; $i++) {
-            $randomPosition = mt_rand(0, count($tokenArray) - 1); // Choose random position
-            $randomSpecialChar = $specialChars[mt_rand(0, strlen($specialChars) - 1)]; // Choose random special char
-            array_splice($tokenArray, $randomPosition, 0, $randomSpecialChar); // Insert special char
-        }
-
-        // Convert the array back to a string
-        $uniqueTokenWithSpecialChars = implode('', $tokenArray);
-
-        return $uniqueTokenWithSpecialChars;
-    }
-    private function getRemainedMinute($minutes = null)
-    {
-        if ($minutes === null) {
-            // Get the end of the day (tomorrow at 00:00:00 - 1 second)
-            $end_of_day = Carbon::tomorrow()->startOfDay()->subSecond();
-            return $end_of_day->format('Y-m-d H:i:s');
-        } else {
-            // Add minutes to the current time
-            $date = Carbon::now()->addMinutes($minutes);
-            return $date->format('Y-m-d H:i:s');
-        }
-
-    }
-    private function compareExpiration($loginToken)
-    {
-        // Get current time using Carbon
-        $currentDate = Carbon::now();
-
-        // Get the expiration date from the $loginToken object and convert it to a Carbon instance
-        $expireAt = Carbon::parse($loginToken->expireAt);
-
-        // Compare the dates
-        if ($currentDate->gt($expireAt)) {
-            // Current time is greater than expiration time (token expired)
-            return true;
-        } else {
-            // Token is still valid
-            return false;
-        }
-    }
-    function readAndRefreshAccessToken($preToken, $deviceId)
-    {
-        $accessToken = $this->getAccessTokenByToken($preToken, $deviceId);
-        if ($this->compareExpiration($accessToken->message)) {
-            return $this->refreshAccessToken($preToken);
+        $accessToken = $this->getAccessTokenByToken($request);
+        if ($this->compareExpiration($accessToken)) {
+            return $this->refreshAccessToken($$accessToken->token);
         }
         return $accessToken;
-    }
-    function readAccessToken($token, $deviceId)
-    {
-        $myResult = $this->getAccessTokenByToken($token, $deviceId);
-
-        if ($myResult->isSuccess == false) {
-            return $myResult;
-        }
-        // print_r($myResult->message);
-        if ($this->compareExpiration($myResult->message)) {
-            // print_r("sdsdsd");
-            return new MyResponse(false, "Need refresh", 405, 1000);
-        }
-
-
-        return $myResult;
     }
     private function refreshAccessToken($preToken)
     {
@@ -491,15 +565,14 @@ class LoginController
             ->where(AccessTokens1::$tableName . '.' . AccessTokens1::$token, '=', $newToken)
             ->first();
     }
-    function exitFromScript($message, $response_code = 400, $code = 0)
+    function readAccessToken($request)
     {
-        http_response_code($response_code);
-        $res = json_encode(array("code" => $code, "message" => $message));
-        die($res);
+        $accessToken = $this->getAccessTokenByToken($request);
+        if ($this->compareExpiration($accessToken)) {
+            throw new CustomException("LT Expired", 1000, 405);
+        }
+        return $accessToken;
     }
-
-
-
     public function loginV1(Request $request)
     {
         $app = $this->getMyApp($request);
@@ -538,17 +611,12 @@ class LoginController
         }
         //////
         $this->updateAppToken($request, $deviceSession);
-
+        /////
         $userSession = $this->getUserFinalSession($user->id, $deviceSession->id);
-        if ($userSession == false) {
-            throw new CustomException("other signin?", 0, 403);
-            // return response()->json(["message" => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل", 'code' => 0,'errors' => []], 400);
-        }
-
         $accessToken = $this->getAccessTokenByUserSessionId($userSession->id);
-        return ["token" => $accessToken->token, 'expireAt' => $accessToken->expireAt];
+        return response()->json(["token" => $accessToken->token, 'expireAt' => $accessToken->expireAt]);
     }
-    function getAccessTokenByTokenV1($request)
+    function getAccessTokenByToken($request)
     {
         $this->validRequestV1($request, [
             'accessToken' => 'required|string|max:255',
