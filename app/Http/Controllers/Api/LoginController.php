@@ -667,6 +667,8 @@ class LoginController
                     //
                 DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
                 DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',
+                UsersSessions::$tableName . '.' . UsersSessions::$isLogin . ' as isLogin',
+
             ]);
         if ($accessToken == null) {
             throw new CustomException("Invalid Token", 2000, 403);
