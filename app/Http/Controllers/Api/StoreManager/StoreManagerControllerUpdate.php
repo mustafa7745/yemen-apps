@@ -172,7 +172,7 @@ class StoreManagerControllerUpdate extends Controller
         $store = $myData['app'];
 
         $this->validRequestV1($request, [
-            'productId' => 'required|int|max:11',
+            'productId' => 'required|integer|max:11',
             'productName' => 'required|string|max:30'
         ]);
 
