@@ -137,6 +137,12 @@ class LoginController
     }
     private function getDevice(Request $request)
     {
+        $this->validRequestV1($request, [
+            'deviceId' => 'required|string|max:40',
+            'model' => 'required|string|max:50',
+            'version' => 'required|string|max:5'
+        ]);
+
         $deviceId = $request->input('deviceId');
         $model = $request->input('model');
         $version = $request->input('version');
@@ -160,6 +166,9 @@ class LoginController
     }
     private function getDeviceSession(Request $request, $deviceId)
     {
+        $this->validRequestV1($request, [
+            'appToken' => 'required|string|max:255'
+        ]);
         $appToken = $request->input('appToken');
         $deviceSession = DB::table(table: DevicesSessions::$tableName)
             ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId, '=', $deviceId)
@@ -490,7 +499,55 @@ class LoginController
     }
 
 
-   
+
+    public function loginV1(Request $request)
+    {
+        $app = $this->getMyApp($request);
+        if ($app->id != $this->appId) {
+            throw new CustomException("App not in Auth", 0, 403);
+        }
+        $this->validRequestV1($request, [
+            'countryCode' => 'required|string|max:4',
+            'phone' => 'required|string|max:9',
+            'password' => 'required|string|max:20'
+        ]);
+
+
+        $countryCode = $request->input('countryCode');
+        $phone = $request->input('phone');
+        $password = $request->input('password');
+
+        $device = $this->getDevice(request: $request);
+        $deviceSession = $this->getDeviceSession($request, $device->id);
+
+        $myProcess = $this->checkProcessV1('login', $device->Id, null);
+
+
+        $user = DB::table(table: Users::$tableName)
+            ->where(Users::$tableName . '.' . Users::$phone, '=', $countryCode . $phone)
+            ->first();
+        if ($user == null || Hash::check($password, $user->password) == false) {
+            DB::table(FailProcesses::$tableName)->insert([
+                FailProcesses::$id => null,
+                FailProcesses::$myProcessId => $myProcess->id,
+                FailProcesses::$deviceId => $device->id,
+                FailProcesses::$userId => null,
+                FailProcesses::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+            throw new CustomException("Phone Or Password Error", 0, 400);
+        }
+        //////
+        $this->updateAppToken($request, $deviceSession);
+
+        $userSession = $this->getUserFinalSession($user->id, $deviceSession->id);
+        if ($userSession == false) {
+            throw new CustomException("other signin?", 0, 403);
+            // return response()->json(["message" => "لايمكنك تسجيل الدخول في حال وجود جهاز اخر مسجل", 'code' => 0,'errors' => []], 400);
+        }
+
+        $accessToken = $this->getAccessTokenByUserSessionId($userSession->id);
+        return ["token" => $accessToken->token, 'expireAt' => $accessToken->expireAt];
+    }
     function getAccessTokenByTokenV1($request)
     {
         $this->validRequestV1($request, [

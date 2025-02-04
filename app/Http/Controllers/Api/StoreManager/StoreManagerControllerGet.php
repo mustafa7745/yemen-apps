@@ -461,7 +461,7 @@ class StoreManagerControllerGet extends Controller
             ])->toArray();
         return response()->json($categories);
     }
-    
+
     public function getStoreCategories(Request $request)
     {
 
@@ -754,14 +754,9 @@ class StoreManagerControllerGet extends Controller
 
     public function login(Request $request)
     {
-        // return (new LoginController($this->appId))->login($request);
         $loginController = (new LoginController($this->appId));
-        $res = $loginController->loginNew($request);
-        if ($res->isSuccess == false) {
-            return $this->responseError2($res->message, [], $res->code, $res->responseCode);
-
-        }
-        return response()->json($res->message);
+        $res = $loginController->loginV1($request);
+        return response()->json($res);
     }
     public function refreshToken(Request $request)
     {

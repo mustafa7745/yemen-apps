@@ -27,6 +27,7 @@ use App\Services\FirebaseService;
 use App\Traits\AllShared;
 use App\Traits\ErrorShared;
 use App\Traits\StoreManagerControllerShared;
+use Illuminate\Database\CustomException;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -655,8 +656,6 @@ class StoreManagerControllerAdd extends Controller
     }
     public function addAds(Request $request)
     {
-
-
         return DB::transaction(function () use ($request) {
             $myData = $this->getMyData($request);
             $accessToken = $myData['accessToken'];
@@ -664,11 +663,6 @@ class StoreManagerControllerAdd extends Controller
             $this->validRequestV1($request, [
                 'image' => 'required|image|mimes:jpg|max:300'
             ]);
-
-            // // // 2) check parameters of request
-            // $myProcess = $this->checkProcessV1('addAds', $accessToken->deviceId, $accessToken->userId);
-
-
             $image = $request->file('image');
             $productId = $request->input('productId');
             // $storeId = $request->input('storeId');
@@ -698,29 +692,17 @@ class StoreManagerControllerAdd extends Controller
 
             try {
                 $path = Storage::disk('s3')->put('stores/ads/' . $fileName, fopen($image, 'r+'));
-
-                // Check if the file was uploaded successfully
                 if ($path) {
-                    // Storage::disk('s3')->url($fileName);
                     return response()->json($addedRecord);
-
                 } else {
                     DB::rollBack();
-                    // If the image is not valid, return a validation error response
-                    return response()->json([
-                        'error' => 'No valid image file uploaded.',
-                    ], 400);
-
+                    throw new CustomException("No valid image file uploaded.", 0, 400);
                 }
             } catch (\Exception $e) {
                 DB::rollBack();  // Manually trigger a rollback
-                return response()->json([
-                    'error' => 'An error occurred while uploading the image.',
-                    'message' => $e->getMessage(),
-                ], 500);
+                throw new CustomException('An error occurred while uploading the image.' . $e->getMessage(), 0, 500);
             }
         });
-
     }
 
 
