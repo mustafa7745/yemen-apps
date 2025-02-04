@@ -167,14 +167,15 @@ class StoreManagerControllerUpdate extends Controller
     }
     public function updateProductName(Request $request)
     {
-        $myData = $this->getMyData($request, true);
-        // $accessToken = $myData['accessToken'];
-        // $store = $myData['app'];
+
 
         $this->validRequestV1($request, [
             'productId' => 'required|string|max:11',
             'productName' => 'required|string|max:30'
         ]);
+        $myData = $this->getMyData($request, true);
+        // $accessToken = $myData['accessToken'];
+        // $store = $myData['app'];
 
         $productId = $request->input('productId');
         $productName = $request->input('productName');
