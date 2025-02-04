@@ -520,7 +520,7 @@ class LoginController
         $device = $this->getDevice(request: $request);
         $deviceSession = $this->getDeviceSession($request, $device->id);
 
-        $myProcess = $this->checkProcessV1('login', $device->Id, null);
+        $myProcess = $this->checkProcessV1('login', $device->id, null);
 
 
         $user = DB::table(table: Users::$tableName)
