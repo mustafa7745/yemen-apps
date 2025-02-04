@@ -678,7 +678,7 @@ class LoginController
             throw new CustomException("Need Refresh", 1000, 405);
         }
         if ($accessToken->isLogin != 1) {
-            throw new CustomException("This Session is logged out please login again", 20000, 403);
+            throw new CustomException("This Session is logged out please login again", 2000, 403);
         }
         return $accessToken;
     }
