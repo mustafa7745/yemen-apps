@@ -72,10 +72,8 @@ trait AllShared
     }
     public function ourLogout(Request $request, $appId)
     {
-        $accessToken = $this->getAccessToken($request, $appId);
-
-
-        // print_r($accessToken);
+        // $accessToken = $this->getAccessToken($request, $appId);
+        $accessToken = (new LoginController($this->appId))->readAccessToken($request);
 
         return DB::transaction(function () use ($accessToken) {
             DB::table(table: UsersSessions::$tableName)
@@ -1583,14 +1581,12 @@ trait AllShared
     /////
     public function getAccessToken(Request $request, $appId)
     {
-        $validation = $this->validRequest($request, [
+        $this->validRequesV1t($request, [
             'accessToken' => 'required|string|max:255',
             'deviceId' => 'required|string|max:255'
 
         ]);
-        if ($validation != null) {
-            return $validation;
-        }
+
 
 
 

@@ -308,12 +308,9 @@ class StoreManagerControllerGet extends Controller
             ], 422);  // 422 Unprocessable Entity
         }
 
-        $loginController = (new LoginController($this->appId));
-        $token = $request->input('accessToken');
-        $deviceId = $request->input('deviceId');
 
         // print_r($request->all());
-        $accessToken = $loginController->readAccessToken($request);
+        $accessToken = (new LoginController($this->appId))->readAccessToken($request);
 
 
         $data = DB::table(Stores::$tableName)
