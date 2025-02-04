@@ -70,14 +70,11 @@ trait AllShared
 
         return response()->json($data);
     }
-    public function ourLogout(Request $request, $appId)
+    public function ourLogout($userSessionId)
     {
-        // $accessToken = $this->getAccessToken($request, $appId);
-        $accessToken = (new LoginController($this->appId))->readAccessToken($request);
-
-        return DB::transaction(function () use ($accessToken) {
+        return DB::transaction(function () use ($userSessionId) {
             DB::table(table: UsersSessions::$tableName)
-                ->where(UsersSessions::$id, '=', $accessToken->userSessionId)
+                ->where(UsersSessions::$id, '=', $userSessionId)
                 ->update([
                     UsersSessions::$isLogin => 0,
                     UsersSessions::$logoutCount => DB::raw(UsersSessions::$logoutCount . ' + 1'),
@@ -89,11 +86,7 @@ trait AllShared
     }
     public function getOurUserProfile(Request $request, $appId)
     {
-        $resultAccessToken = $this->getAccessToken($request, $appId);
-        if ($resultAccessToken->isSuccess == false) {
-            return $this->responseError($resultAccessToken);
-        }
-        $accessToken = $resultAccessToken->message;
+        $accessToken = (new LoginController($this->appId))->readAccessToken($request);
 
         $data = DB::table(table: Users::$tableName)
             ->where(Users::$tableName . '.' . Users::$id, '=', $accessToken->userId)

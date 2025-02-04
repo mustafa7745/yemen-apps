@@ -15,6 +15,7 @@ use App\Models\Stores;
 use App\Models\SharedStoresConfigs;
 use App\Models\StoreProducts;
 use App\Traits\AllShared;
+use App\Traits\StoreManagerControllerShared;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -27,7 +28,7 @@ class StoreManagerControllerUpdate extends Controller
 {
     private $appId = 1;
 
-    use AllShared;
+    use StoreManagerControllerShared;
 
     public function updateProductImage(Request $request)
     {
@@ -575,6 +576,8 @@ class StoreManagerControllerUpdate extends Controller
 
     public function logout(Request $request)
     {
-        return $this->ourLogout($request, $this->appId);
+        $myData = $this->getMyData($request, false);
+        $accessToken = $myData['accessToken'];
+        return $this->ourLogout($$accessToken->userSessionId);
     }
 }
