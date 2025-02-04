@@ -313,11 +313,7 @@ class StoreManagerControllerGet extends Controller
         $deviceId = $request->input('deviceId');
 
         // print_r($request->all());
-        $myResult = $loginController->readAccessToken($request);
-        if ($myResult->isSuccess == false) {
-            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
-        }
-        $accessToken = $myResult->message;
+        $accessToken = $loginController->readAccessToken($request);
 
 
         $data = DB::table(Stores::$tableName)
