@@ -1881,7 +1881,7 @@ trait AllShared
         }
         return $myProcess;
     }
-    public function validRequestV1(Request $request, $rule)
+    public function validRequestV1($request, $rule)
     {
         $validator = Validator::make($request->all(), $rule);
 
