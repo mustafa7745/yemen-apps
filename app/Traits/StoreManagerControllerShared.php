@@ -36,7 +36,7 @@ trait StoreManagerControllerShared
             ->where(Products::$storeId, '=', $storeId)
             ->where(Products::$id, '=', $productId)
             ->first(
-                [Products::$id]
+                [Products::$tableName . '.' . Products::$id]
             );
 
         if ($data == null) {
