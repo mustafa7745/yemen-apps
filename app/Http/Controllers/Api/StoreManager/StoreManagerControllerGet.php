@@ -315,6 +315,12 @@ class StoreManagerControllerGet extends Controller
 
         $data = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$userId, '=', $accessToken->userId)
+            ->join(
+                Currencies::$tableName,
+                Currencies::$tableName . '.' . Currencies::$id,
+                '=',
+                Stores::$tableName . '.' . Stores::$deliveryPriceCurrency
+            )
 
             ->get([
                 Stores::$tableName . '.' . Stores::$id,
@@ -323,6 +329,9 @@ class StoreManagerControllerGet extends Controller
                 Stores::$tableName . '.' . Stores::$logo,
                 Stores::$tableName . '.' . Stores::$cover,
                 Stores::$tableName . '.' . Stores::$latLng,
+                Stores::$tableName . '.' . Stores::$deliveryPriceCurrency,
+                Currencies::$tableName . '.' . Currencies::$id . 'as currencyId',
+                Currencies::$tableName . '.' . Currencies::$id . 'as currencyName',
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$categories,
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$sections,
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$nestedSections,
