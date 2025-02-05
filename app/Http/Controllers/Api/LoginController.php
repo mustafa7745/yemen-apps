@@ -260,10 +260,7 @@ class LoginController
         $accessToken = $this->getAccessTokenByToken($request);
         if ($this->compareExpiration($accessToken)) {
             $accessToken = $this->refreshAccessToken($accessToken->token);
-            print_r("sff");
-            print_r($accessToken);
         }
-        print_r($accessToken);
         return ["token" => $accessToken->token, 'expireAt' => $accessToken->expireAt];
     }
     private function refreshAccessToken($preToken)
@@ -277,7 +274,7 @@ class LoginController
                 AccessTokens1::$refreshCount => DB::raw(AccessTokens1::$refreshCount . ' + 1'),
                 AccessTokens1::$updatedAt => now()->format('Y-m-d H:i:s'),
             ]);
-        return $this->getAccessTokenByIDENTIFIER(AccessTokens1::$token, $preToken);
+        return $this->getAccessTokenByIDENTIFIER(AccessTokens1::$token, $newToken);
     }
     public function login(Request $request)
     {
