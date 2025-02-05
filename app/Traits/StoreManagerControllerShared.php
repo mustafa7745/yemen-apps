@@ -26,6 +26,9 @@ trait StoreManagerControllerShared
     }
     public function checkIfProductInStore($productId, $storeId)
     {
+        print_r($productId);
+        print_r($storeId);
+
         $data = DB::table(table: Products::$tableName)
             // ->join(
             //     Stores::$tableName,
