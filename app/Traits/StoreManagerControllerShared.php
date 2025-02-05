@@ -13,7 +13,7 @@ trait StoreManagerControllerShared
     public function getMyData($request, $withStore = true, $myProcessName = null)
     {
         $app = $this->getMyApp($request, $this->appId);
-        $accessToken = (new LoginController($this->appId))->getAccessTokenByToken($request);
+        $accessToken = (new LoginController($this->appId))->readAccessToken($request);
         $store = null;
         if ($withStore === true) {
             $store = $this->getMyStore($request, $accessToken->userId);

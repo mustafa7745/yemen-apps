@@ -22,7 +22,60 @@ class LoginController
     {
         $this->appId = $appId;
     }
+    public function login(Request $request)
+    {
+        $app = $this->getMyApp($request);
+        if ($app->id != $this->appId) {
+            throw new CustomException("App not in Auth", 0, 403);
+        }
+        $this->validRequestV1($request, [
+            'countryCode' => 'required|string|max:4',
+            'phone' => 'required|string|max:9',
+            'password' => 'required|string|max:20'
+        ]);
 
+
+        $countryCode = $request->input('countryCode');
+        $phone = $request->input('phone');
+        $password = $request->input('password');
+
+        $device = $this->getDevice(request: $request);
+        $deviceSession = $this->getDeviceSession($request, $device->id);
+
+        $myProcess = $this->checkProcessV1('login', $device->id, null);
+
+
+        $user = DB::table(table: Users::$tableName)
+            ->where(Users::$tableName . '.' . Users::$phone, '=', $countryCode . $phone)
+            ->first();
+        if ($user == null || Hash::check($password, $user->password) == false) {
+            DB::table(FailProcesses::$tableName)->insert([
+                FailProcesses::$id => null,
+                FailProcesses::$myProcessId => $myProcess->id,
+                FailProcesses::$deviceId => $device->id,
+                FailProcesses::$userId => null,
+                FailProcesses::$createdAt => now()->format('Y-m-d H:i:s'),
+            ]);
+            throw new CustomException("Phone Or Password Error", 0, 400);
+        }
+        //////
+        $this->updateAppToken($request, $deviceSession);
+        /////
+        $userSession = $this->getFinalUserSession($user->id, $deviceSession->id);
+        $accessToken = $this->getAccessTokenByUserSessionId($userSession->id);
+        // print_r($accessToken);
+        $res = ["token" => $accessToken->token, 'expireAt' => $accessToken->expireAt];
+        return response()->json($res);
+    }
+    function readAccessToken($request)
+    {
+        $accessToken = $this->getAccessTokenByToken($request);
+        if ($this->compareExpiration($accessToken)) {
+            throw new CustomException("AT Expired", 1000, 403);
+        }
+        return $accessToken;
+    }
+    ///
     private function updateAppToken(Request $request, $deviceSession)
     {
         $this->validRequestV1($request, [
@@ -74,7 +127,7 @@ class LoginController
             return false;
         }
     }
-    private function getUserFinalSession($userId, $deviceSessionId)
+    private function getFinalUserSession($userId, $deviceSessionId)
     {
         $userSessions = $this->getUserSessions($userId);
 
@@ -107,15 +160,6 @@ class LoginController
             ]);
             return $this->getUserSession($insertedId);
         }
-    }
-    //get all user sessions of this app 
-    function readAccessToken($request)
-    {
-        $accessToken = $this->getAccessTokenByToken($request);
-        if ($this->compareExpiration($accessToken)) {
-            throw new CustomException("AT Expired", 1000, 403);
-        }
-        return $accessToken;
     }
     private function getUserSessions($userId)
     {
@@ -276,52 +320,7 @@ class LoginController
             ]);
         return $this->getAccessTokenByIDENTIFIER(AccessTokens1::$token, $newToken);
     }
-    public function login(Request $request)
-    {
-        $app = $this->getMyApp($request);
-        if ($app->id != $this->appId) {
-            throw new CustomException("App not in Auth", 0, 403);
-        }
-        $this->validRequestV1($request, [
-            'countryCode' => 'required|string|max:4',
-            'phone' => 'required|string|max:9',
-            'password' => 'required|string|max:20'
-        ]);
-
-
-        $countryCode = $request->input('countryCode');
-        $phone = $request->input('phone');
-        $password = $request->input('password');
-
-        $device = $this->getDevice(request: $request);
-        $deviceSession = $this->getDeviceSession($request, $device->id);
-
-        $myProcess = $this->checkProcessV1('login', $device->id, null);
-
-
-        $user = DB::table(table: Users::$tableName)
-            ->where(Users::$tableName . '.' . Users::$phone, '=', $countryCode . $phone)
-            ->first();
-        if ($user == null || Hash::check($password, $user->password) == false) {
-            DB::table(FailProcesses::$tableName)->insert([
-                FailProcesses::$id => null,
-                FailProcesses::$myProcessId => $myProcess->id,
-                FailProcesses::$deviceId => $device->id,
-                FailProcesses::$userId => null,
-                FailProcesses::$createdAt => now()->format('Y-m-d H:i:s'),
-            ]);
-            throw new CustomException("Phone Or Password Error", 0, 400);
-        }
-        //////
-        $this->updateAppToken($request, $deviceSession);
-        /////
-        $userSession = $this->getUserFinalSession($user->id, $deviceSession->id);
-        $accessToken = $this->getAccessTokenByUserSessionId($userSession->id);
-        // print_r($accessToken);
-        $res = ["token" => $accessToken->token, 'expireAt' => $accessToken->expireAt];
-        return response()->json($res);
-    }
-    function getAccessTokenByToken($request)
+    private function getAccessTokenByToken($request)
     {
         $this->validRequestV1($request, [
             'accessToken' => 'required|string|max:255',
@@ -338,7 +337,7 @@ class LoginController
         }
         return $accessToken;
     }
-    function getAccessTokenByIDENTIFIER($column, $value)
+    private function getAccessTokenByIDENTIFIER($column, $value)
     {
         return DB::table(table: AccessTokens1::$tableName)
             ->where(AccessTokens1::$tableName . '.' . $column, '=', $value)
