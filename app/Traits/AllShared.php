@@ -1939,7 +1939,7 @@ trait AllShared
     public function getMyData($request, $appId = null, $withStore = true, $myProcessName = null)
     {
         $app = $this->getMyApp($request, $appId);
-        $accessToken = (new LoginController($this->appId))->readAccessToken($request);
+        $accessToken = (new LoginController($app->id))->readAccessToken($request);
         $store = null;
         if ($withStore === true) {
             $store = $this->getMyStore($request, $accessToken->userId);
