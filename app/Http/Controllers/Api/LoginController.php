@@ -113,7 +113,7 @@ class LoginController
     {
         $accessToken = $this->getAccessTokenByToken($request);
         if ($this->compareExpiration($accessToken)) {
-            throw new CustomException("AT Expired", 2000, 403);
+            throw new CustomException("AT Expired", 1000, 403);
         }
         return $accessToken;
     }
