@@ -1,8 +1,5 @@
 <?php
 namespace App\Traits;
-use App\Models\Apps;
-use DB;
-use Illuminate\Http\Request;
 
 trait UsersControllerShared
 {
