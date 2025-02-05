@@ -10,32 +10,5 @@ trait StoreManagerControllerShared
 {
     use AllShared;
     public $appId = 1;
-    public function getMyData($request, $withStore = true, $myProcessName = null)
-    {
-        $app = $this->getMyApp($request, $this->appId);
-        $accessToken = (new LoginController($this->appId))->readAccessToken($request);
-        $store = null;
-        if ($withStore === true) {
-            $store = $this->getMyStore($request, $accessToken->userId);
-        }
-        $myProcess = null;
-        if ($myProcessName != null) {
-            $myProcess = $this->checkProcessV1($myProcessName, $accessToken->deviceId, $accessToken->userId);
-        }
-        return ['app' => $app, 'accessToken' => $accessToken, 'store' => $store, 'myProcess' => $myProcess];
-    }
-    public function checkIfProductInStore($productId, $storeId)
-    {
-        $data = DB::table(table: Products::$tableName)
-            ->where(Products::$tableName . '.' . Products::$storeId, '=', $storeId)
-            ->where(Products::$tableName . '.' . Products::$id, '=', $productId)
-            ->first(
-                [Products::$tableName . '.' . Products::$id]
-            );
 
-        if ($data == null) {
-            throw new CustomException("Not have permission to update this product ", 0, 403);
-            # code...
-        }
-    }
 }

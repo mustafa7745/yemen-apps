@@ -178,7 +178,7 @@ class StoreManagerControllerUpdate extends Controller
         $productName = $request->input('productName');
 
         ///
-        $myData = $this->getMyData($request, true);
+        $myData = $this->getMyData($request, $this->appId);
         $store = $myData['store'];
         $this->checkIfProductInStore($productId, $store->id);
         ///
@@ -195,7 +195,7 @@ class StoreManagerControllerUpdate extends Controller
         $productId = $request->input('productId');
         $description = $request->input('description');
         ///
-        $myData = $this->getMyData($request, true);
+        $myData = $this->getMyData($request, $this->appId);
         $store = $myData['store'];
         $this->checkIfProductInStore($productId, $store->id);
         ///
@@ -468,7 +468,7 @@ class StoreManagerControllerUpdate extends Controller
 
         return DB::transaction(function () use ($request) {
 
-            $myData = $this->getMyData($request, true);
+            $myData = $this->getMyData($request, $this->appId);
             $accessToken = $myData['accessToken'];
             $store = $myData['app'];
 
@@ -569,7 +569,7 @@ class StoreManagerControllerUpdate extends Controller
 
     public function logout(Request $request)
     {
-        $myData = $this->getMyData($request, false);
+        $myData = $this->getMyData($request, $this->appId, false);
         $accessToken = $myData['accessToken'];
         return $this->ourLogout($accessToken->userSessionId);
     }

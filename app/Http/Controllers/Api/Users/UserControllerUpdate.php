@@ -9,15 +9,14 @@ use Illuminate\Http\Request;
 class UserControllerUpdate extends Controller
 {
     use UsersControllerShared;
-    use AllShared;
 
 
 
     public function logout(Request $request)
     {
-        $myData = $this->getMyData($request, false);
+        $myData = $this->getMyData($request, null, false);
         $accessToken = $myData['accessToken'];
-        return $this->ourLogout($$accessToken->userSessionId);
+        return $this->ourLogout($accessToken->userSessionId);
     }
     public function updateProfile(Request $request)
     {

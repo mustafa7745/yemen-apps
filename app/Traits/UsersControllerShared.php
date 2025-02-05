@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 trait UsersControllerShared
 {
+    
+    use AllShared;
     // public function getMyApp(Request $request)
     // {
     //     $sha = $request->input('sha');

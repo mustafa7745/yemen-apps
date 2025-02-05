@@ -657,7 +657,7 @@ class StoreManagerControllerAdd extends Controller
     public function addAds(Request $request)
     {
         return DB::transaction(function () use ($request) {
-            $myData = $this->getMyData($request);
+            $myData = $this->getMyData($request, $this->appId);
             $accessToken = $myData['accessToken'];
             $store = $myData['store'];
             $this->validRequestV1($request, [
