@@ -329,7 +329,7 @@ class StoreManagerControllerGet extends Controller
                 Stores::$tableName . '.' . Stores::$logo,
                 Stores::$tableName . '.' . Stores::$cover,
                 Stores::$tableName . '.' . Stores::$latLng,
-                Stores::$tableName . '.' . Stores::$deliveryPriceCurrency,
+                Stores::$tableName . '.' . Stores::$deliveryPrice,
                 Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
                 Currencies::$tableName . '.' . Currencies::$id . ' as currencyName',
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$categories,
