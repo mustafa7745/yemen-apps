@@ -167,10 +167,7 @@ class StoreManagerControllerUpdate extends Controller
     }
     public function updateProductName(Request $request)
     {
-        $myData = $this->getMyData($request, true);
-        // $accessToken = $myData['accessToken'];
-        $store = $myData['store'];
-        // print_r($store);
+
 
         $this->validRequestV1($request, [
             'productId' => 'required|string|max:11',
@@ -180,7 +177,11 @@ class StoreManagerControllerUpdate extends Controller
         $productId = $request->input('productId');
         $productName = $request->input('productName');
 
+        ///
+        $myData = $this->getMyData($request, true);
+        $store = $myData['store'];
         $this->checkIfProductInStore($productId, $store->id);
+        ///
         DB::table(table: Products::$tableName)
             ->where(Products::$id, '=', $productId)
             ->update(
@@ -193,6 +194,11 @@ class StoreManagerControllerUpdate extends Controller
     {
         $productId = $request->input('productId');
         $description = $request->input('description');
+        ///
+        $myData = $this->getMyData($request, true);
+        $store = $myData['store'];
+        $this->checkIfProductInStore($productId, $store->id);
+        ///
 
         DB::table(table: Products::$tableName)
             ->where(Products::$id, '=', $productId)
@@ -207,8 +213,11 @@ class StoreManagerControllerUpdate extends Controller
         $storeProductId = $request->input('storeProductId');
         $optionId = $request->input('optionId');
 
+
+
         $option = DB::table(table: Options::$tableName)
             ->where(Options::$id, '=', $optionId)->sole();
+
 
         DB::table(table: StoreProducts::$tableName)
             ->where(StoreProducts::$id, '=', $storeProductId)

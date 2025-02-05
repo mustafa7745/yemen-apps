@@ -31,7 +31,7 @@ class UserControllerGet extends Controller
     {
         $app = $this->getMyApp($request);
         $loginController = (new LoginController($app->id));
-        $res = $loginController->loginNew($request);
+        $res = $loginController->login($request);
         if ($res->isSuccess == false) {
             return $this->responseError2($res->message, [], $res->code, $res->responseCode);
         }

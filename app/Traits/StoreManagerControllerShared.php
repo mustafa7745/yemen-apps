@@ -26,16 +26,7 @@ trait StoreManagerControllerShared
     }
     public function checkIfProductInStore($productId, $storeId)
     {
-        // print_r($productId);
-        // print_r($storeId);
-
         $data = DB::table(table: Products::$tableName)
-            // ->join(
-            //     Stores::$tableName,
-            //     Stores::$tableName . '.' . Stores::$id,
-            //     '=',
-            //     Products::$tableName . '.' . Products::$storeId
-            // )
             ->where(Products::$tableName . '.' . Products::$storeId, '=', $storeId)
             ->where(Products::$tableName . '.' . Products::$id, '=', $productId)
             ->first(
@@ -46,6 +37,5 @@ trait StoreManagerControllerShared
             throw new CustomException("Not have permission to update this product ", 0, 403);
             # code...
         }
-
     }
 }
