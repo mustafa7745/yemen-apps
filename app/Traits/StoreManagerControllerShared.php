@@ -27,12 +27,12 @@ trait StoreManagerControllerShared
     public function checkIfProductInStore($productId, $storeId)
     {
         $data = DB::table(table: Products::$tableName)
-            ->join(
-                Stores::$tableName,
-                Stores::$tableName . '.' . Stores::$id,
-                '=',
-                Products::$tableName . '.' . Products::$storeId
-            )
+            // ->join(
+            //     Stores::$tableName,
+            //     Stores::$tableName . '.' . Stores::$id,
+            //     '=',
+            //     Products::$tableName . '.' . Products::$storeId
+            // )
             ->where(Products::$tableName . '.' . Products::$storeId, '=', $storeId)
             ->where(Products::$tableName . '.' . Products::$id, '=', $productId)
             ->first(
