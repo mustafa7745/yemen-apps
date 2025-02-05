@@ -1950,7 +1950,15 @@ trait AllShared
         }
         $myProcess = null;
         if ($myProcessName != null) {
-            $myProcess = $this->checkProcessV1($myProcessName, $accessToken->deviceId, $accessToken->userId);
+            if ($withUser === true) {
+                $myProcess = $this->checkProcessV1($myProcessName, $accessToken->deviceId, $accessToken->userId);
+            } else {
+                $this->validRequestV1($request, [
+                    'storeId' => 'required|string|max:100',
+                ]);
+                $deviceId = $request->input('deviceId');
+                $myProcess = $this->checkProcessV1($myProcessName, $deviceId, null);
+            }
         }
         return ['app' => $app, 'accessToken' => $accessToken, 'store' => $store, 'myProcess' => $myProcess];
     }
