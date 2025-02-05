@@ -108,7 +108,15 @@ class LoginController
             return $this->getUserSession($insertedId);
         }
     }
-    //get all user sessions of this app
+    //get all user sessions of this app 
+    function readAccessToken($request)
+    {
+        $accessToken = $this->getAccessTokenByToken($request);
+        if ($this->compareExpiration($accessToken)) {
+            throw new CustomException("AT Expired", 2000, 403);
+        }
+        return $accessToken;
+    }
     private function getUserSessions($userId)
     {
         return DB::table(table: UsersSessions::$tableName)
