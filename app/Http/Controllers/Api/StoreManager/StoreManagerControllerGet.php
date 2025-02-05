@@ -310,7 +310,7 @@ class StoreManagerControllerGet extends Controller
 
 
         // print_r($request->all());
-        $accessToken = (new LoginController($this->appId))->readAccessToken($request); 
+        $accessToken = (new LoginController($this->appId))->readAccessToken($request);
 
 
         $data = DB::table(Stores::$tableName)
@@ -747,7 +747,9 @@ class StoreManagerControllerGet extends Controller
 
     public function login(Request $request)
     {
-        return (new LoginController($this->appId))->login($request);
+        $myData = $this->getMyData($request, $this->appId, false, false, 'login');
+        $app = $myData['app'];
+        return (new LoginController($app->id))->login($request);
     }
     public function refreshToken(Request $request)
     {
