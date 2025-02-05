@@ -318,6 +318,7 @@ class LoginController
         /////
         $userSession = $this->getUserFinalSession($user->id, $deviceSession->id);
         $accessToken = $this->getAccessTokenByUserSessionId($userSession->id);
+        print_r($accessToken);
         $res = ["token" => $accessToken->token, 'expireAt' => $accessToken->expireAt];
         return response()->json($res);
     }
