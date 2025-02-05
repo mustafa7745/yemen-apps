@@ -251,9 +251,9 @@ class LoginController
     {
         $accessToken = $this->getAccessTokenByToken($request);
         if ($this->compareExpiration($accessToken)) {
-            return $this->refreshAccessToken($$accessToken->token);
+            $accessToken = $this->refreshAccessToken($$accessToken->token);
         }
-        return $accessToken;
+        return ["token" => $accessToken->token, 'expireAt' => $accessToken->expireAt];
     }
     private function refreshAccessToken($preToken)
     {

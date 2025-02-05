@@ -1197,11 +1197,8 @@ trait AllShared
     }
     public function refreshOurToken(Request $request, $appId)
     {
-        $token = $request->input('accessToken');
-        $deviceId = $request->input('deviceId');
-
-        $loginController = (new LoginController($appId));
-        return $loginController->readAndRefreshAccessToken($token, $deviceId);
+        return (new LoginController($appId))->readAndRefreshAccessToken($request);
+        // return $loginController;
     }
     public function confirmOurOrder(Request $request, $appId)
     {

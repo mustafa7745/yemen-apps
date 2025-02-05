@@ -751,11 +751,7 @@ class StoreManagerControllerGet extends Controller
     }
     public function refreshToken(Request $request)
     {
-        // $token = $request->input('accessToken');
-        // $deviceId = $request->input('deviceId');
-
-        $loginController = (new LoginController($this->appId));
-        return $loginController->readAndRefreshAccessToken($request);
+        return $this->refreshOurToken($request, $this->appId);
     }
     public function getUserProfile(Request $request)
     {
