@@ -15,13 +15,14 @@ class UserControllerUpdate extends Controller
 
     public function logout(Request $request)
     {
-        $app = $this->getMyApp($request);
-        return $this->ourLogout($request, $app->id);
+        $myData = $this->getMyData($request, false);
+        $accessToken = $myData['accessToken'];
+        return $this->ourLogout($$accessToken->userSessionId);
     }
     public function updateProfile(Request $request)
     {
         $app = $this->getMyApp($request);
         return $this->updateOurProfile($request, $app->id);
     }
-    
+
 }

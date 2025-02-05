@@ -30,12 +30,7 @@ class UserControllerGet extends Controller
     public function login(Request $request)
     {
         $app = $this->getMyApp($request);
-        $loginController = (new LoginController($app->id));
-        $res = $loginController->login($request);
-        if ($res->isSuccess == false) {
-            return $this->responseError2($res->message, [], $res->code, $res->responseCode);
-        }
-        return response()->json($res->message);
+        return (new LoginController($app->id))->login($request);
     }
     public function refreshToken(Request $request)
     {
