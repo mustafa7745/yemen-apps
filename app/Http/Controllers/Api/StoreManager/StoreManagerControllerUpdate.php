@@ -179,7 +179,7 @@ class StoreManagerControllerUpdate extends Controller
         $productId = $request->input('productId');
         $productName = $request->input('productName');
 
-        // $this->checkIfProductInStore($productId, $store->id);
+        $this->checkIfProductInStore($productId, $store->id);
         DB::table(table: Products::$tableName)
             ->where(Products::$id, '=', $productId)
             ->update(
