@@ -1923,12 +1923,12 @@ trait AllShared
 
 
         $storeId = $request->input('storeId');
-        print_r($storeId);
+        // print_r($storeId);
         $store = DB::table(Stores::$tableName)
             ->where(Stores::$userId, '=', $userId)
             ->where(Stores::$id, $storeId)
             ->first();
-        print_r($store);
+        // print_r($store);
 
         if ($store == null) {
             throw new CustomException("This Store not for you", 0, 443);
