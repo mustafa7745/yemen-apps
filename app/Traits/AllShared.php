@@ -1921,7 +1921,9 @@ trait AllShared
             'storeId' => 'required|string|max:9'
         ]);
 
+
         $storeId = $request->input('storeId');
+        print_r($storeId);
         $store = DB::table(Stores::$tableName)
             ->where(Stores::$userId, '=', $userId)
             ->where(Stores::$id, $storeId)
