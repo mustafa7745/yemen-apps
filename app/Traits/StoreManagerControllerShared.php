@@ -33,8 +33,8 @@ trait StoreManagerControllerShared
                 '=',
                 Products::$tableName . '.' . Products::$storeId
             )
-            ->where(Products::$storeId, '=', $storeId)
-            ->where(Products::$id, '=', $productId)
+            ->where(Products::$tableName . '.' . Products::$storeId, '=', $storeId)
+            ->where(Products::$tableName . '.' . Products::$id, '=', $productId)
             ->first(
                 [Products::$tableName . '.' . Products::$id]
             );
