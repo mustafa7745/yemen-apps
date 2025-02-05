@@ -1954,7 +1954,7 @@ trait AllShared
                 $myProcess = $this->checkProcessV1($myProcessName, $accessToken->deviceId, $accessToken->userId);
             } else {
                 $this->validRequestV1($request, [
-                    'storeId' => 'required|string|max:100',
+                    'deviceId' => 'required|string|max:100',
                 ]);
                 $deviceId = $request->input('deviceId');
                 $myProcess = $this->checkProcessV1($myProcessName, $deviceId, null);
