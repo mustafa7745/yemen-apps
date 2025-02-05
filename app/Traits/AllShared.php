@@ -1928,6 +1928,8 @@ trait AllShared
             ->where(Stores::$userId, '=', $userId)
             ->where(Stores::$id, $storeId)
             ->first();
+        print_r($store);
+
         if ($store == null) {
             throw new CustomException("This Store not for you", 0, 443);
         }
