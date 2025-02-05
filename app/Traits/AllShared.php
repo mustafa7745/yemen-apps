@@ -1936,10 +1936,14 @@ trait AllShared
         return $store;
     }
 
-    public function getMyData($request, $appId = null, $withStore = true, $myProcessName = null)
+    public function getMyData($request, $appId = null, $withStore = true, $withUser = null, $myProcessName = null)
     {
         $app = $this->getMyApp($request, $appId);
-        $accessToken = (new LoginController($app->id))->readAccessToken($request);
+        $accessToken = null;
+        if ($withUser != null) {
+            $accessToken = (new LoginController($app->id))->readAccessToken($request);
+        }
+
         $store = null;
         if ($withStore === true) {
             $store = $this->getMyStore($request, $accessToken->userId);
