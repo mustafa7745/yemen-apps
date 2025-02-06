@@ -11,6 +11,7 @@ use App\Models\DeliveryMen;
 use App\Models\NestedSections;
 use App\Models\Orders;
 use App\Models\OrdersAmounts;
+use App\Models\OrderSituations;
 use App\Models\OrdersProducts;
 use App\Models\ProductViews;
 use App\Models\Sections;
@@ -772,6 +773,27 @@ class StoreManagerControllerGet extends Controller
     {
         // $nestedSectionId = $request->input('nestedSectionId');
         $data = DB::table(Currencies::$tableName)
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function getOrderSituations(Request $request)
+    {
+        $myData = $this->getMyData($request, $this->appId, false);
+        $accessToken = $myData['accessToken'];
+
+        $storeId = $request->input('ostoreId');
+        $processPoints = $this->processPoints($storeId);
+        if ($processPoints !== true) {
+            return $processPoints;
+        }
+
+
+        return $this->getOurHome($request);
+        $storeId = $request->input('storeId');
+        // $nestedSectionId = $request->input('nestedSectionId');
+        $data = DB::table(OrderSituations::$tableName)
             ->get();
 
         return response()->json($data);

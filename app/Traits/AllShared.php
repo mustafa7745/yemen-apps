@@ -1785,15 +1785,15 @@ trait AllShared
     {
         $subdcription = DB::table(StoreSubscriptions::$tableName)
             ->where(StoreSubscriptions::$tableName . '.' . StoreSubscriptions::$storeId, '=', $storeId)
-            ->sole();
+            ->first();
 
-        // print_r("222");
-        if ($points > $subdcription->points) {
-            // print_r("333");
-
-            return $this->responseError2("ليس لديك رصيد نقاط كافي للقراءة", [], 25, 403);
+        if ($subdcription == null) {
+            throw new CustomException("This Store Not Have Subscription", 0, 442);
         }
-        // print_r("444");
+
+        if ($points > $subdcription->points) {
+            throw new CustomException("ليس لديك رصيد نقاط كافي للقراءة", 25, 442);
+        }
 
         DB::table(StoreSubscriptions::$tableName)
             ->where(StoreSubscriptions::$tableName . '.' . StoreSubscriptions::$storeId, '=', $storeId)
@@ -1961,6 +1961,10 @@ trait AllShared
             }
         }
         return ['app' => $app, 'accessToken' => $accessToken, 'store' => $store, 'myProcess' => $myProcess];
+    }
+    public function getMyDataWithPoints($request, $appId = null, $withStore = true, $withUser = true, $myProcessName = null)
+    {
+        $myData = $this->getMyData($request, $appId, $withStore, $withStore, $myProcessName);
     }
     public function checkIfProductInStore($productId, $storeId)
     {
