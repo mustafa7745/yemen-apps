@@ -29,7 +29,7 @@ class UserControllerGet extends Controller
 
     public function login(Request $request)
     {
-        $myData = $this->getMyData($request, null, false, false, 'login');
+        $myData = $this->getMyData(request: $request, appId: null, withStore: false, withUser: false, myProcessName: 'login');
         $app = $myData['app'];
         return (new LoginController($app->id))->login($request);
     }

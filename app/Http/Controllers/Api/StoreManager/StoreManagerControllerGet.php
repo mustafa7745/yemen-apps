@@ -757,7 +757,7 @@ class StoreManagerControllerGet extends Controller
 
     public function login(Request $request)
     {
-        $myData = $this->getMyData($request, $this->appId, false, false, 'login');
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, withUser: false, myProcessName: 'login');
         $app = $myData['app'];
         return (new LoginController($app->id))->login($request);
     }
@@ -780,19 +780,7 @@ class StoreManagerControllerGet extends Controller
 
     public function getOrderSituations(Request $request)
     {
-        $myData = $this->getMyData($request, $this->appId, false);
-        $accessToken = $myData['accessToken'];
-
-        $storeId = $request->input('ostoreId');
-        $processPoints = $this->processPoints($storeId);
-        if ($processPoints !== true) {
-            return $processPoints;
-        }
-
-
-        return $this->getOurHome($request);
-        $storeId = $request->input('storeId');
-        // $nestedSectionId = $request->input('nestedSectionId');
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
         $data = DB::table(OrderSituations::$tableName)
             ->get();
 

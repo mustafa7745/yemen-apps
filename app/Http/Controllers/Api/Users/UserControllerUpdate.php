@@ -14,7 +14,7 @@ class UserControllerUpdate extends Controller
 
     public function logout(Request $request)
     {
-        $myData = $this->getMyData($request, null, false);
+        $myData = $this->getMyData(request: $request, appId: null, withStore: false);
         $accessToken = $myData['accessToken'];
         return $this->ourLogout($accessToken->userSessionId);
     }

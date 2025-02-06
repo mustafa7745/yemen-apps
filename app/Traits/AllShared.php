@@ -1801,7 +1801,6 @@ trait AllShared
                 StoreSubscriptions::$points => DB::raw(StoreSubscriptions::$points . "- $points"),
                 StoreSubscriptions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s')
             ]);
-        return true;
     }
     function checkProcess($processName, $deviceId, $userId)
     {
@@ -1936,7 +1935,7 @@ trait AllShared
         return $store;
     }
 
-    public function getMyData($request, $appId = null, $withStore = true, $withUser = true, $myProcessName = null)
+    public function getMyData($request, $appId = null, $withStore = true, $storePoints = null, $withUser = true, $myProcessName = null, )
     {
         $app = $this->getMyApp($request, $appId);
         $accessToken = null;
@@ -1947,6 +1946,9 @@ trait AllShared
         $store = null;
         if ($withStore === true) {
             $store = $this->getMyStore($request, $accessToken->userId);
+            if ($storePoints != null) {
+                $this->processPoints($store->id, $storePoints);
+            }
         }
         $myProcess = null;
         if ($myProcessName != null) {
@@ -1962,10 +1964,7 @@ trait AllShared
         }
         return ['app' => $app, 'accessToken' => $accessToken, 'store' => $store, 'myProcess' => $myProcess];
     }
-    public function getMyDataWithPoints($request, $appId = null, $withStore = true, $withUser = true, $myProcessName = null)
-    {
-        $myData = $this->getMyData($request, $appId, $withStore, $withStore, $myProcessName);
-    }
+
     public function checkIfProductInStore($productId, $storeId)
     {
         $data = DB::table(table: Products::$tableName)
