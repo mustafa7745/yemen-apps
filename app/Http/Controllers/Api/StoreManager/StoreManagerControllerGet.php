@@ -836,14 +836,23 @@ class StoreManagerControllerGet extends Controller
                 '=',
                 Orders::$tableName . '.' . Orders::$userId
             )
+            ->join(
+                OrderSituations::$tableName,
+                OrderSituations::$tableName . '.' . OrderSituations::$id,
+                '=',
+                Orders::$tableName . '.' . Orders::$situationId
+            )
             ->limit(7)
             ->offset($from)
             ->whereBetween(Orders::$tableName . '.' . Orders::$createdAt, [$fromDate, $toDate])
             ->orderByDesc(Orders::$tableName . '.' . Orders::$createdAt)
             ->get([
+                OrderSituations::$tableName . '.' . OrderSituations::$name . ' as situation',
                 Users::$tableName . '.' . Users::$firstName . ' as userName',
                 Users::$tableName . '.' . Users::$phone . ' as userPhone',
                 Orders::$tableName . '.' . Orders::$id . ' as id',
+                Orders::$tableName . '.' . Orders::$createdAt,
+
             ]);
 
         $orderIds = [];
