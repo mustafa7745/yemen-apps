@@ -811,8 +811,20 @@ class StoreManagerControllerGet extends Controller
 
                 return $query->where(Orders::$tableName . '.' . Orders::$situationId, '=', $situationId);
             })
+            ->join(
+                Users::$tableName,
+                Users::$tableName . '.' . Users::$id,
+                '=',
+                Orders::$tableName . '.' . Orders::$userId
+            )
+            ->limit(10)
+            ->orderByDesc(Orders::$tableName . '.' . Orders::$createdAt)
+            ->get([
+                Users::$tableName . '.' . Users::$firstName . ' as userName',
+                Users::$tableName . '.' . Users::$phone . ' as userPhone',
+                Orders::$tableName . '.' . Orders::$id . ' as id',
+            ]);
 
-            ->get();
 
 
         if ($withSituations === true) {
