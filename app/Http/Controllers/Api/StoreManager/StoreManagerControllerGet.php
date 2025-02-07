@@ -808,8 +808,9 @@ class StoreManagerControllerGet extends Controller
                     'situationId' => 'required|string|max:3',
                 ]);
                 $situationId = $request->input('situationId');
+                $situationId = json_decode($situationId);
 
-                return $query->where(Orders::$tableName . '.' . Orders::$situationId, '=', $situationId);
+                return $query->whereIn(Orders::$tableName . '.' . Orders::$situationId, $situationId);
             })
             ->join(
                 Users::$tableName,
