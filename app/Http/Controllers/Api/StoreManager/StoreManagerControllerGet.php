@@ -13,6 +13,7 @@ use App\Models\Orders;
 use App\Models\OrdersAmounts;
 use App\Models\OrderSituations;
 use App\Models\OrdersProducts;
+use App\Models\OrderStatus;
 use App\Models\ProductViews;
 use App\Models\Sections;
 use App\Models\Situations;
@@ -740,12 +741,12 @@ class StoreManagerControllerGet extends Controller
                             Orders::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                         ]
                     );
-                $insertedId = DB::table(Orders::$tableName)
+                $insertedId = DB::table(OrderStatus::$tableName)
                     ->insert([
-                        Orders::$id => null,
-                        Orders::$storeId => $order->id,
-                        Orders::$situationId => Situations::$VIEWD,
-                        Orders::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                        OrderStatus::$id => null,
+                        OrderStatus::$orderId => $order->id,
+                        OrderStatus::$situationId => Situations::$VIEWD,
+                        OrderStatus::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                     ]);
             }
             return response()->json(['orderDelivery' => $orderDelivery, 'orderProducts' => $orderProducts, 'orderPayment' => $orderPayment, 'orderDetail' => $orderDetail]);
