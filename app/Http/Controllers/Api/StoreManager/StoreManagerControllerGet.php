@@ -825,6 +825,41 @@ class StoreManagerControllerGet extends Controller
                 Orders::$tableName . '.' . Orders::$id . ' as id',
             ]);
 
+        $orderIds = [];
+        foreach ($orders as $key => $order) {
+            $orderIds[] = $order->id;
+        }
+
+        $dataOrderAmounts = DB::table(table: OrdersAmounts::$tableName)
+            ->whereIn(OrdersAmounts::$tableName . '.' . OrdersAmounts::$orderId, $orderIds)
+            ->join(
+                Currencies::$tableName,
+                Currencies::$tableName . '.' . Currencies::$id,
+                '=',
+                OrdersAmounts::$tableName . '.' . OrdersAmounts::$currencyId
+            )
+            ->get(
+                [
+                    OrdersAmounts::$tableName . '.' . OrdersAmounts::$id . ' as id',
+                    OrdersAmounts::$tableName . '.' . OrdersAmounts::$amount . ' as amount',
+                    OrdersAmounts::$tableName . '.' . OrdersAmounts::$orderId . ' as orderId',
+                    Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
+                    Currencies::$tableName . '.' . Currencies::$id . ' as currencyId'
+
+                ]
+            );
+
+        foreach ($orders as $key1 => $order) {
+            $amounts = [];
+            foreach ($dataOrderAmounts as $key2 => $amount) {
+                if ($order->id == $amount->orderId) {
+                    $amounts[] = $amount;
+                }
+            }
+            $orders[$key1]->amounts = $amounts;
+        }
+
+
 
 
         if ($withSituations === true) {
