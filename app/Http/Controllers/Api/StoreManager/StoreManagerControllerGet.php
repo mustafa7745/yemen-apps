@@ -789,9 +789,17 @@ class StoreManagerControllerGet extends Controller
     {
         $this->validRequestV1($request, [
             'from' => 'required|string|max:5',
-            // 'to' => 'required|string|max:5',
+            'fromDate' => 'required|date_format:Y-m-d',
+            'toDate' => 'required|date_format:Y-m-d',
         ]);
         $from = $request->input('from');
+        $fromDate = $request->input('fromDate');
+        $toDate = $request->input('toDate');
+
+
+        print_r($fromDate);
+        print_r($toDate);
+
         // $to = $request->input('to');
 
 
@@ -828,6 +836,7 @@ class StoreManagerControllerGet extends Controller
             )
             ->limit(7)
             ->offset($from)
+            ->whereBetween(Orders::$tableName . '.' . Orders::$createdAt, [$fromDate, $toDate])
             ->orderByDesc(Orders::$tableName . '.' . Orders::$createdAt)
             ->get([
                 Users::$tableName . '.' . Users::$firstName . ' as userName',
