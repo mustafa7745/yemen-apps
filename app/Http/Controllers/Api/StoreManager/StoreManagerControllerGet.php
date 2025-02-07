@@ -826,7 +826,7 @@ class StoreManagerControllerGet extends Controller
                 '=',
                 Orders::$tableName . '.' . Orders::$userId
             )
-            ->limit(3)
+            ->limit(7)
             ->offset($from)
             ->orderByDesc(Orders::$tableName . '.' . Orders::$createdAt)
             ->get([
