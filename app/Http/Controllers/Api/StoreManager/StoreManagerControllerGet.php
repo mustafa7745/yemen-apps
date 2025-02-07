@@ -791,15 +791,15 @@ class StoreManagerControllerGet extends Controller
         $fromDate = $request->input('fromDate');
         $toDate = $request->input('toDate');
 
-        // $this->validRequestV1($request, [
-        //     'from' => 'required|string|max:5',
-        //     'fromDate' => 'required|date_format:d-m-Y',
-        //     'toDate' => 'required|date_format:d-m-Y',
-        // ]);
+        $this->validRequestV1($request, [
+            'from' => 'required|string|max:5',
+            'fromDate' => 'required|date_format:d-m-Y',
+            'toDate' => 'required|date_format:d-m-Y',
+        ]);
 
 
-        print_r($fromDate);
-        print_r($toDate);
+        // print_r($fromDate);
+        // print_r($toDate);
 
 
         // $to = $request->input('to');
