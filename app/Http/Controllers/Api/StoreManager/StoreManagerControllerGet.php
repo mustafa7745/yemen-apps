@@ -787,15 +787,16 @@ class StoreManagerControllerGet extends Controller
 
     public function getMyOrders(Request $request, $withSituations = false)
     {
-
-        $this->validRequestV1($request, [
-            'from' => 'required|string|max:5',
-            'fromDate' => 'required|date_format:d-m-Y',
-            'toDate' => 'required|date_format:Y-m-d',
-        ]);
         $from = $request->input('from');
         $fromDate = $request->input('fromDate');
         $toDate = $request->input('toDate');
+
+        // $this->validRequestV1($request, [
+        //     'from' => 'required|string|max:5',
+        //     'fromDate' => 'required|date_format:d-m-Y',
+        //     'toDate' => 'required|date_format:Y-m-d',
+        // ]);
+
 
         // print_r($fromDate);
         // print_r($toDate);
