@@ -805,7 +805,7 @@ class StoreManagerControllerGet extends Controller
             ->when($withSituations === false, function ($query) use ($request, $situation) {
 
                 $this->validRequestV1($request, [
-                    'situationId' => 'required|string|max:3',
+                    'situationId' => 'required|string|max:100',
                 ]);
                 $situationId = $request->input('situationId');
                 $situationId = json_decode($situationId);
