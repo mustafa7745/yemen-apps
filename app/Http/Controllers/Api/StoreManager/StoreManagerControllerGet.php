@@ -727,7 +727,7 @@ class StoreManagerControllerGet extends Controller
 
             $orderId = $request->input('orderId');
 
-            $order = DB::table(OrderSituations::$tableName)
+            $order = DB::table(Orders::$tableName)
                 ->where(Orders::$tableName . '.' . Orders::$id, '=', $orderId)
                 ->where(Orders::$tableName . '.' . Orders::$situationId, '=', Situations::$NEW)
                 ->first();
