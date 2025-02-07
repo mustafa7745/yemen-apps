@@ -797,8 +797,8 @@ class StoreManagerControllerGet extends Controller
         $fromDate = $request->input('fromDate');
         $toDate = $request->input('toDate');
 
-        print_r($fromDate);
-        print_r($toDate);
+        // print_r($fromDate);
+        // print_r($toDate);
 
 
         // $to = $request->input('to');
