@@ -718,7 +718,7 @@ class StoreManagerControllerGet extends Controller
     }
     public function getOrderProducts(Request $request)
     {
-        DB::transaction(function () use ($request) {
+        return DB::transaction(function () use ($request) {
 
             $orderDelivery = $this->getOurOrderDelivery($request);
             $orderProducts = $this->getOurOrderProducts($request);
