@@ -15,6 +15,7 @@ use App\Models\OrderSituations;
 use App\Models\OrdersProducts;
 use App\Models\ProductViews;
 use App\Models\Sections;
+use App\Models\Situations;
 use App\Models\StoreDeliveryMen;
 use App\Models\StoreInfo;
 use App\Models\StoreNestedSections;
@@ -716,11 +717,42 @@ class StoreManagerControllerGet extends Controller
     }
     public function getOrderProducts(Request $request)
     {
-        $orderDelivery = $this->getOurOrderDelivery($request);
-        $orderProducts = $this->getOurOrderProducts($request);
-        $orderPayment = $this->getOurOrderPayment($request);
-        $orderDetail = $this->getOurOrderDetail($request);
-        return response()->json(['orderDelivery' => $orderDelivery, 'orderProducts' => $orderProducts, 'orderPayment' => $orderPayment, 'orderDetail' => $orderDetail]);
+        DB::transaction(function () use ($request) {
+
+            $orderDelivery = $this->getOurOrderDelivery($request);
+            $orderProducts = $this->getOurOrderProducts($request);
+            $orderPayment = $this->getOurOrderPayment($request);
+            $orderDetail = $this->getOurOrderDetail($request);
+
+            $orderId = $request->input('orderId');
+
+            $order = DB::table(OrderSituations::$tableName)
+                ->where(Orders::$tableName . '.' . Orders::$id, '=', $orderId)
+                ->where(Orders::$tableName . '.' . Orders::$situationId, '=', Situations::$NEW)
+                ->first();
+
+            if ($order != null) {
+                DB::table(table: Orders::$tableName)
+                    ->where(Orders::$id, '=', $order->id)
+                    ->update(
+                        [
+                            Orders::$situationId => Situations::$VIEWD,
+                            Orders::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                        ]
+                    );
+                $insertedId = DB::table(Orders::$tableName)
+                    ->insert([
+                        Orders::$id => null,
+                        Orders::$storeId => $order->id,
+                        Orders::$situationId => Situations::$VIEWD,
+                        Orders::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    ]);
+            }
+            return response()->json(['orderDelivery' => $orderDelivery, 'orderProducts' => $orderProducts, 'orderPayment' => $orderPayment, 'orderDetail' => $orderDetail]);
+
+        });
+
+
     }
     public function getDeliveryMen(Request $request)
     {
