@@ -787,6 +787,14 @@ class StoreManagerControllerGet extends Controller
 
     public function getMyOrders(Request $request, $withSituations = false)
     {
+        $this->validRequestV1($request, [
+            'from' => 'required|string|max:5',
+            // 'to' => 'required|string|max:5',
+        ]);
+        $from = $request->input('from');
+        // $to = $request->input('to');
+
+
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
         $store = $myData['store'];
         // $situation = null;
@@ -818,7 +826,8 @@ class StoreManagerControllerGet extends Controller
                 '=',
                 Orders::$tableName . '.' . Orders::$userId
             )
-            ->limit(10)
+            ->limit(3)
+            ->offset($from)
             ->orderByDesc(Orders::$tableName . '.' . Orders::$createdAt)
             ->get([
                 Users::$tableName . '.' . Users::$firstName . ' as userName',
