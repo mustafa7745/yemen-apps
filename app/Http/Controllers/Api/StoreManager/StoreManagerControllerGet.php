@@ -710,7 +710,9 @@ class StoreManagerControllerGet extends Controller
     }
     public function getOrders(Request $request)
     {
-        return $this->getOurOrders($request);
+        return $this->getMyOrders($request);
+
+        // return $this->getOurOrders($request);
     }
     public function getOrderProducts(Request $request)
     {
@@ -780,11 +782,43 @@ class StoreManagerControllerGet extends Controller
 
     public function getOrderSituations(Request $request)
     {
+        return $this->getMyOrders($request, true);
+    }
+
+    public function getMyOrders(Request $request, $withSituations = false)
+    {
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
-        $data = DB::table(OrderSituations::$tableName)
+        $store = $myData['store'];
+        // $situation = null;
+
+        // if ($withSituations === true) {
+        $situation = DB::table(OrderSituations::$tableName)
+            ->get();
+        // }
+
+
+        $orders = DB::table(Orders::$tableName)
+            ->where(Orders::$tableName . '.' . Orders::$storeId, '=', $store->id)
+            ->when($withSituations === true, function ($query) use ($situation) {
+                return $query->where(Orders::$tableName . '.' . Orders::$situationId, '=', $situation[0]->id);
+            })
+            ->when($withSituations === false, function ($query) use ($request, $situation) {
+
+                $this->validRequestV1($request, [
+                    'situationId' => 'required|string|max:3',
+                ]);
+                $situationId = $request->input('situationId');
+
+                return $query->where(Orders::$tableName . '.' . Orders::$situationId, '=', $situationId);
+            })
+
             ->get();
 
-        return response()->json($data);
+
+        if ($withSituations === true) {
+            return response()->json(['situations' => $situation, 'orders' => $orders]);
+        }
+        return response()->json($orders);
     }
 
 }
