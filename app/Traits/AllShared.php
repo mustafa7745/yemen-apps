@@ -103,50 +103,15 @@ trait AllShared
     }
     public function getOurHome($store)
     {
-        // $store = DB::table(Stores::$tableName)
-        //     ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)
-        //     ->sole([
-        //         Stores::$tableName . '.' . Stores::$id,
-        //         Stores::$tableName . '.' . Stores::$typeId,
-        //     ]);
-
-        // $typeId = $store->typeId;
-
-        // $categories = null;
-        // $sections = null;
-        // $nestedSections = null;
         $storeIdReference = null;
-        //
-
         if ($store->storeConfig != null) {
-            // // $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
-            // //     ->where(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, '=', $storeId)
-            // //     ->first();
-            // $categories = json_decode($store->storeConfig['categories']);
-            // $sections = json_decode($store->storeConfig['sections']);
-            // $nestedSections = json_decode($store->storeConfig['nestedSections']);
             $storeIdReference = $store->storeConfig['storeIdReference'];
         }
 
 
 
         $storeCategories = DB::table(table: StoreCategories::$tableName)
-
-            // if ($store->typeId == 1) {
-
-            //     if (count($categories) > 0) {
-            //         $storeCategories->whereNotIn(StoreCategories::$tableName . '.' . StoreCategories::$id, $categories);
-            //     }
-            //     $storeCategories->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $storeIdReference);
-            // } else {
-            //     // When storeConfig is null, apply the simpler condition
-            //     $storeCategories->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $store->id);
-            // }
-
             ->when($store->typeId == 1, function ($query) use ($storeIdReference) {
-                // if (count($categories) > 0) {
-                //     $query->whereNotIn(StoreCategories::$tableName . '.' . StoreCategories::$id, $categories);
-                // }
                 return $query->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $storeIdReference);
             })
             ->when($store->typeId != 1, function ($query) use ($store) {
@@ -199,23 +164,6 @@ trait AllShared
             $storeCategoriesSectionsIds[] = $storeCategorySection->id;
         }
 
-        // $storeNestedSections = DB::table(StoreNestedSections::$tableName)
-        //     ->join(
-        //         NestedSections::$tableName,
-        //         NestedSections::$tableName . '.' . NestedSections::$id,
-        //         '=',
-        //         StoreNestedSections::$tableName . '.' . StoreNestedSections::$nestedSectionId
-        //     )
-
-        //     ->whereIn(StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId, $storeCategoriesSectionsIds)
-        //     ->whereNotIn(StoreNestedSections::$tableName . '.' . StoreNestedSections::$id, $nestedSections)
-        //     ->select(
-        //         StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as id',
-        //         StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId . ' as storeSectionId',
-        //         StoreNestedSections::$tableName . '.' . StoreNestedSections::$nestedSectionId . ' as nestedSectionId',
-        //         NestedSections::$tableName . '.' . NestedSections::$name . ' as name',
-        //     )
-        //     ->get();
         $storeNestedSections = DB::table(StoreNestedSections::$tableName)
             ->join(
                 NestedSections::$tableName,
@@ -256,77 +204,6 @@ trait AllShared
             'storeSections' => $storeSections,
             'storeNestedSections' => $storeNestedSections
         ]);
-
-        // return response()->json($storeCategories);
-        // }
-        // if ($typeId == 2) {
-        //     $storeCategories = DB::table(table: StoreCategories::$tableName)
-        //         ->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $storeId)
-        //         ->join(
-        //             Categories::$tableName,
-        //             Categories::$tableName . '.' . Categories::$id,
-        //             '=',
-        //             StoreCategories::$tableName . '.' . StoreCategories::$categoryId
-        //         )
-        //         ->get(
-        //             [
-        //                 StoreCategories::$tableName . '.' . StoreCategories::$id . ' as id',
-        //                 Categories::$tableName . '.' . Categories::$id . ' as categoryId',
-        //                 Categories::$tableName . '.' . Categories::$name . ' as categoryName'
-        //             ]
-        //         );
-
-        //     $storeCategoriesIds = [];
-        //     foreach ($storeCategories as $storeCategory) {
-        //         $storeCategoriesIds[] = $storeCategory->id;
-        //     }
-        //     $storeSections = DB::table(StoreSections::$tableName)
-        //         ->whereIn(
-        //             StoreSections::$tableName . '.' . StoreSections::$storeCategoryId,
-        //             $storeCategoriesIds
-
-        //         )
-        //         ->join(
-        //             Sections::$tableName,
-        //             Sections::$tableName . '.' . Sections::$id,
-        //             '=',
-        //             StoreSections::$tableName . '.' . StoreSections::$sectionId
-        //         )
-        //         ->select(
-        //             StoreSections::$tableName . '.' . StoreSections::$id . ' as id',
-        //             StoreSections::$tableName . '.' . StoreSections::$storeCategoryId . ' as storeCategoryId',
-        //             Sections::$tableName . '.' . Sections::$name . ' as sectionName',
-        //             Sections::$tableName . '.' . Sections::$id . ' as sectionId',
-        //         )
-        //         ->get()->toArray();
-
-        //     $storeCategoriesSectionsIds = [];
-        //     foreach ($storeSections as $storeCategorySection) {
-        //         $storeCategoriesSectionsIds[] = $storeCategorySection->id;
-        //     }
-
-        //     $storeNestedSections = DB::table(StoreNestedSections::$tableName)
-        //         ->join(
-        //             NestedSections::$tableName,
-        //             NestedSections::$tableName . '.' . NestedSections::$id,
-        //             '=',
-        //             StoreNestedSections::$tableName . '.' . StoreNestedSections::$nestedSectionId
-        //         )
-
-        //         ->whereIn(StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId, $storeCategoriesSectionsIds)
-        //         ->select(
-        //             StoreNestedSections::$tableName . '.' . StoreNestedSections::$id . ' as id',
-        //             StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId . ' as storeSectionId',
-        //             StoreNestedSections::$tableName . '.' . StoreNestedSections::$nestedSectionId . ' as nestedSectionId',
-        //             NestedSections::$tableName . '.' . NestedSections::$name . ' as nestedSectionName',
-        //         )
-        //         ->get();
-
-        //     return response()->json(['storeCategories' => $storeCategories, 'storeSections' => $storeSections, 'storeNestedSections' => $storeNestedSections]);
-        // } else {
-        //     return response()->json(['message' => 'Undefiend Store type', 'code' => 0], 400);
-        // }
-
     }
     public function getOurStores($appId)
     {
