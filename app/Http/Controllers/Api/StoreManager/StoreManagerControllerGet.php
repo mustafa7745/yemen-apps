@@ -481,19 +481,19 @@ class StoreManagerControllerGet extends Controller
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
         $store = $myData['store'];
 
-        $storeId = null;
-        if ($store->typeId == 1) {
-            if ($store->storeConfig == null) {
-                throw new CustomException("This Store Confilct", 0, 443);
-            }
-            $storeId = $store->storeConfig->storeIdReference;
+        // $storeId = $store->id;
+        // if ($store->typeId == 1) {
+        //     if ($store->storeConfig == null) {
+        //         throw new CustomException("This Store Confilct", 0, 443);
+        //     }
+        //     $storeId = $store->storeConfig->storeIdReference;
 
-        } else {
-            $storeId = $store->id;
-        }
+        // } else {
+        //     $storeId = $store->id;
+        // }
 
 
-        return $this->getOurHome($storeId);
+        return $this->getOurHome($store->id, $store->storeConfig);
         // $storeId = $request->input('storeId');
         $store = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)
