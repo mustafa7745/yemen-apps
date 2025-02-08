@@ -167,7 +167,7 @@ trait AllShared
                 ]
             );
 
-        print_r($storeCategories);
+        // print_r($storeCategories);
 
         $storeCategoriesIds = [];
         foreach ($storeCategories as $storeCategory) {
