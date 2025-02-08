@@ -33,6 +33,7 @@ use App\Models\Users;
 use App\Traits\AllShared;
 use App\Traits\StoreManagerControllerShared;
 use Carbon\Carbon;
+use Illuminate\Database\CustomException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -480,8 +481,19 @@ class StoreManagerControllerGet extends Controller
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
         $store = $myData['store'];
 
+        $storeId = null;
+        if ($store->typeId == 1) {
+            if ($store->storeConfig == null) {
+                throw new CustomException("This Store Confilct", 0, 443);
+            }
+            $storeId = $store->storeConfig->storeIdReference;
 
-        return $this->getOurHome($request);
+        } else {
+            $storeId = $store->id;
+        }
+
+
+        return $this->getOurHome($storeId);
         // $storeId = $request->input('storeId');
         $store = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)

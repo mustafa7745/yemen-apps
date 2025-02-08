@@ -101,9 +101,8 @@ trait AllShared
 
         return response()->json($data);
     }
-    public function getOurHome(Request $request)
+    public function getOurHome($storeId)
     {
-        $storeId = $request->input('storeId');
         $store = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)
             ->sole([
@@ -118,6 +117,7 @@ trait AllShared
         $sections = null;
         $nestedSections = null;
         $storeIdReference = null;
+        //
         if ($typeId == 1) {
             $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
                 ->where(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, '=', $storeId)
@@ -1932,6 +1932,27 @@ trait AllShared
         if ($store == null) {
             throw new CustomException("This Store not for you", 0, 443);
         }
+
+        $storeConfigs = DB::table(table: SharedStoresConfigs::$tableName)
+            ->where(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, $store->id)
+            ->get();
+
+
+        if ($store->typeId == 1) {
+            foreach ($storeConfigs as $storeConfig) {
+                if ($storeConfig->storeId == $store->id) {
+                    $categories = json_decode($storeConfig->categories);
+                    $sections = json_decode($storeConfig->sections);
+                    $nestedSections = json_decode($storeConfig->nestedSections);
+                    $products = json_decode($storeConfig->products);
+                    // $stores[$index] = (array)$stores[$index];
+                    $store->storeConfig = ['storeIdReference' => $storeConfig->storeIdReference, 'categories' => $categories, 'sections' => $sections, 'nestedSections' => $nestedSections, 'products' => $products];
+                }
+            }
+        } else {
+            $store->storeConfig = null;
+        }
+
         return $store;
     }
 
