@@ -820,9 +820,7 @@ class StoreManagerControllerGet extends Controller
 
     public function getMyOrders(Request $request, $withSituations = false)
     {
-        $from = $request->input('from');
-        $fromDate = $request->input('fromDate');
-        $toDate = $request->input('toDate');
+
 
         $this->validRequestV1($request, [
             'from' => 'required|string|max:5',
@@ -830,6 +828,12 @@ class StoreManagerControllerGet extends Controller
             'toDate' => 'required|date_format:Y-d-m',
         ]);
 
+        $from = $request->input('from');
+        $fromDate = $request->input('fromDate');
+        $toDate = $request->input('toDate');
+        //
+        $fromDate = Carbon::parse($fromDate); // Parse fromDate to Carbon instance
+        $toDate = Carbon::parse($toDate)->endOfDay(); // Set toDate to end of the day (23:59:59)
 
         // print_r($fromDate);
         // print_r($toDate);
