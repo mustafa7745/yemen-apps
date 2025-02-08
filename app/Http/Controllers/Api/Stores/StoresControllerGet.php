@@ -28,14 +28,12 @@ class StoresControllerGet extends Controller
     {
 
         $stores = DB::table(Stores::$tableName)
-
-            ->get()->toArray();
+            ->get();
 
         $storeIds = [];
         foreach ($stores as $store) {
-            if ($store->typeId == 1) {
-                $storeIds[] = $store->id;
-            }
+            $storeIds[] = $store->id;
+            // }
         }
 
         $storeConfigs = DB::table(table: SharedStoresConfigs::$tableName)
