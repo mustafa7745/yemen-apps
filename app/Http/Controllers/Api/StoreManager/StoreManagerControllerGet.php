@@ -470,16 +470,19 @@ class StoreManagerControllerGet extends Controller
     public function getStoreCategories(Request $request)
     {
 
-        //original store id;
-        $storeId = $request->input('ostoreId');
-        $processPoints = $this->processPoints($storeId);
-        if ($processPoints !== true) {
-            return $processPoints;
-        }
+        // //original store id;
+        // $storeId = $request->input('ostoreId');
+        // $processPoints = $this->processPoints($storeId);
+        // if ($processPoints !== true) {
+        //     return $processPoints;
+        // }
+
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
+        $store = $myData['store'];
 
 
         return $this->getOurHome($request);
-        $storeId = $request->input('storeId');
+        // $storeId = $request->input('storeId');
         $store = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)
             ->sole([
