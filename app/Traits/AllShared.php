@@ -119,7 +119,7 @@ trait AllShared
         $storeIdReference = null;
         //
         // print_r($store);
-        // print_r($store->storeConfig->categories);
+        print_r($store->storeConfig['sections']);
         if ($store->storeConfig != null) {
             // $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
             //     ->where(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, '=', $storeId)
