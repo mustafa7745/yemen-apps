@@ -118,6 +118,7 @@ trait AllShared
         $nestedSections = null;
         $storeIdReference = null;
         //
+        print_r($store);
         if ($store->storeConfig != null) {
             // $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
             //     ->where(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, '=', $storeId)
