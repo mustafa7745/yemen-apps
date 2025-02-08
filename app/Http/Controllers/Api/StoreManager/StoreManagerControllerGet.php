@@ -835,8 +835,8 @@ class StoreManagerControllerGet extends Controller
         $fromDate = Carbon::parse($fromDate)->startOfDay(); // Parse fromDate to Carbon instance
         $toDate = Carbon::parse($toDate)->endOfDay(); // Set toDate to end of the day (23:59:59)
 
-        // print_r($fromDate);
-        // print_r($toDate);
+        print_r($fromDate);
+        print_r($toDate);
 
 
         // $to = $request->input('to');
