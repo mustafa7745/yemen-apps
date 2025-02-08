@@ -117,7 +117,8 @@ class StoresControllerGet extends Controller
     }
     public function getHome(Request $request)
     {
-        return $this->getOurHome($request);
+        $store = $this->getMyStore($request, null);
+        return $this->getOurHome($store);
     }
 
     public function getStoreInfo(Request $request)
