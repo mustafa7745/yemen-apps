@@ -133,7 +133,7 @@ trait AllShared
         $storeCategories = DB::table(table: StoreCategories::$tableName);
 
         if ($store->typeId == 1) {
-            
+
             if (count($categories) > 0) {
                 $storeCategories->whereNotIn(StoreCategories::$tableName . '.' . StoreCategories::$id, $categories);
             }
@@ -166,6 +166,8 @@ trait AllShared
                     Categories::$tableName . '.' . Categories::$name . ' as categoryName'
                 ]
             );
+
+        print_r($storeCategories);
 
         $storeCategoriesIds = [];
         foreach ($storeCategories as $storeCategory) {
