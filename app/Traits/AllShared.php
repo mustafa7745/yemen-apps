@@ -130,35 +130,35 @@ trait AllShared
 
 
 
-        $storeCategories = DB::table(table: StoreCategories::$tableName);
+        $storeCategories = DB::table(table: StoreCategories::$tableName)
 
-        if ($store->typeId == 1) {
+            // if ($store->typeId == 1) {
 
-            if (count($categories) > 0) {
-                $storeCategories->whereNotIn(StoreCategories::$tableName . '.' . StoreCategories::$id, $categories);
-            }
-            $storeCategories->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $storeIdReference);
-        } else {
-            // When storeConfig is null, apply the simpler condition
-            $storeCategories->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $store->id);
-        }
+            //     if (count($categories) > 0) {
+            //         $storeCategories->whereNotIn(StoreCategories::$tableName . '.' . StoreCategories::$id, $categories);
+            //     }
+            //     $storeCategories->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $storeIdReference);
+            // } else {
+            //     // When storeConfig is null, apply the simpler condition
+            //     $storeCategories->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $store->id);
+            // }
 
-        // ->when($storeConfig != null, function ($query) use ($categories, $storeIdReference) {
-        //     if (count($categories) > 0) {
-        //         $query->whereNotIn(StoreCategories::$tableName . '.' . StoreCategories::$id, $categories);
-        //     }
-        //     return $query->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $storeIdReference);
-        // })
-        // ->when($storeConfig == null, function ($query) use ($storeId) {
-        //     return $query->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $storeId);
-        // })
+            ->when($storeConfig != null, function ($query) use ($categories, $storeIdReference) {
+                if (count($categories) > 0) {
+                    $query->whereNotIn(StoreCategories::$tableName . '.' . StoreCategories::$id, $categories);
+                }
+                return $query->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $storeIdReference);
+            })
+            ->when($storeConfig == null, function ($query) use ($store) {
+                return $query->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $store->id);
+            })
 
-        $storeCategories->join(
-            Categories::$tableName,
-            Categories::$tableName . '.' . Categories::$id,
-            '=',
-            StoreCategories::$tableName . '.' . StoreCategories::$categoryId
-        )
+            ->join(
+                Categories::$tableName,
+                Categories::$tableName . '.' . Categories::$id,
+                '=',
+                StoreCategories::$tableName . '.' . StoreCategories::$categoryId
+            )
             ->get(
                 [
                     StoreCategories::$tableName . '.' . StoreCategories::$id . ' as id',
