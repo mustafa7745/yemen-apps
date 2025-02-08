@@ -133,7 +133,7 @@ trait AllShared
         $storeCategories = DB::table(table: StoreCategories::$tableName);
 
         if ($store->typeId == 1) {
-            // When storeConfig is not null, apply the condition
+            
             if (count($categories) > 0) {
                 $storeCategories->whereNotIn(StoreCategories::$tableName . '.' . StoreCategories::$id, $categories);
             }
