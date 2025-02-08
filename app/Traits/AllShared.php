@@ -101,16 +101,16 @@ trait AllShared
 
         return response()->json($data);
     }
-    public function getOurHome($storeId)
+    public function getOurHome($storeId, $storeConfig)
     {
-        $store = DB::table(Stores::$tableName)
-            ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)
-            ->sole([
-                Stores::$tableName . '.' . Stores::$id,
-                Stores::$tableName . '.' . Stores::$typeId,
-            ]);
+        // $store = DB::table(Stores::$tableName)
+        //     ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)
+        //     ->sole([
+        //         Stores::$tableName . '.' . Stores::$id,
+        //         Stores::$tableName . '.' . Stores::$typeId,
+        //     ]);
 
-        $typeId = $store->typeId;
+        // $typeId = $store->typeId;
 
         $storeConfig = null;
         $categories = null;
@@ -118,10 +118,10 @@ trait AllShared
         $nestedSections = null;
         $storeIdReference = null;
         //
-        if ($typeId == 1) {
-            $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
-                ->where(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, '=', $storeId)
-                ->first();
+        if ($storeConfig != null) {
+            // $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
+            //     ->where(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, '=', $storeId)
+            //     ->first();
             $categories = json_decode($storeConfig->categories);
             $sections = json_decode($storeConfig->sections);
             $nestedSections = json_decode($storeConfig->nestedSections);
@@ -131,13 +131,13 @@ trait AllShared
 
 
         $storeCategories = DB::table(table: StoreCategories::$tableName)
-            ->when($typeId == 1, function ($query) use ($categories, $storeIdReference) {
+            ->when($storeConfig != null, function ($query) use ($categories, $storeIdReference) {
                 if (count($categories) > 0) {
                     $query->whereNotIn(StoreCategories::$tableName . '.' . StoreCategories::$id, $categories);
                 }
                 return $query->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $storeIdReference);
             })
-            ->when($typeId == 2, function ($query) use ($storeId) {
+            ->when($storeConfig == null, function ($query) use ($storeId) {
                 return $query->where(StoreCategories::$tableName . '.' . StoreCategories::$storeId, $storeId);
             })
 
@@ -165,7 +165,7 @@ trait AllShared
                 $storeCategoriesIds
 
             )
-            ->when($typeId == 1 && count($sections) > 0, function ($query) use ($sections) {
+            ->when($storeConfig != null && count($sections) > 0, function ($query) use ($sections) {
                 return $query->whereNotIn(StoreSections::$tableName . '.' . StoreSections::$id, $sections);
             })
             ->join(
@@ -180,7 +180,7 @@ trait AllShared
                 Sections::$tableName . '.' . Sections::$name . ' as sectionName',
                 Sections::$tableName . '.' . Sections::$id . ' as sectionId',
             )
-            ->get()->toArray();
+            ->get();
 
         $storeCategoriesSectionsIds = [];
         foreach ($storeSections as $storeCategorySection) {
@@ -213,7 +213,7 @@ trait AllShared
             )
 
             ->whereIn(StoreNestedSections::$tableName . '.' . StoreNestedSections::$storeSectionId, $storeCategoriesSectionsIds)
-            ->when($typeId == 1 && count($nestedSections) > 0, function ($query) use ($nestedSections) {
+            ->when($storeConfig != null && count($nestedSections) > 0, function ($query) use ($nestedSections) {
                 // print_r()
                 return $query->whereNotIn(StoreNestedSections::$tableName . '.' . StoreNestedSections::$id, $nestedSections);
             })
