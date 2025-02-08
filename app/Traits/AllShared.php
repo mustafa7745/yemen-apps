@@ -118,16 +118,16 @@ trait AllShared
         $nestedSections = null;
         $storeIdReference = null;
         //
-        print_r($store);
-        print_r($store->storeConfig->categories);
+        // print_r($store);
+        // print_r($store->storeConfig->categories);
         if ($store->storeConfig != null) {
             // $storeConfig = DB::table(table: SharedStoresConfigs::$tableName)
             //     ->where(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, '=', $storeId)
             //     ->first();
-            $categories = json_decode($store->storeConfig->categories);
-            $sections = json_decode($store->storeConfig->sections);
-            $nestedSections = json_decode($store->storeConfig->nestedSections);
-            $storeIdReference = $store->storeConfig->storeIdReference;
+            $categories = json_decode($store->storeConfig['categories']);
+            $sections = json_decode($store->storeConfig['sections']);
+            $nestedSections = json_decode($store->storeConfig['nestedSections']);
+            $storeIdReference = $store->storeConfig['storeIdReference'];
         }
 
 
