@@ -873,7 +873,7 @@ class StoreManagerControllerGet extends Controller
                 ]);
                 $situationId = $request->input('situationId');
                 $situationIds = json_decode($situationId);
-                print_r($situationId);
+                // print_r($situationId);
 
                 return $query->whereIn(Orders::$tableName . '.' . Orders::$situationId, $situationIds);
             })
