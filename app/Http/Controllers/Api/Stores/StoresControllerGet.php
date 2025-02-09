@@ -49,7 +49,7 @@ class StoresControllerGet extends Controller
         foreach ($storeConfigs as $storeConfig) {
             foreach ($stores as $index => $store) {
                 // print_r($storeConfig);
-                if ($store->typeId == 1) {
+                if ($store->typeId == 1 && $storeConfig->storeId == $store->id) {
                     $categories = json_decode($storeConfig->categories);
                     $sections = json_decode($storeConfig->sections);
                     $nestedSections = json_decode($storeConfig->nestedSections);
