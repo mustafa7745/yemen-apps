@@ -872,9 +872,9 @@ class StoreManagerControllerGet extends Controller
                     'situationId' => 'required|string|max:100',
                 ]);
                 $situationId = $request->input('situationId');
-                $situationId = json_decode($situationId);
+                $situationIds = json_decode($situationId);
 
-                return $query->whereIn(Orders::$tableName . '.' . Orders::$situationId, $situationId);
+                return $query->whereIn(Orders::$tableName . '.' . Orders::$situationId, $situationIds);
             })
             ->join(
                 Users::$tableName,
@@ -890,7 +890,9 @@ class StoreManagerControllerGet extends Controller
             )
             ->limit(7)
             ->offset($from)
-            ->whereBetween(Orders::$tableName . '.' . Orders::$createdAt, [$fromDate, $toDate])
+            // ->whereBetween(Orders::$tableName . '.' . Orders::$createdAt, [$fromDate, $toDate])
+            ->whereBetween(Orders::$tableName . '.' . Orders::$createdAt, ['2025-01-01', '2025-02-10'])
+
             ->orderByDesc(Orders::$tableName . '.' . Orders::$createdAt)
             ->get([
                 OrderSituations::$tableName . '.' . OrderSituations::$name . ' as situation',
