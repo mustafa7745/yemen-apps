@@ -42,22 +42,46 @@ class StoresControllerGet extends Controller
 
         // print_r($storeConfigs);
 
+        // First, filter the storeConfigs by storeIds (matching storeConfig's storeId to store's id)
+        $filteredStoreConfigs = collect($storeConfigs)->keyBy('storeId');
 
+        // Now, update the stores with the corresponding storeConfig data
+        foreach ($stores as $index => $store) {
+            if ($store->typeId == 1 && isset($filteredStoreConfigs[$store->id])) {
+                $storeConfig = $filteredStoreConfigs[$store->id];
 
+                // Handle JSON decoding and checking for errors
+                $categories = json_decode($storeConfig->categories);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    $categories = [];  // Handle invalid JSON
+                }
 
+                $sections = json_decode($storeConfig->sections);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    $sections = [];  // Handle invalid JSON
+                }
 
-        foreach ($storeConfigs as $storeConfig) {
-            foreach ($stores as $index => $store) {
-                // print_r($storeConfig);
-                if ($store->typeId == 1 && $storeConfig->storeId == $store->id) {
-                    $categories = json_decode($storeConfig->categories);
-                    $sections = json_decode($storeConfig->sections);
-                    $nestedSections = json_decode($storeConfig->nestedSections);
-                    $products = json_decode($storeConfig->products);
-                    // $stores[$index] = (array)$stores[$index];
-                    $stores[$index]->storeConfig = ['storeIdReference' => $storeConfig->storeIdReference, 'categories' => $categories, 'sections' => $sections, 'nestedSections' => $nestedSections, 'products' => $products];
-                } else
-                    $stores[$index]->storeConfig = null;
+                $nestedSections = json_decode($storeConfig->nestedSections);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    $nestedSections = [];  // Handle invalid JSON
+                }
+
+                $products = json_decode($storeConfig->products);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    $products = [];  // Handle invalid JSON
+                }
+
+                // Merge the storeConfig data into the store object
+                $stores[$index]->storeConfig = [
+                    'storeIdReference' => $storeConfig->storeIdReference,
+                    'categories' => $categories,
+                    'sections' => $sections,
+                    'nestedSections' => $nestedSections,
+                    'products' => $products
+                ];
+            } else {
+                // If storeConfig doesn't exist for the store or doesn't match, set storeConfig to null
+                $stores[$index]->storeConfig = null;
             }
         }
 
