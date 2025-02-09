@@ -1003,6 +1003,7 @@ trait AllShared
             ->get(
                 [
                     Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
+                    Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
                     OrdersProducts::$tableName . '.' . OrdersProducts::$productName . ' as productName',
                     OrdersProducts::$tableName . '.' . OrdersProducts::$storeProductId . ' as storeProductId',
                     OrdersProducts::$tableName . '.' . OrdersProducts::$productPrice . ' as price',

@@ -874,7 +874,7 @@ class StoreManagerControllerGet extends Controller
                 $situationId = $request->input('situationId');
                 $situationIds = json_decode($situationId);
                 // print_r($situationId);
-
+    
                 return $query->whereIn(Orders::$tableName . '.' . Orders::$situationId, $situationIds);
             })
             ->join(
@@ -897,6 +897,7 @@ class StoreManagerControllerGet extends Controller
             ->orderByDesc(Orders::$tableName . '.' . Orders::$createdAt)
             ->get([
                 OrderSituations::$tableName . '.' . OrderSituations::$name . ' as situation',
+                OrderSituations::$tableName . '.' . OrderSituations::$id . ' as situationId',
                 Users::$tableName . '.' . Users::$firstName . ' as userName',
                 Users::$tableName . '.' . Users::$phone . ' as userPhone',
                 Orders::$tableName . '.' . Orders::$id . ' as id',
