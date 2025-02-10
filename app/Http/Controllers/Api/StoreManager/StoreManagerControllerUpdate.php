@@ -301,8 +301,12 @@ class StoreManagerControllerUpdate extends Controller
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
         $store = $myData['store'];
         $myOrder = $this->getMyOrder($request, $store->id);
-
+        if ($myOrder->situationId == Situations::$CENCELED || $myOrder->situationId == Situations::$COMPLETED) {
+            throw new CustomException("الطلب تم انجازه", 0, 403);
+        }
         return DB::transaction(function () use ($request, $myOrder) {
+
+
 
             $orderDelivery = DB::table(table: OrdersDelivery::$tableName)
                 ->where(OrdersDelivery::$orderId, '=', $myOrder->id)
@@ -475,6 +479,9 @@ class StoreManagerControllerUpdate extends Controller
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
         $store = $myData['store'];
         $myOrder = $this->getMyOrder($request, $store->id);
+        if ($myOrder->situationId == Situations::$CENCELED || $myOrder->situationId == Situations::$COMPLETED) {
+            throw new CustomException("الطلب تم انجازه", 0, 403);
+        }
         return DB::transaction(function () use ($request, $myOrder) {
 
             $id = $request->input('id');
