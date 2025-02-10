@@ -8,6 +8,7 @@ use App\Models\OrdersAmounts;
 use App\Models\OrdersProducts;
 use App\Models\ProductImages;
 use App\Models\Products;
+use App\Models\Situations;
 use App\Models\StoreAds;
 use App\Models\Stores;
 use App\Models\Sections;
@@ -15,6 +16,7 @@ use App\Models\StoreCategories;
 use App\Models\StoreNestedSections;
 use App\Models\StoreProducts;
 use App\Models\StoreSections;
+use Illuminate\Database\CustomException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -272,13 +274,25 @@ class StoreManagerControllerDelete extends Controller
 
     public function deleteOrderProducts(Request $request)
     {
-        return DB::transaction(function () use ($request) {
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
+        $store = $myData['store'];
+        $myOrder = $this->getMyOrder($request, $store->id);
+        if ($myOrder->situationId == Situations::$CENCELED || $myOrder->situationId == Situations::$COMPLETED) {
+            throw new CustomException("الطلب تم انجازه", 0, 403);
+        }
+
+        return DB::transaction(function () use ($request, $myOrder) {
             $ids = $request->input('ids');
             $ids = json_decode($ids);
 
             $orderProducts = DB::table(table: OrdersProducts::$tableName)
                 ->whereIn(OrdersProducts::$id, $ids)
+                ->where(OrdersProducts::$orderId, '=', $myOrder->id)
                 ->get();
+
+            if (count($ids) != count($orderProducts)) {
+                throw new CustomException("ليس لديك صلاحية حذف المنتجات", 0, 403);
+            }
 
             $orderIds = [];
 
