@@ -1904,7 +1904,7 @@ trait AllShared
             ->where(Orders::$tableName . '.' . Orders::$storeId, '=', $storeId)
             ->where(Orders::$tableName . '.' . Orders::$id, '=', $orderId)
             ->first(
-                []
+
             );
 
         if ($data == null) {
