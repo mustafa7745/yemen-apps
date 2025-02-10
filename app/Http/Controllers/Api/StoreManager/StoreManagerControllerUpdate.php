@@ -17,6 +17,7 @@ use App\Models\StoreProducts;
 use App\Traits\AllShared;
 use App\Traits\StoreManagerControllerShared;
 use Carbon\Carbon;
+use Illuminate\Database\CustomException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -397,15 +398,23 @@ class StoreManagerControllerUpdate extends Controller
     public function updateOrderProductQuantity(Request $request)
     {
 
-
-        return DB::transaction(function () use ($request) {
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
+        $store = $myData['store'];
+        $myOrder = $this->getMyOrder($request, $store->id);
+        return DB::transaction(function () use ($request, $myOrder) {
 
             $id = $request->input('id');
             $qnt = $request->input('qnt');
 
             $orderProduct = DB::table(table: OrdersProducts::$tableName)
                 ->where(OrdersProducts::$id, '=', $id)
-                ->sole();
+                ->first();
+            if ($orderProduct == null) {
+                throw new CustomException("Order Product Not found", 0, 400);
+            }
+            if ($orderProduct->orderId != $myOrder->id) {
+                throw new CustomException("Not Have Permission to controll this order", 0, 400);
+            }
 
             DB::table(table: OrdersProducts::$tableName)
                 ->where(OrdersProducts::$id, '=', $id)
@@ -571,7 +580,7 @@ class StoreManagerControllerUpdate extends Controller
 
     public function logout(Request $request)
     {
-        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore:false);
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false);
         $accessToken = $myData['accessToken'];
         return $this->ourLogout($accessToken->userSessionId);
     }

@@ -41,7 +41,6 @@ use Carbon\Carbon;
 use DB;
 use Hash;
 use Illuminate\Database\CustomException;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Log;
 use Storage;
@@ -1891,6 +1890,27 @@ trait AllShared
         if ($data == null) {
             throw new CustomException("Not have permission to update this product ", 0, 403);
         }
+    }
+
+    public function getMyOrder($request, $storeId)
+    {
+        $this->validRequestV1($request, [
+            'orderId' => 'required|string|max:100',
+        ]);
+
+        $orderId = $request->input('orderId');
+
+        $data = DB::table(table: Orders::$tableName)
+            ->where(Orders::$tableName . '.' . Orders::$storeId, '=', $storeId)
+            ->where(Orders::$tableName . '.' . Orders::$id, '=', $orderId)
+            ->first(
+                []
+            );
+
+        if ($data == null) {
+            throw new CustomException("Not have permission to Controll this order ", 0, 403);
+        }
+        return $data;
     }
 
 }
