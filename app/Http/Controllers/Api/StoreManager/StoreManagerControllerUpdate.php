@@ -347,6 +347,37 @@ class StoreManagerControllerUpdate extends Controller
 
 
     }
+    public function cancelOrder(Request $request)
+    {
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
+        $store = $myData['store'];
+        $myOrder = $this->getMyOrder($request, $store->id);
+
+        return DB::transaction(function () use ($request, $myOrder) {
+            if ($myOrder->situationId == Situations::$CENCELED || $myOrder->situationId == Situations::$COMPLETED) {
+                throw new CustomException("الطلب تم انجازه", 0, 403);
+            }
+
+            DB::table(table: Orders::$tableName)
+                ->where(Orders::$id, '=', $myOrder->id)
+                ->update(
+                    [
+                        Orders::$situationId => Situations::$CENCELED,
+                        Orders::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    ]
+                );
+            DB::table(OrderStatus::$tableName)
+                ->insert([
+                    OrderStatus::$id => null,
+                    OrderStatus::$orderId => $myOrder->id,
+                    OrderStatus::$situationId => Situations::$CENCELED,
+                    OrderStatus::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ]);
+            return response()->json([]);
+        });
+
+
+    }
     public function updateProductView(Request $request)
     {
         $storeId = $request->input('storeId');

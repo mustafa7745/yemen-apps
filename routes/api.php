@@ -113,6 +113,8 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/updateProductOrder', [StoreManagerControllerUpdate::class, 'updateProductOrder']);
     Route::post('/updateCurrency', [StoreManagerControllerUpdate::class, 'updateCurrency']);
     Route::post('/updateCustomPrice', [StoreManagerControllerUpdate::class, 'updateCustomPrice']);
+    Route::post('/cancelOrder', [StoreManagerControllerUpdate::class, 'cancelOrder']);
+
 
 
 
