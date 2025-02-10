@@ -16,6 +16,7 @@ use App\Models\StoreCategories;
 use App\Models\StoreNestedSections;
 use App\Models\StoreProducts;
 use App\Models\StoreSections;
+use App\Traits\StoreManagerControllerShared;
 use Illuminate\Database\CustomException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -23,6 +24,7 @@ use Illuminate\Support\Facades\Storage;
 
 class StoreManagerControllerDelete extends Controller
 {
+    use StoreManagerControllerShared;
 
     public function deleteProductImage(Request $request)
     {
