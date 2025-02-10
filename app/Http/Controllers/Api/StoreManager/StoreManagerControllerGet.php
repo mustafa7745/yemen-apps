@@ -839,7 +839,7 @@ class StoreManagerControllerGet extends Controller
 
         $from = $request->input('from');
         $fromDate = $request->input('fromDate');
-        $toDate = $request->input('toDate');
+        $toDate = Carbon::parse($request->input('toDate'))->endOfDay();
         //
         // $fromDate = Carbon::parse($fromDate)->startOfDay(); // Parse fromDate to Carbon instance
         // $toDate = Carbon::parse($toDate)->endOfDay(); // Set toDate to end of the day (23:59:59)
