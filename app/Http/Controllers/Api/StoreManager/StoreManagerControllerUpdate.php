@@ -6,11 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Currencies;
 use App\Models\CustomPrices;
 use App\Models\Options;
+use App\Models\Orders;
 use App\Models\OrdersAmounts;
 use App\Models\OrdersDelivery;
 use App\Models\OrdersProducts;
+use App\Models\OrderStatus;
 use App\Models\ProductImages;
 use App\Models\Products;
+use App\Models\Situations;
 use App\Models\Stores;
 use App\Models\SharedStoresConfigs;
 use App\Models\StoreProducts;
@@ -292,17 +295,57 @@ class StoreManagerControllerUpdate extends Controller
     }
     public function updateOrderDeliveryMan(Request $request)
     {
-        $orderId = $request->input('orderId');
-        $deliveryManId = $request->input('deliveryManId');
-        DB::table(table: OrdersDelivery::$tableName)
-            ->where(OrdersDelivery::$orderId, '=', $orderId)
-            ->update(
-                [
-                    OrdersDelivery::$deliveryManId => $deliveryManId,
-                ]
-            );
+        $this->validRequestV1($request, [
+            'deliveryManId' => 'required|string|max:100',
+        ]);
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
+        $store = $myData['store'];
+        $myOrder = $this->getMyOrder($request, $store->id);
 
-        return response()->json($this->getOurOrderDelivery($request));
+        return DB::transaction(function () use ($request, $myOrder) {
+
+            $orderDelivery = DB::table(table: OrdersDelivery::$tableName)
+                ->where(OrdersDelivery::$orderId, '=', $myOrder->id)
+                ->first();
+
+            if ($orderDelivery == null) {
+                throw new CustomException("Order not have Delivery", 0, 403);
+            }
+
+
+
+            DB::table(table: Orders::$tableName)
+                ->where(Orders::$id, '=', $myOrder->id)
+                ->update(
+                    [
+                        Orders::$situationId => Situations::$ASSIGN_DELIVERY_MAN,
+                        Orders::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    ]
+                );
+            DB::table(OrderStatus::$tableName)
+                ->insert([
+                    OrderStatus::$id => null,
+                    OrderStatus::$orderId => $myOrder->id,
+                    OrderStatus::$situationId => Situations::$ASSIGN_DELIVERY_MAN,
+                    OrderStatus::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ]);
+
+
+            // $orderId = $request->input('orderId');
+            $deliveryManId = $request->input('deliveryManId');
+            DB::table(table: OrdersDelivery::$tableName)
+                ->where(OrdersDelivery::$orderId, '=', $myOrder->id)
+                ->update(
+                    [
+                        OrdersDelivery::$deliveryManId => $deliveryManId,
+                    ]
+                );
+
+            return response()->json($this->getOurOrderDelivery($request));
+
+        });
+
+
     }
     public function updateProductView(Request $request)
     {
