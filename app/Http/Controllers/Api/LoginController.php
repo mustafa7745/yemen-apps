@@ -45,8 +45,8 @@ class LoginController
 
         $myProcess = $this->checkProcessV1('login', $device->id, null);
 
-        print_r(strlen($phone));
-        print_r(strlen($countryCode));
+        // print_r(strlen($phone));
+        // print_r(strlen($countryCode));
 
 
         $user = DB::table(Users::$tableName)
@@ -63,7 +63,7 @@ class LoginController
         // print_r($countryCode);
         // print_r($phone);
 
-        print_r($user);
+        // print_r($user);
         if ($user == null || Hash::check($password, $user->password) == false) {
             DB::table(FailProcesses::$tableName)->insert([
                 FailProcesses::$id => null,
