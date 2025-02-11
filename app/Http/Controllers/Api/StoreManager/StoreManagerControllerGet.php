@@ -316,7 +316,7 @@ class StoreManagerControllerGet extends Controller
         // // print_r($request->all());
         // $accessToken = (new LoginController($this->appId))->readAccessToken($request);
 
-        $myData = $this->getMyData(request: $request, appId: $this->appId);
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false);
         $accessToken = $myData['accessToken'];
 
         $data = DB::table(Stores::$tableName)
