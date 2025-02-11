@@ -686,7 +686,7 @@ class StoreManagerControllerAdd extends Controller
                     StoreAds::$storeId => $store->id,
                     StoreAds::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                     StoreAds::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-                    StoreAds::$expireAt => Carbon::now()->add($days)->format('Y-m-d H:i:s'),
+                    StoreAds::$expireAt => Carbon::now()->addDays($days)->endOfDay()->format('Y-m-d H:i:s'),
                 ]);
 
 
