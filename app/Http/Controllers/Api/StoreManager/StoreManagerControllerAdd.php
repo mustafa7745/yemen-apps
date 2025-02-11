@@ -665,16 +665,16 @@ class StoreManagerControllerAdd extends Controller
         ]);
         // print_r(Carbon::now()->addDays($days)->endOfDay()->format('Y-m-d H:i:s'));
 
-        $days = $request->file('days');
+        // $days = $request->input('days');
 
-        print_r($days);
-        return;
+        // print_r($days);
+        // return;
 
         return DB::transaction(function () use ($request, $store) {
 
 
             $image = $request->file('image');
-            $days = $request->file('days');
+            $days = $request->input('days');
 
             $productId = $request->input('productId');
             // $storeId = $request->input('storeId');
