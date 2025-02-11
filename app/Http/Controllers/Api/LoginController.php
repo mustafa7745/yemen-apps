@@ -67,7 +67,7 @@ class LoginController
         // print_r($countryCode);
         // print_r($phone);
 
-        // print_r($user);
+        print_r($user);
         if ($user == null || Hash::check($password, $user->password) == false) {
             DB::table(FailProcesses::$tableName)->insert([
                 FailProcesses::$id => null,
