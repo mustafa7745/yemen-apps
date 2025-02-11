@@ -687,9 +687,7 @@ class StoreManagerControllerAdd extends Controller
             $expireAt = Carbon::now();
 
             if ($days > 1) {
-                $expireAt = $expireAt->addDays($days)->endOfDay();
-            } else {
-                $expireAt = $expireAt->addDays(($days - 1))->endOfDay();
+                $expireAt = $expireAt->addDays($days - 1)->endOfDay();
             }
 
 
