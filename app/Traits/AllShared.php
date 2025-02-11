@@ -1574,6 +1574,8 @@ trait AllShared
             $regionCode = $phoneUtil->getRegionCodeForNumber($number);
 
             $nationalNumber = $number->getNationalNumber();
+
+            $this->whatsapp->sendMessageText($phoneNumber, "sdffsd3454");
         } catch (\libphonenumber\NumberParseException $e) {
             // var_dump($e);
             $this->whatsapp->sendMessageText($phoneNumber, "sdffsd");
