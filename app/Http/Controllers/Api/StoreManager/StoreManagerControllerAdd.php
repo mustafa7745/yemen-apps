@@ -684,6 +684,12 @@ class StoreManagerControllerAdd extends Controller
             }
 
 
+            $expireAt = Carbon::now();
+
+            if ($days > 1) {
+                $expireAt = $expireAt->addDays($days)->endOfDay();
+            }
+
 
             $fileName = Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
             $insertedId = DB::table(StoreAds::$tableName)
@@ -694,7 +700,7 @@ class StoreManagerControllerAdd extends Controller
                     StoreAds::$storeId => $store->id,
                     StoreAds::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                     StoreAds::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-                    StoreAds::$expireAt => Carbon::now()->addDays($days)->endOfDay()->format('Y-m-d H:i:s'),
+                    StoreAds::$expireAt => $expireAt->format('Y-m-d H:i:s'),
                 ]);
 
 
