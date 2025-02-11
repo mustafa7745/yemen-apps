@@ -1645,7 +1645,7 @@ trait AllShared
                 $message = $message . "\n";
                 $message = $message . "رقم الهاتف هو: ";
                 $message = $message . "\n";
-                $message = $message . "+" . $countryCode . ' ' . $nationalNumber;
+                $message = $message . "+" . $countryCode . $nationalNumber;
                 $message = $message . "\n";
 
                 $message = $message . "الرقم السري هو: ";
