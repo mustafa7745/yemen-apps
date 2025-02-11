@@ -58,6 +58,8 @@ class LoginController
             ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
             ->get();
         print_r($countryCode);
+        print_r($phone);
+
         print_r($user);
         if ($user == null || Hash::check($password, $user->password) == false) {
             DB::table(FailProcesses::$tableName)->insert([
