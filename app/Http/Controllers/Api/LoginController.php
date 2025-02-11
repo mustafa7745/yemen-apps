@@ -59,7 +59,11 @@ class LoginController
             )
             ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
             ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
-            ->first();
+            ->first([
+                Users::$tableName . '.' . Users::$phone . ' as id',
+                Users::$tableName . '.' . Users::$password . ' as password'
+
+            ]);
         // print_r($countryCode);
         // print_r($phone);
 
