@@ -45,7 +45,9 @@ class LoginController
 
         $myProcess = $this->checkProcessV1('login', $device->id, null);
 
-        print_r($phone);
+        print_r(strlen($phone));
+        print_r(strlen($countryCode));
+
 
         $user = DB::table(Users::$tableName)
             // ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
