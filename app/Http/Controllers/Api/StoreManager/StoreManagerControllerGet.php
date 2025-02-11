@@ -345,6 +345,7 @@ class StoreManagerControllerGet extends Controller
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$products,
             ])->toArray();
 
+        print_r($data);
         $storeIds = [];
         foreach ($data as $store) {
             if ($store->typeId == 1) {
