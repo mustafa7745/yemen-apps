@@ -1535,7 +1535,7 @@ trait AllShared
     }
     public function whatsapp_webhook(Request $request)
     {
-
+        
         // $verifyToken = '774519161'; // Replace with your verify token
         // $challenge = $request->query('hub_challenge');
         // $token = $request->query('hub_verify_token');
@@ -1565,23 +1565,20 @@ trait AllShared
         // $phone = substr($phoneNumber, 3);
         //
         $phoneUtil = PhoneNumberUtil::getInstance();
-        try {
-            $number = $phoneUtil->parse($phoneNumber, null);
-            // Get the country code
-            $countryCode = $number->getCountryCode();
+        // try {
+        //     $swissNumberProto = $phoneUtil->parse($swissNumberStr, "CH");
+        //     var_dump($swissNumberProto);
+        // } catch (\libphonenumber\NumberParseException $e) {
+        //     var_dump($e);
+        // }
+        $number = $phoneUtil->parse($phoneNumber, null);
+        // Get the country code
+        $countryCode = $number->getCountryCode();
 
-            // Get the region code (e.g., 'GB' for United Kingdom)
-            $regionCode = $phoneUtil->getRegionCodeForNumber($number);
+        // Get the region code (e.g., 'GB' for United Kingdom)
+        $regionCode = $phoneUtil->getRegionCodeForNumber($number);
 
-            $nationalNumber = $number->getNationalNumber();
-
-            $this->whatsapp->sendMessageText($phoneNumber, "sdffsd3454");
-        } catch (\libphonenumber\NumberParseException $e) {
-            // var_dump($e);
-            $this->whatsapp->sendMessageText($phoneNumber, "sdffsd");
-            logger($e);
-        }
-
+        $nationalNumber = $number->getNationalNumber();
 
         if ($message == "اشتراك") {
 
