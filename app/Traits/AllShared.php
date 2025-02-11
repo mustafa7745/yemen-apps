@@ -1641,7 +1641,7 @@ trait AllShared
                 $message = $message . "\n";
                 $message = $message . "معلومات الدخول: ";
                 $message = $message . "\n";
-                $message = $message . "المنطقة: " . '+' . $regionCode;
+                $message = $message . "المنطقة: " . ' ' . $regionCode;
                 $message = $message . "\n";
                 $message = $message . "رقم الهاتف هو: " . '+' . $countryCode . ' ' . $nationalNumber;
                 $message = $message . "\n";
