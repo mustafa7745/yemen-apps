@@ -345,19 +345,19 @@ class StoreManagerControllerGet extends Controller
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$products,
             ])->toArray();
 
-        print_r($data);
+        // print_r($data);
         $storeIds = [];
         foreach ($data as $store) {
-            if ($store->typeId == 1) {
+            // if ($store->typeId == 1) {
                 $storeIds[] = $store->id;
-            }
+            // }
         }
 
         $storeConfigs = DB::table(table: SharedStoresConfigs::$tableName)
             ->whereIn(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, $storeIds)
             ->get();
 
-        print_r($storeConfigs);
+        // print_r($storeConfigs);
 
 
 
