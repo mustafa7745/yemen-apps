@@ -1535,6 +1535,7 @@ trait AllShared
     }
     public function whatsapp_webhook(Request $request)
     {
+
         // $verifyToken = '774519161'; // Replace with your verify token
         // $challenge = $request->query('hub_challenge');
         // $token = $request->query('hub_verify_token');
@@ -1564,14 +1565,20 @@ trait AllShared
         // $phone = substr($phoneNumber, 3);
         //
         $phoneUtil = PhoneNumberUtil::getInstance();
-        $number = $phoneUtil->parse($phoneNumber, null);
-        // Get the country code
-        $countryCode = $number->getCountryCode();
+        try {
+            $number = $phoneUtil->parse($phoneNumber, null);
+            // Get the country code
+            $countryCode = $number->getCountryCode();
 
-        // Get the region code (e.g., 'GB' for United Kingdom)
-        $regionCode = $phoneUtil->getRegionCodeForNumber($number);
+            // Get the region code (e.g., 'GB' for United Kingdom)
+            $regionCode = $phoneUtil->getRegionCodeForNumber($number);
 
-        $nationalNumber = $number->getNationalNumber();
+            $nationalNumber = $number->getNationalNumber();
+        } catch (\libphonenumber\NumberParseException $e) {
+            // var_dump($e);
+            logger($e);
+        }
+
 
         if ($message == "اشتراك") {
 
