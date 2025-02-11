@@ -63,7 +63,7 @@ class LoginController
                 FailProcesses::$myProcessId => $myProcess->id,
                 FailProcesses::$deviceId => $device->id,
                 FailProcesses::$userId => null,
-                FailProcesses::$createdAt => now()->format('Y-m-d H:i:s'),
+                FailProcesses::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
             throw new CustomException("Phone Or Password Error", 0, 400);
         }
