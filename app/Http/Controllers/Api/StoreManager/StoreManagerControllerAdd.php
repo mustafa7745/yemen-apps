@@ -656,14 +656,19 @@ class StoreManagerControllerAdd extends Controller
     }
     public function addAds(Request $request)
     {
-        return DB::transaction(function () use ($request) {
-            $myData = $this->getMyData(request: $request, appId: $this->appId);
-            $accessToken = $myData['accessToken'];
-            $store = $myData['store'];
-            $this->validRequestV1($request, [
-                'image' => 'required|image|mimes:jpg|max:300'
-            ]);
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
+        $store = $myData['store'];
+        $this->validRequestV1($request, [
+            'image' => 'required|image|mimes:jpg|max:300',
+            'days' => 'required|image|mimes:jpg|max:1'
+
+        ]);
+        return DB::transaction(function () use ($request, $store) {
+
+
             $image = $request->file('image');
+            $days = $request->file('days');
+
             $productId = $request->input('productId');
             // $storeId = $request->input('storeId');
 
@@ -681,8 +686,7 @@ class StoreManagerControllerAdd extends Controller
                     StoreAds::$storeId => $store->id,
                     StoreAds::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                     StoreAds::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-                    StoreAds::$expireAt => Carbon::now()->format('Y-m-d H:i:s'),
-
+                    StoreAds::$expireAt => Carbon::now()->add($days)->format('Y-m-d H:i:s'),
                 ]);
 
 
