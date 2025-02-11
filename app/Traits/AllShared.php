@@ -1643,8 +1643,9 @@ trait AllShared
                 $message = $message . "\n";
                 $message = $message . "المنطقة: " . ' ' . $regionCode;
                 $message = $message . "\n";
-                $message = $message . "رقم الهاتف هو: " . '+' . $countryCode . ' ' . $nationalNumber;
+                $message = $message . "رقم الهاتف هو: ";
                 $message = $message . "\n";
+                $message = $message . $countryCode . ' ' . $nationalNumber;
                 $message = $message . "الرقم السري هو: ";
                 $this->whatsapp->sendMessageText($phoneNumber, $message);
                 $this->whatsapp->sendMessageText($phoneNumber, $password);
