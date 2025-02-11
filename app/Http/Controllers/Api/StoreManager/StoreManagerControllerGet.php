@@ -297,25 +297,27 @@ class StoreManagerControllerGet extends Controller
     }
     public function getStores(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'accessToken' => 'required|string|max:255',
-            'deviceId' => 'required|string|max:255',
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'accessToken' => 'required|string|max:255',
+        //     'deviceId' => 'required|string|max:255',
+        // ]);
 
-        // Check if validation fails
-        if ($validator->fails()) {
-            // Return a JSON response with validation errors
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
-                'code' => 0
-            ], 422);  // 422 Unprocessable Entity
-        }
+        // // Check if validation fails
+        // if ($validator->fails()) {
+        //     // Return a JSON response with validation errors
+        //     return response()->json([
+        //         'message' => 'Validation failed',
+        //         'errors' => $validator->errors(),
+        //         'code' => 0
+        //     ], 422);  // 422 Unprocessable Entity
+        // }
 
 
-        // print_r($request->all());
-        $accessToken = (new LoginController($this->appId))->readAccessToken($request);
+        // // print_r($request->all());
+        // $accessToken = (new LoginController($this->appId))->readAccessToken($request);
 
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
+        $accessToken = $myData['accessToken'];
 
         $data = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$userId, '=', $accessToken->userId)
