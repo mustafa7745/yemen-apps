@@ -660,7 +660,7 @@ class StoreManagerControllerAdd extends Controller
         $store = $myData['store'];
         $this->validRequestV1($request, [
             'image' => 'required|image|mimes:jpg|max:300',
-            'days' => 'required|image|mimes:jpg|max:1'
+            'days' => 'required|string|max:1'
 
         ]);
         return DB::transaction(function () use ($request, $store) {
