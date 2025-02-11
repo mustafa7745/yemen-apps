@@ -60,14 +60,14 @@ class LoginController
             ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
             ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
             ->first([
-                Users::$tableName . '.' . Users::$phone . ' as id',
+                Users::$tableName . '.' . Users::$id . ' as id',
                 Users::$tableName . '.' . Users::$password . ' as password'
 
             ]);
         // print_r($countryCode);
         // print_r($phone);
 
-        print_r($user);
+        // print_r($user);
         if ($user == null || Hash::check($password, $user->password) == false) {
             DB::table(FailProcesses::$tableName)->insert([
                 FailProcesses::$id => null,
