@@ -56,7 +56,7 @@ class LoginController
             )
             ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
             ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
-            ->first();
+            ->get();
         print_r($countryCode);
         print_r($user);
         if ($user == null || Hash::check($password, $user->password) == false) {
