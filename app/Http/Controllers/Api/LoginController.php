@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\AccessTokens1;
+use App\Models\Countries;
 use App\Models\Devices;
 use App\Models\DevicesSessions;
 use App\Models\FailProcesses;
@@ -45,8 +46,16 @@ class LoginController
         $myProcess = $this->checkProcessV1('login', $device->id, null);
 
 
-        $user = DB::table(table: Users::$tableName)
-            ->where(Users::$tableName . '.' . Users::$phone, '=', $countryCode . $phone)
+        $user = DB::table(Users::$tableName)
+            // ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
+            ->join(
+                Countries::$tableName,
+                Countries::$tableName . '.' . Countries::$id,
+                '=',
+                Users::$tableName . '.' . Users::$countryId
+            )
+            ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
+            ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
             ->first();
         if ($user == null || Hash::check($password, $user->password) == false) {
             DB::table(FailProcesses::$tableName)->insert([
