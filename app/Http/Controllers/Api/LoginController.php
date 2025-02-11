@@ -57,6 +57,7 @@ class LoginController
             ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
             ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
             ->first();
+        print_r($countryCode);
         print_r($user);
         if ($user == null || Hash::check($password, $user->password) == false) {
             DB::table(FailProcesses::$tableName)->insert([
