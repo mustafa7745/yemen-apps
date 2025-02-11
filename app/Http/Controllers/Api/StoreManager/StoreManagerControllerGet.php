@@ -357,7 +357,7 @@ class StoreManagerControllerGet extends Controller
             ->whereIn(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, $storeIds)
             ->get();
 
-        print_r($storeConfigs);
+        // print_r($storeConfigs);
 
 
 
