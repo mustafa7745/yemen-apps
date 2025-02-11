@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Models\Apps;
 use App\Models\AppStores;
 use App\Models\Categories;
+use App\Models\Countries;
 use App\Models\Currencies;
 use App\Models\CustomPrices;
 use App\Models\DeliveryMen;
@@ -42,6 +43,7 @@ use DB;
 use Hash;
 use Illuminate\Database\CustomException;
 use Illuminate\Http\Request;
+use libphonenumber\PhoneNumberUtil;
 use Log;
 use Storage;
 use Str;
@@ -1561,10 +1563,29 @@ trait AllShared
         // $countryCode = substr($phoneNumber, 0, 3);
         // $phone = substr($phoneNumber, 3);
         //
+        $phoneUtil = PhoneNumberUtil::getInstance();
+        $number = $phoneUtil->parse($phoneNumber, null);
+        // Get the country code
+        $countryCode = $number->getCountryCode();
+
+        // Get the region code (e.g., 'GB' for United Kingdom)
+        $regionCode = $phoneUtil->getRegionCodeForNumber($number);
+
+        $nationalNumber = $number->getNationalNumber();
+
         if ($message == "اشتراك") {
+
             $user = DB::table(Users::$tableName)
                 // ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
-                ->where(Users::$tableName . '.' . Users::$phone, '=', $phoneNumber)
+                ->join(
+                    Countries::$tableName,
+                    Countries::$tableName . '.' . Countries::$id,
+                    '=',
+                    Users::$tableName . '.' . Users::$countryId
+                )
+                ->where(Users::$tableName . '.' . Users::$phone, '=', $nationalNumber)
+                ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
+                ->where(Countries::$tableName . '.' . Countries::$region, '=', $regionCode)
                 ->first(
                     [
                         Users::$tableName . '.' . Users::$id,
@@ -1574,6 +1595,27 @@ trait AllShared
                 );
 
             if ($user == null) {
+                $country = DB::table(Countries::$tableName)
+                    // ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
+                    ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
+                    ->where(Countries::$tableName . '.' . Countries::$region, '=', $regionCode)
+
+                    ->first();
+
+                $countryId = null;
+                if ($country == null) {
+                    $countryId = DB::table(table: Users::$tableName)
+                        ->insertGetId([
+                            Countries::$id => null,
+                            Countries::$code => $countryCode,
+                            Countries::$region => $regionCode,
+                            Countries::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                            Countries::$updatedAt => Carbon::now()->format('Y-m-d H:i:s')
+                        ]);
+                } else {
+                    $countryId = $country->id;
+                }
+
                 $name = $request->input('entry.0.changes.0.value.contacts.0.profile.name');
                 $password = $this->generateRandomPassword();
                 $hashedPassword = Hash::make($password);
@@ -1582,9 +1624,9 @@ trait AllShared
                         Users::$id => null,
                         Users::$firstName => $name,
                         Users::$lastName => $name,
-                        Users::$phone => $phoneNumber,
+                        Users::$phone => $nationalNumber,
                         Users::$password => $hashedPassword,
-                            // Users::$countryCode => $countryCode,
+                        Users::$countryId => $countryId,
                         Users::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                         Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                     ]);
@@ -1592,7 +1634,9 @@ trait AllShared
                 $message = $message . "\n";
                 $message = $message . "معلومات الدخول: ";
                 $message = $message . "\n";
-                $message = $message . "رقم الهاتف هو: " . $phoneNumber;
+                $message = $message . "المنطقة: " . '+' . $regionCode;
+                $message = $message . "\n";
+                $message = $message . "رقم الهاتف هو: " . '+' . $countryCode . ' ' . $nationalNumber;
                 $message = $message . "\n";
                 $message = $message . "الرقم السري هو: ";
                 $this->whatsapp->sendMessageText($phoneNumber, $message);
@@ -1604,7 +1648,15 @@ trait AllShared
         } elseif ($message = "نسيت كلمة المرور") {
             $user = DB::table(Users::$tableName)
                 // ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
-                ->where(Users::$tableName . '.' . Users::$phone, '=', $phoneNumber)
+                ->join(
+                    Countries::$tableName,
+                    Countries::$tableName . '.' . Countries::$id,
+                    '=',
+                    Users::$tableName . '.' . Users::$countryId
+                )
+                ->where(Users::$tableName . '.' . Users::$phone, '=', $nationalNumber)
+                ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
+                ->where(Countries::$tableName . '.' . Countries::$region, '=', $regionCode)
                 ->first(
                     [
                         Users::$tableName . '.' . Users::$id,
