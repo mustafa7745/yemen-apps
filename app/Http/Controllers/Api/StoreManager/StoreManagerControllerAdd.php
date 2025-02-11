@@ -663,6 +663,13 @@ class StoreManagerControllerAdd extends Controller
             'days' => 'required|string|max:1'
 
         ]);
+        // print_r(Carbon::now()->addDays($days)->endOfDay()->format('Y-m-d H:i:s'));
+
+        $days = $request->file('days');
+
+        print_r($days);
+        return;
+
         return DB::transaction(function () use ($request, $store) {
 
 
@@ -675,6 +682,7 @@ class StoreManagerControllerAdd extends Controller
             if ($image->isValid() == false) {
                 return response()->json(['error' => 'Invalid image file.'], 400);
             }
+
 
 
             $fileName = Str::random(10) . '_' . time() . '.' . $image->getClientOriginalExtension();
