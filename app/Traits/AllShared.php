@@ -1535,7 +1535,7 @@ trait AllShared
     }
     public function whatsapp_webhook(Request $request)
     {
-        
+
         // $verifyToken = '774519161'; // Replace with your verify token
         // $challenge = $request->query('hub_challenge');
         // $token = $request->query('hub_verify_token');
@@ -1571,7 +1571,7 @@ trait AllShared
         // } catch (\libphonenumber\NumberParseException $e) {
         //     var_dump($e);
         // }
-        $number = $phoneUtil->parse($phoneNumber, null);
+        $number = $phoneUtil->parse("+" . $phoneNumber, null);
         // Get the country code
         $countryCode = $number->getCountryCode();
 
