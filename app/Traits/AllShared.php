@@ -1611,7 +1611,7 @@ trait AllShared
 
                 $countryId = null;
                 if ($country == null) {
-                    $countryId = DB::table(table: Users::$tableName)
+                    $countryId = DB::table(table: Countries::$tableName)
                         ->insertGetId([
                             Countries::$id => null,
                             Countries::$code => $countryCode,
