@@ -688,6 +688,8 @@ class StoreManagerControllerAdd extends Controller
 
             if ($days > 1) {
                 $expireAt = $expireAt->addDays($days)->endOfDay();
+            } else {
+                $expireAt = $expireAt->addDays($days - 1)->endOfDay();
             }
 
 
