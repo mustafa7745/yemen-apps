@@ -43,7 +43,7 @@ class StoreManagerControllerAdd extends Controller
 {
 
     use StoreManagerControllerShared;
-    use ErrorShared;
+    // use ErrorShared;
     // use AllShared;
     public function addCategory(Request $request)
     {
@@ -512,7 +512,7 @@ class StoreManagerControllerAdd extends Controller
     }
     public function addDeliveryManToStore(Request $request)
     {
-        $this->validRequest2($request, [
+        $this->validRequestV1($request, [
             'phone' => 'required|string|max:9',
             'storeId' => 'required|string|max:9'
         ]);
