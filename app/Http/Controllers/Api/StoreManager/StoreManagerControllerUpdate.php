@@ -14,6 +14,7 @@ use App\Models\OrderStatus;
 use App\Models\ProductImages;
 use App\Models\Products;
 use App\Models\Situations;
+use App\Models\StoreAds;
 use App\Models\Stores;
 use App\Models\SharedStoresConfigs;
 use App\Models\StoreProducts;
@@ -664,5 +665,45 @@ class StoreManagerControllerUpdate extends Controller
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false);
         $accessToken = $myData['accessToken'];
         return $this->ourLogout($accessToken->userSessionId);
+    }
+    public function updateAds(Request $request)
+    {
+
+        $this->validRequestV1($request, [
+            'adsId' => 'required|string|max:11'
+        ]);
+        $adsId = $request->input('adsId');
+        ///
+        $myData = $this->getMyData(request: $request, appId: $this->appId, storePoints: 2);
+        $store = $myData['store'];
+
+        ///
+        $ads = DB::table(table: StoreAds::$tableName)
+            ->where(StoreAds::$id, '=', $adsId)->first();
+
+        if ($ads == null) {
+            throw new CustomException("not found", 0, 403);
+        }
+        if ($ads->storeId != $store->id) {
+            throw new CustomException("need permission", 0, 403);
+        }
+
+        $days = 1;
+        $expireAt = Carbon::now();
+
+        if ($days > 1) {
+            $expireAt = $expireAt->addDays($days - 1)->endOfDay();
+        }
+
+        $expireAt->addDays($days - 1)->endOfDay();
+
+        $expireAt = $expireAt->format('Y-m-d H:i:s');
+        DB::table(table: StoreAds::$tableName)
+            ->where(StoreAds::$id, '=', $adsId)
+            ->update(
+                [StoreAds::$expireAt => $expireAt]
+            );
+
+        return response()->json(['result' => $expireAt]);
     }
 }
