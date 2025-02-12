@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Apps;
 use App\Models\Categories;
+use App\Models\Countries;
 use App\Models\Currencies;
 use App\Models\CustomPrices;
 use App\Models\DeliveryMen;
@@ -511,32 +512,35 @@ class StoreManagerControllerAdd extends Controller
     }
     public function addDeliveryManToStore(Request $request)
     {
-        $validation = $this->validRequest($request, [
+        $this->validRequest2($request, [
             'phone' => 'required|string|max:9',
             'storeId' => 'required|string|max:9'
         ]);
 
-
-        if ($validation != null) {
-            return $this->responseError($validation);
-        }
-
-
-
-        $loginController = (new LoginController($this->appId));
-        $token = $request->input('accessToken');
-        $deviceId = $request->input('deviceId');
-
-        // print_r($request->all());
-        $myResult = $loginController->readAccessToken($token, $deviceId);
-        if ($myResult->isSuccess == false) {
-            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
-        }
-        $accessToken = $myResult->message;
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
+        $store = $myData['store'];
+        $accessToken = $myData['accessToken'];
 
 
 
-        return DB::transaction(function () use ($request, $accessToken) {
+
+        return DB::transaction(function () use ($request, $store, $accessToken) {
+
+            $region = DB::table(table: Users::$tableName)
+                ->join(
+                    Countries::$tableName,
+                    Countries::$tableName . '.' . Countries::$id,
+                    '=',
+                    Users::$tableName . '.' . Users::$countryId
+                )->where(Users::$tableName . '.' . Users::$id, '=', $accessToken->userId)
+                ->first(
+                    [
+                        Countries::$tableName . '.' . Countries::$id,
+                    ]
+                );
+            if ($region == null) {
+                throw new CustomException("Unkown region", 0, 403);
+            }
 
             $phone = $request->input('phone');
             $storeId = $request->input('storeId');
@@ -549,6 +553,8 @@ class StoreManagerControllerAdd extends Controller
                     DeliveryMen::$tableName . '.' . DeliveryMen::$userId
                 )
                 ->where(Users::$tableName . '.' . Users::$phone, '=', $phone)
+                ->where(Users::$tableName . '.' . Users::$countryId, '=', $region->id)
+
                 ->first(
                     [
                         DeliveryMen::$tableName . '.' . DeliveryMen::$id,
@@ -560,10 +566,22 @@ class StoreManagerControllerAdd extends Controller
                 );
 
             if ($deliveryMan == null) {
-                return $this->soleEX();
+                throw new CustomException("NOt Found", 0, 403);
+            }
+
+            $deliveryManInStore = DB::table(table: StoreDeliveryMen::$tableName)
+                ->where(StoreDeliveryMen::$tableName . '.' . StoreDeliveryMen::$deliveryManId, '=', $phone)
+                ->where(StoreDeliveryMen::$tableName . '.' . StoreDeliveryMen::$storeId, '=', $store->id)
+                ->first(
+                    [
+                        StoreDeliveryMen::$tableName . '.' . StoreDeliveryMen::$id,
+                    ]
+                );
+
+            if ($deliveryManInStore != null) {
+                throw new CustomException("تم اضافته مسبقا", 0, 403);
             }
             try {
-
                 $insertedId = DB::table(table: StoreDeliveryMen::$tableName)
                     ->insertGetId([
                         StoreDeliveryMen::$id => null,
@@ -578,10 +596,6 @@ class StoreManagerControllerAdd extends Controller
                 // Manually trigger a rollback
                 return $this->queryEX($e);
             }
-
-
-
-
         });
     }
     public function addProductImage(Request $request)
