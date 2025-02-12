@@ -570,7 +570,7 @@ class StoreManagerControllerAdd extends Controller
             }
 
             $deliveryManInStore = DB::table(table: StoreDeliveryMen::$tableName)
-                ->where(StoreDeliveryMen::$tableName . '.' . StoreDeliveryMen::$deliveryManId, '=', $phone)
+                ->where(StoreDeliveryMen::$tableName . '.' . StoreDeliveryMen::$deliveryManId, '=', $deliveryMan->id)
                 ->where(StoreDeliveryMen::$tableName . '.' . StoreDeliveryMen::$storeId, '=', $store->id)
                 ->first(
                     [
