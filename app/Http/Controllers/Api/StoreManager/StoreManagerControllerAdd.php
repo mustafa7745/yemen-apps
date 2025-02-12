@@ -542,6 +542,8 @@ class StoreManagerControllerAdd extends Controller
                 throw new CustomException("Unkown region", 0, 403);
             }
 
+            print_r($region);
+
             $phone = $request->input('phone');
             $storeId = $request->input('storeId');
 
