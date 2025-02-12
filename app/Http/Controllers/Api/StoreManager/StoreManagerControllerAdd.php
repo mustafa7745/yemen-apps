@@ -542,7 +542,7 @@ class StoreManagerControllerAdd extends Controller
                 throw new CustomException("Unkown region", 0, 403);
             }
 
-            print_r($region);
+            // print_r($region);
 
             $phone = $request->input('phone');
             $storeId = $request->input('storeId');
@@ -568,7 +568,7 @@ class StoreManagerControllerAdd extends Controller
                 );
 
             if ($deliveryMan == null) {
-                throw new CustomException("NOt Found", 0, 403);
+                throw new CustomException("قد يكون المستحدم غير موجود او الموصل غير مسجل في نظام التوصيل", 0, 403);
             }
 
             $deliveryManInStore = DB::table(table: StoreDeliveryMen::$tableName)
