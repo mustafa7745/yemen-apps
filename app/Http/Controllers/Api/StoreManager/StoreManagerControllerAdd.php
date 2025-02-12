@@ -593,6 +593,7 @@ class StoreManagerControllerAdd extends Controller
 
                 return response()->json($deliveryMan);
             } catch (QueryException $e) {
+                print_r($e);
                 // Manually trigger a rollback
                 return $this->queryEX($e);
             }
