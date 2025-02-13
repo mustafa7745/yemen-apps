@@ -8,6 +8,7 @@ use App\Models\AppStores;
 use App\Models\Categories;
 use App\Models\Currencies;
 use App\Models\DeliveryMen;
+use App\Models\InAppProducts;
 use App\Models\NestedSections;
 use App\Models\Orders;
 use App\Models\OrdersAmounts;
@@ -349,7 +350,7 @@ class StoreManagerControllerGet extends Controller
         $storeIds = [];
         foreach ($data as $store) {
             // if ($store->typeId == 1) {
-                $storeIds[] = $store->id;
+            $storeIds[] = $store->id;
             // }
         }
 
@@ -950,6 +951,22 @@ class StoreManagerControllerGet extends Controller
             return response()->json(['situations' => $situation, 'orders' => $orders]);
         }
         return response()->json($orders);
+    }
+
+    public function getInAppProducts(Request $request, $withSituations = false)
+    {
+
+
+
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
+        $store = $myData['store'];
+        // $situation = null;
+
+        // if ($withSituations === true) {
+        $data = DB::table(InAppProducts::$tableName)
+            ->get();
+        // }
+        return response()->json($data);
     }
 
 }
