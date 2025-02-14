@@ -9,6 +9,7 @@ use App\Models\Countries;
 use App\Models\Currencies;
 use App\Models\CustomPrices;
 use App\Models\DeliveryMen;
+use App\Models\InAppProducts;
 use App\Models\NestedSections;
 use App\Models\Options;
 use App\Models\ProductImages;
@@ -788,4 +789,5 @@ class StoreManagerControllerAdd extends Controller
 
         return response()->json([]);
     }
+  
 }

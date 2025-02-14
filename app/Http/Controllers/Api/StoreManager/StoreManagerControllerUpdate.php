@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Currencies;
 use App\Models\CustomPrices;
+use App\Models\InAppProducts;
 use App\Models\Options;
 use App\Models\Orders;
 use App\Models\OrdersAmounts;
@@ -18,6 +19,7 @@ use App\Models\StoreAds;
 use App\Models\Stores;
 use App\Models\SharedStoresConfigs;
 use App\Models\StoreProducts;
+use App\Models\StoreSubscriptions;
 use App\Traits\AllShared;
 use App\Traits\StoreManagerControllerShared;
 use Carbon\Carbon;
@@ -705,5 +707,34 @@ class StoreManagerControllerUpdate extends Controller
             );
 
         return response()->json(['result' => $expireAt]);
+    }
+
+    public function updatePoints(Request $request)
+    {
+        $this->validRequestV1($request, [
+            'productId' => 'required|string|max:50'
+        ]);
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
+        $store = $myData['store'];
+
+        $productId = $request->input('productId');
+
+
+        $inAppProduct = DB::table(InAppProducts::$tableName)
+            ->where(InAppProducts::$productId, '=', $productId)
+            ->first();
+
+        $points = $inAppProduct->points;
+
+        DB::table(table: StoreSubscriptions::$tableName)
+            ->where(StoreSubscriptions::$points, '=', $store->id)
+            ->update(
+                [StoreAds::$expireAt => DB::raw(StoreSubscriptions::$points . " + ($points)")]
+            );
+
+        $sub = DB::table(StoreSubscriptions::$tableName)
+            ->where(StoreSubscriptions::$storeId, '=', $store->id)
+            ->first();
+        return response()->json($sub);
     }
 }
