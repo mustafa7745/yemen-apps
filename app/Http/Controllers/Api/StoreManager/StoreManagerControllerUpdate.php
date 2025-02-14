@@ -719,6 +719,7 @@ class StoreManagerControllerUpdate extends Controller
 
         $productId = $request->input('productId');
 
+        logger($productId);
 
         $inAppProduct = DB::table(InAppProducts::$tableName)
             ->where(InAppProducts::$productId, '=', $productId)
