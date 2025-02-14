@@ -729,7 +729,7 @@ class StoreManagerControllerUpdate extends Controller
         DB::table(table: StoreSubscriptions::$tableName)
             ->where(StoreSubscriptions::$storeId, '=', $store->id)
             ->update(
-                [StoreSubscriptions::$expireAt => DB::raw(StoreSubscriptions::$points . " + ($points)")]
+                [StoreSubscriptions::$points => DB::raw(StoreSubscriptions::$points . " + ($points)")]
             );
 
         $sub = DB::table(StoreSubscriptions::$tableName)
