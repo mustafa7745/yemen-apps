@@ -711,15 +711,17 @@ class StoreManagerControllerUpdate extends Controller
 
     public function updatePoints(Request $request)
     {
+
+        $productId = $request->input('productId');
+
+        logger($productId);
+
         $this->validRequestV1($request, [
             'productId' => 'required|string|max:50'
         ]);
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
         $store = $myData['store'];
 
-        $productId = $request->input('productId');
-
-        logger($productId);
 
         $inAppProduct = DB::table(InAppProducts::$tableName)
             ->where(InAppProducts::$productId, '=', $productId)
