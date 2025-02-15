@@ -23,6 +23,8 @@ use App\Models\StoreSubscriptions;
 use App\Traits\AllShared;
 use App\Traits\StoreManagerControllerShared;
 use Carbon\Carbon;
+use Google\Client;
+use Google\Service\AndroidPublisher;
 use Illuminate\Database\CustomException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -711,6 +713,13 @@ class StoreManagerControllerUpdate extends Controller
 
     public function updatePoints(Request $request)
     {
+
+        // storage_path('play/client_secret_851785290377-df0camfn5keeoeji4k2iqhafg868oums.apps.googleusercontent.com.json')
+        $client = new Client();
+        $client->setAuthConfig(storage_path('play/client_secret_851785290377-df0camfn5keeoeji4k2iqhafg868oums.apps.googleusercontent.com.json'));
+        $client->addScope(AndroidPublisher::ANDROIDPUBLISHER);
+
+        $service = new AndroidPublisher($client);
 
         $productId = $request->input('productId');
 
