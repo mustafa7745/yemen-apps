@@ -715,20 +715,22 @@ class StoreManagerControllerUpdate extends Controller
     {
 
         // storage_path('play/client_secret_851785290377-df0camfn5keeoeji4k2iqhafg868oums.apps.googleusercontent.com.json')
-        $client = new Client();
-        $client->setAuthConfig(storage_path('play/storesmanger-9dea8f2ba6b8.json'));
-        $client->addScope(AndroidPublisher::ANDROIDPUBLISHER);
+        // $client = new Client();
+        // $client->setAuthConfig(storage_path('play/storesmanger-9dea8f2ba6b8.json'));
+        // $client->addScope(AndroidPublisher::ANDROIDPUBLISHER);
 
-        $purchaseToken = 'lciifjfcnlelpajlpkjfalhm.AO-J1OwYHJ7x1ngapDExZ0B17cijbdiV9GeBsgYGg8NLLjYyGezrgwKaiEqDII18_Py9JuPMZ0NM-wL5ST58oJKHXlQAKSC_ufZQOj-ViY817cB0mRHXhrs';
-        $service = new AndroidPublisher($client);
-        print_r("ff: " . $service->getClient()->getClientId())
-        ;
+        // $purchaseToken = 'lciifjfcnlelpajlpkjfalhm.AO-J1OwYHJ7x1ngapDExZ0B17cijbdiV9GeBsgYGg8NLLjYyGezrgwKaiEqDII18_Py9JuPMZ0NM-wL5ST58oJKHXlQAKSC_ufZQOj-ViY817cB0mRHXhrs';
+        // $service = new AndroidPublisher($client);
+        // print_r("ff: " . $service->)
+        // ;
 
-        $purchase = $service->purchases_products->get('com.fekraplatform.storemanger', 'point5', $purchaseToken);
-        $productId = $request->input('productId');
+        // $purchase = $service->purchases_products->get('com.fekraplatform.storemanger', 'point5', $purchaseToken);
+        $productIds = $request->input('productId');
+        $productIds = json_decode($productIds);
 
-        logger($purchase);
-        logger($productId);
+
+        // logger($purchase);
+        // logger($productId);
 
         $this->validRequestV1($request, [
             'productId' => 'required|string|max:50'
@@ -738,7 +740,7 @@ class StoreManagerControllerUpdate extends Controller
 
 
         $inAppProduct = DB::table(InAppProducts::$tableName)
-            ->where(InAppProducts::$productId, '=', $productId)
+            ->where(InAppProducts::$productId, '=', $productIds[0])
             ->first();
 
         $points = $inAppProduct->points;
