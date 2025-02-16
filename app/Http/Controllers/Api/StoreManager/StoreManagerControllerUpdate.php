@@ -728,7 +728,7 @@ class StoreManagerControllerUpdate extends Controller
         $productIds = $request->input('productId');
         // print_r($productIds[0]);
         $productIds = json_decode($productIds);
-        print_r($productIds);
+        // print_r($productIds);
 
 
 
