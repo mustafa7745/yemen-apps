@@ -713,7 +713,7 @@ class StoreManagerControllerUpdate extends Controller
         return response()->json(['result' => $expireAt]);
     }
 
-    
+
     public function updatePoints(Request $request)
     {
 
@@ -740,7 +740,7 @@ class StoreManagerControllerUpdate extends Controller
         $this->validRequestV1($request, [
             'productId' => 'required|string|max:50'
         ]);
-        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2,);
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2, );
         $store = $myData['store'];
         $app = $myData['app'];
 
@@ -768,6 +768,7 @@ class StoreManagerControllerUpdate extends Controller
                         GooglePurchases::$isPending => 0,
                         GooglePurchases::$isAck => 0,
                         GooglePurchases::$isCounsumed => 0,
+                        GooglePurchases::$productId => $productId,
                         GooglePurchases::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                         GooglePurchases::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                     ]);
