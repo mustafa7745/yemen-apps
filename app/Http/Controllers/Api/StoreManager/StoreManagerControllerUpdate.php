@@ -718,11 +718,11 @@ class StoreManagerControllerUpdate extends Controller
         $client = new Client();
         $client->setAuthConfig(storage_path('play/storesmanger-9dea8f2ba6b8.json'));
         $client->addScope(AndroidPublisher::ANDROIDPUBLISHER);
-
+        $service = new AndroidPublisher($client);
         // $purchaseToken = 'lciifjfcnlelpajlpkjfalhm.AO-J1OwYHJ7x1ngapDExZ0B17cijbdiV9GeBsgYGg8NLLjYyGezrgwKaiEqDII18_Py9JuPMZ0NM-wL5ST58oJKHXlQAKSC_ufZQOj-ViY817cB0mRHXhrs';
         // $purchaseToken = 'ceonjjkebfoglochohenjjjd.AO-J1OzkwlSEl0nyYShkbsEYnSPngHE-cfz3XZIL2MXIvPp42W_NHf0pZ8dphiiCcqh-pv-tVtFkNMNrXlvew34O9ufc6dZdm9nA6iXvnqsWHJ3DX4ZsAK0';
 
-        $service = new AndroidPublisher($client);
+
         // print_r("ff: " . $service->)
         // ;
 
@@ -740,7 +740,7 @@ class StoreManagerControllerUpdate extends Controller
         $productIds = json_decode($productIds);
         $purchaseToken = $request->input('purchaseToken');
 
-        $purchaseToken = 'hjlhooipdfkblhinncdchddg.AO-J1Oy4fCR8epqu2Y_t-35jXovXJGZm8xkyeIB3Ds-lxJKmieOPfUQ0SaKnAeJMOGuhnMN_w5j1tovX2DJwbmr0SWqgNwa0qq1uoOE02CIC3lTguhXw-Bg';
+        $purchaseToken = 'cjalfpjdacmcceeeannlfkef.AO-J1OwnQPmYzrT1IQhntBUx5cncJxIcLdtt-imItfROdLjMQ2osbHcmLFYEOVZe8RVaVoPB3vQhGtaKjn-BW8P43aHwOdv8BydDzRDP3knLD0O6wbs0Ghg';
         $purchase = $service->purchases_products->get('com.fekraplatform.storemanger', $productIds[0], $purchaseToken);
 
         $response = $service->purchases_products->consume('com.fekraplatform.storemanger', $productIds[0], $purchaseToken);
