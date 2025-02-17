@@ -1769,7 +1769,7 @@ trait AllShared
 
         $failProcesses = DB::table(table: FailProcesses::$tableName)
             ->where(FailProcesses::$tableName . '.' . FailProcesses::$deviceId, '=', $deviceId)
-            ->whereBetween(FailProcesses::$tableName . '.' . FailProcesses::$createdAt, [ Carbon::now()->subMinutes(5),  Carbon::now()])
+            ->whereBetween(FailProcesses::$tableName . '.' . FailProcesses::$createdAt, [Carbon::now()->subMinutes(5), Carbon::now()])
             ->when($userId != null, function ($query) use ($userId) {
                 return $query->where(FailProcesses::$tableName . '.' . FailProcesses::$userId, '=', $userId);
             })
@@ -1817,7 +1817,7 @@ trait AllShared
 
         $failProcesses = DB::table(table: FailProcesses::$tableName)
             ->where(FailProcesses::$tableName . '.' . FailProcesses::$deviceId, '=', $deviceId)
-            ->whereBetween(FailProcesses::$tableName . '.' . FailProcesses::$createdAt, [Carbon::now()->subMinutes(5)->toDateTimeString(),  Carbon::now()->toDateTimeString()])
+            ->whereBetween(FailProcesses::$tableName . '.' . FailProcesses::$createdAt, [Carbon::now()->subMinutes(5)->toDateTimeString(), Carbon::now()->toDateTimeString()])
             ->when($userId != null, function ($query) use ($userId) {
                 return $query->where(FailProcesses::$tableName . '.' . FailProcesses::$userId, '=', $userId);
             })
@@ -1855,7 +1855,8 @@ trait AllShared
             ->where(Apps::$sha, '=', $sha)
             ->where(Apps::$packageName, '=', $packageName)
             ->first([
-                Apps::$tableName . '.' . Apps::$id
+                Apps::$tableName . '.' . Apps::$id,
+                Apps::$tableName . '.' . Apps::$packageName
             ]);
         if ($app == null) {
             throw new CustomException("Error App", 0, 443);

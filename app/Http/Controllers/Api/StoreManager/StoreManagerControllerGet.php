@@ -8,6 +8,7 @@ use App\Models\AppStores;
 use App\Models\Categories;
 use App\Models\Currencies;
 use App\Models\DeliveryMen;
+use App\Models\GooglePurchases;
 use App\Models\InAppProducts;
 use App\Models\NestedSections;
 use App\Models\Orders;
@@ -960,13 +961,31 @@ class StoreManagerControllerGet extends Controller
 
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
         $store = $myData['store'];
-        // $situation = null;
+        $app = $myData['app'];
 
         // if ($withSituations === true) {
-        $data = DB::table(InAppProducts::$tableName)
+        $inAppProducts = DB::table(InAppProducts::$tableName)
             ->get();
-        // }
-        return response()->json($data);
+        $googlePurchases = DB::table(GooglePurchases::$tableName)
+            ->where(GooglePurchases::$isPending, '=', 1)
+            ->where(GooglePurchases::$storeId, '=', $store->id)
+            ->get();
+
+        foreach ($inAppProducts as $key => $inAppProduct) {
+            $isPending = false;
+            foreach ($googlePurchases as $key2 => $googlePurchase) {
+                if ($googlePurchase->productId == $inAppProduct->productId) {
+                    $inAppProducts[$key] = $this->processPurchase($app, $store, $googlePurchase, $inAppProduct, $googlePurchase->purchaseToken);
+                    if ($inAppProducts[$key]->isPending === true) {
+                        $isPending = true;
+                    }
+                }
+            }
+            if ($isPending === false) {
+                $inAppProducts[$key]->isPending = false;
+            }
+        }
+        return response()->json($inAppProducts);
     }
 
 }

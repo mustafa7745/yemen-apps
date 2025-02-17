@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Currencies;
 use App\Models\CustomPrices;
+use App\Models\GooglePurchases;
 use App\Models\InAppProducts;
 use App\Models\Options;
 use App\Models\Orders;
@@ -23,7 +24,8 @@ use App\Models\StoreSubscriptions;
 use App\Traits\AllShared;
 use App\Traits\StoreManagerControllerShared;
 use Carbon\Carbon;
-use Google\Client;
+use Exception;
+
 use Google\Service\AndroidPublisher;
 use Illuminate\Database\CustomException;
 use Illuminate\Support\Facades\DB;
@@ -588,7 +590,7 @@ class StoreManagerControllerUpdate extends Controller
             //     return response()->json(['error' => 'Invalid Cover file.'], 400);
             // }
             $updatedData = [
-                Stores::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    // Stores::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                 Stores::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ];
 
@@ -711,41 +713,23 @@ class StoreManagerControllerUpdate extends Controller
         return response()->json(['result' => $expireAt]);
     }
 
+    
     public function updatePoints(Request $request)
     {
 
-        // storage_path('play/client_secret_851785290377-df0camfn5keeoeji4k2iqhafg868oums.apps.googleusercontent.com.json')
-        $client = new Client();
-        $client->setAuthConfig(storage_path('play/storesmanger-9dea8f2ba6b8.json'));
-        $client->addScope(AndroidPublisher::ANDROIDPUBLISHER);
-        $service = new AndroidPublisher($client);
-        // $purchaseToken = 'lciifjfcnlelpajlpkjfalhm.AO-J1OwYHJ7x1ngapDExZ0B17cijbdiV9GeBsgYGg8NLLjYyGezrgwKaiEqDII18_Py9JuPMZ0NM-wL5ST58oJKHXlQAKSC_ufZQOj-ViY817cB0mRHXhrs';
-        // $purchaseToken = 'ceonjjkebfoglochohenjjjd.AO-J1OzkwlSEl0nyYShkbsEYnSPngHE-cfz3XZIL2MXIvPp42W_NHf0pZ8dphiiCcqh-pv-tVtFkNMNrXlvew34O9ufc6dZdm9nA6iXvnqsWHJ3DX4ZsAK0';
 
 
-        // print_r("ff: " . $service->)
-        // ;
+        // $productIds = $request->input('productId');
+        // // print_r($productIds[0]);
+        // $productIds = json_decode($productIds);
 
-        // $purchase = $service->purchases_products->get('com.fekraplatform.storemanger', 'point5', $purchaseToken);
-        // $response = $service->purchases_products->consume('com.fekraplatform.storemanger', 'point5', $purchaseToken);
+        // $productId = $productIds[0];
+        // $purchaseToken = $request->input('purchaseToken');
 
-        // if ($response->getConsumed()) {
-        //     echo "Purchase consumed successfully.";
-        // } else {
-        //     echo "Failed to consume the purchase.";
-        // }
+        // $purchaseToken = 'ichbpmdhlkkmhkncbakcdjmb.AO-J1Ox0k0mBEmfpoSXTN28GxYmpG0oegbOY5Vjrx7_baru7xbgubIixVT_Lb3mHaYVgRswL7a4aCZARcOlNmQ_PBiYcRMlX3uv_pQsMaMVIaUktK0A_dxw';
+
         // print_r($purchase);
-        $productIds = $request->input('productId');
-        // print_r($productIds[0]);
-        $productIds = json_decode($productIds);
-        $purchaseToken = $request->input('purchaseToken');
-
-        $purchaseToken = 'ichbpmdhlkkmhkncbakcdjmb.AO-J1Ox0k0mBEmfpoSXTN28GxYmpG0oegbOY5Vjrx7_baru7xbgubIixVT_Lb3mHaYVgRswL7a4aCZARcOlNmQ_PBiYcRMlX3uv_pQsMaMVIaUktK0A_dxw';
-        $purchase = $service->purchases_products->get('com.fekraplatform.storemanger', $productIds[0], $purchaseToken);
-
-        $response = $service->purchases_products->consume('com.fekraplatform.storemanger', $productIds[0], $purchaseToken);
-        print_r($purchase);
-        print_r($response);
+        // print_r($response);
         // print_r($productIds);
 
 
@@ -756,25 +740,66 @@ class StoreManagerControllerUpdate extends Controller
         $this->validRequestV1($request, [
             'productId' => 'required|string|max:50'
         ]);
-        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2, myProcessName: " updatePoints");
         $store = $myData['store'];
+        $app = $myData['app'];
 
 
-        $inAppProduct = DB::table(InAppProducts::$tableName)
-            ->where(InAppProducts::$productId, '=', $productIds[0])
-            ->first();
+        return DB::transaction(function () use ($request, $store, $app) {
+            $productIds = $request->input('productId');
+            $productIds = json_decode($productIds);
+            $productId = $productIds[0];
+            $purchaseToken = $request->input('purchaseToken');
 
-        $points = $inAppProduct->points;
+            $inAppProduct = DB::table(InAppProducts::$tableName)->where(InAppProducts::$productId, '=', $productId)->first();
+            if ($inAppProduct == null) {
+                throw new CustomException("Undefiend ProductId", 0, 403);
+            }
 
-        DB::table(table: StoreSubscriptions::$tableName)
-            ->where(StoreSubscriptions::$storeId, '=', $store->id)
-            ->update(
-                [StoreSubscriptions::$points => DB::raw(StoreSubscriptions::$points . " + ($points)")]
-            );
+            $googlePurchase = DB::table(GooglePurchases::$tableName)
+                ->where(GooglePurchases::$purchaseToken, '=', $purchaseToken)
+                ->first();
+            if ($googlePurchase == null) {
+                $insertedId = DB::table(table: GooglePurchases::$tableName)
+                    ->insertGetId([
+                        GooglePurchases::$id => null,
+                        GooglePurchases::$storeId => $store->id,
+                        GooglePurchases::$purchaseToken => $purchaseToken,
+                        GooglePurchases::$isPending => 0,
+                        GooglePurchases::$isAck => 0,
+                        GooglePurchases::$isCounsumed => 0,
+                        GooglePurchases::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                        GooglePurchases::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    ]);
+                $googlePurchase = DB::table(GooglePurchases::$tableName)
+                    ->where(GooglePurchases::$id, '=', $insertedId)
+                    ->first();
+            }
+            $inAppProduct = $this->processPurchase($app, $store, $googlePurchase, $inAppProduct, $purchaseToken);
+            return response()->json($inAppProduct);
 
-        $sub = DB::table(StoreSubscriptions::$tableName)
-            ->where(StoreSubscriptions::$storeId, '=', $store->id)
-            ->first();
-        return response()->json($sub);
+        });
+
+
+
+
+        // $inAppProduct = DB::table(InAppProducts::$tableName)
+        //     ->where(InAppProducts::$productId, '=', $productIds[0])
+        //     ->first();
+
+        // $points = $inAppProduct->points;
+
+        // DB::table(table: StoreSubscriptions::$tableName)
+        //     ->where(StoreSubscriptions::$storeId, '=', $store->id)
+        //     ->update(
+        //         [StoreSubscriptions::$points => DB::raw(StoreSubscriptions::$points . " + ($points)")]
+        //     );
+
+        // $sub = DB::table(StoreSubscriptions::$tableName)
+        //     ->where(StoreSubscriptions::$storeId, '=', $store->id)
+        //     ->first();
+        // return response()->json($sub);
     }
+
+
 }
