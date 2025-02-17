@@ -740,7 +740,7 @@ class StoreManagerControllerUpdate extends Controller
         $productIds = json_decode($productIds);
         $purchaseToken = $request->input('purchaseToken');
 
-        $response = $service->purchases_products->consume('com.fekraplatform.storemanger', 'point5', $purchaseToken);
+        $response = $service->purchases_products->consume('com.fekraplatform.storemanger', $productIds[0], $purchaseToken);
 
         // print_r($productIds);
 
