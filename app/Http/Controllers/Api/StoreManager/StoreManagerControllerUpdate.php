@@ -740,9 +740,12 @@ class StoreManagerControllerUpdate extends Controller
         $productIds = json_decode($productIds);
         $purchaseToken = $request->input('purchaseToken');
 
-        // $purchaseToken = 'ccbgdehmgebcfkdpgiigoghc.AO-J1OxXiOFT5LgD2aG0ltUC8AIKsIj_n8OvYLdt8iuc2jWh9hlxc14KOGdCK2-ARmVM9aSSHGzmrI0emnwACUgzbp7jm_KjVutZc8yCxqzc1A5sBz2XUhM';
-        $response = $service->purchases_products->consume('com.fekraplatform.storemanger', $productIds[0], $purchaseToken);
+        $purchaseToken = 'bpkmkkelnehjdbklhpoohlpl.AO-J1OxEb3CZ4W1UH9tS2___8tovxFZm3F4M57BUU5SuTEMV2nlmP2iv9EUAB3bxTTREsvV5S2uVZOawc3YfeumM4kqBoX0F3EgW4z4O1AUukk3Ikq6pCkA';
+        $purchase = $service->purchases_products->get('com.fekraplatform.storemanger', 'point5', $purchaseToken);
 
+        $response = $service->purchases_products->consume('com.fekraplatform.storemanger', $productIds[0], $purchaseToken);
+        print_r($purchase);
+        print_r($response);
         // print_r($productIds);
 
 
