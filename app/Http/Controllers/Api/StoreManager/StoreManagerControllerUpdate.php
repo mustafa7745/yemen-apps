@@ -719,14 +719,14 @@ class StoreManagerControllerUpdate extends Controller
         $client->setAuthConfig(storage_path('play/storesmanger-9dea8f2ba6b8.json'));
         $client->addScope(AndroidPublisher::ANDROIDPUBLISHER);
 
-        $purchaseToken = 'lciifjfcnlelpajlpkjfalhm.AO-J1OwYHJ7x1ngapDExZ0B17cijbdiV9GeBsgYGg8NLLjYyGezrgwKaiEqDII18_Py9JuPMZ0NM-wL5ST58oJKHXlQAKSC_ufZQOj-ViY817cB0mRHXhrs';
-        $purchaseToken = 'ceonjjkebfoglochohenjjjd.AO-J1OzkwlSEl0nyYShkbsEYnSPngHE-cfz3XZIL2MXIvPp42W_NHf0pZ8dphiiCcqh-pv-tVtFkNMNrXlvew34O9ufc6dZdm9nA6iXvnqsWHJ3DX4ZsAK0';
+        // $purchaseToken = 'lciifjfcnlelpajlpkjfalhm.AO-J1OwYHJ7x1ngapDExZ0B17cijbdiV9GeBsgYGg8NLLjYyGezrgwKaiEqDII18_Py9JuPMZ0NM-wL5ST58oJKHXlQAKSC_ufZQOj-ViY817cB0mRHXhrs';
+        // $purchaseToken = 'ceonjjkebfoglochohenjjjd.AO-J1OzkwlSEl0nyYShkbsEYnSPngHE-cfz3XZIL2MXIvPp42W_NHf0pZ8dphiiCcqh-pv-tVtFkNMNrXlvew34O9ufc6dZdm9nA6iXvnqsWHJ3DX4ZsAK0';
 
         $service = new AndroidPublisher($client);
         // print_r("ff: " . $service->)
         // ;
 
-        $purchase = $service->purchases_products->get('com.fekraplatform.storemanger', 'point5', $purchaseToken);
+        // $purchase = $service->purchases_products->get('com.fekraplatform.storemanger', 'point5', $purchaseToken);
         // $response = $service->purchases_products->consume('com.fekraplatform.storemanger', 'point5', $purchaseToken);
 
         // if ($response->getConsumed()) {
@@ -734,10 +734,14 @@ class StoreManagerControllerUpdate extends Controller
         // } else {
         //     echo "Failed to consume the purchase.";
         // }
-        print_r($purchase);
+        // print_r($purchase);
         $productIds = $request->input('productId');
         // print_r($productIds[0]);
         $productIds = json_decode($productIds);
+        $purchaseToken = $request->input('purchaseToken');
+
+        $response = $service->purchases_products->consume('com.fekraplatform.storemanger', 'point5', $purchaseToken);
+
         // print_r($productIds);
 
 
