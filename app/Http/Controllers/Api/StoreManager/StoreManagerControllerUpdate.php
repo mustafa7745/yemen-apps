@@ -725,6 +725,7 @@ class StoreManagerControllerUpdate extends Controller
         // ;
 
         $purchase = $service->purchases_products->get('com.fekraplatform.storemanger', 'point5', $purchaseToken);
+        print_r($purchase);
         $productIds = $request->input('productId');
         // print_r($productIds[0]);
         $productIds = json_decode($productIds);
