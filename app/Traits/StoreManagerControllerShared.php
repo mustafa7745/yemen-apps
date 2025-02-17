@@ -30,6 +30,7 @@ trait StoreManagerControllerShared
             $service = $this->getServiceClient();
             $purchase = $service->purchases_products->get($app->packageName, $inAppProduct->productId, $purchaseToken);
             print_r($purchase);
+            print_r($googlePurchase->productId);
             // Logger(json_encode($purchase));
             $updatedData = [
                 Stores::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
