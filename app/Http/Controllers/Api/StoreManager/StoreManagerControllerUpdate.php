@@ -740,7 +740,7 @@ class StoreManagerControllerUpdate extends Controller
         $this->validRequestV1($request, [
             'productId' => 'required|string|max:50'
         ]);
-        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2, myProcessName: " updatePoints");
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2,);
         $store = $myData['store'];
         $app = $myData['app'];
 
