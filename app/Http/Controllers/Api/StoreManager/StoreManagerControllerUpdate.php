@@ -727,7 +727,14 @@ class StoreManagerControllerUpdate extends Controller
         // ;
 
         $purchase = $service->purchases_products->get('com.fekraplatform.storemanger', 'point5', $purchaseToken);
-        print_r($purchase->sku);
+        $response = $service->purchases_products->consume('com.fekraplatform.storemanger', 'point5', $purchaseToken);
+
+        if ($response->getConsumed()) {
+            echo "Purchase consumed successfully.";
+        } else {
+            echo "Failed to consume the purchase.";
+        }
+        // print_r($purchase->sku);
         $productIds = $request->input('productId');
         // print_r($productIds[0]);
         $productIds = json_decode($productIds);
