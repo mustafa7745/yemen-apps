@@ -720,6 +720,8 @@ class StoreManagerControllerUpdate extends Controller
         $client->addScope(AndroidPublisher::ANDROIDPUBLISHER);
 
         $purchaseToken = 'lciifjfcnlelpajlpkjfalhm.AO-J1OwYHJ7x1ngapDExZ0B17cijbdiV9GeBsgYGg8NLLjYyGezrgwKaiEqDII18_Py9JuPMZ0NM-wL5ST58oJKHXlQAKSC_ufZQOj-ViY817cB0mRHXhrs';
+        $purchaseToken = 'ceonjjkebfoglochohenjjjd.AO-J1OzkwlSEl0nyYShkbsEYnSPngHE-cfz3XZIL2MXIvPp42W_NHf0pZ8dphiiCcqh-pv-tVtFkNMNrXlvew34O9ufc6dZdm9nA6iXvnqsWHJ3DX4ZsAK0';
+
         $service = new AndroidPublisher($client);
         // print_r("ff: " . $service->)
         // ;
