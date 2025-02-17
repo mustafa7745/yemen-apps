@@ -29,10 +29,10 @@ trait StoreManagerControllerShared
         try {
             $service = $this->getServiceClient();
             $purchase = $service->purchases_products->get($app->packageName, $inAppProduct->productId, $purchaseToken);
-            print_r($purchase);
-            print_r($purchaseToken);
-            print_r($googlePurchase->productId);
-            print_r($app->packageName);
+            // print_r($purchase);
+            // print_r($purchaseToken);
+            // print_r($googlePurchase->productId);
+            // print_r($app->packageName);
 
             // Logger(json_encode($purchase));
             $updatedData = [
