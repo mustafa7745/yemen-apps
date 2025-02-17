@@ -4,7 +4,7 @@ namespace App\Models;
 
 class GooglePurchases
 {
-   public static $tableName = "googlePurchases.php";
+   public static $tableName = "googlePurchases";
    public static $id = "id";
    public static $purchaseToken = "purchaseToken";
    public static $productId = "productId";
