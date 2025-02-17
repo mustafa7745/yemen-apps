@@ -28,6 +28,7 @@ trait StoreManagerControllerShared
         try {
             $service = $this->getServiceClient();
             $purchase = $service->purchases_products->get($app->packageName, $inAppProduct->productId, $purchaseToken);
+            logger($purchase);
             $updatedData = [
                 Stores::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ];
