@@ -38,14 +38,14 @@ trait StoreManagerControllerShared
                 if ($googlePurchase->isPending !== 1) {
                     $updatedData[GooglePurchases::$isPending] = 1;
                 }
-                // if ($purchase->consumptionState !== 1) {
-                //     $service->purchases_products->consume($app->packageName, $inAppProduct->productId, $purchaseToken);
-                //     $updatedData[GooglePurchases::$isCounsumed] = 1;
-                // }
-                if ($purchase->acknowledgementState !== 1) {
-                    $service->purchases_products->acknowledge($app->packageName, $inAppProduct->productId, $purchaseToken);
-                    $updatedData[GooglePurchases::$isAck] = 1;
+                if ($purchase->consumptionState !== 1) {
+                    $service->purchases_products->consume($app->packageName, $googlePurchase->productId, $purchaseToken);
+                    $updatedData[GooglePurchases::$isCounsumed] = 1;
                 }
+                // if ($purchase->acknowledgementState !== 1) {
+                //     $service->purchases_products->acknowledge($app->packageName, $googlePurchase->productId, $purchaseToken);
+                //     $updatedData[GooglePurchases::$isAck] = 1;
+                // }
                 ////
                 if ($updatedData > 1) {
                     DB::table(table: GooglePurchases::$tableName)
