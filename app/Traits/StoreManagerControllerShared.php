@@ -9,6 +9,7 @@ use Exception;
 use Google\Service\AndroidPublisher;
 use Illuminate\Database\CustomException;
 use Google\Client;
+use Illuminate\Log\Logger;
 
 trait StoreManagerControllerShared
 {
@@ -28,7 +29,7 @@ trait StoreManagerControllerShared
         try {
             $service = $this->getServiceClient();
             $purchase = $service->purchases_products->get($app->packageName, $inAppProduct->productId, $purchaseToken);
-            logger($purchase);
+            Logger($purchase);
             $updatedData = [
                 Stores::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ];
