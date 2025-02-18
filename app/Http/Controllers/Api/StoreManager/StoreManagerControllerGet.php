@@ -976,9 +976,10 @@ class StoreManagerControllerGet extends Controller
             foreach ($googlePurchases as $key2 => $googlePurchase) {
                 if ($googlePurchase->productId == $inAppProduct->productId) {
                     $inAppProducts[$key] = $this->processPurchase($app, $store, $googlePurchase, $inAppProduct, $googlePurchase->purchaseToken);
-                    if ($inAppProducts[$key]->isPending === true) {
-                        $isPending = true;
-                    }
+                    $isPending = $inAppProducts[$key]->isPending;
+                    // if ($inAppProducts[$key]->isPending === true) {
+                    //     $isPending = true;
+                    // }
                 }
             }
             $inAppProducts[$key]->isPending = $isPending;
