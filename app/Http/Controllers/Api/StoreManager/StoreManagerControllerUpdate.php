@@ -753,7 +753,7 @@ class StoreManagerControllerUpdate extends Controller
 
             $inAppProduct = DB::table(InAppProducts::$tableName)->where(InAppProducts::$productId, '=', $productId)->first();
             if ($inAppProduct == null) {
-                throw new CustomException("Undefiend ProductId", 0, 403);
+                throw new CustomException("Undefiend ProductId" . $productId, 0, 403);
             }
 
             $googlePurchase = DB::table(GooglePurchases::$tableName)
@@ -768,7 +768,7 @@ class StoreManagerControllerUpdate extends Controller
                         GooglePurchases::$isPending => 0,
                         GooglePurchases::$isAck => 0,
                         GooglePurchases::$isCounsumed => 0,
-                        GooglePurchases::$isSubs =>$inAppProduct->isSubs,
+                        GooglePurchases::$isSubs => $inAppProduct->isSubs,
                         GooglePurchases::$productId => $productId,
                         GooglePurchases::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                         GooglePurchases::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
