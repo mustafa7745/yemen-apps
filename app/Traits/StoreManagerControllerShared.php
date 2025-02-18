@@ -56,6 +56,10 @@ trait StoreManagerControllerShared
                     $service->purchases_products->acknowledge($app->packageName, $googlePurchase->productId, $purchaseToken, $acknowledgeRequest);
                     $updatedData[GooglePurchases::$isAck] = 1;
                 }
+                if ($purchase->consumptionState != 1) {
+                    $service->purchases_products->consume($app->packageName, $googlePurchase->productId, $purchaseToken);
+                    $updatedData[GooglePurchases::$isCounsumed] = 1;
+                }
 
                 // if ($purchase->acknowledgementState !== 1) {
                 //     $service->purchases_products->acknowledge($app->packageName, $googlePurchase->productId, $purchaseToken);
