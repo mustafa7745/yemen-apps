@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use DB;
 use Exception;
 use Google\Service\AndroidPublisher;
+use Google\Service\Pubsub\AcknowledgeRequest;
 use Illuminate\Database\CustomException;
 use Google\Client;
 use Illuminate\Log\Logger;
@@ -43,7 +44,8 @@ trait StoreManagerControllerShared
                     $updatedData[GooglePurchases::$isPending] = 0;
                 }
                 if ($purchase->acknowledgementState !== 1) {
-                    $service->purchases_products->acknowledge($app->packageName, $googlePurchase->productId, $purchaseToken);
+                    $acknowledgeRequest = new AcknowledgeRequest();
+                    $service->purchases_products->acknowledge($app->packageName, $googlePurchase->productId, $purchaseToken,$acknowledgeRequestf);
                     $updatedData[GooglePurchases::$isAck] = 1;
                 }
                 if ($purchase->consumptionState !== 1) {
