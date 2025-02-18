@@ -74,11 +74,21 @@ trait StoreManagerControllerShared
                         );
                 }
 
-                DB::table(table: StoreSubscriptions::$tableName)
-                    ->where(StoreSubscriptions::$storeId, '=', $store->id)
-                    ->update(
-                        [StoreSubscriptions::$points => DB::raw(StoreSubscriptions::$points . " + ($inAppProduct->points)")]
-                    );
+                if ($googlePurchase->isSubs == 1) {
+                    DB::table(table: StoreSubscriptions::$tableName)
+                        ->where(StoreSubscriptions::$storeId, '=', $store->id)
+                        ->update(
+                            [StoreSubscriptions::$points => DB::raw(StoreSubscriptions::$points . " + ($inAppProduct->points)")]
+                        );
+                } else {
+                    DB::table(table: StoreSubscriptions::$tableName)
+                        ->where(StoreSubscriptions::$storeId, '=', $store->id)
+                        ->update(
+                            [StoreSubscriptions::$points => DB::raw(StoreSubscriptions::$points . " + ($inAppProduct->points)")]
+                        );
+                }
+
+
                 $inAppProduct->isPending = false;
                 return $inAppProduct;
             } elseif ($purchase->purchaseState == 1) {
@@ -117,7 +127,7 @@ trait StoreManagerControllerShared
                 //     ->update(
                 //         [StoreSubscriptions::$points => DB::raw(StoreSubscriptions::$points . " + ($inAppProduct->points)")]
                 //     );
-               
+
             }
             $inAppProduct->isPending = true;
             return $inAppProduct;

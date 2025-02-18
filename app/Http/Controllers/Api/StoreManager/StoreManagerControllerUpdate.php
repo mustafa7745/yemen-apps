@@ -746,9 +746,9 @@ class StoreManagerControllerUpdate extends Controller
 
 
         return DB::transaction(function () use ($request, $store, $app) {
-            $productIds = $request->input('productId');
-            $productIds = json_decode($productIds);
-            $productId = $productIds[0];
+            $productId = $request->input('productId');
+            // $productIds = json_decode($productIds);
+            // $productId = $productIds[0];
             $purchaseToken = $request->input('purchaseToken');
 
             $inAppProduct = DB::table(InAppProducts::$tableName)->where(InAppProducts::$productId, '=', $productId)->first();

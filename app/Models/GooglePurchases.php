@@ -12,6 +12,8 @@ class GooglePurchases
    public static $isAck = "isAck";
    public static $isCounsumed = "isCounsumed";
    public static $storeId = "storeId";
+   public static $isSubs = "isSubs";
+
    public static $createdAt = "createdAt";
    public static $updatedAt = "updatedAt";
 }

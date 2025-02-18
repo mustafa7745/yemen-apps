@@ -958,6 +958,11 @@ class StoreManagerControllerGet extends Controller
     {
 
 
+        $this->validRequestV1($request, [
+            'isSubs' => 'required|string|max:1'
+        ]);
+
+        $isSubs = $request->input('isSubs');
 
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
         $store = $myData['store'];
@@ -965,8 +970,10 @@ class StoreManagerControllerGet extends Controller
 
         // if ($withSituations === true) {
         $inAppProducts = DB::table(InAppProducts::$tableName)
+            ->where(InAppProducts::$tableName . '.' . InAppProducts::$isSubs, '=', $isSubs)
             ->get();
         $googlePurchases = DB::table(GooglePurchases::$tableName)
+            ->where(GooglePurchases::$tableName . '.' . GooglePurchases::$isSubs, '=', $isSubs)
             ->whereIn(GooglePurchases::$isPending, [1, 2])
             // ->where(GooglePurchases::$isPending, '=', 2)
 
