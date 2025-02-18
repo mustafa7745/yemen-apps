@@ -81,6 +81,42 @@ trait StoreManagerControllerShared
                     );
                 $inAppProduct->isPending = false;
                 return $inAppProduct;
+            } elseif ($purchase->purchaseState == 1) {
+                if ($googlePurchase->isPending != 1) {
+                    $updatedData[GooglePurchases::$isPending] = 1;
+                }
+                if ($updatedData > 1) {
+                    DB::table(table: GooglePurchases::$tableName)
+                        ->where(GooglePurchases::$purchaseToken, '=', $purchaseToken)
+                        ->update(
+                            $updatedData
+                        );
+                }
+
+                DB::table(table: StoreSubscriptions::$tableName)
+                    ->where(StoreSubscriptions::$storeId, '=', $store->id)
+                    ->update(
+                        [StoreSubscriptions::$points => DB::raw(StoreSubscriptions::$points . " + ($inAppProduct->points)")]
+                    );
+            } elseif ($purchase->purchaseState == 2) {
+                if ($googlePurchase->isPending != 2) {
+                    $updatedData[GooglePurchases::$isPending] = 2;
+                }
+                if ($updatedData > 1) {
+                    DB::table(table: GooglePurchases::$tableName)
+                        ->where(GooglePurchases::$purchaseToken, '=', $purchaseToken)
+                        ->update(
+                            $updatedData
+                        );
+                }
+
+                DB::table(table: StoreSubscriptions::$tableName)
+                    ->where(StoreSubscriptions::$storeId, '=', $store->id)
+                    ->update(
+                        [StoreSubscriptions::$points => DB::raw(StoreSubscriptions::$points . " + ($inAppProduct->points)")]
+                    );
+                $inAppProduct->isPending = false;
+                return $inAppProduct;
             }
             $inAppProduct->isPending = true;
             return $inAppProduct;
