@@ -50,7 +50,7 @@ trait StoreManagerControllerShared
                 //     $updatedData[GooglePurchases::$isAck] = 1;
                 // }
                 if ($purchase->consumptionState !== 1) {
-                    $service->purchases_products->consume($app->packageName, $inAppProduct->productId, 'necfimfooaknjighladencbb.AO-J1OzZvojb3Nkn5rtKrZRnKIP_JFuCH9ZjpApWu22SGk4uHmOrMxDNgOZqswkWIu4gMNsNBoTEsj-DOOhWoCyigWIrTAulRLrp7yQi5BefoO15MrYTx7s');
+                    $service->purchases_products->consume('com.fekraplatform.storemanger', 'point5', 'necfimfooaknjighladencbb.AO-J1OzZvojb3Nkn5rtKrZRnKIP_JFuCH9ZjpApWu22SGk4uHmOrMxDNgOZqswkWIu4gMNsNBoTEsj-DOOhWoCyigWIrTAulRLrp7yQi5BefoO15MrYTx7s');
                     $updatedData[GooglePurchases::$isCounsumed] = 1;
                 }
                 // if ($purchase->acknowledgementState !== 1) {
