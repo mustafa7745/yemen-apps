@@ -968,6 +968,8 @@ class StoreManagerControllerGet extends Controller
             ->get();
         $googlePurchases = DB::table(GooglePurchases::$tableName)
             ->where(GooglePurchases::$isPending, '=', 1)
+            ->where(GooglePurchases::$isPending, '=', 2)
+
             ->where(GooglePurchases::$storeId, '=', $store->id)
             ->get();
 
