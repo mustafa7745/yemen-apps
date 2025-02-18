@@ -31,7 +31,7 @@ trait StoreManagerControllerShared
         try {
             $service = $this->getServiceClient();
             $purchase = $service->purchases_products->get($app->packageName, $inAppProduct->productId, $purchaseToken);
-            print_r($purchase);
+            // print_r($purchase);
             // print_r('purchaseSatae' . ': ' . $purchase->purchaseState);
             // print_r($purchaseToken);
             // print_r($googlePurchase->productId);
@@ -41,29 +41,20 @@ trait StoreManagerControllerShared
             $updatedData = [
                 Stores::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ];
-            if ($purchase->consumptionState !== 1) {
-                $service->purchases_products->consume($app->packageName, $googlePurchase->productId, $purchaseToken);
-                $updatedData[GooglePurchases::$isCounsumed] = 1;
-            }
-            if ($purchase->acknowledgementState !== 1) {
-                $acknowledgeRequest = new ProductPurchasesAcknowledgeRequest();
-                $service->purchases_products->acknowledge($app->packageName, $googlePurchase->productId, $purchaseToken, $acknowledgeRequest);
-                $updatedData[GooglePurchases::$isAck] = 1;
-            }
             if ($purchase->purchaseState === 1) {
                 // print_r("4343434");
                 if ($googlePurchase->isPending !== 0) {
                     $updatedData[GooglePurchases::$isPending] = 0;
                 }
-                // if ($purchase->consumptionState !== 1) {
-                //     $service->purchases_products->consume($app->packageName, $googlePurchase->productId, $purchaseToken);
-                //     $updatedData[GooglePurchases::$isCounsumed] = 1;
-                // }
-                // if ($purchase->acknowledgementState !== 1) {
-                //     $acknowledgeRequest = new ProductPurchasesAcknowledgeRequest();
-                //     $service->purchases_products->acknowledge($app->packageName, $googlePurchase->productId, $purchaseToken, $acknowledgeRequest);
-                //     $updatedData[GooglePurchases::$isAck] = 1;
-                // }
+                if ($purchase->consumptionState !== 1) {
+                    $service->purchases_products->consume($app->packageName, $googlePurchase->productId, $purchaseToken);
+                    $updatedData[GooglePurchases::$isCounsumed] = 1;
+                }
+                if ($purchase->acknowledgementState !== 1) {
+                    $acknowledgeRequest = new ProductPurchasesAcknowledgeRequest();
+                    $service->purchases_products->acknowledge($app->packageName, $googlePurchase->productId, $purchaseToken, $acknowledgeRequest);
+                    $updatedData[GooglePurchases::$isAck] = 1;
+                }
 
                 // if ($purchase->acknowledgementState !== 1) {
                 //     $service->purchases_products->acknowledge($app->packageName, $googlePurchase->productId, $purchaseToken);
