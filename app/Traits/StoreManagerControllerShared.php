@@ -31,8 +31,8 @@ trait StoreManagerControllerShared
         try {
             $service = $this->getServiceClient();
             $purchase = $service->purchases_products->get($app->packageName, $inAppProduct->productId, $purchaseToken);
-            print_r($purchase);
-            print_r('purchaseSatae' . ': ' . $purchase->purchaseState);
+            // print_r($purchase);
+            // print_r('purchaseSatae' . ': ' . $purchase->purchaseState);
             // print_r($purchaseToken);
             // print_r($googlePurchase->productId);
             // print_r($app->packageName);
@@ -42,7 +42,7 @@ trait StoreManagerControllerShared
                 Stores::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ];
             if ($purchase->purchaseState === 1) {
-                print_r("4343434");
+                // print_r("4343434");
                 if ($googlePurchase->isPending !== 0) {
                     $updatedData[GooglePurchases::$isPending] = 0;
                 }
