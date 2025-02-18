@@ -768,6 +768,7 @@ class StoreManagerControllerUpdate extends Controller
                         GooglePurchases::$isPending => 0,
                         GooglePurchases::$isAck => 0,
                         GooglePurchases::$isCounsumed => 0,
+                        GooglePurchases::$isSubs =>$inAppProduct->isSubs,
                         GooglePurchases::$productId => $productId,
                         GooglePurchases::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                         GooglePurchases::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
