@@ -10,6 +10,8 @@ class GooglePurchases
    public static $productId = "productId";
    public static $isPending = "isPending";
    public static $isAck = "isAck";
+   public static $orderId = "orderId";
+
    public static $isCounsumed = "isCounsumed";
    public static $storeId = "storeId";
    public static $isSubs = "isSubs";

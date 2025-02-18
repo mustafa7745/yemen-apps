@@ -40,12 +40,21 @@ trait StoreManagerControllerShared
 
             // Logger(json_encode($purchase));
             $updatedData = [
-                Stores::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                GooglePurchases::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ];
+            if ($googlePurchase->orderId == null) {
+                DB::table(table: GooglePurchases::$tableName)
+                    ->where(GooglePurchases::$purchaseToken, '=', $purchaseToken)
+                    ->update(
+                        [GooglePurchases::$orderId => $purchase->orderId,]
+                    );
+            }
             if ($purchase->purchaseState == 0) {
                 // print_r("4343434");
                 if ($googlePurchase->isPending != 0) {
                     $updatedData[GooglePurchases::$isPending] = 0;
+                    $updatedData[GooglePurchases::$orderId] = $googlePurchase->orderId;
+
                 }
                 // if ($purchase->consumptionState != 1) {
                 //     $service->purchases_products->consume($app->packageName, $googlePurchase->productId, $purchaseToken);
