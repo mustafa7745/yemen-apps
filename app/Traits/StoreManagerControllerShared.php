@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use DB;
 use Exception;
 use Google\Service\AndroidPublisher;
+use Google\Service\AndroidPublisher\ProductPurchasesAcknowledgeRequest;
 use Google\Service\Pubsub\AcknowledgeRequest;
 use Illuminate\Database\CustomException;
 use Google\Client;
@@ -44,7 +45,7 @@ trait StoreManagerControllerShared
                     $updatedData[GooglePurchases::$isPending] = 0;
                 }
                 if ($purchase->acknowledgementState !== 1) {
-                    $acknowledgeRequest = new AcknowledgeRequest();
+                    $acknowledgeRequest = new ProductPurchasesAcknowledgeRequest();
                     $service->purchases_products->acknowledge($app->packageName, $googlePurchase->productId, $purchaseToken,$acknowledgeRequest);
                     $updatedData[GooglePurchases::$isAck] = 1;
                 }
