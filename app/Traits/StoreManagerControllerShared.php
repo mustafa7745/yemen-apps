@@ -45,7 +45,7 @@ trait StoreManagerControllerShared
                     $updatedData[GooglePurchases::$isPending] = 0;
                 }
                 if ($purchase->consumptionState !== 1) {
-                    $service->purchases_products->consume($app->packageName, $googlePurchase->productId,sf $purchaseToken);
+                    $service->purchases_products->consume($app->packageName, $googlePurchase->productId, $purchaseToken);
                     $updatedData[GooglePurchases::$isCounsumed] = 1;
                 }
                 if ($purchase->acknowledgementState !== 1) {
