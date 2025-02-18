@@ -45,7 +45,7 @@ trait StoreManagerControllerShared
                 }
                 if ($purchase->acknowledgementState !== 1) {
                     $acknowledgeRequest = new AcknowledgeRequest();
-                    $service->purchases_products->acknowledge($app->packageName, $googlePurchase->productId, $purchaseToken,$acknowledgeRequestf);
+                    $service->purchases_products->acknowledge($app->packageName, $googlePurchase->productId, $purchaseToken,$acknowledgeRequest);
                     $updatedData[GooglePurchases::$isAck] = 1;
                 }
                 if ($purchase->consumptionState !== 1) {
