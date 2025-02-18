@@ -44,13 +44,13 @@ trait StoreManagerControllerShared
                 if ($googlePurchase->isPending !== 0) {
                     $updatedData[GooglePurchases::$isPending] = 0;
                 }
-                if ($purchase->acknowledgementState !== 1) {
-                    $acknowledgeRequest = new ProductPurchasesAcknowledgeRequest();
-                    $service->purchases_products->acknowledge($app->packageName, $googlePurchase->productId, $purchaseToken,$acknowledgeRequest);
-                    $updatedData[GooglePurchases::$isAck] = 1;
-                }
+                // if ($purchase->acknowledgementState !== 1) {
+                //     $acknowledgeRequest = new ProductPurchasesAcknowledgeRequest();
+                //     $service->purchases_products->acknowledge($app->packageName, $googlePurchase->productId, $purchaseToken,$acknowledgeRequest);
+                //     $updatedData[GooglePurchases::$isAck] = 1;
+                // }
                 if ($purchase->consumptionState !== 1) {
-                    $service->purchases_products->consume($app->packageName, $inAppProduct->productId, $purchaseToken);
+                    $service->purchases_products->consume($app->packageName, $inAppProduct->productId, 'necfimfooaknjighladencbb.AO-J1OzZvojb3Nkn5rtKrZRnKIP_JFuCH9ZjpApWu22SGk4uHmOrMxDNgOZqswkWIu4gMNsNBoTEsj-DOOhWoCyigWIrTAulRLrp7yQi5BefoO15MrYTx7s');
                     $updatedData[GooglePurchases::$isCounsumed] = 1;
                 }
                 // if ($purchase->acknowledgementState !== 1) {
