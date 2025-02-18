@@ -981,9 +981,12 @@ class StoreManagerControllerGet extends Controller
                     }
                 }
             }
-            if ($isPending === false) {
-                $inAppProducts[$key]->isPending = false;
-            }
+            $inAppProducts[$key]->isPending = $isPending;
+            // if ($isPending === false) {
+            //     $inAppProducts[$key]->isPending = false;
+            // }else{
+
+            // }
         }
         return response()->json($inAppProducts);
     }
