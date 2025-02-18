@@ -98,6 +98,8 @@ trait StoreManagerControllerShared
                 //     ->update(
                 //         [StoreSubscriptions::$points => DB::raw(StoreSubscriptions::$points . " + ($inAppProduct->points)")]
                 //     );
+                $inAppProduct->isPending = false;
+                return $inAppProduct;
             } elseif ($purchase->purchaseState == 2) {
                 if ($googlePurchase->isPending != 2) {
                     $updatedData[GooglePurchases::$isPending] = 2;
@@ -115,8 +117,7 @@ trait StoreManagerControllerShared
                 //     ->update(
                 //         [StoreSubscriptions::$points => DB::raw(StoreSubscriptions::$points . " + ($inAppProduct->points)")]
                 //     );
-                $inAppProduct->isPending = false;
-                return $inAppProduct;
+               
             }
             $inAppProduct->isPending = true;
             return $inAppProduct;
