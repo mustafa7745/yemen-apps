@@ -967,8 +967,8 @@ class StoreManagerControllerGet extends Controller
         $inAppProducts = DB::table(InAppProducts::$tableName)
             ->get();
         $googlePurchases = DB::table(GooglePurchases::$tableName)
-            ->where(GooglePurchases::$isPending, '=', 1)
-            ->where(GooglePurchases::$isPending, '=', 2)
+            ->whereIn(GooglePurchases::$isPending, [1, 2])
+            // ->where(GooglePurchases::$isPending, '=', 2)
 
             ->where(GooglePurchases::$storeId, '=', $store->id)
             ->get();
