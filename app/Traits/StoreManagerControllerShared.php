@@ -42,6 +42,7 @@ trait StoreManagerControllerShared
                 Stores::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ];
             if ($purchase->purchaseState === 1) {
+                print_r("4343434");
                 if ($googlePurchase->isPending !== 0) {
                     $updatedData[GooglePurchases::$isPending] = 0;
                 }
