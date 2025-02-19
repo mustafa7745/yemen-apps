@@ -720,6 +720,7 @@ class StoreManagerControllerUpdate extends Controller
             'productId' => 'required|string|max:50',
             'purchaseToken' => 'required|string|max:200',
         ]);
+        
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2, );
         $store = $myData['store'];
         $app = $myData['app'];
@@ -728,6 +729,7 @@ class StoreManagerControllerUpdate extends Controller
         return DB::transaction(function () use ($request, $store, $app) {
             $productId = $request->input('productId');
             $purchaseToken = $request->input('purchaseToken');
+                throw new CustomException("Undefiend ProductId" . $productId, 0, 403);
 
             $inAppProduct = DB::table(InAppProducts::$tableName)->where(InAppProducts::$productId, '=', $productId)->first();
             if ($inAppProduct == null) {
