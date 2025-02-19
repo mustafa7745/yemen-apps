@@ -18,6 +18,8 @@ class Stores
    public static $typeId = "typeId";
    public static $deliveryPrice = "deliveryPrice";
    public static $deliveryPriceCurrency = "deliveryPriceCurrency";
+   public static $serviceAccount = "serviceAccount";
+
    public static $createdAt = "createdAt";
    public static $updatedAt = "updatedAt";
 }

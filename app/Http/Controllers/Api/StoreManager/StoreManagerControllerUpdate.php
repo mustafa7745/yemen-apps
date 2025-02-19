@@ -825,11 +825,21 @@ class StoreManagerControllerUpdate extends Controller
         $this->validRequestV1($request, [
             'jsonService' => 'required|file|mimes:json|max:50'
         ]);
+        $myData = $this->getMyData(request: $request, appId: $this->appId, storePoints: 2);
+        $store = $myData['store'];
 
         $jsonFile = $request->file('jsonService');
         $jsonContent = file_get_contents($jsonFile->path());
+        DB::table(table: Stores::$tableName)
+            ->where(Stores::$id, '=', $store->id)
+            ->update(
+                [
+                    Stores::$serviceAccount => $jsonContent,
+                ]
+            );
+        return response()->json([]);
         // $jsonData = json_encode($jsonContent, true);
 
-        throw new CustomException("Error " . $jsonContent, 0, 403);
+        // throw new CustomException("Error " . $jsonContent, 0, 403);
     }
 }
