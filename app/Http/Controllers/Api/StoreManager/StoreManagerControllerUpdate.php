@@ -828,8 +828,8 @@ class StoreManagerControllerUpdate extends Controller
 
         $jsonFile = $request->file('jsonService');
         $jsonContent = file_get_contents($jsonFile->path());
-        $jsonData = json_encode($jsonContent, true);
+        // $jsonData = json_encode($jsonContent, true);
 
-        throw new CustomException("Error " . $jsonData, 0, 403);
+        throw new CustomException("Error " . $jsonContent, 0, 403);
     }
 }
