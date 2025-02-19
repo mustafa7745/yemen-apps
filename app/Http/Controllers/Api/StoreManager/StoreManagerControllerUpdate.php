@@ -759,7 +759,7 @@ class StoreManagerControllerUpdate extends Controller
                     ->where(GooglePurchases::$id, '=', $insertedId)
                     ->first();
             } else {
-                if ($googlePurchase->isPending == 0 && $googlePurchase->isAck == 1 && $googlePurchase->isCounsumed == 1) {
+                if ($googlePurchase->isGet == 1) {
                     throw new CustomException("تم الشراء مسبقا", 0, 403);
                 } elseif ($googlePurchase->isPending == 1) {
                     throw new CustomException("عملية شراء تم الغاءها", 0, 403);

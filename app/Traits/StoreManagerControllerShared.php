@@ -75,13 +75,7 @@ trait StoreManagerControllerShared
                 //     $updatedData[GooglePurchases::$isAck] = 1;
                 // }
                 ////
-                if ($updatedData > 1) {
-                    DB::table(table: GooglePurchases::$tableName)
-                        ->where(GooglePurchases::$purchaseToken, '=', $purchaseToken)
-                        ->update(
-                            $updatedData
-                        );
-                }
+
 
                 if ($googlePurchase->isSubs == 1) {
                     // $newDate = Carbon::now()->addMonths($inAppProduct->points)->endOfDay()->format('Y-m-d H:i:s');
@@ -100,7 +94,14 @@ trait StoreManagerControllerShared
                             [StoreSubscriptions::$points => DB::raw(StoreSubscriptions::$points . " + ($inAppProduct->points)")]
                         );
                 }
-
+                $updatedData[GooglePurchases::$isGet] = 1;
+                if ($updatedData > 1) {
+                    DB::table(table: GooglePurchases::$tableName)
+                        ->where(GooglePurchases::$purchaseToken, '=', $purchaseToken)
+                        ->update(
+                            $updatedData
+                        );
+                }
 
                 $inAppProduct->isPending = false;
                 return $inAppProduct;
