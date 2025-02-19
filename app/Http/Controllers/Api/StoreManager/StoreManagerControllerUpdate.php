@@ -823,7 +823,7 @@ class StoreManagerControllerUpdate extends Controller
     public function updateStoreServiceAccount(Request $request)
     {
         $this->validRequestV1($request, [
-            'jsonServie' => 'required|file|mimes:json|max:50'
+            'jsonService' => 'required|file|mimes:json|max:50'
         ]);
 
         $jsonFile = $request->file('jsonFile');
