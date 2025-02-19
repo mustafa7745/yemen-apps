@@ -716,29 +716,9 @@ class StoreManagerControllerUpdate extends Controller
 
     public function updatePoints(Request $request)
     {
-
-
-
-        // $productIds = $request->input('productId');
-        // // print_r($productIds[0]);
-        // $productIds = json_decode($productIds);
-
-        // $productId = $productIds[0];
-        // $purchaseToken = $request->input('purchaseToken');
-
-        // $purchaseToken = 'ichbpmdhlkkmhkncbakcdjmb.AO-J1Ox0k0mBEmfpoSXTN28GxYmpG0oegbOY5Vjrx7_baru7xbgubIixVT_Lb3mHaYVgRswL7a4aCZARcOlNmQ_PBiYcRMlX3uv_pQsMaMVIaUktK0A_dxw';
-
-        // print_r($purchase);
-        // print_r($response);
-        // print_r($productIds);
-
-
-
-        // logger($purchase);
-        // logger($productId);
-
         $this->validRequestV1($request, [
-            'productId' => 'required|string|max:50'
+            'productId' => 'required|string|max:50',
+            'purchaseToken' => 'required|string|max:200',
         ]);
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2, );
         $store = $myData['store'];
@@ -747,8 +727,6 @@ class StoreManagerControllerUpdate extends Controller
 
         return DB::transaction(function () use ($request, $store, $app) {
             $productId = $request->input('productId');
-            // $productIds = json_decode($productIds);
-            // $productId = $productIds[0];
             $purchaseToken = $request->input('purchaseToken');
 
             $inAppProduct = DB::table(InAppProducts::$tableName)->where(InAppProducts::$productId, '=', $productId)->first();

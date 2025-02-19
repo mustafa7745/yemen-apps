@@ -84,10 +84,14 @@ trait StoreManagerControllerShared
                 }
 
                 if ($googlePurchase->isSubs == 1) {
+                    // $newDate = Carbon::now()->addMonths($inAppProduct->points)->endOfDay()->format('Y-m-d H:i:s');
                     DB::table(table: StoreSubscriptions::$tableName)
                         ->where(StoreSubscriptions::$storeId, '=', $store->id)
                         ->update(
-                            [StoreSubscriptions::$points => DB::raw(StoreSubscriptions::$points . " + ($inAppProduct->points)")]
+                            [
+                                StoreSubscriptions::$isPremium => 1,
+                                StoreSubscriptions::$expireAt => DB::raw("DATE_ADD(" . StoreSubscriptions::$expireAt . ", INTERVAL {$inAppProduct->points} MONTH)")
+                            ]
                         );
                 } else {
                     DB::table(table: StoreSubscriptions::$tableName)
