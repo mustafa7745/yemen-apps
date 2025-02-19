@@ -760,9 +760,9 @@ class StoreManagerControllerUpdate extends Controller
                     ->first();
             } else {
                 if ($googlePurchase->isPending == 0 && $googlePurchase->isAck == 1 && $googlePurchase->isCounsumed == 1) {
-                    throw new CustomException("تم الشراء مسبقا" . $productId, 0, 403);
+                    throw new CustomException("تم الشراء مسبقا", 0, 403);
                 } elseif ($googlePurchase->isPending == 1) {
-                    throw new CustomException("عملية شراء تم الغاءها" . $productId, 0, 403);
+                    throw new CustomException("عملية شراء تم الغاءها", 0, 403);
                 }
             }
             $inAppProduct = $this->processPurchase($app, $store, $googlePurchase, $inAppProduct, $purchaseToken);
