@@ -826,7 +826,7 @@ class StoreManagerControllerUpdate extends Controller
             'jsonService' => 'required|file|mimes:json|max:50'
         ]);
 
-        $jsonFile = $request->file('jsonFile');
+        $jsonFile = $request->file('jsonService');
         $jsonContent = file_get_contents($jsonFile->path());
         $jsonData = json_decode($jsonContent, true);
 
