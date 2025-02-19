@@ -1753,36 +1753,36 @@ trait AllShared
                 StoreSubscriptions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s')
             ]);
     }
-    function checkProcess($processName, $deviceId, $userId)
-    {
+    // function checkProcess($processName, $deviceId, $userId)
+    // {
 
-        // print_r("dffdfrfrgfr");
-        $myProcess = DB::table(table: MyProcesses::$tableName)
-            ->where(MyProcesses::$tableName . '.' . MyProcesses::$name, '=', $processName)
-            ->first();
-        if ($myProcess == null) {
-            // print_r("dffdf");
-            $res = new MyResponse(false, "Process not in log", 422, 0);
-            return $res;
-        }
-        $now = Carbon::now();
+    //     // print_r("dffdfrfrgfr");
+    //     $myProcess = DB::table(table: MyProcesses::$tableName)
+    //         ->where(MyProcesses::$tableName . '.' . MyProcesses::$name, '=', $processName)
+    //         ->first();
+    //     if ($myProcess == null) {
+    //         // print_r("dffdf");
+    //         $res = new MyResponse(false, "Process not in log", 422, 0);
+    //         return $res;
+    //     }
+    //     $now = Carbon::now();
 
-        $failProcesses = DB::table(table: FailProcesses::$tableName)
-            ->where(FailProcesses::$tableName . '.' . FailProcesses::$deviceId, '=', $deviceId)
-            ->whereBetween(FailProcesses::$tableName . '.' . FailProcesses::$createdAt, [Carbon::now()->subMinutes(5), Carbon::now()])
-            ->when($userId != null, function ($query) use ($userId) {
-                return $query->where(FailProcesses::$tableName . '.' . FailProcesses::$userId, '=', $userId);
-            })
-            ->get([FailProcesses::$tableName . '.' . FailProcesses::$id]);
+    //     $failProcesses = DB::table(table: FailProcesses::$tableName)
+    //         ->where(FailProcesses::$tableName . '.' . FailProcesses::$deviceId, '=', $deviceId)
+    //         ->whereBetween(FailProcesses::$tableName . '.' . FailProcesses::$createdAt, [Carbon::now()->subMinutes(5), Carbon::now()])
+    //         ->when($userId != null, function ($query) use ($userId) {
+    //             return $query->where(FailProcesses::$tableName . '.' . FailProcesses::$userId, '=', $userId);
+    //         })
+    //         ->get([FailProcesses::$tableName . '.' . FailProcesses::$id]);
 
-        // print_r($failProcesses);
-        if (count($failProcesses) >= $myProcess->countFail5m) {
-            $res = new MyResponse(false, "Blocked", 302, 0);
-            return $res;
-        }
-        $res = new MyResponse(true, $myProcess, 200, 0);
-        return $res;
-    }
+    //     // print_r($failProcesses);
+    //     if (count($failProcesses) >= $myProcess->countFail5m) {
+    //         $res = new MyResponse(false, "Blocked", 302, 0);
+    //         return $res;
+    //     }
+    //     $res = new MyResponse(true, $myProcess, 200, 0);
+    //     return $res;
+    // }
 
     function getDistance($lat1, $lon1, $lat2, $lon2)
     {
@@ -1824,6 +1824,28 @@ trait AllShared
             ->get([FailProcesses::$tableName . '.' . FailProcesses::$id]);
 
         if (count($failProcesses) >= $myProcess->countFail5m) {
+            throw new CustomException("Blocked", 0, 442);
+        }
+        return $myProcess;
+    }
+    function checkProcess($processConfig, $deviceId, $userId)
+    {
+        $myProcess = DB::table(table: MyProcesses::$tableName)
+            ->where(MyProcesses::$tableName . '.' . MyProcesses::$name, '=', $processConfig->processName)
+            ->first();
+        if ($myProcess == null) {
+            throw new CustomException("Process not in log", 0, 442);
+        }
+
+        $failProcesses = DB::table(table: FailProcesses::$tableName)
+            ->where(FailProcesses::$tableName . '.' . FailProcesses::$deviceId, '=', $deviceId)
+            ->whereBetween(FailProcesses::$tableName . '.' . FailProcesses::$createdAt, [Carbon::now()->subMinutes($processConfig->minute)->toDateTimeString(), Carbon::now()->toDateTimeString()])
+            ->when($userId != null, function ($query) use ($userId) {
+                return $query->where(FailProcesses::$tableName . '.' . FailProcesses::$userId, '=', $userId);
+            })
+            ->get([FailProcesses::$tableName . '.' . FailProcesses::$id]);
+
+        if (count($failProcesses) >= $$processConfig->countFail) {
             throw new CustomException("Blocked", 0, 442);
         }
         return $myProcess;

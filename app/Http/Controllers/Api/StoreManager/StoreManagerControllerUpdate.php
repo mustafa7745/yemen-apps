@@ -791,5 +791,45 @@ class StoreManagerControllerUpdate extends Controller
         // return response()->json($sub);
     }
 
+    public function updateStoreDeliveryPrice(Request $request)
+    {
 
+        $this->validRequestV1($request, [
+            'deliveryPriceCurrency' => 'required|string|max:2',
+            'price' => 'required|string|max:10'
+        ]);
+        $price = $request->input('price');
+        $deliveryPriceCurrency = $request->input('deliveryPriceCurrency');
+
+        ///
+        $myData = $this->getMyData(request: $request, appId: $this->appId, storePoints: 2);
+        $store = $myData['store'];
+
+        DB::table(table: Stores::$tableName)
+            ->where(Stores::$id, '=', $store->id)
+            ->update(
+                [
+                    Stores::$deliveryPrice => $price,
+                    Stores::$deliveryPriceCurrency => $deliveryPriceCurrency,
+                ]
+            );
+
+
+
+        return response()->json([]);
+    }
+
+
+    public function updateStoreServiceAccount(Request $request)
+    {
+        $this->validRequestV1($request, [
+            'jsonServie' => 'required|file|mimes:json|max:50'
+        ]);
+
+        $jsonFile = $request->file('jsonFile');
+        $jsonContent = file_get_contents($jsonFile->path());
+        $jsonData = json_decode($jsonContent, true);
+
+        throw new CustomException("Error " . $jsonData, 0, 403);
+    }
 }
