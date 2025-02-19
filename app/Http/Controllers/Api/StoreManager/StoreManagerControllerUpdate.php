@@ -720,7 +720,7 @@ class StoreManagerControllerUpdate extends Controller
             'productId' => 'required|string|max:50',
             'purchaseToken' => 'required|string|max:200',
         ]);
-        
+
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2, );
         $store = $myData['store'];
         $app = $myData['app'];
@@ -729,9 +729,11 @@ class StoreManagerControllerUpdate extends Controller
         return DB::transaction(function () use ($request, $store, $app) {
             $productId = $request->input('productId');
             $purchaseToken = $request->input('purchaseToken');
-                throw new CustomException("Undefiend ProductId" . $productId, 0, 403);
+            // throw new CustomException("Undefiend ProductId" . $productId, 0, 403);
 
-            $inAppProduct = DB::table(InAppProducts::$tableName)->where(InAppProducts::$productId, '=', $productId)->first();
+            $inAppProduct = DB::table(InAppProducts::$tableName)
+                ->where(InAppProducts::$productId, '=', $productId)
+                ->first();
             if ($inAppProduct == null) {
                 throw new CustomException("Undefiend ProductId" . $productId, 0, 403);
             }
@@ -756,6 +758,12 @@ class StoreManagerControllerUpdate extends Controller
                 $googlePurchase = DB::table(GooglePurchases::$tableName)
                     ->where(GooglePurchases::$id, '=', $insertedId)
                     ->first();
+            } else {
+                if ($googlePurchase->isPending == 0 && $googlePurchase->isAck == 1 && $googlePurchase->isCounsumed == 1) {
+                    throw new CustomException("تم الشراء مسبقا" . $productId, 0, 403);
+                } elseif ($googlePurchase->isPending == 1) {
+                    throw new CustomException("عملية شراء تم الغاءها" . $productId, 0, 403);
+                }
             }
             $inAppProduct = $this->processPurchase($app, $store, $googlePurchase, $inAppProduct, $purchaseToken);
             return response()->json($inAppProduct);
