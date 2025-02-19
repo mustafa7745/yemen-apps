@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Api\StoreManager;
 
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
+use App\Models\Apps;
 use App\Models\Currencies;
 use App\Models\CustomPrices;
 use App\Models\GooglePurchases;
@@ -826,15 +827,15 @@ class StoreManagerControllerUpdate extends Controller
             'jsonService' => 'required|file|mimes:json|max:50'
         ]);
         $myData = $this->getMyData(request: $request, appId: $this->appId, storePoints: 2);
-        $store = $myData['store'];
+        $app = $myData['app'];
 
         $jsonFile = $request->file('jsonService');
         $jsonContent = file_get_contents($jsonFile->path());
-        DB::table(table: Stores::$tableName)
-            ->where(Stores::$id, '=', $store->id)
+        DB::table(table: Apps::$tableName)
+            ->where(Apps::$id, '=', $app->id)
             ->update(
                 [
-                    Stores::$serviceAccount => $jsonContent,
+                    Apps::$serviceAccount => $jsonContent,
                 ]
             );
         return response()->json([]);
