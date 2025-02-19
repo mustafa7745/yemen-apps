@@ -84,7 +84,7 @@ trait StoreManagerControllerShared
                         ->update(
                             [
                                 StoreSubscriptions::$isPremium => 1,
-                                StoreSubscriptions::$expireAt => DB::raw("DATE_ADD(" . StoreSubscriptions::$expireAt . ", INTERVAL {$inAppProduct->points} MONTH)")
+                                StoreSubscriptions::$expireAt => DB::raw("DATE_ADD(" . Carbon::now()->format('Y-m-d H:i:s') . ", INTERVAL {$inAppProduct->points} MONTH)")
                             ]
                         );
                     DB::table(table: Stores::$tableName)
