@@ -87,6 +87,13 @@ trait StoreManagerControllerShared
                                 StoreSubscriptions::$expireAt => DB::raw("DATE_ADD(" . StoreSubscriptions::$expireAt . ", INTERVAL {$inAppProduct->points} MONTH)")
                             ]
                         );
+                    DB::table(table: Stores::$tableName)
+                        ->where(Stores::$id, '=', $store->id)
+                        ->update(
+                            [
+                                Stores::$typeId => 2,
+                            ]
+                        );
                 } else {
                     DB::table(table: StoreSubscriptions::$tableName)
                         ->where(StoreSubscriptions::$storeId, '=', $store->id)
