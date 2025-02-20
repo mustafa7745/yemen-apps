@@ -1024,6 +1024,8 @@ class StoreManagerControllerGet extends Controller
             $day = $i + 1;
             if (isset($times[$i]) ) {
                 print_r($day);
+                print_r($times[$i]);
+
                 if ($times[$i]->day == $day) {
                     $result[] = [
                         "day" => $this->getDayName($day),
