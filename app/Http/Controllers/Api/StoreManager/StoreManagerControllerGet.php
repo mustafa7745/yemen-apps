@@ -30,6 +30,7 @@ use App\Models\StoreCategories;
 use App\Models\StoreProducts;
 use App\Models\Stores;
 use App\Models\StoreSections;
+use App\Models\StoresTime;
 use App\Models\StoreSubscriptions;
 use App\Models\Users;
 use App\Traits\AllShared;
@@ -954,7 +955,7 @@ class StoreManagerControllerGet extends Controller
         return response()->json($orders);
     }
 
-    public function getInAppProducts(Request $request, $withSituations = false)
+    public function getInAppProducts(Request $request)
     {
 
 
@@ -1000,5 +1001,34 @@ class StoreManagerControllerGet extends Controller
         }
         return response()->json($inAppProducts);
     }
+
+    public function getStoreTime(Request $request)
+    {
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2);
+        $store = $myData['store'];
+        // $app = $myData['app'];
+
+        // if ($withSituations === true) {
+        $times = DB::table(StoresTime::$tableName)
+            ->where(StoresTime::$tableName . '.' . StoresTime::$storeId, '=', $store->id)
+            ->get();
+
+
+        for ($i = 1; $i < 8; $i++) {
+
+            if (isset($times[$i])) {
+
+            } else {
+                $times[$i] = null;
+            }
+
+        }
+
+
+
+
+        return response()->json($times);
+    }
+
 
 }
