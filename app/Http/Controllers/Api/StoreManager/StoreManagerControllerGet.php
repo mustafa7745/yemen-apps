@@ -1009,19 +1009,24 @@ class StoreManagerControllerGet extends Controller
         // $app = $myData['app'];
 
         // if ($withSituations === true) {
-            $times = DB::table(StoresTime::$tableName) 
+        $times = DB::table(StoresTime::$tableName)
             ->where(StoresTime::$tableName . '.' . StoresTime::$storeId, '=', $store->id)
-            ->get()
-            ->keyBy('day'); // Assuming 'day' is the column representing the day of the week (1-7)
-        
+            ->get();
+        // ->keyBy('day'); // Assuming 'day' is the column representing the day of the week (1-7)
+
         // Initialize an empty array for the final result
         $result = [];
-        
+
         // Ensure keys 1 to 7 exist in the result array
         for ($i = 1; $i < 8; $i++) {
-            $result[$i] = $times->has($i) ? $times[$i] : null;
+            if (isset($times[$i])) {
+                $result[] = [$i => $times[$i]];
+            } else {
+                $result[] = [$i => null];
+            }
+            // $result[$i] = $times->has($i) ? $times[$i] : null;
         }
-        
+
 
 
 
