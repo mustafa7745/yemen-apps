@@ -1021,23 +1021,38 @@ class StoreManagerControllerGet extends Controller
         for ($i = 1; $i < 8; $i++) {
             if (isset($times[$i])) {
                 $result[] = [
-                    "day" => $i,
+                    "day" => $this->getDayName($i),
                     "storeTime" => $times[$i]
                 ];
             } else {
                 $result[] = [
-                    "day" => $i,
+                    "day" => $this->getDayName($i),
                     "storeTime" => null
                 ];
             }
             // $result[$i] = $times->has($i) ? $times[$i] : null;
         }
 
-
-
-
-
         return response()->json($result);
+    }
+    function getDayName($dayNumber)
+    {
+        $days = [
+            1 => 'السبت',
+            2 => 'الأحد',
+            3 => 'الاثنين',
+            4 => 'الثلاثاء',
+            5 => 'الأربعاء',
+            6 => 'الخميس',
+            7 => 'الجمعة'
+        ];
+
+        // التحقق من وجود الرقم في المصفوفة
+        if (array_key_exists($dayNumber, $days)) {
+            return $days[$dayNumber];
+        } else {
+            return 'رقم اليوم غير صحيح';
+        }
     }
 
 
