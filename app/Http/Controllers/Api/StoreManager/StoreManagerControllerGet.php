@@ -1017,7 +1017,7 @@ class StoreManagerControllerGet extends Controller
         // Initialize an empty array for the final result
         $result = [];
 
-        print_r($times[1]);
+        print_r($times[0]);
 
         // Ensure keys 1 to 7 exist in the result array
         for ($i = 1; $i < 8; $i++) {
