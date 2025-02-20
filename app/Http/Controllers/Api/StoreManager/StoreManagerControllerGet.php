@@ -1022,19 +1022,19 @@ class StoreManagerControllerGet extends Controller
         // Ensure keys 1 to 7 exist in the result array
         for ($i = 0; $i < 7; $i++) {
             $day = $i + 1;
-            if (isset($times[$i]) ) {
-                print_r($day);
-               
+            if (isset($times[$i])) {
+                // print_r($day);
+
 
                 if ($times[$i]->day == $day) {
-                    print_r($times[$i]);
+                    // print_r($times[$i]);
                     $result[] = [
                         "day" => $this->getDayName($day),
                         "storeTime" => $times[$i]
                     ];
-                    break;
+                    // break;
                 } else {
-                    $result[] = [
+                    $result[$day] = [
                         "day" => $this->getDayName($day),
                         "storeTime" => null
                     ];
