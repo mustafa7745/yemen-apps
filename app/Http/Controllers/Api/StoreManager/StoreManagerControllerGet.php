@@ -1056,10 +1056,18 @@ class StoreManagerControllerGet extends Controller
             $storeTime = $times->firstWhere('day', $day);
 
             // Add the day and store time to the result array
-            $result[$day] = [
-                "day" => $this->getDayName($day), // Get the day name (e.g., "Saturday")
-                "storeTime" => $storeTime ?: null, // Store time or null if not found
-            ];
+            if ($storeTime != null) {
+                $result[] = [
+                    "day" => $this->getDayName($day), // Get the day name (e.g., "Saturday")
+                    "storeTime" => $storeTime, // Store time or null if not found
+                ];
+            } else {
+                $result[] = [
+                    "day" => $this->getDayName($day), // Get the day name (e.g., "Saturday")
+                    "storeTime" => null, // Store time or null if not found
+                ];
+            }
+
         }
 
         return response()->json($result);
