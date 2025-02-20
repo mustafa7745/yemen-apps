@@ -1020,9 +1020,15 @@ class StoreManagerControllerGet extends Controller
         // Ensure keys 1 to 7 exist in the result array
         for ($i = 1; $i < 8; $i++) {
             if (isset($times[$i])) {
-                $result[] = [$i => $times[$i]];
+                $result[] = [
+                    "day" => $i,
+                    "storeTime" => $times[$i]
+                ];
             } else {
-                $result[] = [$i => null];
+                $result[] = [
+                    "day" => $i,
+                    "storeTime" => null
+                ];
             }
             // $result[$i] = $times->has($i) ? $times[$i] : null;
         }
