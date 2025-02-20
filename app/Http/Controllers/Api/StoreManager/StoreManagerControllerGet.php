@@ -1017,16 +1017,26 @@ class StoreManagerControllerGet extends Controller
         // Initialize an empty array for the final result
         $result = [];
 
-       
+
 
         // Ensure keys 1 to 7 exist in the result array
-        for ($i = 1; $i < 8; $i++) {
+        for ($i = 0; $i < 7; $i++) {
             if (isset($times[$i])) {
-                print_r($times[0]);
-                $result[] = [
-                    "day" => $this->getDayName($i),
-                    "storeTime" => $times[$i]
-                ];
+                $day = $i + 1;
+                if ($times[$i]->day == $day) {
+                    $result[] = [
+                        "day" => $this->getDayName($i),
+                        "storeTime" => $times[$i]
+                    ];
+                    break;
+                } else {
+                    $result[] = [
+                        "day" => $this->getDayName($i),
+                        "storeTime" => null
+                    ];
+                }
+
+
             } else {
                 $result[] = [
                     "day" => $this->getDayName($i),
