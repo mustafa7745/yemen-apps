@@ -1034,7 +1034,7 @@ class StoreManagerControllerGet extends Controller
                     ];
                     // break;
                 } else {
-                    $result[][$day] = [
+                    $result[$day] = [
                         "day" => $this->getDayName($day),
                         "storeTime" => null
                     ];
