@@ -1015,7 +1015,7 @@ class StoreManagerControllerGet extends Controller
         // ->keyBy('day'); // Assuming 'day' is the column representing the day of the week (1-7)
 
         // Initialize an empty array for the final result
-        $result = [];
+        $result = array_fill(1, 7, null);
 
 
 
