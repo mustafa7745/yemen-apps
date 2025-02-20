@@ -22,6 +22,7 @@ use App\Models\StoreAds;
 use App\Models\Stores;
 use App\Models\SharedStoresConfigs;
 use App\Models\StoreProducts;
+use App\Models\StoresTime;
 use App\Models\StoreSubscriptions;
 use App\Traits\AllShared;
 use App\Traits\StoreManagerControllerShared;
@@ -848,6 +849,79 @@ class StoreManagerControllerUpdate extends Controller
                 ]
             );
         return response()->json([]);
+        // $jsonData = json_encode($jsonContent, true);
+
+        // throw new CustomException("Error " . $jsonContent, 0, 403);
+    }
+    public function updateStoreTime(Request $request)
+    {
+        $this->validRequestV1($request, [
+            'day' => 'required|file|mimes:json|max:1'
+        ]);
+        $myData = $this->getMyData(request: $request, appId: $this->appId, storePoints: 2);
+        $store = $myData['store'];
+
+        $day = $request->input('day');
+        $openAt = $request->input('openAt');
+        $closeAt = $request->input('closeAt');
+        $isOpen = $request->input('isOpen');
+
+
+        $time = DB::table(table: StoresTime::$tableName)
+            ->where(StoresTime::$tableName . '.' . StoresTime::$storeId, '=', $store->id)
+            ->where(StoresTime::$tableName . '.' . StoresTime::$day, '=', $day)
+            ->first();
+
+        $data = [
+            StoresTime::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+        ];
+        if ($time == null) {
+            $data[] = [
+                StoresTime::$id => null,
+                StoresTime::$day => $day,
+                StoresTime::$storeId => $store->id,
+                StoresTime::$createdAt => Carbon::now()->format('Y-m-d H:i:s')
+            ];
+            if ($openAt != null) {
+                $data[StoresTime::$openAt] = $openAt;
+            }
+            if ($closeAt != null) {
+                $data[StoresTime::$closeAt] = $closeAt;
+            }
+            if ($isOpen != null) {
+                $data[StoresTime::$isOpen] = $isOpen;
+            }
+            DB::table(StoresTime::$tableName)
+                ->insert($data);
+
+        } else {
+            if ($openAt != null) {
+                $data[StoresTime::$openAt] = $openAt;
+            }
+            if ($closeAt != null) {
+                $data[StoresTime::$closeAt] = $closeAt;
+            }
+            if ($isOpen != null) {
+                $data[StoresTime::$isOpen] = $isOpen;
+            }
+
+            if (count($data) > 1) {
+                DB::table(table: Apps::$tableName)
+                    ->where(StoresTime::$tableName . '.' . StoresTime::$storeId, '=', $store->id)
+                    ->where(StoresTime::$tableName . '.' . StoresTime::$day, '=', $day)
+                    ->update(
+                        $data
+                    );
+            }
+
+        }
+
+        $time = DB::table(table: StoresTime::$tableName)
+            ->where(StoresTime::$tableName . '.' . StoresTime::$storeId, '=', $store->id)
+            ->where(StoresTime::$tableName . '.' . StoresTime::$day, '=', $day)
+            ->first();
+
+        return response()->json($time);
         // $jsonData = json_encode($jsonContent, true);
 
         // throw new CustomException("Error " . $jsonContent, 0, 403);

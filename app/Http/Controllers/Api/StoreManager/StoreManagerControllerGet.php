@@ -1012,45 +1012,7 @@ class StoreManagerControllerGet extends Controller
         $times = DB::table(StoresTime::$tableName)
             ->where(StoresTime::$tableName . '.' . StoresTime::$storeId, '=', $store->id)
             ->get();
-        // ->keyBy('day'); // Assuming 'day' is the column representing the day of the week (1-7)
-
-        // // Initialize an empty array for the final result
-        // $result = array_fill(1, 7, null);
-
-
-
-        // // Ensure keys 1 to 7 exist in the result array
-        // for ($i = 0; $i < 7; $i++) {
-        //     $day = $i + 1;
-        //     if (isset($times[$i])) {
-        //         // print_r($day);
-
-
-        //         if ($times[$i]->day == $day) {
-        //             // print_r($times[$i]);
-        //             $result[] = [
-        //                 "day" => $this->getDayName($day),
-        //                 "storeTime" => $times[$i]
-        //             ];
-        //             // break;
-        //         } else {
-        //             $result[$day] = [
-        //                 "day" => $this->getDayName($day),
-        //                 "storeTime" => null
-        //             ];
-        //         }
-
-
-        //     } else {
-        //         $result[] = [
-        //             "day" => $this->getDayName($day),
-        //             "storeTime" => null
-        //         ];
-        //     }
-        //     // $result[$i] = $times->has($i) ? $times[$i] : null;
-        // }
-
-        // Loop through days 1 to 7
+  
         for ($day = 1; $day <= 7; $day++) {
             // Find the store time for the current day
             $storeTime = $times->firstWhere('day', $day);
@@ -1060,7 +1022,6 @@ class StoreManagerControllerGet extends Controller
                 "day" => $this->getDayName($day), // Get the day name (e.g., "Saturday")
                 "storeTime" => $storeTime ?: null, // Store time or null if not found
             ];
-
         }
 
         return response()->json($result);
