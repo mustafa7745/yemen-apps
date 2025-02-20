@@ -1015,13 +1015,9 @@ class StoreManagerControllerGet extends Controller
 
 
         for ($i = 1; $i < 8; $i++) {
-
-            if (isset($times[$i])) {
-
-            } else {
+            if (!isset($times[$i])) {
                 $times[$i] = null;
             }
-
         }
 
 
