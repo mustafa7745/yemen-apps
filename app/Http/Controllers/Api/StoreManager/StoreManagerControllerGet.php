@@ -1023,7 +1023,7 @@ class StoreManagerControllerGet extends Controller
 
 
 
-        return response()->json($times);
+        return response()->json(json_decode($times));
     }
 
 
