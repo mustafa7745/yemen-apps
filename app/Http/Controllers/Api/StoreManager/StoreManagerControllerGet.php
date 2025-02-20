@@ -1026,7 +1026,7 @@ class StoreManagerControllerGet extends Controller
 
 
 
-        return response()->json(json_decode($result));
+        return response()->json($result);
     }
 
 
