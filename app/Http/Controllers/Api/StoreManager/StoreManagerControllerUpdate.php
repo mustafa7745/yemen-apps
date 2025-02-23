@@ -912,7 +912,7 @@ class StoreManagerControllerUpdate extends Controller
             }
 
             if (count($data) > 1) {
-                DB::table(table: Apps::$tableName)
+                DB::table(table: StoresTime::$tableName)
                     ->where(StoresTime::$tableName . '.' . StoresTime::$storeId, '=', $store->id)
                     ->where(StoresTime::$tableName . '.' . StoresTime::$day, '=', $day)
                     ->update(
