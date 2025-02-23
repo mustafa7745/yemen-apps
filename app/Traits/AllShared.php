@@ -1709,6 +1709,9 @@ trait AllShared
                 $password = $this->generateRandomPassword();
                 $hashedPassword = Hash::make($password);
                 ///
+                $whatsapp->sendMessageText($phoneNumber, $storeId);
+                $whatsapp->sendMessageText($phoneNumber, $user->id);
+
                 $app = DB::table(table: AppStores::$tableName)
                     ->where(AppStores::$tableName . '.' . AppStores::$storeId, '=', $storeId)
                     ->where(Stores::$tableName . '.' . Stores::$userId, '=', $user->id)
