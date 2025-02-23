@@ -230,4 +230,9 @@ trait StoreManagerControllerShared
         // echo "Decrypted data: " . $decryptedData . "\n";
         return $decryptedData;
     }
+    function isValidJson($string)
+    {
+        json_decode($string); // Attempt to decode the string
+        return (json_last_error() == JSON_ERROR_NONE); // Check for JSON errors
+    }
 }

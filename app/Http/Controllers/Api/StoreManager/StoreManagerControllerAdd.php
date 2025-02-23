@@ -771,6 +771,9 @@ class StoreManagerControllerAdd extends Controller
         if ($serviceAccount != true) {
             return $this->responseError2("رمز غير صحيح", [], 0, 405);
         }
+        if ($this->isValidJson($serviceAccount) == false) {
+            return $this->responseError2("تم تخزين الملف بشكل خاطئ", [], 0, 405);
+        }
         // print_r($serviceAccount);
 
         try {
