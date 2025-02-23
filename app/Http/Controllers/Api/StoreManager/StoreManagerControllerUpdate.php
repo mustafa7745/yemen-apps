@@ -845,7 +845,7 @@ class StoreManagerControllerUpdate extends Controller
 
 
         if ($app->password == null) {
-            throw new CustomException(" ddsdsdلم يتم اضافة رمز التحقق للتطبيق بعد", 0, 403);
+            throw new CustomException(" dd sdsdلم يتم اضافة رمز التحقق للتطبيق بعد", 0, 403);
         }
         DB::table(table: Apps::$tableName)
             ->where(Apps::$id, '=', $app->id)
