@@ -210,10 +210,10 @@ trait StoreManagerControllerShared
      */
     function decryptData($encryptedData, $password)
     {
-        $parts = explode(':', $encryptedData);
-        if (count($parts) !== 3) {
-            throw new Exception("Invalid encrypted data format. Expected iv:salt:encryptedData.");
-        }
+        // $parts = explode(':', $encryptedData);
+        // if (count($parts) !== 3) {
+        //     throw new Exception("Invalid encrypted data format. Expected iv:salt:encryptedData.");
+        // }
 
         $ivHex = $encryptedData->iv;
         $saltHex = $encryptedData->salt;
