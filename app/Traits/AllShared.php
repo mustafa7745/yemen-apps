@@ -1697,7 +1697,7 @@ trait AllShared
             }
 
         } elseif ($message == "{10}رمز التطبيق") {
-            $whatsapp->sendMessageText($phoneNumber, "{10}رمز التطبيق");
+           
             $storeId = null;
             if (preg_match('/\{(\d+)\}/', $message, $matches)) {
                 $storeId = $matches[1]; // الرقم المستخرج
@@ -1768,6 +1768,7 @@ trait AllShared
             }
         }
 
+        $whatsapp->sendMessageText($phoneNumber, "{10}رمز التطبيق");
         // exit;
         return response()->json(['success' => true]);
 
