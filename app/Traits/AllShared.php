@@ -36,6 +36,7 @@ use App\Models\StoreSections;
 use App\Models\StoreSubscriptions;
 use App\Models\Users;
 use App\Models\UsersSessions;
+use App\Models\WhatsappMessages;
 use App\Services\FirebaseService;
 use App\Services\WhatsappService;
 use Carbon\Carbon;
@@ -1571,36 +1572,32 @@ trait AllShared
         // } catch (\libphonenumber\NumberParseException $e) {
         //     var_dump($e);
         // }
+
+
+        // Get the region code (e.g., 'GB' for United Kingdom)
         $number = $phoneUtil->parse("+" . $phoneNumber, null);
         // Get the country code
         $countryCode = $number->getCountryCode();
-
-        // Get the region code (e.g., 'GB' for United Kingdom)
         $regionCode = $phoneUtil->getRegionCodeForNumber($number);
-
         $nationalNumber = $number->getNationalNumber();
-
+        $user = DB::table(Users::$tableName)
+            ->join(
+                Countries::$tableName,
+                Countries::$tableName . '.' . Countries::$id,
+                '=',
+                Users::$tableName . '.' . Users::$countryId
+            )
+            ->where(Users::$tableName . '.' . Users::$phone, '=', $nationalNumber)
+            ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
+            ->where(Countries::$tableName . '.' . Countries::$region, '=', $regionCode)
+            ->first(
+                [
+                    Users::$tableName . '.' . Users::$id,
+                    Users::$tableName . '.' . Users::$firstName,
+                    Users::$tableName . '.' . Users::$lastName,
+                ]
+            );
         if ($message == "اشتراك") {
-
-            $user = DB::table(Users::$tableName)
-                // ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
-                ->join(
-                    Countries::$tableName,
-                    Countries::$tableName . '.' . Countries::$id,
-                    '=',
-                    Users::$tableName . '.' . Users::$countryId
-                )
-                ->where(Users::$tableName . '.' . Users::$phone, '=', $nationalNumber)
-                ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
-                ->where(Countries::$tableName . '.' . Countries::$region, '=', $regionCode)
-                ->first(
-                    [
-                        Users::$tableName . '.' . Users::$id,
-                        Users::$tableName . '.' . Users::$firstName,
-                        Users::$tableName . '.' . Users::$lastName,
-                    ]
-                );
-
             if ($user == null) {
                 $country = DB::table(Countries::$tableName)
                     // ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
@@ -1656,25 +1653,6 @@ trait AllShared
                 $whatsapp->sendMessageText($phoneNumber, $message);
             }
         } elseif ($message == "نسيت كلمة المرور") {
-            $user = DB::table(Users::$tableName)
-                // ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
-                ->join(
-                    Countries::$tableName,
-                    Countries::$tableName . '.' . Countries::$id,
-                    '=',
-                    Users::$tableName . '.' . Users::$countryId
-                )
-                ->where(Users::$tableName . '.' . Users::$phone, '=', $nationalNumber)
-                ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
-                ->where(Countries::$tableName . '.' . Countries::$region, '=', $regionCode)
-                ->first(
-                    [
-                        Users::$tableName . '.' . Users::$id,
-                        Users::$tableName . '.' . Users::$firstName,
-                        Users::$tableName . '.' . Users::$lastName,
-                    ]
-                );
-
             if ($user == null) {
                 $message = "يجب الاشتراك اولا";
                 $whatsapp->sendMessageText($phoneNumber, $message);
@@ -1696,7 +1674,24 @@ trait AllShared
                 // $this->whatsapp->sendMessageText($phoneNumber, $message);
             }
 
-        } elseif ((preg_match('/\{(\d+)\}/', $message, $matches))) {
+        } elseif (preg_match('/\{(\d+)\}/', $message, $matches)) {
+            // if ($user != null) {
+            //     $whatsappMessage = DB::table(WhatsappMessages::$tableName)
+            //         ->where(WhatsappMessages::$tableName . '.' . WhatsappMessages::$userId, '=', $user->id)
+            //         ->first(
+            //             [
+            //                 Users::$tableName . '.' . Users::$id,
+            //                 Users::$tableName . '.' . Users::$firstName,
+            //                 Users::$tableName . '.' . Users::$lastName,
+            //             ]
+            //         );
+            //     if ($whatsappMessage->sevicesMode == 1) {
+            //         if ($message == 1) {
+            //         }
+
+            //     }
+            // }
+
 
             $storeId = null;
             if (preg_match('/\{(\d+)\}/', $message, $matches)) {
@@ -1706,24 +1701,6 @@ trait AllShared
                 $whatsapp->sendMessageText($phoneNumber, "uncorrect format");
                 return response()->json(['success' => true]);
             }
-            $user = DB::table(Users::$tableName)
-                // ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
-                ->join(
-                    Countries::$tableName,
-                    Countries::$tableName . '.' . Countries::$id,
-                    '=',
-                    Users::$tableName . '.' . Users::$countryId
-                )
-                ->where(Users::$tableName . '.' . Users::$phone, '=', $nationalNumber)
-                ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
-                ->where(Countries::$tableName . '.' . Countries::$region, '=', $regionCode)
-                ->first(
-                    [
-                        Users::$tableName . '.' . Users::$id,
-                        Users::$tableName . '.' . Users::$firstName,
-                        Users::$tableName . '.' . Users::$lastName,
-                    ]
-                );
 
             if ($user == null) {
                 $message = "يجب الاشتراك اولا";
