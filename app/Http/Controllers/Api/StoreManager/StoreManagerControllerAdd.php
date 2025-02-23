@@ -775,7 +775,7 @@ class StoreManagerControllerAdd extends Controller
         $json = json_decode($serviceAccount);
 
         print_r($json);
-        $private_key = $this->decryptRsa($passwordService, $json->private_key);
+        $private_key = $this->decryptServiceAccount($passwordService, $json->private_key);
         if ($serviceAccount != true) {
             return $this->responseError2("رمز غير صحيح", [], 0, 405);
         }

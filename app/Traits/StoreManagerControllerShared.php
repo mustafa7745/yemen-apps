@@ -175,67 +175,98 @@ trait StoreManagerControllerShared
             return 'رقم اليوم غير صحيح';
         }
     }
-    function encryptRsa($password, $data)
+    function encryptServiceAccount($serviceAccount, $key)
     {
-        // 1. Generate a secure encryption key (this should be kept secret)
-        $key = $password; // AES-128 requires 16 bytes, AES-256 requires 32 bytes
-        $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc')); // Initialization Vector
+        // Ensure UTF-8 encoding for the service account string
+        $serviceAccount = mb_convert_encoding($serviceAccount, 'UTF-8');
 
-        // 2. Encrypt the data
-        $dataToEncrypt = str_replace(["\n", "\r"], '', $data);
+        // Generate a random 16-byte IV (Initialization Vector)
+        $iv = openssl_random_pseudo_bytes(16);
 
-        // print_r($data);
-        // $dataToEncrypt = mb_convert_encoding($data, 'UTF-8');
-        // print_r($dataToEncrypt);
+        // Encrypt the service account string using AES-256-CBC
+        $encrypted = openssl_encrypt($serviceAccount, 'AES-256-CBC', hex2bin($key), OPENSSL_RAW_DATA, $iv);
 
-        $ciphertext = openssl_encrypt($dataToEncrypt, 'aes-256-cbc', $key, 0, $iv);
-
-        // Encode the ciphertext and IV so they can be stored or transmitted (Base64 encoding)
-        $encodedCiphertext = base64_encode($ciphertext);
-
-        return $encodedCiphertext;
-        // $encodedIv = base64_encode($iv);
-
-        // echo "Encrypted data: " . $encodedCiphertext . "\n";
-        // echo "IV: " . $encodedIv . "\n";
-
-        // // 3. Decrypt the data (using the same key and IV)
-        // $decodedCiphertext = base64_decode($encodedCiphertext);
-        // $decodedIv = base64_decode($encodedIv);
-
-        // $decryptedData = openssl_decrypt($decodedCiphertext, 'aes-256-cbc', $key, 0, $decodedIv);
-
-        // echo "Decrypted data: " . $decryptedData . "\n";
+        // Combine the IV and encrypted data, then base64-encode
+        return base64_encode($iv . $encrypted);
     }
-    function decryptRsa($password, $encodedCiphertext)
+
+    function decryptServiceAccount($encryptedData, $key)
     {
-        // 1. Generate a secure encryption key (this should be kept secret)
-        $key = $password; // AES-128 requires 16 bytes, AES-256 requires 32 bytes
-        $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc')); // Initialization Vector
+        // Decode the base64-encoded encrypted data
+        $encryptedData = base64_decode($encryptedData);
 
-        // 2. Encrypt the data
-        // $dataToEncrypt = $data;
-        // $ciphertext = openssl_encrypt($dataToEncrypt, 'aes-256-cbc', $key, 0, $iv);
+        // Extract the IV (first 16 bytes) and the encrypted data (remaining bytes)
+        $iv = substr($encryptedData, 0, 16);
+        $encrypted = substr($encryptedData, 16);
 
-        // Encode the ciphertext and IV so they can be stored or transmitted (Base64 encoding)
-        // $encodedCiphertext = base64_encode($ciphertext);
+        // Decrypt the service account string using AES-256-CBC
+        $decrypted = openssl_decrypt($encrypted, 'AES-256-CBC', hex2bin($key), OPENSSL_RAW_DATA, $iv);
 
-        // return $encodedCiphertext;
-        $encodedIv = base64_encode($iv);
-
-        // echo "Encrypted data: " . $encodedCiphertext . "\n";
-        // echo "IV: " . $encodedIv . "\n";
-
-        // 3. Decrypt the data (using the same key and IV)
-        $decodedCiphertext = base64_decode($encodedCiphertext);
-        $decodedIv = base64_decode($encodedIv);
-
-        $decryptedData = openssl_decrypt($decodedCiphertext, 'aes-256-cbc', $key, 0, $decodedIv);
-
-        // echo "Decrypted data: " . $decryptedData . "\n";
-        return $decryptedData;
-        // mb_convert_encoding($decryptedData, 'UTF-8');
+        // Ensure the decrypted string is UTF-8 encoded
+        return mb_convert_encoding($decrypted, 'UTF-8');
     }
+
+    // function encryptRsa($password, $data)
+    // {
+    //     // 1. Generate a secure encryption key (this should be kept secret)
+    //     $key = $password; // AES-128 requires 16 bytes, AES-256 requires 32 bytes
+    //     $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc')); // Initialization Vector
+
+    //     // 2. Encrypt the data
+    //     $dataToEncrypt = str_replace(["\n", "\r"], '', $data);
+
+    //     // print_r($data);
+    //     // $dataToEncrypt = mb_convert_encoding($data, 'UTF-8');
+    //     // print_r($dataToEncrypt);
+
+    //     $ciphertext = openssl_encrypt($dataToEncrypt, 'aes-256-cbc', $key, 0, $iv);
+
+    //     // Encode the ciphertext and IV so they can be stored or transmitted (Base64 encoding)
+    //     $encodedCiphertext = base64_encode($ciphertext);
+
+    //     return $encodedCiphertext;
+    //     // $encodedIv = base64_encode($iv);
+
+    //     // echo "Encrypted data: " . $encodedCiphertext . "\n";
+    //     // echo "IV: " . $encodedIv . "\n";
+
+    //     // // 3. Decrypt the data (using the same key and IV)
+    //     // $decodedCiphertext = base64_decode($encodedCiphertext);
+    //     // $decodedIv = base64_decode($encodedIv);
+
+    //     // $decryptedData = openssl_decrypt($decodedCiphertext, 'aes-256-cbc', $key, 0, $decodedIv);
+
+    //     // echo "Decrypted data: " . $decryptedData . "\n";
+    // }
+    // function decryptRsa($password, $encodedCiphertext)
+    // {
+    //     // 1. Generate a secure encryption key (this should be kept secret)
+    //     $key = $password; // AES-128 requires 16 bytes, AES-256 requires 32 bytes
+    //     $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc')); // Initialization Vector
+
+    //     // 2. Encrypt the data
+    //     // $dataToEncrypt = $data;
+    //     // $ciphertext = openssl_encrypt($dataToEncrypt, 'aes-256-cbc', $key, 0, $iv);
+
+    //     // Encode the ciphertext and IV so they can be stored or transmitted (Base64 encoding)
+    //     // $encodedCiphertext = base64_encode($ciphertext);
+
+    //     // return $encodedCiphertext;
+    //     $encodedIv = base64_encode($iv);
+
+    //     // echo "Encrypted data: " . $encodedCiphertext . "\n";
+    //     // echo "IV: " . $encodedIv . "\n";
+
+    //     // 3. Decrypt the data (using the same key and IV)
+    //     $decodedCiphertext = base64_decode($encodedCiphertext);
+    //     $decodedIv = base64_decode($encodedIv);
+
+    //     $decryptedData = openssl_decrypt($decodedCiphertext, 'aes-256-cbc', $key, 0, $decodedIv);
+
+    //     // echo "Decrypted data: " . $decryptedData . "\n";
+    //     return $decryptedData;
+    //     // mb_convert_encoding($decryptedData, 'UTF-8');
+    // }
     function isValidJson($string)
     {
         json_decode($string); // Attempt to decode the string
