@@ -780,6 +780,8 @@ class StoreManagerControllerAdd extends Controller
             return $this->responseError2("رمز غير صحيح", [], 0, 405);
         }
         $json->private_key = $private_key;
+        print_r($json);
+
         // print_r($serviceAccount);
 
         try {
