@@ -856,7 +856,7 @@ class StoreManagerControllerUpdate extends Controller
     public function updateStoreTime(Request $request)
     {
         $this->validRequestV1($request, [
-            'day' => 'required|string|max:1'
+            'day' => 'required|string|max:2'
         ]);
         $myData = $this->getMyData(request: $request, appId: $this->appId, storePoints: 2);
         $store = $myData['store'];
