@@ -771,13 +771,18 @@ class StoreManagerControllerAdd extends Controller
         if ($serviceAccount != true) {
             return $this->responseError2("رمز غير صحيح", [], 0, 405);
         }
-        print_r($serviceAccount);
+        // print_r($serviceAccount);
 
-        $firebaseService = new FirebaseService($serviceAccount);
+        try {
+            $firebaseService = new FirebaseService($serviceAccount);
 
-        $response = $firebaseService->sendNotificationToTopic($app->id, $title, $description);
-        // $response = $this->firebaseService->sendNotification("d37lmIWyReq0Gno0g6iPb7:APA91bFCb8RDk3niIpLpxjw2sF0Zh9zZni3jbdBBaSCuwFNx9YQTsBrCjigisCkpktKk7K_AatCqbOmuWC1LKjWqhHj844BUu0YU0MiWNmwnhM_jjOPLvnU", $title, $description);
-        return response()->json($response);
+            $response = $firebaseService->sendNotificationToTopic($app->id, $title, $description);
+            // $response = $this->firebaseService->sendNotification("d37lmIWyReq0Gno0g6iPb7:APA91bFCb8RDk3niIpLpxjw2sF0Zh9zZni3jbdBBaSCuwFNx9YQTsBrCjigisCkpktKk7K_AatCqbOmuWC1LKjWqhHj844BUu0YU0MiWNmwnhM_jjOPLvnU", $title, $description);
+            return response()->json($response);
+        } catch (\Throwable $th) {
+            return $this->responseError2($th->getMessage(), [], 0, 405);
+        }
+
     }
     public function addCustomPrice(Request $request)
     {
