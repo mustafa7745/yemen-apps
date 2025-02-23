@@ -853,11 +853,13 @@ class StoreManagerControllerUpdate extends Controller
         if (Hash::check($passwordService, $app->password) == false) {
             throw new CustomException("رمز غير صحيح", 0, 403);
         }
+        $dat = $this->encryptRsa($passwordService, $jsonContent);
+        print_r(strlen($dat) . " " . $dat);
         DB::table(table: Apps::$tableName)
             ->where(Apps::$id, '=', $app->id)
             ->update(
                 [
-                    Apps::$serviceAccount => $this->encryptRsa($passwordService, $jsonContent),
+                    Apps::$serviceAccount => $dat,
                 ]
             );
         return response()->json([]);
