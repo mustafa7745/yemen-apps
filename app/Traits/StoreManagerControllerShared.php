@@ -233,7 +233,7 @@ trait StoreManagerControllerShared
         $decryptedData = openssl_decrypt($decodedCiphertext, 'aes-256-cbc', $key, 0, $decodedIv);
 
         // echo "Decrypted data: " . $decryptedData . "\n";
-        return $decodedCiphertext;
+        return $decryptedData;
         // mb_convert_encoding($decryptedData, 'UTF-8');
     }
     function isValidJson($string)
