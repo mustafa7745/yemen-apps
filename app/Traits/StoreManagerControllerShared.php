@@ -182,7 +182,7 @@ trait StoreManagerControllerShared
         $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc')); // Initialization Vector
 
         // 2. Encrypt the data
-        $dataToEncrypt = $data;
+        $dataToEncrypt = json_encode($data);
         $ciphertext = openssl_encrypt($dataToEncrypt, 'aes-256-cbc', $key, 0, $iv);
 
         // Encode the ciphertext and IV so they can be stored or transmitted (Base64 encoding)
@@ -228,7 +228,7 @@ trait StoreManagerControllerShared
         $decryptedData = openssl_decrypt($decodedCiphertext, 'aes-256-cbc', $key, 0, $decodedIv);
 
         // echo "Decrypted data: " . $decryptedData . "\n";
-        return $decryptedData;
+        return json_decode($decryptedData);
     }
     function isValidJson($string)
     {
