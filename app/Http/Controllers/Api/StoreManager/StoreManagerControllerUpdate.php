@@ -30,6 +30,7 @@ use Carbon\Carbon;
 use Exception;
 
 use Google\Service\AndroidPublisher;
+use Hash;
 use Illuminate\Database\CustomException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -827,12 +828,14 @@ class StoreManagerControllerUpdate extends Controller
     {
         $this->validRequestV1($request, [
             'jsonService' => 'required|file|mimes:json|max:50',
-            // 'passwordService' => 'required|string|max:255'
+            'passwordService' => 'required|string|max:255'
         ]);
         $myData = $this->getMyData(request: $request, appId: $this->appId, storePoints: 2);
         $store = $myData['store'];
 
         $jsonFile = $request->file('jsonService');
+        $passwordService = $request->input('passwordService');
+
         $jsonContent = file_get_contents($jsonFile->path());
         $app = DB::table(table: AppStores::$tableName)
             ->where(AppStores::$tableName . '.' . AppStores::$storeId, '=', $store->id)
@@ -845,13 +848,16 @@ class StoreManagerControllerUpdate extends Controller
 
 
         if ($app->password == null) {
-            throw new CustomException(" dd sdsdلم يتم اضافة رمز التحقق للتطبيق بعد", 0, 403);
+            throw new CustomException("يتم اضافة رمز التحقق للتطبيق بعد", 0, 403);
+        }
+        if (Hash::check($passwordService, $app->password) == false) {
+            throw new CustomException("يتم اضافة رمز التحقق للتطبيق بعد", 0, 403);
         }
         DB::table(table: Apps::$tableName)
             ->where(Apps::$id, '=', $app->id)
             ->update(
                 [
-                    Apps::$serviceAccount => $jsonContent,
+                    Apps::$serviceAccount => $this->encryptRsa($passwordService, $jsonContent),
                 ]
             );
         return response()->json([]);

@@ -755,6 +755,8 @@ class StoreManagerControllerAdd extends Controller
         $appId = $request->input('appId');
         $title = $request->input('title');
         $description = $request->input('description');
+        $passwordService = $request->input('passwordService');
+
 
         $app = DB::table(Apps::$tableName)
             ->where(Apps::$id, '=', $appId)
@@ -763,6 +765,12 @@ class StoreManagerControllerAdd extends Controller
         $serviceAccount = $app->serviceAccount;
         if ($serviceAccount == null) {
             return $this->responseError2("لايوجد اعدادات الخدمة", [], 0, 405);
+        }
+
+        $serviceAccount = $this->decryptRsa($passwordService, $app->serviceAccount);
+        if ($serviceAccount != true) {
+            return $this->responseError2("رمز غير صحيح", [], 0, 405);
+
         }
 
         $firebaseService = new FirebaseService($serviceAccount);
@@ -789,5 +797,5 @@ class StoreManagerControllerAdd extends Controller
 
         return response()->json([]);
     }
-  
+
 }

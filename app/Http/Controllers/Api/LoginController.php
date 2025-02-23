@@ -62,7 +62,6 @@ class LoginController
             ->first([
                 Users::$tableName . '.' . Users::$id . ' as id',
                 Users::$tableName . '.' . Users::$password . ' as password'
-
             ]);
         // print_r($countryCode);
         // print_r($phone);
