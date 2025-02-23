@@ -10,6 +10,8 @@ class Apps
    public static $sha = "sha";
    public static $packageName = "packageName";
    public static $serviceAccount = "serviceAccount";
+   public static $password = "password";
+
    public static $createdAt = "createdAt";
    public static $updatedAt = "updatedAt";
 }

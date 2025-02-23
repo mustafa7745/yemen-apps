@@ -1759,14 +1759,14 @@ trait AllShared
                     return response()->json(['success' => true]);
                 }
 
-                // DB::table(table: Apps::$tableName)
-                //     ->where(Apps::$id, '=', $app->id)
-                //     ->update(
-                //         [
-                //             Users::$password => $hashedPassword,
-                //             Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-                //         ]
-                //     );
+                DB::table(table: Apps::$tableName)
+                    ->where(Apps::$id, '=', $app->id)
+                    ->update(
+                        [
+                            Apps::$password => $hashedPassword,
+                            Apps::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                        ]
+                    );
                 $message = "الرقم السري الجديد للتطبيق هو: ";
                 $whatsapp->sendMessageText($phoneNumber, $message);
                 $whatsapp->sendMessageText($phoneNumber, $password);
