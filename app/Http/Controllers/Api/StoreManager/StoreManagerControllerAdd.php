@@ -767,18 +767,22 @@ class StoreManagerControllerAdd extends Controller
             return $this->responseError2("لايوجد اعدادات الخدمة", [], 0, 405);
         }
 
-        $serviceAccount = $this->decryptRsa($passwordService, $app->serviceAccount);
-        if ($serviceAccount != true) {
-            return $this->responseError2("رمز غير صحيح", [], 0, 405);
-        }
+
         if ($this->isValidJson($serviceAccount) == false) {
             return $this->responseError2("تم تخزين الملف بشكل خاطئ", [], 0, 405);
         }
-        
+
+        $json = json_decode($serviceAccount);
+
+        $private_key = $this->decryptRsa($passwordService, $json->private_key);
+        if ($serviceAccount != true) {
+            return $this->responseError2("رمز غير صحيح", [], 0, 405);
+        }
+        $json->private_key = $private_key;
         // print_r($serviceAccount);
 
         try {
-            $firebaseService = new FirebaseService($serviceAccount);
+            $firebaseService = new FirebaseService($json);
 
             $response = $firebaseService->sendNotificationToTopic($app->id, $title, $description);
             // $response = $this->firebaseService->sendNotification("d37lmIWyReq0Gno0g6iPb7:APA91bFCb8RDk3niIpLpxjw2sF0Zh9zZni3jbdBBaSCuwFNx9YQTsBrCjigisCkpktKk7K_AatCqbOmuWC1LKjWqhHj844BUu0YU0MiWNmwnhM_jjOPLvnU", $title, $description);
