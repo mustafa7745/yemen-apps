@@ -215,9 +215,9 @@ trait StoreManagerControllerShared
             throw new Exception("Invalid encrypted data format. Expected iv:salt:encryptedData.");
         }
 
-        $ivHex = $parts[0];
-        $saltHex = $parts[1];
-        $encryptedHex = $parts[2];
+        $ivHex = $encryptedData->iv;
+        $saltHex = $encryptedData->salt;
+        $encryptedHex = $encryptedData->encrypted;
 
         // Decode the hexadecimal strings to binary
         $iv = hex2bin($ivHex);
