@@ -1741,6 +1741,12 @@ trait AllShared
                         AppStores::$tableName . '.' . AppStores::$appId
                     )
                     ->join(
+                        Stores::$tableName,
+                        Stores::$tableName . '.' . Stores::$id,
+                        '=',
+                        AppStores::$tableName . '.' . AppStores::$storeId
+                    )
+                    ->join(
                         Users::$tableName,
                         Users::$tableName . '.' . Users::$id,
                         '=',
