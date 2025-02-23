@@ -1696,7 +1696,7 @@ trait AllShared
                 // $this->whatsapp->sendMessageText($phoneNumber, $message);
             }
 
-        } elseif ($message == (preg_match('/\{(\d+)\}/', $message, $matches))) {
+        } elseif ((preg_match('/\{(\d+)\}/', $message, $matches))) {
 
             $storeId = null;
             if (preg_match('/\{(\d+)\}/', $message, $matches)) {
