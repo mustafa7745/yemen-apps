@@ -1744,6 +1744,7 @@ trait AllShared
                 }
   
                 // $whatsapp->sendMessageText($phoneNumber, json_encode($app) . " ID");
+                
                 DB::table(table: Apps::$tableName)
                     ->where(Apps::$id, '=', $app->id)
                     ->update(
