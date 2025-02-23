@@ -1734,7 +1734,9 @@ trait AllShared
                         '=',
                         Stores::$tableName . '.' . Stores::$userId
                     )
-                    ->first();
+                    ->first(
+                        [Apps::$tableName . '.' . Apps::$id]
+                    );
 
                 if ($app == null) {
                     $whatsapp->sendMessageText($phoneNumber, "app not found");
