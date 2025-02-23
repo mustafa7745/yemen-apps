@@ -770,8 +770,8 @@ class StoreManagerControllerAdd extends Controller
         $serviceAccount = $this->decryptRsa($passwordService, $app->serviceAccount);
         if ($serviceAccount != true) {
             return $this->responseError2("رمز غير صحيح", [], 0, 405);
-
         }
+        print_r($serviceAccount);
 
         $firebaseService = new FirebaseService($serviceAccount);
 
