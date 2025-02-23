@@ -184,7 +184,7 @@ trait StoreManagerControllerShared
         $iv = openssl_random_pseudo_bytes(16);
 
         // Encrypt the service account string using AES-256-CBC
-        $encrypted = openssl_encrypt($serviceAccount, 'AES-256-CBC', hex2bin($key), OPENSSL_RAW_DATA, $iv);
+        $encrypted = openssl_encrypt($serviceAccount, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
 
         // Combine the IV and encrypted data, then base64-encode
         return base64_encode($iv . $encrypted);
@@ -200,7 +200,7 @@ trait StoreManagerControllerShared
         $encrypted = substr($encryptedData, 16);
 
         // Decrypt the service account string using AES-256-CBC
-        $decrypted = openssl_decrypt($encrypted, 'AES-256-CBC', hex2bin($key), OPENSSL_RAW_DATA, $iv);
+        $decrypted = openssl_decrypt($encrypted, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
 
         // Ensure the decrypted string is UTF-8 encoded
         return mb_convert_encoding($decrypted, 'UTF-8');
