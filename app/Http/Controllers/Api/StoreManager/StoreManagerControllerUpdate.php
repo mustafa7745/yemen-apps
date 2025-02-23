@@ -876,21 +876,26 @@ class StoreManagerControllerUpdate extends Controller
             StoresTime::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
         ];
         if ($time == null) {
-            $data[] = [
+            $newData = [
                 StoresTime::$id => null,
                 StoresTime::$day => $day,
                 StoresTime::$storeId => $store->id,
-                StoresTime::$createdAt => Carbon::now()->format('Y-m-d H:i:s')
+                StoresTime::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
             ];
+
+            // Only add these fields if they're not null
             if ($openAt != null) {
-                $data[StoresTime::$openAt] = $openAt;
+                $newData[StoresTime::$openAt] = $openAt;
             }
             if ($closeAt != null) {
-                $data[StoresTime::$closeAt] = $closeAt;
+                $newData[StoresTime::$closeAt] = $closeAt;
             }
             if ($isOpen != null) {
-                $data[StoresTime::$isOpen] = $isOpen;
+                $newData[StoresTime::$isOpen] = $isOpen;
             }
+
+            // Add the new row to the `$data` array
+            $data[] = $newData;
             DB::table(StoresTime::$tableName)
                 ->insert($data);
 
