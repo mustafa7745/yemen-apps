@@ -863,10 +863,10 @@ class StoreManagerControllerUpdate extends Controller
         //     throw new CustomException("تنسيق الملف غير صحيح", 0, 403);
         //     // return $this->responseError2("تم تخزين الملف بشكل خاطئ", [], 0, 405);
         // }
-        print_r(($json));
+        // print_r(($json));
         $dat = $this->encryptRsa($passwordService, $json->private_key);
         $json->private_key = $dat;
-        print_r(($json));
+        // print_r(($json));
 
 
 
