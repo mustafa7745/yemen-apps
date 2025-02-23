@@ -896,7 +896,7 @@ class StoreManagerControllerUpdate extends Controller
 
             // Add the new row to the `$data` array
             $data = array_merge($data, $newData);
-            print_r($data);
+            // print_r($data);
             DB::table(StoresTime::$tableName)
                 ->insert($data);
 
