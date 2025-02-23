@@ -1655,7 +1655,7 @@ trait AllShared
                 $message = "هذا المستخدم لديه حساب مسبق";
                 $whatsapp->sendMessageText($phoneNumber, $message);
             }
-        } elseif ($message = "نسيت كلمة المرور") {
+        } elseif ($message == "نسيت كلمة المرور") {
             $user = DB::table(Users::$tableName)
                 // ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
                 ->join(
@@ -1690,13 +1690,13 @@ trait AllShared
                             Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                         ]
                     );
-                $message = "الرقم السففري الجديد هو: " . $message;
+                $message = "الرقم السري الجديد هو: ";
                 $whatsapp->sendMessageText($phoneNumber, $message);
                 $whatsapp->sendMessageText($phoneNumber, $password);
                 // $this->whatsapp->sendMessageText($phoneNumber, $message);
             }
 
-        } elseif ($message = "{10}رمز التطبيق") {
+        } elseif ($message == "{10}رمز التطبيق") {
             $storeId = null;
             if (preg_match('/\{(\d+)\}/', $message, $matches)) {
                 $storeId = $matches[1]; // الرقم المستخرج
