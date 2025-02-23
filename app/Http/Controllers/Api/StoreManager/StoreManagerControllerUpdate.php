@@ -864,7 +864,7 @@ class StoreManagerControllerUpdate extends Controller
         //     // return $this->responseError2("تم تخزين الملف بشكل خاطئ", [], 0, 405);
         // }
         // print_r(($json));
-        $dat = $this->encryptServiceAccount($passwordService, $json->private_key);
+        $dat = $this->encryptData($passwordService, $json->private_key);
         $json->private_key = $dat;
         // print_r(($json));
 
