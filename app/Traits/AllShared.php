@@ -1735,7 +1735,7 @@ trait AllShared
                         Stores::$tableName . '.' . Stores::$userId
                     )
                     ->first(
-                        [Apps::$tableName . '.' . Apps::$id . ' as id2']
+                        // [Apps::$tableName . '.' . Apps::$id . ' as id2']
                     );
 
                 if ($app == null) {
