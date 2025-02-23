@@ -826,7 +826,8 @@ class StoreManagerControllerUpdate extends Controller
     public function updateStoreServiceAccount(Request $request)
     {
         $this->validRequestV1($request, [
-            'jsonService' => 'required|file|mimes:json|max:50'
+            'jsonService' => 'required|file|mimes:json|max:50',
+            // 'passwordService' => 'required|string|max:255'
         ]);
         $myData = $this->getMyData(request: $request, appId: $this->appId, storePoints: 2);
         $store = $myData['store'];
@@ -841,6 +842,11 @@ class StoreManagerControllerUpdate extends Controller
                 '=',
                 AppStores::$tableName . '.' . AppStores::$appId
             )->first();
+
+
+        if ($app->password == null) {
+            throw new CustomException("لم يتم اضافة رمز التحقق للتطبيق بعد", 0, 403);
+        }
         DB::table(table: Apps::$tableName)
             ->where(Apps::$id, '=', $app->id)
             ->update(
