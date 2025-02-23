@@ -1690,7 +1690,7 @@ trait AllShared
                             Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                         ]
                     );
-                $message = "الرقم السففري الجديد هو: ";
+                $message = "الرقم السففري الجديد هو: " . $message;
                 $whatsapp->sendMessageText($phoneNumber, $message);
                 $whatsapp->sendMessageText($phoneNumber, $password);
                 // $this->whatsapp->sendMessageText($phoneNumber, $message);
