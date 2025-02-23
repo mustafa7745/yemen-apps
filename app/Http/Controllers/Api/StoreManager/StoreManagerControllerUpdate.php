@@ -848,7 +848,7 @@ class StoreManagerControllerUpdate extends Controller
 
 
         if ($app->password == null) {
-            throw new CustomException("يتم اضافة رمز التحقق للتطبيق بعد", 0, 403);
+            throw new CustomException("رمز غير صحيح", 0, 403);
         }
         if (Hash::check($passwordService, $app->password) == false) {
             throw new CustomException("يتم اضافة رمز التحقق للتطبيق بعد", 0, 403);
