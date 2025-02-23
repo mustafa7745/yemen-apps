@@ -854,7 +854,7 @@ class StoreManagerControllerUpdate extends Controller
             throw new CustomException("رمز غير صحيح", 0, 403);
         }
         $dat = $this->encryptRsa($passwordService, $jsonContent);
-        print_r(strlen($dat) . " " . $dat);
+        // print_r(strlen($dat) . " " . $dat);
         DB::table(table: Apps::$tableName)
             ->where(Apps::$id, '=', $app->id)
             ->update(
