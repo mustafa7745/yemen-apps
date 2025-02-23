@@ -1527,15 +1527,15 @@ trait AllShared
         return response()->json($products);
     }
 
-    protected $whatsapp;
+    // protected 
 
-    public function __construct(WhatsappService $whatsapp)
-    {
-        $this->whatsapp = $whatsapp;
-    }
+    // public function __construct(WhatsappService $whatsapp)
+    // {
+    //     $this->whatsapp = $whatsapp;
+    // }
     public function whatsapp_webhook(Request $request)
     {
-
+        $whatsapp = new WhatsappService();
         // $verifyToken = '774519161'; // Replace with your verify token
         // $challenge = $request->query('hub_challenge');
         // $token = $request->query('hub_verify_token');
@@ -1649,11 +1649,11 @@ trait AllShared
                 $message = $message . "\n";
 
                 $message = $message . "الرقم السري هو: ";
-                $this->whatsapp->sendMessageText($phoneNumber, $message);
-                $this->whatsapp->sendMessageText($phoneNumber, $password);
+                $whatsapp->sendMessageText($phoneNumber, $message);
+                $whatsapp->sendMessageText($phoneNumber, $password);
             } else {
                 $message = "هذا المستخدم لديه حساب مسبق";
-                $this->whatsapp->sendMessageText($phoneNumber, $message);
+                $whatsapp->sendMessageText($phoneNumber, $message);
             }
         } elseif ($message = "نسيت كلمة المرور") {
             $user = DB::table(Users::$tableName)
@@ -1677,7 +1677,7 @@ trait AllShared
 
             if ($user == null) {
                 $message = "يجب الاشتراك اولا";
-                $this->whatsapp->sendMessageText($phoneNumber, $message);
+                $whatsapp->sendMessageText($phoneNumber, $message);
             } else {
                 $password = $this->generateRandomPassword();
                 $hashedPassword = Hash::make($password);
@@ -1691,11 +1691,80 @@ trait AllShared
                         ]
                     );
                 $message = "الرقم السري الجديد هو: ";
-                $this->whatsapp->sendMessageText($phoneNumber, $message);
-                $this->whatsapp->sendMessageText($phoneNumber, $password);
+                $whatsapp->sendMessageText($phoneNumber, $message);
+                $whatsapp->sendMessageText($phoneNumber, $password);
                 // $this->whatsapp->sendMessageText($phoneNumber, $message);
             }
 
+        } elseif ($message = "{10}رمز التطبيق") {
+            $storeId = null;
+            if (preg_match('/\{(\d+)\}/', $message, $matches)) {
+                $storeId = $matches[1]; // الرقم المستخرج
+                // echo $number; // الناتج: 10
+            } else {
+                $whatsapp->sendMessageText($phoneNumber, "uncorrect format");
+                return response()->json(['success' => true]);
+            }
+            $user = DB::table(Users::$tableName)
+                // ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
+                ->join(
+                    Countries::$tableName,
+                    Countries::$tableName . '.' . Countries::$id,
+                    '=',
+                    Users::$tableName . '.' . Users::$countryId
+                )
+                ->where(Users::$tableName . '.' . Users::$phone, '=', $nationalNumber)
+                ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
+                ->where(Countries::$tableName . '.' . Countries::$region, '=', $regionCode)
+                ->first(
+                    [
+                        Users::$tableName . '.' . Users::$id,
+                        Users::$tableName . '.' . Users::$firstName,
+                        Users::$tableName . '.' . Users::$lastName,
+                    ]
+                );
+
+            if ($user == null) {
+                $message = "يجب الاشتراك اولا";
+                $whatsapp->sendMessageText($phoneNumber, $message);
+            } else {
+                $password = $this->generateRandomPassword();
+                $hashedPassword = Hash::make($password);
+                ///
+                $app = DB::table(table: AppStores::$tableName)
+                    ->where(AppStores::$tableName . '.' . AppStores::$storeId, '=', $storeId)
+                    ->join(
+                        Apps::$tableName,
+                        Apps::$tableName . '.' . Apps::$id,
+                        '=',
+                        AppStores::$tableName . '.' . AppStores::$appId
+                    )
+                    ->join(
+                        Users::$tableName,
+                        Users::$tableName . '.' . Users::$id,
+                        '=',
+                        Stores::$tableName . '.' . Stores::$userId
+                    )
+                    ->first();
+
+                if ($app == null) {
+                    $whatsapp->sendMessageText($phoneNumber, "app not found");
+                    return response()->json(['success' => true]);
+                }
+
+                DB::table(table: Apps::$tableName)
+                    ->where(Apps::$id, '=', $app->id)
+                    ->update(
+                        [
+                            Users::$password => $hashedPassword,
+                            Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                        ]
+                    );
+                $message = "الرقم السري الجديد للتطبيق هو: ";
+                $whatsapp->sendMessageText($phoneNumber, $message);
+                $whatsapp->sendMessageText($phoneNumber, $password);
+                // $this->whatsapp->sendMessageText($phoneNumber, $message);
+            }
         }
 
         // exit;
