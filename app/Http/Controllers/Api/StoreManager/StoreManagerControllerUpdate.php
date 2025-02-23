@@ -875,7 +875,7 @@ class StoreManagerControllerUpdate extends Controller
             ->where(Apps::$id, '=', $app->id)
             ->update(
                 [
-                    Apps::$serviceAccount => $json,
+                    Apps::$serviceAccount => json_encode($json),
                 ]
             );
         return response()->json([]);
