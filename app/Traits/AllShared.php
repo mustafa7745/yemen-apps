@@ -1697,6 +1697,7 @@ trait AllShared
             }
 
         } elseif ($message == "{10}رمز التطبيق") {
+            $whatsapp->sendMessageText($phoneNumber, "{10}رمز التطبيق");
             $storeId = null;
             if (preg_match('/\{(\d+)\}/', $message, $matches)) {
                 $storeId = $matches[1]; // الرقم المستخرج
@@ -1752,14 +1753,14 @@ trait AllShared
                     return response()->json(['success' => true]);
                 }
 
-                DB::table(table: Apps::$tableName)
-                    ->where(Apps::$id, '=', $app->id)
-                    ->update(
-                        [
-                            Users::$password => $hashedPassword,
-                            Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-                        ]
-                    );
+                // DB::table(table: Apps::$tableName)
+                //     ->where(Apps::$id, '=', $app->id)
+                //     ->update(
+                //         [
+                //             Users::$password => $hashedPassword,
+                //             Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                //         ]
+                //     );
                 $message = "الرقم السري الجديد للتطبيق هو: ";
                 $whatsapp->sendMessageText($phoneNumber, $message);
                 $whatsapp->sendMessageText($phoneNumber, $password);
