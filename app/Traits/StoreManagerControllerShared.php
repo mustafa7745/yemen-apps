@@ -175,36 +175,94 @@ trait StoreManagerControllerShared
             return 'رقم اليوم غير صحيح';
         }
     }
-    function encryptServiceAccount($serviceAccount, $key)
+    function encryptData($password, $data, )
     {
-        // Ensure UTF-8 encoding for the service account string
-        $serviceAccount = mb_convert_encoding($serviceAccount, 'UTF-8');
+        // Generate a random salt
+        $salt = random_bytes(16);
 
-        // Generate a random 16-byte IV (Initialization Vector)
-        $iv = openssl_random_pseudo_bytes(16);
+        // Derive a 256-bit key using PBKDF2
+        $iterations = 100000; // Number of iterations
+        $keyLength = 32; // 256-bit key
+        $secretKey = hash_pbkdf2('sha256', $password, $salt, $iterations, $keyLength, true);
 
-        // Encrypt the service account string using AES-256-CBC
-        $encrypted = openssl_encrypt($serviceAccount, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
+        // Generate a random IV
+        $iv = random_bytes(16);
 
-        // Combine the IV and encrypted data, then base64-encode
-        return base64_encode($iv . $encrypted);
+        // Encrypt the data using AES-256-CBC
+        $encrypted = openssl_encrypt($data, 'aes-256-cbc', $secretKey, OPENSSL_RAW_DATA, $iv);
+
+        // Encode the encrypted data, IV, and salt as hexadecimal strings
+        return [
+            'encrypted' => bin2hex($encrypted),
+            'iv' => bin2hex($iv),
+            'salt' => bin2hex($salt),
+        ];
     }
 
-    function decryptServiceAccount($encryptedData, $key)
+    /**
+     * Decrypts data encrypted with AES-256-CBC using a password.
+     * 
+     * @param string $encryptedHex The encrypted data as a hexadecimal string.
+     * @param string $ivHex The IV as a hexadecimal string.
+     * @param string $saltHex The salt as a hexadecimal string.
+     * @param string $password The password used for encryption.
+     * @return string The decrypted data.
+     */
+    function decryptData($encryptedData, $password)
     {
-        // Decode the base64-encoded encrypted data
-        $encryptedData = base64_decode($encryptedData);
+        $parts = explode(':', $encryptedData);
+        if (count($parts) !== 3) {
+            throw new Exception("Invalid encrypted data format. Expected iv:salt:encryptedData.");
+        }
 
-        // Extract the IV (first 16 bytes) and the encrypted data (remaining bytes)
-        $iv = substr($encryptedData, 0, 16);
-        $encrypted = substr($encryptedData, 16);
+        $ivHex = $parts[0];
+        $saltHex = $parts[1];
+        $encryptedHex = $parts[2];
 
-        // Decrypt the service account string using AES-256-CBC
-        $decrypted = openssl_decrypt($encrypted, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
+        // Decode the hexadecimal strings to binary
+        $iv = hex2bin($ivHex);
+        $salt = hex2bin($saltHex);
+        $encrypted = hex2bin($encryptedHex);
 
-        // Ensure the decrypted string is UTF-8 encoded
-        return mb_convert_encoding($decrypted, 'UTF-8');
+        // Derive the key using the same password and salt
+        $iterations = 100000; // Number of iterations
+        $keyLength = 32; // 256-bit key
+        $secretKey = hash_pbkdf2('sha256', $password, $salt, $iterations, $keyLength, true);
+
+        // Decrypt the data using AES-256-CBC
+        return openssl_decrypt($encrypted, 'aes-256-cbc', $secretKey, OPENSSL_RAW_DATA, $iv);
     }
+
+    // function encryptServiceAccount($serviceAccount, $key)
+    // {
+    //     // Ensure UTF-8 encoding for the service account string
+    //     $serviceAccount = mb_convert_encoding($serviceAccount, 'UTF-8');
+
+    //     // Generate a random 16-byte IV (Initialization Vector)
+    //     $iv = openssl_random_pseudo_bytes(16);
+
+    //     // Encrypt the service account string using AES-256-CBC
+    //     $encrypted = openssl_encrypt($serviceAccount, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
+
+    //     // Combine the IV and encrypted data, then base64-encode
+    //     return base64_encode($iv . $encrypted);
+    // }
+
+    // function decryptServiceAccount($encryptedData, $key)
+    // {
+    //     // Decode the base64-encoded encrypted data
+    //     $encryptedData = base64_decode($encryptedData);
+
+    //     // Extract the IV (first 16 bytes) and the encrypted data (remaining bytes)
+    //     $iv = substr($encryptedData, 0, 16);
+    //     $encrypted = substr($encryptedData, 16);
+
+    //     // Decrypt the service account string using AES-256-CBC
+    //     $decrypted = openssl_decrypt($encrypted, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
+
+    //     // Ensure the decrypted string is UTF-8 encoded
+    //     return mb_convert_encoding($decrypted, 'UTF-8');
+    // }
 
     // function encryptRsa($password, $data)
     // {
