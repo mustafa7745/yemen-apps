@@ -862,17 +862,18 @@ class StoreManagerControllerUpdate extends Controller
         //     throw new CustomException("تنسيق الملف غير صحيح", 0, 403);
         //     // return $this->responseError2("تم تخزين الملف بشكل خاطئ", [], 0, 405);
         // }
-        print_r($json);
+        print_r(json_encode($json));
         $dat = $this->encryptRsa($passwordService, $json->private_key);
         $json->private_key = $dat;
-        print_r($json);
+        print_r(json_encode($json));
+
 
         // print_r(strlen($dat) . " " . $dat);
         DB::table(table: Apps::$tableName)
             ->where(Apps::$id, '=', $app->id)
             ->update(
                 [
-                    Apps::$serviceAccount => $dat,
+                    Apps::$serviceAccount => json_encode($json),
                 ]
             );
         return response()->json([]);
