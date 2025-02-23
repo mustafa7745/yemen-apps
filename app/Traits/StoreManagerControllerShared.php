@@ -184,9 +184,9 @@ trait StoreManagerControllerShared
         // 2. Encrypt the data
         $dataToEncrypt = str_replace(["\n", "\r"], '', $data);
 
-        print_r($data);
+        // print_r($data);
         // $dataToEncrypt = mb_convert_encoding($data, 'UTF-8');
-        print_r($dataToEncrypt);
+        // print_r($dataToEncrypt);
 
         $ciphertext = openssl_encrypt($dataToEncrypt, 'aes-256-cbc', $key, 0, $iv);
 
