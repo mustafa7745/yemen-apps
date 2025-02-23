@@ -1743,7 +1743,7 @@ trait AllShared
                     return response()->json(['success' => true]);
                 }
 
-                $whatsapp->sendMessageText($phoneNumber, json_encode($app));
+                $whatsapp->sendMessageText($phoneNumber, json_encode($app) . " ID");
                 DB::table(table: Apps::$tableName)
                     ->where(Apps::$id, '=', $app->id)
                     ->update(
