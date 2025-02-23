@@ -1734,6 +1734,8 @@ trait AllShared
                 ///
                 $app = DB::table(table: AppStores::$tableName)
                     ->where(AppStores::$tableName . '.' . AppStores::$storeId, '=', $storeId)
+                    ->where(Stores::$tableName . '.' . Stores::$userId, '=', $user->id)
+
                     ->join(
                         Apps::$tableName,
                         Apps::$tableName . '.' . Apps::$id,
