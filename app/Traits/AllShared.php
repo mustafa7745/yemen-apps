@@ -1735,7 +1735,7 @@ trait AllShared
                         Stores::$tableName . '.' . Stores::$userId
                     )
                     ->first(
-                        [Apps::$tableName . '.' . Apps::$id . ' as id']
+                        [Apps::$tableName . '.' . Apps::$id . ' as id2']
                     );
 
                 if ($app == null) {
@@ -1743,7 +1743,7 @@ trait AllShared
                     return response()->json(['success' => true]);
                 }
 
-                $whatsapp->sendMessageText($phoneNumber, $app->id);
+                $whatsapp->sendMessageText($phoneNumber, $app->id2);
                 DB::table(table: Apps::$tableName)
                     ->where(Apps::$id, '=', $app->id)
                     ->update(
