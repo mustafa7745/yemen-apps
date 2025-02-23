@@ -921,7 +921,12 @@ class StoreManagerControllerUpdate extends Controller
             ->where(StoresTime::$tableName . '.' . StoresTime::$day, '=', $day)
             ->first();
 
-        return response()->json($time);
+        $result = [
+            "day" => $this->getDayName($day), // Get the day name (e.g., "Saturday")
+            "storeTime" => $time, // Store time or null if not found
+        ];
+
+        return response()->json($result);
         // $jsonData = json_encode($jsonContent, true);
 
         // throw new CustomException("Error " . $jsonContent, 0, 403);

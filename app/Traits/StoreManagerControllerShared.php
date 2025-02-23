@@ -156,4 +156,23 @@ trait StoreManagerControllerShared
             throw new CustomException($e->getMessage(), 0, 403);
         }
     }
+    function getDayName($dayNumber)
+    {
+        $days = [
+            1 => 'السبت',
+            2 => 'الأحد',
+            3 => 'الاثنين',
+            4 => 'الثلاثاء',
+            5 => 'الأربعاء',
+            6 => 'الخميس',
+            7 => 'الجمعة'
+        ];
+
+        // التحقق من وجود الرقم في المصفوفة
+        if (array_key_exists($dayNumber, $days)) {
+            return $days[$dayNumber];
+        } else {
+            return 'رقم اليوم غير صحيح';
+        }
+    }
 }
