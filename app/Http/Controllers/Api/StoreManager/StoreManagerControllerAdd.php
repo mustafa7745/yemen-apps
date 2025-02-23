@@ -774,7 +774,7 @@ class StoreManagerControllerAdd extends Controller
 
         $json = json_decode($serviceAccount);
 
-        // print_r($json);
+        print_r($json->private_key);
         // $private_key = $this->decryptServiceAccount($passwordService, $json->private_key);
         $private_key = $this->decryptData($json->private_key, $passwordService);
         // if ($private_key != true) {
