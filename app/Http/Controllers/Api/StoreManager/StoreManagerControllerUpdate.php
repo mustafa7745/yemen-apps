@@ -853,10 +853,11 @@ class StoreManagerControllerUpdate extends Controller
         if (Hash::check($passwordService, $app->password) == false) {
             throw new CustomException("رمز غير صحيح", 0, 403);
         }
-        $json = json_decode($jsonContent);
-        if ($this->isValidJson($json) == false) {
+        if ($this->isValidJson($jsonContent) == false) {
             return $this->responseError2(" الملف  خاطئ", [], 0, 405);
         }
+        $json = json_decode($jsonContent);
+
         // print_r($json->private_key);
         // if ($this->isValidJson($jsonContent) == false) {
         //     throw new CustomException("تنسيق الملف غير صحيح", 0, 403);
