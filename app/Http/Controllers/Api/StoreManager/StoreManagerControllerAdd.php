@@ -771,20 +771,10 @@ class StoreManagerControllerAdd extends Controller
         if ($this->isValidJson($serviceAccount) == false) {
             return $this->responseError2("تم تخزين الملف بشكل خاطئ", [], 0, 405);
         }
-
-        // $json = json_decode($serviceAccount);
-
-        // print_r($json->private_key);
-        // $private_key = $this->decryptServiceAccount($passwordService, $json->private_key);
         $json = $this->decryptData(json_decode($serviceAccount), $passwordService);
         if ($json != true) {
             return $this->responseError2("رمز غير صحيح", [], 0, 405);
         }
-        print_r($json);
-        // $json = ;
-        // print_r($json);
-
-        // print_r($serviceAccount);
 
         try {
             $firebaseService = new FirebaseService($json);
