@@ -856,7 +856,7 @@ class StoreManagerControllerUpdate extends Controller
         if ($this->isValidJson($jsonContent) == false) {
             return $this->responseError2(" الملف  خاطئ", [], 0, 405);
         }
-        $json = json_decode($jsonContent);
+        // $json = json_decode($jsonContent);
 
         // print_r($json->private_key);
         // if ($this->isValidJson($jsonContent) == false) {
@@ -864,8 +864,8 @@ class StoreManagerControllerUpdate extends Controller
         //     // return $this->responseError2("تم تخزين الملف بشكل خاطئ", [], 0, 405);
         // }
         // print_r(($json));
-        $dat = $this->encryptData($passwordService, $json->private_key);
-        $json->private_key = $dat;
+        $dat = $this->encryptData($passwordService, $jsonContent);
+        // $json->private_key = $dat;
         // print_r(($json));
 
 
@@ -875,7 +875,7 @@ class StoreManagerControllerUpdate extends Controller
             ->where(Apps::$id, '=', $app->id)
             ->update(
                 [
-                    Apps::$serviceAccount => json_encode($json),
+                    Apps::$serviceAccount => $dat,
                 ]
             );
         return response()->json([]);

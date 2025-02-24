@@ -772,15 +772,15 @@ class StoreManagerControllerAdd extends Controller
             return $this->responseError2("تم تخزين الملف بشكل خاطئ", [], 0, 405);
         }
 
-        $json = json_decode($serviceAccount);
+        // $json = json_decode($serviceAccount);
 
         // print_r($json->private_key);
         // $private_key = $this->decryptServiceAccount($passwordService, $json->private_key);
-        $private_key = $this->decryptData($json->private_key, $passwordService);
-        if ($private_key != true) {
+        $json = $this->decryptData(json_decode($serviceAccount), $passwordService);
+        if ($json != true) {
             return $this->responseError2("رمز غير صحيح", [], 0, 405);
         }
-        $json->private_key = $private_key;
+        // $json;
         // print_r($json);
 
         // print_r($serviceAccount);
