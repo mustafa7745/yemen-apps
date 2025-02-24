@@ -780,6 +780,7 @@ class StoreManagerControllerAdd extends Controller
         if ($json != true) {
             return $this->responseError2("رمز غير صحيح", [], 0, 405);
         }
+        print_r($json);
         // $json = ;
         // print_r($json);
 
