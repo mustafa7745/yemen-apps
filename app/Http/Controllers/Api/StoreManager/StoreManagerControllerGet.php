@@ -1030,7 +1030,7 @@ class StoreManagerControllerGet extends Controller
     }
     public function getLoginConfiguration(Request $request)
     {
-        $myData = $this->getMyData(request: $request, appId: $this->appId);
+        $myData = $this->getMyData(request: $request, appId: $this->appId,withStore:false,withUser:false);
         // $store = $myData['store'];
         // // $app = $myData['app'];
 
