@@ -787,7 +787,7 @@ class StoreManagerControllerAdd extends Controller
         // print_r($serviceAccount);
 
         try {
-            $firebaseService = new FirebaseService(json_decode($json));
+            $firebaseService = new FirebaseService($json);
 
             $response = $firebaseService->sendNotificationToTopic($app->id, $title, $description);
             // $response = $this->firebaseService->sendNotification("d37lmIWyReq0Gno0g6iPb7:APA91bFCb8RDk3niIpLpxjw2sF0Zh9zZni3jbdBBaSCuwFNx9YQTsBrCjigisCkpktKk7K_AatCqbOmuWC1LKjWqhHj844BUu0YU0MiWNmwnhM_jjOPLvnU", $title, $description);
