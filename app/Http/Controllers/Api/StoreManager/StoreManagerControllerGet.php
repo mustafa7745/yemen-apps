@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Apps;
 use App\Models\AppStores;
 use App\Models\Categories;
+use App\Models\Countries;
 use App\Models\Currencies;
 use App\Models\DeliveryMen;
 use App\Models\GooglePurchases;
 use App\Models\InAppProducts;
+use App\Models\Languages;
 use App\Models\NestedSections;
 use App\Models\Orders;
 use App\Models\OrdersAmounts;
@@ -1012,7 +1014,7 @@ class StoreManagerControllerGet extends Controller
         $times = DB::table(StoresTime::$tableName)
             ->where(StoresTime::$tableName . '.' . StoresTime::$storeId, '=', $store->id)
             ->get();
-  
+
         for ($day = 1; $day <= 7; $day++) {
             // Find the store time for the current day
             $storeTime = $times->firstWhere('day', $day);
@@ -1026,7 +1028,21 @@ class StoreManagerControllerGet extends Controller
 
         return response()->json($result);
     }
- 
+    public function getLoginConfiguration(Request $request)
+    {
+        $myData = $this->getMyData(request: $request, appId: $this->appId);
+        // $store = $myData['store'];
+        // // $app = $myData['app'];
+
+        // // if ($withSituations === true) {
+        $languages = DB::table(Languages::$tableName)
+            ->get();
+        $countries = DB::table(Countries::$tableName)
+            ->get();
+
+        return response()->json(['languages' => $languages, 'countries' => $countries]);
+    }
+
 
 
 }
