@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Stores;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Locations;
+use App\Models\MainCategories;
 use App\Models\PaymentTypes;
 use App\Models\SharedStoresConfigs;
 use App\Models\StoreInfo;
@@ -85,7 +86,26 @@ class StoresControllerGet extends Controller
             }
         }
 
-        return response()->json($stores);
+        $mainCatgories = DB::table(table: MainCategories::$tableName)
+            ->get();
+        //  [
+        //     ['name'=>'المطاعم','image'=>],
+        //     ['name'=>'الهواتف الذكية وملحقاتها','image'=>],
+        //     ['name'=>'الملابس والأحذية','image'=>],
+        //     ['name'=>'المواد البلاستيكية','image'=>],
+        //     ['name'=>'المستلزمات المكتبية','image'=>],
+        //     ['name'=>'الاثاث','image'=>],
+        //     ['name'=>'العطور','image'=>],
+        //     ['name'=>'المواد الغذائية','image'=>],
+        //     ['name'=>'مواد البناء','image'=>],
+        //     ['name'=>'الشنط','image'=>],
+        //     ['name'=>'الاجهزة الكهربائية','image'=>],
+        //     ['name'=>'الالكترونيات','image'=>],
+        //     ['name'=>'الحواسيب ومستلزماتها','image'=>],
+
+        // ];
+
+        return response()->json(['stores' => $stores, 'categories' => $mainCatgories]);
     }
     public function getProducts(Request $request)
     {
