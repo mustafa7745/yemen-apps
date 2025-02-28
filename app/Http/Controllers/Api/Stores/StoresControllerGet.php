@@ -140,7 +140,7 @@ class StoresControllerGet extends Controller
 
         foreach ($countries as $key => $value) {
             $data = json_decode($value);
-            $countries[$key]->name = $value[$lang];
+            $countries[$key]->name = $data[$lang];
             // if ($value[$lang]) {
             //     # code...
             // }
