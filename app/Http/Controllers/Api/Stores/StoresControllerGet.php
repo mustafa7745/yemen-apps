@@ -94,7 +94,7 @@ class StoresControllerGet extends Controller
         $mainCatgories = DB::table(table: MainCategories::$tableName)
             ->get();
 
-        $userLocation = DB::table(table: Users::$tableName)
+        $userInfo = DB::table(table: Users::$tableName)
             ->where(Users::$tableName . '.' . Users::$id, '=', $accessToken->userId)
 
             ->join(
@@ -108,11 +108,11 @@ class StoresControllerGet extends Controller
                 Users::$tableName . '.' . Users::$lastName,
                 Countries::$tableName . '.' . Countries::$image,
                 Countries::$tableName . '.' . Countries::$name,
-
-
             ]);
-
-
+            // $userInfo
+            $lang = $this->getLanguage($request);
+            $d = json_decode($userInfo->name, true);
+            $userInfo->name = $d[$lang];
         //  [
         //     ['name'=>'المطاعم','image'=>],
         //     ['name'=>'الهواتف الذكية وملحقاتها','image'=>],
@@ -130,7 +130,7 @@ class StoresControllerGet extends Controller
 
         // ];
 
-        return response()->json(['userInfo' => $userLocation, 'stores' => $stores, 'categories' => $mainCatgories]);
+        return response()->json(['userInfo' => $userInfo, 'stores' => $stores, 'categories' => $mainCatgories]);
     }
     public function getLoginConfiguration(Request $request)
     {
