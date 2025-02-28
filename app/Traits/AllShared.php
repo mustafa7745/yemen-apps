@@ -1951,6 +1951,9 @@ trait AllShared
         if ($packageName == null) {
             $packageName = 002;
         }
+        print_r($sha);
+        print_r($packageName);
+
         // 
         $app = DB::table(Apps::$tableName)
             ->where(Apps::$sha, '=', $sha)
