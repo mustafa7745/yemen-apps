@@ -106,29 +106,14 @@ class StoresControllerGet extends Controller
             ->first([
                 Users::$tableName . '.' . Users::$firstName,
                 Users::$tableName . '.' . Users::$lastName,
-                Countries::$tableName . '.' . Countries::$image,
-                Countries::$tableName . '.' . Countries::$name,
+                Countries::$tableName . '.' . Countries::$image . ' as flag',
+                Countries::$tableName . '.' . Countries::$name . ' as countryName',
             ]);
-            // $userInfo
-            $lang = $this->getLanguage($request);
-            $d = json_decode($userInfo->name, true);
-            $userInfo->name = $d[$lang];
-        //  [
-        //     ['name'=>'المطاعم','image'=>],
-        //     ['name'=>'الهواتف الذكية وملحقاتها','image'=>],
-        //     ['name'=>'الملابس والأحذية','image'=>],
-        //     ['name'=>'المواد البلاستيكية','image'=>],
-        //     ['name'=>'المستلزمات المكتبية','image'=>],
-        //     ['name'=>'الاثاث','image'=>],
-        //     ['name'=>'العطور','image'=>],
-        //     ['name'=>'المواد الغذائية','image'=>],
-        //     ['name'=>'مواد البناء','image'=>],
-        //     ['name'=>'الشنط','image'=>],
-        //     ['name'=>'الاجهزة الكهربائية','image'=>],
-        //     ['name'=>'الالكترونيات','image'=>],
-        //     ['name'=>'الحواسيب ومستلزماتها','image'=>],
+        // $userInfo
+        $lang = $this->getLanguage($request);
+        $d = json_decode($userInfo->countryName, true);
+        $userInfo->countryName = $d[$lang];
 
-        // ];
 
         return response()->json(['userInfo' => $userInfo, 'stores' => $stores, 'categories' => $mainCatgories]);
     }
