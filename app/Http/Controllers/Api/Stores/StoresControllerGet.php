@@ -27,7 +27,7 @@ class StoresControllerGet extends Controller
 {
     use StoresControllerShared;
     use AllShared;
-    public function index(Request $request)
+    public function getMain(Request $request)
     {
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, withUser: true);
         $accessToken = $myData['accessToken'];
