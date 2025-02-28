@@ -1951,7 +1951,7 @@ trait AllShared
         if ($packageName == null) {
             $packageName = 002;
         }
-        print_r($request);
+        dump($request);
         // print_r($packageName);
 
         // 
