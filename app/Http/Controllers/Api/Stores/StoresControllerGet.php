@@ -123,7 +123,7 @@ class StoresControllerGet extends Controller
 
         // ];
 
-        return response()->json(['stores' => $stores, 'categories' => $mainCatgories, 'userLocation' => $userLocation]);
+        return response()->json(['userLocation' => $userLocation,'stores' => $stores, 'categories' => $mainCatgories]);
     }
     public function getLoginConfiguration(Request $request)
     {
@@ -141,9 +141,6 @@ class StoresControllerGet extends Controller
         foreach ($countries as $key => $value) {
             $data = json_decode($value->name, true);
             $countries[$key]->name = $data[$lang];
-            // if ($value[$lang]) {
-            //     # code...
-            // }
         }
 
         return response()->json(['languages' => $languages, 'countries' => $countries]);
