@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Stores;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Countries;
+use App\Models\Languages;
 use App\Models\Locations;
 use App\Models\MainCategories;
 use App\Models\PaymentTypes;
@@ -123,6 +124,20 @@ class StoresControllerGet extends Controller
         // ];
 
         return response()->json(['stores' => $stores, 'categories' => $mainCatgories, 'userLocation' => $userLocation]);
+    }
+    public function getLoginConfiguration(Request $request)
+    {
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, withUser: false);
+        // $store = $myData['store'];
+        // // $app = $myData['app'];
+
+        // // if ($withSituations === true) {
+        $languages = DB::table(Languages::$tableName)
+            ->get();
+        $countries = DB::table(Countries::$tableName)
+            ->get();
+
+        return response()->json(['languages' => $languages, 'countries' => $countries]);
     }
     public function getProducts(Request $request)
     {
