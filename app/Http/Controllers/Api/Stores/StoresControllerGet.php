@@ -103,7 +103,14 @@ class StoresControllerGet extends Controller
                 '=',
                 Users::$tableName . '.' . Users::$countryId
             )
-            ->first();
+            ->first([
+                Users::$tableName . '.' . Users::$firstName,
+                Users::$tableName . '.' . Users::$lastName,
+                Countries::$tableName . '.' . Countries::$image,
+                Countries::$tableName . '.' . Countries::$name,
+
+
+            ]);
 
 
         //  [
@@ -123,7 +130,7 @@ class StoresControllerGet extends Controller
 
         // ];
 
-        return response()->json(['userLocation' => $userLocation,'stores' => $stores, 'categories' => $mainCatgories]);
+        return response()->json(['userInfo' => $userLocation, 'stores' => $stores, 'categories' => $mainCatgories]);
     }
     public function getLoginConfiguration(Request $request)
     {

@@ -8,7 +8,8 @@ class Countries
    public static $id = "id";
    public static $code = "code";
    public static $region = "region";
-
+   public static $image = "image";
+   public static $name = "name";
    public static $createdAt = "createdAt";
    public static $updatedAt = "updatedAt";
 
