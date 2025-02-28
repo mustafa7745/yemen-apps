@@ -139,7 +139,7 @@ class StoresControllerGet extends Controller
         $lang = $this->getLanguage($request);
 
         foreach ($countries as $key => $value) {
-            $data = json_decode($value, true);
+            $data = json_decode($value->name, true);
             $countries[$key]->name = $data[$lang];
             // if ($value[$lang]) {
             //     # code...
