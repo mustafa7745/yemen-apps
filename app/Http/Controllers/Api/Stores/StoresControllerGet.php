@@ -136,6 +136,15 @@ class StoresControllerGet extends Controller
             ->get();
         $countries = DB::table(Countries::$tableName)
             ->get();
+        $lang = $this->getLanguage($request);
+
+        foreach ($countries as $key => $value) {
+            $data = json_decode($value);
+            $countries[$key]->name = $value[$lang];
+            // if ($value[$lang]) {
+            //     # code...
+            // }
+        }
 
         return response()->json(['languages' => $languages, 'countries' => $countries]);
     }
