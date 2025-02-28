@@ -10,6 +10,7 @@ use App\Models\CustomPrices;
 use App\Models\DeliveryMen;
 use App\Models\DevicesSessions;
 use App\Models\FailProcesses;
+use App\Models\Languages;
 use App\Models\Locations;
 use App\Models\MyProcesses;
 use App\Models\MyResponse;
@@ -1742,7 +1743,7 @@ trait AllShared
                     $whatsapp->sendMessageText($phoneNumber, "app not found");
                     return response()->json(['success' => true]);
                 }
-  
+
                 // $whatsapp->sendMessageText($phoneNumber, json_encode($app) . " ID");
 
                 DB::table(table: Apps::$tableName)
@@ -1923,6 +1924,21 @@ trait AllShared
             $errors = $validator->errors()->all();
             throw new CustomException($message, 0, 442, $errors);
         }
+    }
+    public function getLanguage($request)
+    {
+        $language = $request->input('language');
+        if ($language == null) {
+            return 'en';
+        }
+        // 
+        $data = DB::table(Languages::$tableName)
+            ->where(Languages::$code, '=', $language)
+            ->first();
+        if ($data == null) {
+            return 'en';
+        }
+        return $language;
     }
     public function getMyApp(Request $request, $appId = null)
     {

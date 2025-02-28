@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Api\Stores;
 
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
+use App\Models\Countries;
 use App\Models\Locations;
 use App\Models\MainCategories;
 use App\Models\PaymentTypes;
@@ -15,6 +16,7 @@ use App\Models\Stores;
 use App\Models\ProductImages;
 use App\Models\Products;
 use App\Models\StoreProducts;
+use App\Models\Users;
 use App\Traits\AllShared;
 use App\Traits\StoresControllerShared;
 use Illuminate\Support\Facades\DB;
@@ -25,8 +27,10 @@ class StoresControllerGet extends Controller
 {
     use StoresControllerShared;
     use AllShared;
-    public function index()
+    public function index(Request $request)
     {
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, withUser: true);
+        $accessToken = $myData['accessToken'];
 
         $stores = DB::table(Stores::$tableName)
             ->get();
@@ -88,6 +92,19 @@ class StoresControllerGet extends Controller
 
         $mainCatgories = DB::table(table: MainCategories::$tableName)
             ->get();
+
+        $userLocation = DB::table(table: Users::$tableName)
+            ->where(Users::$tableName . '.' . Users::$id, '=', $accessToken->userId)
+
+            ->join(
+                Countries::$tableName,
+                Countries::$tableName . '.' . Countries::$id,
+                '=',
+                Users::$tableName . '.' . Users::$countryId
+            )
+            ->first();
+
+
         //  [
         //     ['name'=>'المطاعم','image'=>],
         //     ['name'=>'الهواتف الذكية وملحقاتها','image'=>],
@@ -105,7 +122,7 @@ class StoresControllerGet extends Controller
 
         // ];
 
-        return response()->json(['stores' => $stores, 'categories' => $mainCatgories]);
+        return response()->json(['stores' => $stores, 'categories' => $mainCatgories, 'userLocation' => $userLocation]);
     }
     public function getProducts(Request $request)
     {
