@@ -418,7 +418,7 @@ class StoreManagerControllerAdd extends Controller
             $typeId = $request->input('typeId');
             $logo = $request->file('logo');
             $cover = $request->file('cover');
-            $mainCategoryId = $request->file('mainCategoryId');
+            $mainCategoryId = $request->input('mainCategoryId');
 
 
             if ($logo->isValid() == false) {
