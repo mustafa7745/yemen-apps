@@ -373,36 +373,44 @@ class StoreManagerControllerAdd extends Controller
 
     public function addStore(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'accessToken' => 'required|string|max:255',
-            'deviceId' => 'required|string|max:255',
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, storePoints: 2);
+        $store = $myData['store'];
+        $accessToken = $myData['accessToken'];
+
+        $this->validRequestV1($request, [
             'logo' => 'required|image|max:100',
             'name' => 'required|string|max:100',
             'typeId' => 'required|string|max:1',
             'cover' => 'required|image|max:100',
         ]);
 
-        // Check if validation fails
-        if ($validator->fails()) {
-            // Return a JSON response with validation errors
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
-                'code' => 0
-            ], 422);  // 422 Unprocessable Entity
-        }
+        // $validator = Validator::make($request->all(), [
+        //     // 'accessToken' => 'required|string|max:255',
+        //     // 'deviceId' => 'required|string|max:255',
+
+        // ]);
+
+        // // Check if validation fails
+        // if ($validator->fails()) {
+        //     // Return a JSON response with validation errors
+        //     return response()->json([
+        //         'message' => 'Validation failed',
+        //         'errors' => $validator->errors(),
+        //         'code' => 0
+        //     ], 422);  // 422 Unprocessable Entity
+        // }
 
 
-        $loginController = (new LoginController($this->appId));
-        $token = $request->input('accessToken');
-        $deviceId = $request->input('deviceId');
+        // $loginController = (new LoginController($this->appId));
+        // $token = $request->input('accessToken');
+        // $deviceId = $request->input('deviceId');
 
-        // print_r($request->all());
-        $myResult = $loginController->readAccessToken($token, $deviceId);
-        if ($myResult->isSuccess == false) {
-            return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
-        }
-        $accessToken = $myResult->message;
+        // // print_r($request->all());
+        // $myResult = $loginController->readAccessToken($token, $deviceId);
+        // if ($myResult->isSuccess == false) {
+        //     return response()->json(['message' => $myResult->message, 'code' => $myResult->code], $myResult->responseCode);
+        // }
+        // $accessToken = $myResult->message;
 
         return DB::transaction(function () use ($request, $accessToken) {
 
@@ -410,6 +418,8 @@ class StoreManagerControllerAdd extends Controller
             $typeId = $request->input('typeId');
             $logo = $request->file('logo');
             $cover = $request->file('cover');
+            $mainCategoryId = $request->file('mainCategoryId');
+
 
             if ($logo->isValid() == false) {
                 return response()->json(['error' => 'Invalid Logo file.'], 400);
@@ -418,6 +428,24 @@ class StoreManagerControllerAdd extends Controller
             if ($cover->isValid() == false) {
                 return response()->json(['error' => 'Invalid Cover file.'], 400);
             }
+
+            $userInfo = DB::table(table: Users::$tableName)
+                ->where(Users::$tableName . '.' . Users::$id, '=', $accessToken->userId)
+
+                ->join(
+                    Countries::$tableName,
+                    Countries::$tableName . '.' . Countries::$id,
+                    '=',
+                    Users::$tableName . '.' . Users::$countryId
+                )
+                ->first([
+                    Users::$tableName . '.' . Users::$firstName,
+                    Users::$tableName . '.' . Users::$lastName,
+                    Users::$tableName . '.' . Users::$logo,
+                    Countries::$tableName . '.' . Countries::$image . ' as flag',
+                    Countries::$tableName . '.' . Countries::$name . ' as countryName',
+                    Countries::$tableName . '.' . Countries::$id . ' as countryId',
+                ]);
 
             $logoName = Str::random(10) . '_' . time() . '.jpg';
             $coverName = Str::random(10) . '_' . time() . '.jpg';
@@ -430,6 +458,8 @@ class StoreManagerControllerAdd extends Controller
                     Stores::$typeId => $typeId,
                     Stores::$logo => $logoName,
                     Stores::$cover => $coverName,
+                    Stores::$countryId => $userInfo->countryId,
+                    Stores::$mainCategoryId => $mainCategoryId,
                     Stores::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                     Stores::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);

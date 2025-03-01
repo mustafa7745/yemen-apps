@@ -16,6 +16,10 @@ class Stores
    public static $subscriptions = "subscriptions";
    public static $reviews = "reviews";
    public static $typeId = "typeId";
+   public static $countryId = "countryId";
+   public static $mainCategoryId = "mainCategoryId";
+
+
    public static $deliveryPrice = "deliveryPrice";
    public static $deliveryPriceCurrency = "deliveryPriceCurrency";
    // public static $serviceAccount = "serviceAccount";

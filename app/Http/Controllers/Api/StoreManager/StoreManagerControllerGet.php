@@ -12,6 +12,7 @@ use App\Models\DeliveryMen;
 use App\Models\GooglePurchases;
 use App\Models\InAppProducts;
 use App\Models\Languages;
+use App\Models\MainCategories;
 use App\Models\NestedSections;
 use App\Models\Orders;
 use App\Models\OrdersAmounts;
@@ -1030,7 +1031,7 @@ class StoreManagerControllerGet extends Controller
     }
     public function getLoginConfiguration(Request $request)
     {
-        $myData = $this->getMyData(request: $request, appId: $this->appId,withStore:false,withUser:false);
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, withUser: false);
         // $store = $myData['store'];
         // // $app = $myData['app'];
 
@@ -1043,6 +1044,12 @@ class StoreManagerControllerGet extends Controller
         return response()->json(['languages' => $languages, 'countries' => $countries]);
     }
 
+    public function getMainCategories(Request $request)
+    {
+        $mainCatgories = DB::table(table: MainCategories::$tableName)
+            ->get();
+        return response()->json($mainCatgories);
+    }
 
 
 }
