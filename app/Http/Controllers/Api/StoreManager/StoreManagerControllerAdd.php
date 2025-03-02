@@ -585,7 +585,7 @@ class StoreManagerControllerAdd extends Controller
                     $addedRecord->app = null;
                     $addedRecord->subscription = $subscribe;
 
-                    print_r("defef");
+                    print_r($addedRecord);
                     return response()->json($addedRecord);
 
                 } else {
