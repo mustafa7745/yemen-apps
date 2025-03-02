@@ -28,6 +28,11 @@ class StoresControllerGet extends Controller
 {
     use StoresControllerShared;
     use AllShared;
+
+    function index()
+    {
+        return response()->json(['userInfo' => "fdfdfdf"]);
+    }
     public function getMain(Request $request)
     {
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, withUser: true);
