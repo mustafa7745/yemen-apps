@@ -548,6 +548,8 @@ class StoreManagerControllerAdd extends Controller
 
             try {
                 print_r($logo);
+                print_r($cover);
+
                 $pathLogo = Storage::disk('s3')->put('stores/logos/' . $logoName, fopen($logo, 'r+'));
                 // print_r("dsffdf3453");
                 
