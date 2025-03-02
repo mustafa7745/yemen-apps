@@ -42,7 +42,7 @@ class StoresControllerGet extends Controller
         ->selectRaw(
             'ST_Distance_Sphere(
                 POINT(?, ?),
-                POINT(longitude, latitude)
+                latLong
             ) AS distance',
             ["44.19853605671369", "15.334396879361327"]
         )
