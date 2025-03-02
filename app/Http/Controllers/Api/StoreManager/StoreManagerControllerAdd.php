@@ -547,6 +547,7 @@ class StoreManagerControllerAdd extends Controller
             }
 
             try {
+                print_r("dsffdf");
                 $pathLogo = Storage::disk('s3')->put('stores/logos/' . $logoName, fopen($logo, 'r+'));
                 $pathCover = Storage::disk('s3')->put('stores/covers/' . $coverName, fopen($cover, 'r+'));
 
