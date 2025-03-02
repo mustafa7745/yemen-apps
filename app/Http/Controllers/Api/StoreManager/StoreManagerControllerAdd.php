@@ -570,7 +570,7 @@ class StoreManagerControllerAdd extends Controller
                             
                         );
 
-                        print_r("frgrg");
+                        // print_r("frgrg");
                     if ($storeConfig != null) {
 
                         $categories = json_decode($storeConfig->categories);
@@ -582,13 +582,13 @@ class StoreManagerControllerAdd extends Controller
                     } else {
                         $addedRecord->storeConfig = $storeConfig;
                     }
-                    print_r("34");
+                    // print_r("34");
 
 
                     $addedRecord->app = null;
                     $addedRecord->subscription = $subscribe;
 
-                    print_r($addedRecord);
+                    // print_r($addedRecord);
                     return response()->json($addedRecord);
 
                 } else {
