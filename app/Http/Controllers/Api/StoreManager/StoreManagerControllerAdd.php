@@ -426,6 +426,9 @@ class StoreManagerControllerAdd extends Controller
             'name' => 'required|string|max:100',
             'typeId' => 'required|string|max:1',
             'cover' => 'required|image|max:100',
+            'latitude' => 'required|image|max:100',
+            'longitude' => 'required|image|max:100',
+
         ]);
 
         // $validator = Validator::make($request->all(), [
