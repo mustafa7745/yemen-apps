@@ -547,8 +547,8 @@ class StoreManagerControllerAdd extends Controller
             }
 
             try {
-                print_r($logo);
-                print_r($cover);
+                // print_r($logo);
+                // print_r($cover);
 
                 $pathLogo = Storage::disk('s3')->put('stores/logos/' . $logoName, fopen($logo, 'r+'));
                 // print_r("dsffdf3453");
@@ -562,6 +562,7 @@ class StoreManagerControllerAdd extends Controller
                         ->where(Stores::$id, '=', $insertedId)
                         ->first();
 
+                        print_r("frgrg");
                     if ($storeConfig != null) {
 
                         $categories = json_decode($storeConfig->categories);
@@ -573,6 +574,8 @@ class StoreManagerControllerAdd extends Controller
                     } else {
                         $addedRecord->storeConfig = $storeConfig;
                     }
+                    print_r("34");
+
 
                     $addedRecord->app = null;
                     $addedRecord->subscription = $subscribe;
