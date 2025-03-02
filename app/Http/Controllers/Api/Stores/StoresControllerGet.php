@@ -50,11 +50,11 @@ class StoresControllerGet extends Controller
                 [
                     Stores::$tableName . '.' . Stores::$id,
                     Stores::$tableName . '.' . Stores::$typeId,
-                    Stores::$tableName . '.' . Stores::$id,
-                    Stores::$tableName . '.' . Stores::$id,
-                    Stores::$tableName . '.' . Stores::$id,
-                    Stores::$tableName . '.' . Stores::$id,
-                    Stores::$tableName . '.' . Stores::$id,
+                    // Stores::$tableName . '.' . Stores::$id,
+                    // Stores::$tableName . '.' . Stores::$id,
+                    // Stores::$tableName . '.' . Stores::$id,
+                    // Stores::$tableName . '.' . Stores::$id,
+                    // Stores::$tableName . '.' . Stores::$id,
 
                     // 'ST_Distance_Sphere(
                     //     POINT(?, ?),
