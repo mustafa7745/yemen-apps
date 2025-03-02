@@ -47,13 +47,13 @@ class StoresControllerGet extends Controller
         //     ["44.19853605671369", "15.334396879361327"]
         // )
             ->get(
-                // [
-                //     Stores::$tableName . '.' . Stores::$id,
-                //     'ST_Distance_Sphere(
-                //         POINT(?, ?),
-                //         POINT(longitude, latitude)
-                //     ) AS distance',
-                // ]
+                [
+                    Stores::$tableName . '.' . Stores::$id,
+                    // 'ST_Distance_Sphere(
+                    //     POINT(?, ?),
+                    //     POINT(longitude, latitude)
+                    // ) AS distance',
+                ]
             );
 
         $storeIds = [];
