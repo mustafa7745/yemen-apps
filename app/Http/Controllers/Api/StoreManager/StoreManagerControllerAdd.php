@@ -35,6 +35,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Kreait\Firebase\Messaging\CloudMessage;
+use libphonenumber\PhoneNumberUtil;
 use Notification;
 use Storage;
 use Str;
@@ -371,6 +372,49 @@ class StoreManagerControllerAdd extends Controller
 
     }
 
+    function getInfoLocation()
+    {
+        // 15.33196939619582, 44.19890626711651
+        // Google Maps Reverse Geocoding API URL
+        $apiKey = 'your_google_maps_api_key'; // Replace with your API key
+        $url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=15.33196939619582,44.19890626711651&key=AIzaSyBcKkdvibY3J8wJmIwC3Ws9mA2crZvPC8c";
+
+        // Fetch the data
+        $response = file_get_contents($url);
+
+        // Decode the JSON response
+        $data = json_decode($response, true);
+
+        // Check if the response is OK
+        if ($data['status'] === 'OK') {
+            // Extract address components
+            $addressComponents = $data['results'][0]['address_components'];
+
+            $countryCode = '';
+
+            // Loop through address components to find the country code
+            foreach ($addressComponents as $component) {
+                if (in_array('country', $component['types'])) {
+                    $countryCode = $component['short_name']; // ISO country code (e.g., "MN")
+                    break;
+                }
+            }
+
+            // Get the calling code using libphonenumber
+            $phoneUtil = PhoneNumberUtil::getInstance();
+            $callingCode = $phoneUtil->getCountryCodeForRegion($countryCode);
+
+            if ($callingCode) {
+                echo "ISO Country Code: $countryCode<br>";
+                echo "Country Calling Code: +$callingCode";
+            } else {
+                echo "Calling code not found for country code: $countryCode";
+            }
+        } else {
+            echo "Unable to fetch location data. Status: " . $data['status'];
+        }
+    }
+
     public function addStore(Request $request)
     {
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, storePoints: 2);
@@ -420,7 +464,8 @@ class StoreManagerControllerAdd extends Controller
             $cover = $request->file('cover');
             $mainCategoryId = $request->input('mainCategoryId');
 
-
+            $latitude = $request->input('latitude');
+            $longitude = $request->input('longitude');
             if ($logo->isValid() == false) {
                 return response()->json(['error' => 'Invalid Logo file.'], 400);
             }
@@ -458,6 +503,7 @@ class StoreManagerControllerAdd extends Controller
                     Stores::$typeId => $typeId,
                     Stores::$logo => $logoName,
                     Stores::$cover => $coverName,
+                    Stores::$latLong => DB::raw("ST_GeomFromText('POINT($latitude $longitude)', 4326)"),
                     Stores::$countryId => $userInfo->countryId,
                     Stores::$mainCategoryId => $mainCategoryId,
                     Stores::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
