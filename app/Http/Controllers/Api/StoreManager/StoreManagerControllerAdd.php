@@ -565,7 +565,10 @@ class StoreManagerControllerAdd extends Controller
                 if ($pathLogo && $pathCover) {
                     $addedRecord = DB::table(Stores::$tableName)
                         ->where(Stores::$id, '=', $insertedId)
-                        ->first();
+                        ->first(
+                            Stores::$tableName . '.' . Stores::$id,
+                            
+                        );
 
                         print_r("frgrg");
                     if ($storeConfig != null) {
