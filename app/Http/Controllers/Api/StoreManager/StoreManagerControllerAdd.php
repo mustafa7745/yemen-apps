@@ -559,7 +559,7 @@ class StoreManagerControllerAdd extends Controller
                 $logoUrl = Storage::disk('s3')->url($pathCover);
 
                 print_r("C: ".$logoUrl);
-
+ 
 
                 // Check if the file was uploaded successfully
                 if ($pathLogo && $pathCover) {
