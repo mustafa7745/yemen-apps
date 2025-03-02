@@ -50,9 +50,17 @@ class StoresControllerGet extends Controller
                 [
                     Stores::$tableName . '.' . Stores::$id,
                     Stores::$tableName . '.' . Stores::$typeId,
-                    // Stores::$tableName . '.' . Stores::$id,
-                    // Stores::$tableName . '.' . Stores::$id,
-                    // Stores::$tableName . '.' . Stores::$id,
+                    Stores::$tableName . '.' . Stores::$name,
+                    Stores::$tableName . '.' . Stores::$logo,
+                    Stores::$tableName . '.' . Stores::$cover,
+                    Stores::$tableName . '.' . Stores::$cover,
+                    
+                    Stores::$tableName . '.' . Stores::$reviews,
+                    Stores::$tableName . '.' . Stores::$subscriptions,
+                    Stores::$tableName . '.' . Stores::$stars,
+                    Stores::$tableName . '.' . Stores::$likes,
+
+
                     // Stores::$tableName . '.' . Stores::$id,
                     // Stores::$tableName . '.' . Stores::$id,
 
