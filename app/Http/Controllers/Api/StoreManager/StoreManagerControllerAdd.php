@@ -551,11 +551,14 @@ class StoreManagerControllerAdd extends Controller
                 // print_r($cover);
 
                 $pathLogo = Storage::disk('s3')->put('stores/logos/' . $logoName, fopen($logo, 'r+'));
-                print_r("L: ".$pathLogo);
-                
+               
+                $logoUrl = Storage::disk('s3')->url($pathLogo);
+                 print_r("L: ".$logoUrl);
                 $pathCover = Storage::disk('s3')->put('stores/covers/' . $coverName, fopen($cover, 'r+'));
                 // print_r("dsffdftttttt3");
-                print_r("C: ".$pathCover);
+                $logoUrl = Storage::disk('s3')->url($pathCover);
+
+                print_r("C: ".$logoUrl);
 
 
                 // Check if the file was uploaded successfully
