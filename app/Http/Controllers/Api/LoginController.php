@@ -356,8 +356,31 @@ class LoginController
         }
         return $accessToken;
     }
-    private function getAccessTokenByIDENTIFIER($column, $value)
+    private function getAccessTokenByIDENTIFIER($column, $value, $selectes = [])
     {
+        $selecteData = [
+            AccessTokens1::$tableName . '.' . AccessTokens1::$id . ' as id',
+            AccessTokens1::$tableName . '.' . AccessTokens1::$token . ' as token',
+            AccessTokens1::$tableName . '.' . AccessTokens1::$expireAt . ' as expireAt',
+            AccessTokens1::$tableName . '.' . AccessTokens1::$userSessionId . ' as userSessionId',
+                //
+            Users::$tableName . '.' . Users::$id . ' as userId',
+            Users::$tableName . '.' . Users::$firstName . ' as firstName',
+            Users::$tableName . '.' . Users::$lastName . ' as lastName',
+            Users::$tableName . '.' . Users::$logo . ' as logo',
+                //
+            DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
+            DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',
+            UsersSessions::$tableName . '.' . UsersSessions::$isLogin . ' as isLogin',
+
+        ];
+
+        foreach ($selectes as $key => $s) {
+            $selecteData[] = $s;
+        }
+
+
+
         return DB::table(table: AccessTokens1::$tableName)
             ->where(AccessTokens1::$tableName . '.' . $column, '=', $value)
             ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $this->appId)
@@ -385,21 +408,6 @@ class LoginController
                 '=',
                 DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId
             )
-            ->first([
-                AccessTokens1::$tableName . '.' . AccessTokens1::$id . ' as id',
-                AccessTokens1::$tableName . '.' . AccessTokens1::$token . ' as token',
-                AccessTokens1::$tableName . '.' . AccessTokens1::$userSessionId . ' as userSessionId',
-                AccessTokens1::$tableName . '.' . AccessTokens1::$expireAt . ' as expireAt',
-                    //
-                Users::$tableName . '.' . Users::$id . ' as userId',
-                Users::$tableName . '.' . Users::$firstName . ' as firstName',
-                Users::$tableName . '.' . Users::$lastName . ' as lastName',
-                Users::$tableName . '.' . Users::$logo . ' as logo',
-                    //
-                DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
-                DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',
-                UsersSessions::$tableName . '.' . UsersSessions::$isLogin . ' as isLogin',
-
-            ]);
+            ->first($selecteData);
     }
 }
