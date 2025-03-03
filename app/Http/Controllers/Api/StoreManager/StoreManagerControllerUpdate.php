@@ -300,6 +300,7 @@ class StoreManagerControllerUpdate extends Controller
                     Stores::$latLong => DB::raw("ST_GeomFromText('POINT($latitude $longitude)', 4326)"),
                 ]
             );
+            // SELECT ST_Distance_Sphere( ST_GeomFromText('POINT(15.334788468105963 44.198597215780914)', 4326), latLong ) * 1.45 AS distance_in_meters,name,latLng FROM stores;
         $store = DB::table(table: Stores::$tableName)
             ->where(Stores::$id, '=', $storeId)
             ->first(
