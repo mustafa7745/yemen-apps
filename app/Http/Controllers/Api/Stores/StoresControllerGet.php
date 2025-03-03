@@ -43,8 +43,8 @@ class StoresControllerGet extends Controller
         $longitude = $request->input('longitude');
 
         $isLocationNull = is_null($latitude) || is_null($longitude);
-        print_r($latitude.$longitude);
-        print_r($isLocationNull ? "null":"not null");
+        // print_r($latitude.$longitude);
+        // print_r($isLocationNull ? "null":"not null");
 
         $stores = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$mainCategoryId, '=', $mainCategoryId)
