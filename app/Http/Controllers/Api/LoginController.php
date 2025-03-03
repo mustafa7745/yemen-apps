@@ -86,9 +86,9 @@ class LoginController
         $res = ["token" => $accessToken->token, 'expireAt' => $accessToken->expireAt];
         return response()->json($res);
     }
-    function readAccessToken($request)
+    function readAccessToken($request, $selects = [])
     {
-        $accessToken = $this->getAccessTokenByToken($request);
+        $accessToken = $this->getAccessTokenByToken($request, $selects = []);
         if ($this->compareExpiration($accessToken)) {
             throw new CustomException("AT Expired", 1000, 403);
         }
@@ -339,7 +339,7 @@ class LoginController
             ]);
         return $this->getAccessTokenByIDENTIFIER(AccessTokens1::$token, $newToken);
     }
-    private function getAccessTokenByToken($request)
+    private function getAccessTokenByToken($request, $selectes = [])
     {
         $this->validRequestV1($request, [
             'accessToken' => 'required|string|max:255',
@@ -347,7 +347,7 @@ class LoginController
         $token = $request->input('accessToken');
         //
 
-        $accessToken = $this->getAccessTokenByIDENTIFIER(AccessTokens1::$token, $token);
+        $accessToken = $this->getAccessTokenByIDENTIFIER(AccessTokens1::$token, $token, $selectes);
         if ($accessToken == null) {
             throw new CustomException("Invalid Token", 2000, 403);
         }
@@ -368,6 +368,8 @@ class LoginController
             Users::$tableName . '.' . Users::$firstName . ' as firstName',
             Users::$tableName . '.' . Users::$lastName . ' as lastName',
             Users::$tableName . '.' . Users::$logo . ' as logo',
+            Users::$tableName . '.' . Users::$countryId . ' as countryId',
+
                 //
             DevicesSessions::$tableName . '.' . DevicesSessions::$appId . ' as appId',
             DevicesSessions::$tableName . '.' . DevicesSessions::$deviceId . ' as deviceId',

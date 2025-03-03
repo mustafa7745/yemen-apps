@@ -48,6 +48,8 @@ class StoresControllerGet extends Controller
 
         $stores = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$mainCategoryId, '=', $mainCategoryId)
+            ->where(Stores::$tableName . '.' . Stores::$countryId, '=', $accessToken->countryId)
+
             ->get(
                 [
                     Stores::$tableName . '.' . Stores::$id,
@@ -130,7 +132,7 @@ class StoresControllerGet extends Controller
     {
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, withUser: true);
         $accessToken = $myData['accessToken'];
-       
+
 
         $mainCatgories = DB::table(table: MainCategories::$tableName)
             ->get();
@@ -157,7 +159,7 @@ class StoresControllerGet extends Controller
         $userInfo->countryName = $d[$lang];
 
 
-        return response()->json(['userInfo' => $userInfo,'categories' => $mainCatgories]);
+        return response()->json(['userInfo' => $userInfo, 'categories' => $mainCatgories]);
     }
     public function getLoginConfiguration(Request $request)
     {
