@@ -33,12 +33,101 @@ class StoresControllerGet extends Controller
     {
         return response()->json(['userInfo' => "fdfdfdf"]);
     }
+    public function getStores(Request $request)
+    {
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, withUser: true);
+        $accessToken = $myData['accessToken'];
+        $mainCategoryId = $request->input('mainCategoryId');
+
+        $latitude = $request->input('latitude');
+        $longitude = $request->input('longitude');
+
+        $stores = DB::table(Stores::$tableName)
+            ->where(Stores::$tableName . '.' . Stores::$mainCategoryId, '=', $mainCategoryId)
+            ->get(
+                [
+                    Stores::$tableName . '.' . Stores::$id,
+                    Stores::$tableName . '.' . Stores::$typeId,
+                    Stores::$tableName . '.' . Stores::$name,
+                    Stores::$tableName . '.' . Stores::$logo,
+                    Stores::$tableName . '.' . Stores::$cover,
+                    Stores::$tableName . '.' . Stores::$cover,
+                    Stores::$tableName . '.' . Stores::$reviews,
+                    Stores::$tableName . '.' . Stores::$subscriptions,
+                    Stores::$tableName . '.' . Stores::$stars,
+                    Stores::$tableName . '.' . Stores::$likes,
+                    DB::raw("ST_Distance_Sphere(ST_GeomFromText('POINT($latitude $longitude)', 4326), " . Stores::$tableName . '.' . Stores::$latLong . ") * 1.45 AS distance"),
+                ]
+            );
+
+        $storeIds = [];
+        foreach ($stores as $store) {
+            $storeIds[] = $store->id;
+            // }
+        }
+
+        $storeConfigs = DB::table(table: SharedStoresConfigs::$tableName)
+            ->whereIn(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, $storeIds)
+            ->get();
+
+        // print_r($storeConfigs);
+
+        // First, filter the storeConfigs by storeIds (matching storeConfig's storeId to store's id)
+        $filteredStoreConfigs = collect($storeConfigs)->keyBy('storeId');
+
+        // Now, update the stores with the corresponding storeConfig data
+        foreach ($stores as $index => $store) {
+            if ($store->typeId == 1 && isset($filteredStoreConfigs[$store->id])) {
+                $storeConfig = $filteredStoreConfigs[$store->id];
+
+                // Handle JSON decoding and checking for errors
+                $categories = json_decode($storeConfig->categories);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    $categories = [];  // Handle invalid JSON
+                }
+
+                $sections = json_decode($storeConfig->sections);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    $sections = [];  // Handle invalid JSON
+                }
+
+                $nestedSections = json_decode($storeConfig->nestedSections);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    $nestedSections = [];  // Handle invalid JSON
+                }
+
+                $products = json_decode($storeConfig->products);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    $products = [];  // Handle invalid JSON
+                }
+
+                // Merge the storeConfig data into the store object
+                $stores[$index]->storeConfig = [
+                    'storeIdReference' => $storeConfig->storeIdReference,
+                    'categories' => $categories,
+                    'sections' => $sections,
+                    'nestedSections' => $nestedSections,
+                    'products' => $products
+                ];
+            } else {
+                // If storeConfig doesn't exist for the store or doesn't match, set storeConfig to null
+                $stores[$index]->storeConfig = null;
+            }
+        }
+
+
+        return response()->json($stores);
+    }
     public function getMain(Request $request)
     {
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, withUser: true);
         $accessToken = $myData['accessToken'];
+        $mainCategoryId = $request->input('mainCategoryId');
 
         $stores = DB::table(Stores::$tableName)
+            ->when($mainCategoryId != null, function ($query) use ($mainCategoryId) {
+                return $query->where(Stores::$tableName . '.' . Stores::$mainCategoryId, '=', $mainCategoryId);
+            })
             ->get(
                 [
                     Stores::$tableName . '.' . Stores::$id,
@@ -52,7 +141,7 @@ class StoresControllerGet extends Controller
                     Stores::$tableName . '.' . Stores::$stars,
                     Stores::$tableName . '.' . Stores::$likes,
                     DB::raw("ST_Distance_Sphere(ST_GeomFromText('POINT(15.334788468105963 44.198597215780914)', 4326), " . Stores::$tableName . '.' . Stores::$latLong . ") * 1.45 AS distance"),
-               ]
+                ]
             );
 
         $storeIds = [];
@@ -160,47 +249,6 @@ class StoresControllerGet extends Controller
     public function getProducts(Request $request)
     {
         return $this->getOurProducts2($request);
-    }
-    public function getStores(Request $request)
-    {
-
-        $stores = DB::table(Stores::$tableName)
-            // ->where(Stores::$tableName . '.' . Stores::$userId, '=', $accessToken->userId)
-            ->get()->toArray();
-
-        $storeIds = [];
-        foreach ($stores as $store) {
-            if ($store->typeId == 1) {
-                $storeIds[] = $store->id;
-            }
-        }
-
-        $storeConfigs = DB::table(table: SharedStoresConfigs::$tableName)
-            ->whereIn(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, $storeIds)
-            ->get();
-
-        // print_r($storeConfigs);
-
-
-
-
-
-        foreach ($storeConfigs as $storeConfig) {
-            foreach ($stores as $index => $store) {
-                // print_r($storeConfig);
-                if ($storeConfig->storeId == $store->id && $store->typeId == 1) {
-                    $categories = json_decode($storeConfig->categories);
-                    $sections = json_decode($storeConfig->sections);
-                    $nestedSections = json_decode($storeConfig->nestedSections);
-                    $products = json_decode($storeConfig->products);
-                    // $stores[$index] = (array)$stores[$index];
-                    $stores[$index]->storeConfig = ['storeIdReference' => $storeConfig->storeIdReference, 'categories' => $categories, 'sections' => $sections, 'nestedSections' => $nestedSections, 'products' => $products];
-                } else
-                    $stores[$index]->storeConfig = null;
-            }
-        }
-
-        return response()->json($stores);
     }
 
     public function getLocations(Request $request)

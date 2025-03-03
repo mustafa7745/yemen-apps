@@ -33,6 +33,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('v1')->group(function () {
     Route::apiResource('/', StoresControllerGet::class);
     Route::post('/getHome', [StoresControllerGet::class, 'getHome']);
+    Route::post('/getStores', [StoresControllerGet::class, 'getStores']);
+
     Route::post('/getMain', [StoresControllerGet::class, 'getMain']);
 
     // 
