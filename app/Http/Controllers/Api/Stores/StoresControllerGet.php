@@ -39,13 +39,6 @@ class StoresControllerGet extends Controller
         $accessToken = $myData['accessToken'];
 
         $stores = DB::table(Stores::$tableName)
-        // ->selectRaw(
-        //     'ST_Distance_Sphere(
-        //         POINT(?, ?),
-        //         latLong
-        //     ) AS distance',
-        //     ["44.19853605671369", "15.334396879361327"]
-        // )
             ->get(
                 [
                     Stores::$tableName . '.' . Stores::$id,
@@ -54,20 +47,10 @@ class StoresControllerGet extends Controller
                     Stores::$tableName . '.' . Stores::$logo,
                     Stores::$tableName . '.' . Stores::$cover,
                     Stores::$tableName . '.' . Stores::$cover,
-                    
                     Stores::$tableName . '.' . Stores::$reviews,
                     Stores::$tableName . '.' . Stores::$subscriptions,
                     Stores::$tableName . '.' . Stores::$stars,
                     Stores::$tableName . '.' . Stores::$likes,
-
-
-                    // Stores::$tableName . '.' . Stores::$id,
-                    // Stores::$tableName . '.' . Stores::$id,
-
-                    // 'ST_Distance_Sphere(
-                    //     POINT(?, ?),
-                    //     POINT(longitude, latitude)
-                    // ) AS distance',
                 ]
             );
 

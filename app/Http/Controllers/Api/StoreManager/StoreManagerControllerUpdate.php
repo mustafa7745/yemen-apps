@@ -290,11 +290,14 @@ class StoreManagerControllerUpdate extends Controller
     {
         $storeId = $request->input('storeId');
         $latLng = $request->input('latLng');
+        $latitude = $request->input('latitude');
+        $longitude = $request->input('longitude');
         DB::table(table: Stores::$tableName)
             ->where(Stores::$id, '=', $storeId)
             ->update(
                 [
                     Stores::$latLng => $latLng,
+                    Stores::$latLong => DB::raw("ST_GeomFromText('POINT($latitude $longitude)', 4326)"),
                 ]
             );
         $store = DB::table(table: Stores::$tableName)
