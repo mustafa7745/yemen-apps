@@ -56,7 +56,7 @@ class StoresControllerGet extends Controller
                     Stores::$tableName . '.' . Stores::$subscriptions,
                     Stores::$tableName . '.' . Stores::$stars,
                     Stores::$tableName . '.' . Stores::$likes,
-                    DB::raw("ST_Distance_Sphere(ST_GeomFromText('POINT($latitude $longitude)', 4326), " . Stores::$tableName . '.' . Stores::$latLong . ") * 1.45 AS distance"),
+                    DB::raw("ROUND(ST_Distance_Sphere(ST_GeomFromText('POINT($latitude $longitude)', 4326), " . Stores::$tableName . '.' . Stores::$latLong . ") * 1.45 / 1000 , 2) AS distance"),
                 ]
             );
 
