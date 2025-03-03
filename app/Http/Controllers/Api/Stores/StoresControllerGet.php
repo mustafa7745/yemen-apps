@@ -42,6 +42,8 @@ class StoresControllerGet extends Controller
         $latitude = $request->input('latitude');
         $longitude = $request->input('longitude');
 
+        $isLocationNull = is_null($latitude) || is_null($longitude);
+
         $stores = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$mainCategoryId, '=', $mainCategoryId)
             ->get(
@@ -56,7 +58,11 @@ class StoresControllerGet extends Controller
                     Stores::$tableName . '.' . Stores::$subscriptions,
                     Stores::$tableName . '.' . Stores::$stars,
                     Stores::$tableName . '.' . Stores::$likes,
-                    DB::raw("ROUND(ST_Distance_Sphere(ST_GeomFromText('POINT($latitude $longitude)', 4326), " . Stores::$tableName . '.' . Stores::$latLong . ") * 1.45 / 1000 , 2) AS distance"),
+                    DB::raw(
+                        $isLocationNull
+                        ? "NULL AS distance" // Return NULL if latitude or longitude is null
+                        : "ROUND(ST_Distance_Sphere(ST_GeomFromText('POINT($latitude $longitude)', 4326), " . Stores::$tableName . '.' . Stores::$latLong . ") * 1.45 / 1000, 2) AS distance"
+                    ),
                 ]
             );
 
