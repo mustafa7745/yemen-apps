@@ -875,6 +875,58 @@ trait AllShared
         }
         return response()->json($data);
     }
+
+    public function getOurLocationsV1($storeId, $userId)
+    {
+        $data = DB::table(table: Locations::$tableName)
+            ->where(Locations::$tableName . '.' . Locations::$userId, '=', $userId)
+            ->get(
+                [
+                    Locations::$tableName . '.' . Locations::$id,
+                    Locations::$tableName . '.' . Locations::$street,
+                    Locations::$tableName . '.' . Locations::$latLng,
+                ]
+            );
+
+        $store = DB::table(table: Stores::$tableName)
+            ->join(
+                Currencies::$tableName,
+                Currencies::$tableName . '.' . Currencies::$id,
+                '=',
+                Stores::$tableName . '.' . Stores::$deliveryPriceCurrency
+            )
+            ->where(Stores::$tableName . '.' . Stores::$id, '=', $storeId)->first(
+                [
+                    Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
+                    Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
+                    Stores::$tableName . '.' . Stores::$deliveryPrice,
+                    Stores::$tableName . '.' . Stores::$latLng,
+                ]
+            );
+
+
+        foreach ($data as $key => $location) {
+            $parts = explode(",", $store->latLng);
+
+            // Extract the latitude and longitude
+            $latitude1 = (float) $parts[0];
+            $longitude1 = (float) $parts[1];
+            //
+            $parts = explode(",", $location->latLng);
+
+            // Extract the latitude and longitude
+            $latitude2 = (float) $parts[0];
+            $longitude2 = (float) $parts[1];
+
+            $distance = $this->getDistance($latitude1, $longitude1, $latitude2, $longitude2);
+            // print_r($store->deliveryPrice);
+            // print_r($distance);
+
+            $deliveryPrice = 50 * round(num: ($distance * $store->deliveryPrice) / 50);
+            $data[$key]->deliveryPrice = ['deliveryPrice' => $deliveryPrice, 'currencyId' => $store->currencyId, 'currencyName' => $store->currencyName,];
+        }
+        return response()->json($data);
+    }
     public function getOurOrders(Request $request, $userId = null)
     {
         $storeId = $request->input('storeId');
