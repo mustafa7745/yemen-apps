@@ -532,6 +532,12 @@ class StoreManagerControllerAdd extends Controller
             $storeConfig = null;
             if ($typeId == 1) {
                 $storeReference = DB::table(table: Stores::$tableName)
+                    ->join(
+                        SharedableStores::$tableName,
+                        SharedableStores::$tableName . '.' . SharedableStores::$storeId,
+                        '=',
+                        Stores::$tableName . '.' . Stores::$id
+                    )
                     ->where(Stores::$tableName . '.' . Stores::$countryId, '=', $accessToken->countryId)
                     ->where(Stores::$tableName . '.' . Stores::$typeId, '=', 2)
                     ->where(Stores::$tableName . '.' . Stores::$mainCategoryId, '=', $mainCategoryId)
@@ -542,12 +548,12 @@ class StoreManagerControllerAdd extends Controller
                 if ($storeReference == null) {
                     throw new CustomException("ليس هناك متجر مشترك في الفئة المختارة", 0, 403);
                 }
-                $sharedableStore = DB::table(table: SharedableStores::$tableName)
-                    ->where(SharedableStores::$tableName . '.' . SharedableStores::$storeId, '=', $storeReference->id)
-                    ->first();
-                if ($sharedableStore == null) {
-                    throw new CustomException("المتجر المختار ليس قابل للمشاركة", 0, 403);
-                }
+                // $sharedableStore = DB::table(table: SharedableStores::$tableName)
+                //     ->where(SharedableStores::$tableName . '.' . SharedableStores::$storeId, '=', $storeReference->id)
+                //     ->first();
+                // if ($sharedableStore == null) {
+                //     throw new CustomException("المتجر المختار ليس قابل للمشاركة", 0, 403);
+                // }
 
                 $insertedIdShared = DB::table(table: SharedStoresConfigs::$tableName)
                     ->insertGetId([
