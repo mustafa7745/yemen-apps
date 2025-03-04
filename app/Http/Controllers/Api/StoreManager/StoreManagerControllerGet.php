@@ -341,7 +341,7 @@ class StoreManagerControllerGet extends Controller
                 Stores::$tableName . '.' . Stores::$typeId,
                 Stores::$tableName . '.' . Stores::$logo,
                 Stores::$tableName . '.' . Stores::$cover,
-                DB::raw("CONCAT(ROUND(ST_Y(" . Stores::$tableName . "." . Stores::$latLong . "), 4), ',', ROUND(ST_X(" . Stores::$tableName . "." . Stores::$latLong . "), 4)) AS latLng"),
+                DB::raw("CONCAT(ROUND(ST_X(" . Stores::$tableName . "." . Stores::$latLong . "), 4), ',', ROUND(ST_Y(" . Stores::$tableName . "." . Stores::$latLong . "), 4)) AS latLng"),
                 // Stores::$tableName . '.' . Stores::$latLong,
                 Stores::$tableName . '.' . Stores::$deliveryPrice,
                 Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
