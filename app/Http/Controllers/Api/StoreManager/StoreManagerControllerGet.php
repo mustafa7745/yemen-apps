@@ -328,7 +328,7 @@ class StoreManagerControllerGet extends Controller
 
         $data = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$userId, '=', $accessToken->userId)
-            ->where("latLng", '<>', null)
+            // ->where(Stores::$tableName . '.' . Stores::$userId, '<>', null)
             ->join(
                 Currencies::$tableName,
                 Currencies::$tableName . '.' . Currencies::$id,

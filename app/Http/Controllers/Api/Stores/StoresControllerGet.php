@@ -49,6 +49,7 @@ class StoresControllerGet extends Controller
         $stores = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$mainCategoryId, '=', $mainCategoryId)
             ->where(Stores::$tableName . '.' . Stores::$countryId, '=', $accessToken->countryId)
+            ->where(Stores::$tableName . '.' . Stores::$latLong, '<>', null)
 
             ->get(
                 [
