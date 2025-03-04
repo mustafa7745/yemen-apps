@@ -14,7 +14,10 @@ class StoresControllerAdd extends Controller
 
     public function addLocation(Request $request)
     {
-        return $this->addOurLocation($request, $this->appId);
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, withUser: true);
+        // $storeId = $request->input('storeId');
+        $accessToken = $myData['accessToken'];
+        return $this->addOurLocation($request, $accessToken->id);
     }
     public function confirmOrder(Request $request)
     {

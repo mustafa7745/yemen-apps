@@ -1103,29 +1103,33 @@ trait AllShared
             ->sole();
         return $dataOrderProducts;
     }
-    public function addOurLocation(Request $request, $appId)
+    public function addOurLocation(Request $request, $userId)
     {
-        $resultAccessToken = $this->getAccessToken($request, $appId);
-        if ($resultAccessToken->isSuccess == false) {
-            return $this->responseError($resultAccessToken);
-        }
-
-        $accessToken = $resultAccessToken->message;
-
-        $validation = $this->validRequest($request, [
+        $this->validRequest($request, [
             'latLng' => 'required|string|max:100',
             'street' => 'required|string|max:100',
         ]);
-        if ($validation != null) {
-            return $this->responseError($validation);
-        }
-        // 
+        // $resultAccessToken = $this->getAccessToken($request, $appId);
+        // if ($resultAccessToken->isSuccess == false) {
+        //     return $this->responseError($resultAccessToken);
+        // }
+
+        // $accessToken = $resultAccessToken->message;
+
+        // $validation = $this->validRequest($request, [
+        //     'latLng' => 'required|string|max:100',
+        //     'street' => 'required|string|max:100',
+        // ]);
+        // if ($validation != null) {
+        //     return $this->responseError($validation);
+        // }
+        // // 
         $latLng = $request->input('latLng');
         $street = $request->input('street');
         $insertedId = DB::table(table: Locations::$tableName)
             ->insertGetId([
                 Locations::$id => null,
-                Locations::$userId => $accessToken->userId,
+                Locations::$userId => $userId,
                 Locations::$latLng => $latLng,
                 Locations::$street => $street,
                 Locations::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
