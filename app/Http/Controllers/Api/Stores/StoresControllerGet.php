@@ -192,7 +192,9 @@ class StoresControllerGet extends Controller
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, withUser: true);
         $storeId = $request->input('storeId');
         $app = $myData['app'];
-        return $this->getOurLocationsV1($storeId, $app->id);
+        $accessToken = $myData['accessToken'];
+
+        return $this->getOurLocationsV1($storeId, $accessToken->userId);
     }
     public function getHome(Request $request)
     {
