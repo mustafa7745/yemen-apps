@@ -189,10 +189,10 @@ class StoresControllerGet extends Controller
 
     public function getLocations(Request $request)
     {
-        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, withUser: true);
-        $store = $myData['store'];
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, withUser: true);
+        $storeId = $request->input('storeId');
         $app = $myData['app'];
-        return $this->getOurLocationsV1($store->id, $app->id);
+        return $this->getOurLocationsV1($storeId, $app->id);
     }
     public function getHome(Request $request)
     {
