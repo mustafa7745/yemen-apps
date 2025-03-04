@@ -14,6 +14,7 @@ use App\Models\NestedSections;
 use App\Models\Options;
 use App\Models\ProductImages;
 use App\Models\Products;
+use App\Models\SharedableStores;
 use App\Models\SharedStoresConfigs;
 use App\Models\StoreAds;
 use App\Models\StoreDeliveryMen;
@@ -477,6 +478,7 @@ class StoreManagerControllerAdd extends Controller
                 return response()->json(['error' => 'Invalid Cover file.'], 400);
             }
 
+
             $userInfo = DB::table(table: Users::$tableName)
                 ->where(Users::$tableName . '.' . Users::$id, '=', $accessToken->userId)
 
@@ -529,6 +531,24 @@ class StoreManagerControllerAdd extends Controller
 
             $storeConfig = null;
             if ($typeId == 1) {
+                $storeReference = DB::table(table: Stores::$tableName)
+                    ->where(Stores::$tableName . '.' . Stores::$countryId, '=', $accessToken->countryId)
+                    ->where(Stores::$tableName . '.' . Stores::$typeId, '=', 2)
+                    ->where(Stores::$tableName . '.' . Stores::$mainCategoryId, '=', $mainCategoryId)
+                    ->where(Stores::$tableName . '.' . Stores::$mainCategoryId, '=', $mainCategoryId)
+                    ->first([
+                        Stores::$tableName . '.' . Stores::$id
+                    ]);
+                if ($storeReference == null) {
+                    throw new CustomException("ليس هناك متجر مشترك في الفئة المختارة", 0, 403);
+                }
+                $sharedableStore = DB::table(table: SharedableStores::$tableName)
+                    ->where(SharedableStores::$tableName . '.' . SharedableStores::$storeId, '=', $storeReference->id)
+                    ->first();
+                if ($sharedableStore == null) {
+                    throw new CustomException("المتجر المختار ليس قابل للمشاركة", 0, 403);
+                }
+
                 $insertedIdShared = DB::table(table: SharedStoresConfigs::$tableName)
                     ->insertGetId([
                         SharedStoresConfigs::$id => null,
@@ -551,15 +571,15 @@ class StoreManagerControllerAdd extends Controller
                 // print_r($cover);
 
                 $pathLogo = Storage::disk('s3')->put('stores/logos/' . $logoName, fopen($logo, 'r+'));
-               
+
                 $logoUrl = Storage::disk('s3')->url($pathLogo);
-                 print_r("L: ".$logoUrl);
+                print_r("L: " . $logoUrl);
                 $pathCover = Storage::disk('s3')->put('stores/covers/' . $coverName, fopen($cover, 'r+'));
                 print_r("dsffdftttttt3");
                 $logoUrl = Storage::disk('s3')->url($pathCover);
 
                 // print_r("C: ".$logoUrl);
- 
+
 
                 // Check if the file was uploaded successfully
                 if ($pathLogo && $pathCover) {
@@ -567,10 +587,10 @@ class StoreManagerControllerAdd extends Controller
                         ->where(Stores::$id, '=', $insertedId)
                         ->first(
                             Stores::$tableName . '.' . Stores::$id,
-                            
+
                         );
 
-                        // print_r("frgrg");
+                    // print_r("frgrg");
                     if ($storeConfig != null) {
 
                         $categories = json_decode($storeConfig->categories);
