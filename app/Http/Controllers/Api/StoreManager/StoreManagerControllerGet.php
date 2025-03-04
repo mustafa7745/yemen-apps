@@ -350,7 +350,7 @@ class StoreManagerControllerGet extends Controller
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$sections,
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$nestedSections,
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$products,
-            ])->toArray();
+            ]);
 
         // print_r($data);
         $storeIds = [];
