@@ -1407,19 +1407,10 @@ trait AllShared
             return response()->json($order);
         });
     }
-    public function updateOurProfile(Request $request, $appId)
+    public function updateOurProfile($request, $userId)
     {
-        $resultAccessToken = $this->getAccessToken($request, $appId);
-        if ($resultAccessToken->isSuccess == false) {
-            return $this->responseError($resultAccessToken);
-        }
-        $accessToken = $resultAccessToken->message;
-
-
-
-
-
-        return DB::transaction(function () use ($request, $accessToken) {
+       
+        return DB::transaction(function () use ($request, $userId) {
 
             $firstName = $request->input('firstName');
             $secondName = $request->input('secondName');
@@ -1472,13 +1463,13 @@ trait AllShared
             $previousRecord = null;
             if ($logo != null) {
                 $previousRecord = DB::table(Users::$tableName)
-                    ->where(Users::$id, '=', $accessToken->userId)
+                    ->where(Users::$id, '=', $userId)
                     ->sole();
             }
 
 
             DB::table(table: Users::$tableName)
-                ->where(Users::$id, '=', $accessToken->userId)
+                ->where(Users::$id, '=', $userId)
                 ->update(
                     $updatedData
                 );
@@ -1501,7 +1492,7 @@ trait AllShared
                 //     }
                 // }
                 $updatedRecord = DB::table(Users::$tableName)
-                    ->where(Users::$id, '=', $accessToken->userId)
+                    ->where(Users::$id, '=', $userId)
                     ->first();
 
                 // $updatedRecord->storeConfig = null;

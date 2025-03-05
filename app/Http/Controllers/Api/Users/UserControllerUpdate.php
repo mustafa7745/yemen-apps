@@ -20,8 +20,9 @@ class UserControllerUpdate extends Controller
     }
     public function updateProfile(Request $request)
     {
-        $app = $this->getMyApp($request);
-        return $this->updateOurProfile($request, $app->id);
+        $myData = $this->getMyData(request: $request, appId: null, withStore: false);
+        $accessToken = $myData['accessToken'];
+        return $this->updateOurProfile($request, $accessToken->userId);
     }
 
 }
