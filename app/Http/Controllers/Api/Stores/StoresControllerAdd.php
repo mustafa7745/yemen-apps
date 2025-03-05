@@ -21,6 +21,8 @@ class StoresControllerAdd extends Controller
     }
     public function confirmOrder(Request $request)
     {
-        return $this->confirmOurOrder($request, $this->appId);
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, withUser: true);
+        $accessToken = $myData['accessToken'];
+        return $this->confirmOurOrder($request, $$accessToken->userId);
     }
 }

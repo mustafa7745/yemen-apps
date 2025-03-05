@@ -1149,22 +1149,22 @@ trait AllShared
         return (new LoginController($appId))->readAndRefreshAccessToken($request);
         // return $loginController;
     }
-    public function confirmOurOrder(Request $request, $appId)
+    public function confirmOurOrder(Request $request, $userId)
     {
-        $validation = $this->validRequest($request, [
+        $this->validRequest($request, [
             'storeId' => 'required|string|max:100',
             'paid' => 'required|string|max:100',
             'orderProducts' => 'required|string|max:200',
         ]);
-        if ($validation != null) {
-            return $this->responseError($validation);
-        }
+        // if ($validation != null) {
+        //     return $this->responseError($validation);
+        // }
 
-        $resultAccessToken = $this->getAccessToken($request, $appId);
-        if ($resultAccessToken->isSuccess == false) {
-            return $this->responseError($resultAccessToken);
-        }
-        $accessToken = $resultAccessToken->message;
+        // $resultAccessToken = $this->getAccessToken($request, $appId);
+        // if ($resultAccessToken->isSuccess == false) {
+        //     return $this->responseError($resultAccessToken);
+        // }
+        // $accessToken = $resultAccessToken->message;
 
         $storeId = $request->input('storeId');
         $orderProducts = $request->input('orderProducts');
@@ -1213,12 +1213,12 @@ trait AllShared
             return "error";
         }
 
-        return DB::transaction(function () use ($request, $accessToken, $storeId, $storeProducts, $orderProducts, $locationId, $paid) {
+        return DB::transaction(function () use ($request, $userId, $storeId, $storeProducts, $orderProducts, $locationId, $paid) {
 
             $orderData = [
                 Orders::$id => null,
                 Orders::$storeId => $storeId,
-                Orders::$userId => $accessToken->userId,
+                Orders::$userId => $userId,
                 Orders::$situationId => 1,
                 Orders::$paid => $paid,
                 Orders::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
