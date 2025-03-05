@@ -189,6 +189,21 @@ class StoresControllerGet extends Controller
 
         return response()->json(['languages' => $languages, 'countries' => $countries]);
     }
+    public function getLanguages(Request $request)
+    {
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, withUser: false);
+        // $store = $myData['store'];
+        // // $app = $myData['app'];
+
+        // // if ($withSituations === true) {
+        $languages = DB::table(Languages::$tableName)
+            ->get();
+
+
+
+
+        return response()->json($languages);
+    }
     public function getProducts(Request $request)
     {
         return $this->getOurProducts2($request);
