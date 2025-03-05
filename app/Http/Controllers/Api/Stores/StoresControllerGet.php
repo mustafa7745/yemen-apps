@@ -150,6 +150,8 @@ class StoresControllerGet extends Controller
             ->first([
                 Users::$tableName . '.' . Users::$firstName,
                 Users::$tableName . '.' . Users::$lastName,
+                Users::$tableName . '.' . Users::$secondName,
+                Users::$tableName . '.' . Users::$thirdName,
                 Users::$tableName . '.' . Users::$logo,
                 Countries::$tableName . '.' . Countries::$image . ' as flag',
                 Countries::$tableName . '.' . Countries::$name . ' as countryName',
