@@ -46,6 +46,8 @@ Route::prefix('v1')->group(function () {
     Route::post('/getPaymentTypes', [StoresControllerGet::class, 'getPaymentTypes']);
     Route::post('/getCustomPrices', [StoresControllerGet::class, 'getCustomPrices']);
     Route::post('/getLoginConfiguration', [StoresControllerGet::class, 'getLoginConfiguration']); 
+    Route::post('/getUserProfile', [StoresControllerGet::class, 'getUserProfile']); 
+
 
 
     Route::post('/whatsapp_webhook', [StoresControllerGet::class, 'whatsapp_webhook']);

@@ -80,10 +80,7 @@ class UserControllerGet extends Controller
     public function getUserProfile(Request $request)
     {
         $myData = $this->getMyData(request: $request, withStore: false, withUser: true);
-        $storeId = $request->input('storeId');
-        $app = $myData['app'];
         $accessToken = $myData['accessToken'];
-
         return $this->getOurUserProfile($accessToken->userId, );
     }
 
