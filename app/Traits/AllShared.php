@@ -87,12 +87,12 @@ trait AllShared
             return response()->json([]);
         });
     }
-    public function getOurUserProfile(Request $request, $appId)
+    public function getOurUserProfile($userId)
     {
-        $accessToken = (new LoginController($this->appId))->readAccessToken($request);
+        // $accessToken = (new LoginController($this->appId))->readAccessToken($request);
 
         $data = DB::table(table: Users::$tableName)
-            ->where(Users::$tableName . '.' . Users::$id, '=', $accessToken->userId)
+            ->where(Users::$tableName . '.' . Users::$id, '=', $userId)
             ->first([
                 Users::$tableName . '.' . Users::$id,
                 Users::$tableName . '.' . Users::$firstName,
