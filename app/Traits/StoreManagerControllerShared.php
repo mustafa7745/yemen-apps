@@ -46,7 +46,7 @@ trait StoreManagerControllerShared
                 DB::table(table: GooglePurchases::$tableName)
                     ->where(GooglePurchases::$purchaseToken, '=', $purchaseToken)
                     ->update(
-                        [GooglePurchases::$orderId => $purchase->orderId,]
+                        [GooglePurchases::$orderId => $purchase->orderId]
                     );
             }
             if ($purchase->purchaseState == 0) {

@@ -300,7 +300,7 @@ class StoreManagerControllerUpdate extends Controller
                     Stores::$latLong => DB::raw("ST_GeomFromText('POINT($latitude $longitude)', 4326)"),
                 ]
             );
-            // SELECT ST_Distance_Sphere( ST_GeomFromText('POINT(15.334788468105963 44.198597215780914)', 4326), latLong ) * 1.45 AS distance_in_meters,name,latLng FROM stores;
+        // SELECT ST_Distance_Sphere( ST_GeomFromText('POINT(15.334788468105963 44.198597215780914)', 4326), latLong ) * 1.45 AS distance_in_meters,name,latLng FROM stores;
         $store = DB::table(table: Stores::$tableName)
             ->where(Stores::$id, '=', $storeId)
             ->first(
@@ -732,9 +732,11 @@ class StoreManagerControllerUpdate extends Controller
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: true, storePoints: 2, );
         $store = $myData['store'];
         $app = $myData['app'];
+        $accessToken = $myData['accessToken'];
+        $userId = $accessToken->userId;
 
 
-        return DB::transaction(function () use ($request, $store, $app) {
+        return DB::transaction(function () use ($request, $store, $app, $userId) {
             $productId = $request->input('productId');
             $purchaseToken = $request->input('purchaseToken');
             // throw new CustomException("Undefiend ProductId" . $productId, 0, 403);
@@ -760,6 +762,7 @@ class StoreManagerControllerUpdate extends Controller
                         GooglePurchases::$isCounsumed => 0,
                         GooglePurchases::$isSubs => $inAppProduct->isSubs,
                         GooglePurchases::$productId => $productId,
+                        GooglePurchases::$userId => $userId,
                         GooglePurchases::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                         GooglePurchases::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                     ]);

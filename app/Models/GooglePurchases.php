@@ -13,6 +13,7 @@ class GooglePurchases
    public static $isGet = "isGet";
 
    public static $orderId = "orderId";
+   public static $userId = "userId";
 
    public static $isCounsumed = "isCounsumed";
    public static $storeId = "storeId";
