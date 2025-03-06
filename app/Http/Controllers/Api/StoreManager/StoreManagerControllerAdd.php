@@ -728,8 +728,6 @@ class StoreManagerControllerAdd extends Controller
     public function addProductImage(Request $request)
     {
         if ($request->hasFile('image')) {
-
-
             $validator = Validator::make($request->all(), [
                 'image' => 'required|image|mimes:png|max:300', // If you're uploading a file
             ]);
