@@ -1069,7 +1069,7 @@ class StoreManagerControllerGet extends Controller
                 Currencies::$tableName,
                 Currencies::$tableName . '.' . Currencies::$id,
                 '=',
-                StoreCurencies::$tableName . '.' . StoreCurencies::$storeId
+                StoreCurencies::$tableName . '.' . StoreCurencies::$currencyId
             )
             ->get([
                 Currencies::$tableName . '.' . Currencies::$id,
