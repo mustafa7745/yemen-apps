@@ -1058,7 +1058,7 @@ class StoreManagerControllerGet extends Controller
     }
     public function getStoreCurrencies(Request $request)
     {
-        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, withUser: false);
+        $myData = $this->getMyData(request: $request, appId: $this->appId);
         $store = $myData['store'];
         // // $app = $myData['app'];
 
