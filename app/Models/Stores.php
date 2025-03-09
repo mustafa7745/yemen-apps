@@ -23,6 +23,9 @@ class Stores
 
 
    public static $deliveryPrice = "deliveryPrice";
+   public static $freeDeliveryPrice = "freeDeliveryPrice";
+   public static $lessCartPrice = "lessCartPrice";
+
    public static $deliveryPriceCurrency = "deliveryPriceCurrency";
    // public static $serviceAccount = "serviceAccount";
 

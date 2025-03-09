@@ -17,6 +17,7 @@ use App\Models\Products;
 use App\Models\SharedableStores;
 use App\Models\SharedStoresConfigs;
 use App\Models\StoreAds;
+use App\Models\StoreCurencies;
 use App\Models\StoreDeliveryMen;
 use App\Models\StoreProducts;
 use App\Models\StoreSections;
@@ -426,10 +427,10 @@ class StoreManagerControllerAdd extends Controller
             'logo' => 'required|image|max:100',
             'name' => 'required|string|max:100',
             'typeId' => 'required|string|max:1',
+            'currencyId' => 'required|string|max:currencyId',
             'cover' => 'required|image|max:100',
             'latitude' => 'required|string|max:100',
             'longitude' => 'required|string|max:100',
-
         ]);
 
         // $validator = Validator::make($request->all(), [
@@ -464,6 +465,8 @@ class StoreManagerControllerAdd extends Controller
 
             $name = $request->input('name');
             $typeId = $request->input('typeId');
+            $currencyId = $request->input('currencyId');
+
             $logo = $request->file('logo');
             $cover = $request->file('cover');
             $mainCategoryId = $request->input('mainCategoryId');
@@ -523,6 +526,25 @@ class StoreManagerControllerAdd extends Controller
                     StoreSubscriptions::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
                     StoreSubscriptions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                     StoreSubscriptions::$expireAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ]);
+            $currency = DB::table(table: Currencies::$tableName)
+                ->where(Currencies::$tableName . '.' . Currencies::$id, '=', $currencyId)
+                ->first([
+                    Currencies::$tableName . '.' . Currencies::$id
+                ]);
+
+
+            if ($currency == null) {
+                throw new CustomException("عملة غير صحيحة", 0, 403);
+            }
+            DB::table(table: StoreSubscriptions::$tableName)
+                ->insert([
+                    StoreCurencies::$id => null,
+                    StoreCurencies::$storeId => 0,
+                    StoreCurencies::$currencyId => $currencyId,
+                    StoreCurencies::$isSelected => 1,
+                    StoreCurencies::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    StoreCurencies::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                 ]);
 
             $subscribe = DB::table(StoreSubscriptions::$tableName)

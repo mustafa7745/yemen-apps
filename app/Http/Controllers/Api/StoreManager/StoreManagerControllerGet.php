@@ -343,7 +343,7 @@ class StoreManagerControllerGet extends Controller
                 Stores::$tableName . '.' . Stores::$logo,
                 Stores::$tableName . '.' . Stores::$cover,
                 DB::raw("CONCAT(ST_X(" . Stores::$tableName . "." . Stores::$latLong . "), ',', ST_Y(" . Stores::$tableName . "." . Stores::$latLong . ")) AS latLng"),
-                // Stores::$tableName . '.' . Stores::$latLong,
+                    // Stores::$tableName . '.' . Stores::$latLong,
                 Stores::$tableName . '.' . Stores::$deliveryPrice,
                 Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
                 Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
@@ -1046,11 +1046,14 @@ class StoreManagerControllerGet extends Controller
         return response()->json(['languages' => $languages, 'countries' => $countries]);
     }
 
-    public function getMainCategories(Request $request)
+    public function getMainData1(Request $request)
     {
         $mainCatgories = DB::table(table: MainCategories::$tableName)
             ->get();
-        return response()->json($mainCatgories);
+
+        $currencies = DB::table(table: MainCategories::$tableName)
+            ->get();
+        return response()->json(['mainCatgories' => $mainCatgories, 'currencies' => $currencies]);
     }
 
 
