@@ -467,7 +467,7 @@ class StoreManagerControllerAdd extends Controller
             $typeId = $request->input('typeId');
             $currencyId = $request->input('currencyId');
 
-            print_r($currencyId);
+            // print_r($currencyId);
             $logo = $request->file('logo');
             $cover = $request->file('cover');
             $mainCategoryId = $request->input('mainCategoryId');
