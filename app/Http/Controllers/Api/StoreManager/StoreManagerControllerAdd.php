@@ -541,7 +541,7 @@ class StoreManagerControllerAdd extends Controller
             DB::table(table: StoreCurencies::$tableName)
                 ->insert([
                     StoreCurencies::$id => null,
-                    StoreCurencies::$storeId => 0,
+                    StoreCurencies::$storeId => $insertedId,
                     StoreCurencies::$currencyId => $currencyId,
                     StoreCurencies::$isSelected => 1,
                     StoreCurencies::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
