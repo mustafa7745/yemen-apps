@@ -538,7 +538,7 @@ class StoreManagerControllerAdd extends Controller
             if ($currency == null) {
                 throw new CustomException("عملة غير صحيحة", 0, 403);
             }
-            DB::table(table: StoreSubscriptions::$tableName)
+            DB::table(table: StoreCurencies::$tableName)
                 ->insert([
                     StoreCurencies::$id => null,
                     StoreCurencies::$storeId => 0,
