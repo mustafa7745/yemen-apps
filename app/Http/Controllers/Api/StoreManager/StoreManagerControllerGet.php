@@ -1051,7 +1051,7 @@ class StoreManagerControllerGet extends Controller
         $mainCatgories = DB::table(table: MainCategories::$tableName)
             ->get();
 
-        $currencies = DB::table(table: MainCategories::$tableName)
+        $currencies = DB::table(table: Currencies::$tableName)
             ->get();
         return response()->json(['mainCatgories' => $mainCatgories, 'currencies' => $currencies]);
     }
