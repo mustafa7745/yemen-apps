@@ -46,13 +46,13 @@ Route::prefix('v1')->group(function () {
     Route::post('/getLocations', [StoresControllerGet::class, 'getLocations']);
     Route::post('/getPaymentTypes', [StoresControllerGet::class, 'getPaymentTypes']);
     Route::post('/getCustomPrices', [StoresControllerGet::class, 'getCustomPrices']);
-    Route::post('/getLoginConfiguration', [StoresControllerGet::class, 'getLoginConfiguration']); 
-    Route::post('/getLanguages', [StoresControllerGet::class, 'getLanguages']); 
+    Route::post('/getLoginConfiguration', [StoresControllerGet::class, 'getLoginConfiguration']);
+    Route::post('/getLanguages', [StoresControllerGet::class, 'getLanguages']);
 
-    Route::post('/getUserProfile', [StoresControllerGet::class, 'getUserProfile']); 
+    Route::post('/getUserProfile', [StoresControllerGet::class, 'getUserProfile']);
 
 
-    Route::post('/updateProfile', [StoresControllerUpdate::class, 'updateProfile']); 
+    Route::post('/updateProfile', [StoresControllerUpdate::class, 'updateProfile']);
 
 
 
@@ -89,9 +89,11 @@ Route::prefix('v1/storeManager')->group(function () {
     Route::post('/getCustomPrices', [StoreManagerControllerGet::class, 'getCustomPrices']);
     Route::post('/getOrderSituations', [StoreManagerControllerGet::class, 'getOrderSituations']);
     Route::post('/getInAppProducts', [StoreManagerControllerGet::class, 'getInAppProducts']);
-    Route::post('/getStoreTime', [StoreManagerControllerGet::class, 'getStoreTime']); 
+    Route::post('/getStoreTime', [StoreManagerControllerGet::class, 'getStoreTime']);
     Route::post('/getLoginConfiguration', [StoreManagerControllerGet::class, 'getLoginConfiguration']);
     Route::post('/getMainData1', [StoreManagerControllerGet::class, 'getMainData1']);
+    Route::post('/getStoreCurrencies', [StoreManagerControllerGet::class, 'getStoreCurrencies']);
+
 
 
 

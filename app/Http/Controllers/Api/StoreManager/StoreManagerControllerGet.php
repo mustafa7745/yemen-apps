@@ -22,6 +22,7 @@ use App\Models\OrderStatus;
 use App\Models\ProductViews;
 use App\Models\Sections;
 use App\Models\Situations;
+use App\Models\StoreCurencies;
 use App\Models\StoreDeliveryMen;
 use App\Models\StoreInfo;
 use App\Models\StoreNestedSections;
@@ -1054,6 +1055,28 @@ class StoreManagerControllerGet extends Controller
         $currencies = DB::table(table: Currencies::$tableName)
             ->get();
         return response()->json(['mainCategories' => $mainCatgories, 'currencies' => $currencies]);
+    }
+    public function getStoreCurrencies(Request $request)
+    {
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, withUser: false);
+        $store = $myData['store'];
+        // // $app = $myData['app'];
+
+
+        $currencies = DB::table(table: StoreCurencies::$tableName)
+            ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$storeId, '=', $store->id)
+            ->join(
+                Currencies::$tableName,
+                Currencies::$tableName . '.' . Currencies::$id,
+                '=',
+                StoreCurencies::$tableName . '.' . StoreCurencies::$storeId
+            )
+            ->get([
+                Currencies::$tableName . '.' . Currencies::$id,
+                Currencies::$tableName . '.' . Currencies::$name,
+                Currencies::$tableName . '.' . Currencies::$sign,
+            ]);
+        return response()->json($currencies);
     }
 
 
