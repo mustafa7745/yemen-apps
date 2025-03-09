@@ -427,7 +427,7 @@ class StoreManagerControllerAdd extends Controller
             'logo' => 'required|image|max:100',
             'name' => 'required|string|max:100',
             'typeId' => 'required|string|max:1',
-            'currencyId' => 'required|string|max:currencyId',
+            'currencyId' => 'required|string|max:1',
             'cover' => 'required|image|max:100',
             'latitude' => 'required|string|max:100',
             'longitude' => 'required|string|max:100',
@@ -467,6 +467,7 @@ class StoreManagerControllerAdd extends Controller
             $typeId = $request->input('typeId');
             $currencyId = $request->input('currencyId');
 
+            print_r($currencyId);
             $logo = $request->file('logo');
             $cover = $request->file('cover');
             $mainCategoryId = $request->input('mainCategoryId');
