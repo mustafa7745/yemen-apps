@@ -336,6 +336,12 @@ class StoreManagerControllerGet extends Controller
                 '=',
                 Stores::$tableName . '.' . Stores::$deliveryPriceCurrency
             )
+            ->join(
+                MainCategories::$tableName,
+                MainCategories::$tableName . '.' . MainCategories::$id,
+                '=',
+                Stores::$tableName . '.' . Stores::$mainCategoryId
+            )
 
             ->get([
                 Stores::$tableName . '.' . Stores::$id,
@@ -348,6 +354,10 @@ class StoreManagerControllerGet extends Controller
                 Stores::$tableName . '.' . Stores::$deliveryPrice,
                 Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
                 Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
+                //
+                MainCategories::$tableName . '.' . MainCategories::$name . ' storeMainCategoryName',
+                MainCategories::$tableName . '.' . MainCategories::$image . ' storeMainCategoryImage',
+
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$categories,
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$sections,
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$nestedSections,
