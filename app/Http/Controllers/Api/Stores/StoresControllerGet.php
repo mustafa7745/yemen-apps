@@ -149,7 +149,7 @@ class StoresControllerGet extends Controller
                 StoreCurencies::$tableName . '.' . StoreCurencies::$countUsed,
             ]);
 
-        foreach ($data as $index => $store) {
+        foreach ($stores as $index => $store) {
             $res = [];
             foreach ($storeCurrencies as $key => $storeCurrency) {
                 if ($store->id == $storeCurrency->storeId) {
