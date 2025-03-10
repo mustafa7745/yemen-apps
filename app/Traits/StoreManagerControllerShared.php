@@ -1,6 +1,7 @@
 <?php
 namespace App\Traits;
 use App\Models\GooglePurchases;
+use App\Models\StoreCurencies;
 use App\Models\Stores;
 use App\Models\StoreSubscriptions;
 use Carbon\Carbon;
@@ -330,4 +331,6 @@ trait StoreManagerControllerShared
         json_decode($string); // Attempt to decode the string
         return (json_last_error() == JSON_ERROR_NONE); // Check for JSON errors
     }
+
+    
 }

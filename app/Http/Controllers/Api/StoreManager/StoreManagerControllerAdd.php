@@ -279,21 +279,44 @@ class StoreManagerControllerAdd extends Controller
             $currency = DB::table(Currencies::$tableName)
                 ->where(Currencies::$id, '=', $currencyId)
                 ->first();
-            $storeCurrency = DB::table(table: StoreCurencies::$tableName)
+            $storeCurrencies = DB::table(table: StoreCurencies::$tableName)
                 ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$storeId, '=', $store->id)
-                ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$currencyId, '=', $currency->id)
-                ->first();
-            // print_r($storeCurrency);
-            if ($storeCurrency == null) {
-                DB::table(table: StoreCurencies::$tableName)
-                    ->insertGetId([
-                        StoreCurencies::$id => null,
-                        StoreCurencies::$currencyId => $currencyId,
-                        StoreCurencies::$storeId => $store->id,
-                        StoreCurencies::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                        StoreCurencies::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-                    ]);
+                ->get();
+
+            $isFound = false;
+            foreach ($storeCurrencies as $key => $storeCurrency) {
+                if ($storeCurrency->currencyId == $currency->id) {
+                    $isFound = true;
+                    break;
+                }
             }
+
+            $data = [
+                StoreCurencies::$id => null,
+                StoreCurencies::$currencyId => $currencyId,
+                StoreCurencies::$storeId => $store->id,
+                StoreCurencies::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                StoreCurencies::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+            ];
+
+            if ($isFound == false) {
+                $data = [
+                    StoreCurencies::$id => null,
+                    StoreCurencies::$currencyId => $currencyId,
+                    StoreCurencies::$storeId => $store->id,
+                    StoreCurencies::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    StoreCurencies::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ];
+
+                // Check if there are existing records
+                if (count($storeCurrency) == 0) {
+                    $data[StoreCurencies::$isSelected] = 1; // Set isSelected to 1 if no records exist
+                }
+
+                DB::table(StoreCurencies::$tableName)
+                    ->insertGetId($data);
+            }
+            // print_r($storeCurrency)
 
             $productOption = null;
             if ($getWithProduct == 1) {
