@@ -355,8 +355,8 @@ class StoreManagerControllerGet extends Controller
                 Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
                 Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
                 //
-                MainCategories::$tableName . '.' . MainCategories::$name . ' storeMainCategoryName',
-                MainCategories::$tableName . '.' . MainCategories::$image . ' storeMainCategoryImage',
+                MainCategories::$tableName . '.' . MainCategories::$name . ' as storeMainCategoryName',
+                MainCategories::$tableName . '.' . MainCategories::$image . ' as storeMainCategoryImage',
 
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$categories,
                 // SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$sections,
