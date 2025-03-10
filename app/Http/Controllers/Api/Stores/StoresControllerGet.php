@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Api\Stores;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Controller;
 use App\Models\Countries;
+use App\Models\Currencies;
 use App\Models\Languages;
 use App\Models\Locations;
 use App\Models\MainCategories;
 use App\Models\PaymentTypes;
 use App\Models\SharedStoresConfigs;
+use App\Models\StoreCurencies;
 use App\Models\StoreInfo;
 use App\Models\StoreNestedSections;
 use App\Models\Options;
@@ -124,6 +126,37 @@ class StoresControllerGet extends Controller
                 // If storeConfig doesn't exist for the store or doesn't match, set storeConfig to null
                 $stores[$index]->storeConfig = null;
             }
+        }
+
+
+        $storeCurrencies = DB::table(table: StoreCurencies::$tableName)
+            ->join(
+                Currencies::$tableName,
+                Currencies::$tableName . '.' . Currencies::$id,
+                '=',
+                StoreCurencies::$tableName . '.' . StoreCurencies::$currencyId
+            )
+            ->whereIn(StoreCurencies::$tableName . '.' . StoreCurencies::$storeId, $storeIds)
+            ->get([
+                Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
+                Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
+                StoreCurencies::$tableName . '.' . StoreCurencies::$id,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$lessCartPrice,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$storeId,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$freeDeliveryPrice,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$deliveryPrice,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$isSelected,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$countUsed,
+            ]);
+
+        foreach ($data as $index => $store) {
+            $res = [];
+            foreach ($storeCurrencies as $key => $storeCurrency) {
+                if ($store->id == $storeCurrency->storeId) {
+                    $res[] = $storeCurrency;
+                }
+            }
+            $stores[$index]->storeCurrencies = $res;
         }
 
 
