@@ -803,7 +803,7 @@ class StoreManagerControllerUpdate extends Controller
         // return response()->json($sub);
     }
 
-    public function updateStoreCurrencyPriceing(Request $request)
+    public function updateStoreCurrencyPricing(Request $request)
     {
 
         $deliveryPrice = $request->input('deliveryPrice');
