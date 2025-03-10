@@ -860,6 +860,12 @@ class StoreManagerControllerUpdate extends Controller
 
         $storeCurrency = DB::table(table: StoreCurencies::$tableName)
             ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$id, '=', $storeCurrency->id)
+            ->join(
+                Currencies::$tableName,
+                Currencies::$tableName . '.' . Currencies::$id,
+                '=',
+                StoreCurencies::$tableName . '.' . StoreCurencies::$currencyId
+            )
             ->first([
                 Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
                 Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
