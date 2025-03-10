@@ -354,7 +354,7 @@ class StoreManagerControllerGet extends Controller
                 Stores::$tableName . '.' . Stores::$deliveryPrice,
                 Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
                 Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
-                //
+                    //
                 MainCategories::$tableName . '.' . MainCategories::$name . ' as storeMainCategoryName',
                 MainCategories::$tableName . '.' . MainCategories::$image . ' as storeMainCategoryImage',
 
@@ -397,6 +397,7 @@ class StoreManagerControllerGet extends Controller
             } else {
                 $data[$index]->storeConfig = null;
             }
+            $data[$index]->storeMainCategory = ['storeMainCategoryName' => $store->storeMainCategoryName,'storeMainCategoryImage' => $store->storeMainCategoryImage,];
         }
 
         $storeIds = [];
