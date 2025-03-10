@@ -283,6 +283,7 @@ class StoreManagerControllerAdd extends Controller
                 ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$storeId, '=', $store->id)
                 ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$currencyId, '=', $currency->id)
                 ->get();
+            print_r($storeCurrency);
             if ($storeCurrency == null) {
                 DB::table(table: StoreCurencies::$tableName)
                     ->insertGetId([
@@ -381,7 +382,7 @@ class StoreManagerControllerAdd extends Controller
                     'name' => $productOption->optionName,
                     'price' => $productOption->price,
                     'currency' => $currency,
-                    'isCustomPrice'=> false
+                    'isCustomPrice' => false
                 ]);
             }
         } catch (QueryException $e) {
