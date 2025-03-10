@@ -454,6 +454,7 @@ class StoreManagerControllerGet extends Controller
             ->get([
                 Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
                 Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
+                StoreCurencies::$tableName . '.' . StoreCurencies::$id,
                 StoreCurencies::$tableName . '.' . StoreCurencies::$lessCartPrice,
                 StoreCurencies::$tableName . '.' . StoreCurencies::$storeId,
                 StoreCurencies::$tableName . '.' . StoreCurencies::$freeDeliveryPrice,
