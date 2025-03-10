@@ -380,7 +380,8 @@ class StoreManagerControllerAdd extends Controller
                     'storeProductId' => $productOption->storeProductId,
                     'name' => $productOption->optionName,
                     'price' => $productOption->price,
-                    'currency' => $currency
+                    'currency' => $currency,
+                    'isCustomPrice'=> false
                 ]);
             }
         } catch (QueryException $e) {
