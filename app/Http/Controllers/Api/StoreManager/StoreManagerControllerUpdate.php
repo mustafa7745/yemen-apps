@@ -847,7 +847,7 @@ class StoreManagerControllerUpdate extends Controller
         $storeCurrency = DB::table(table: StoreCurencies::$tableName)
             ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$storeId, '=', $store->id)
             ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$isSelected, '=', 1)
-            ->first([]);
+            ->first();
 
         if ($storeCurrency == null) {
             throw new CustomException("اما لايوجد عملات للمتجر او ليس هناك عمله افتراضية", 0, 403);
