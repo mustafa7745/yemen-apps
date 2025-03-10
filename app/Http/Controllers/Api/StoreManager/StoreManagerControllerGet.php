@@ -330,12 +330,7 @@ class StoreManagerControllerGet extends Controller
         $data = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$userId, '=', $accessToken->userId)
             // ->where(Stores::$tableName . '.' . Stores::$userId, '<>', null)
-            ->join(
-                Currencies::$tableName,
-                Currencies::$tableName . '.' . Currencies::$id,
-                '=',
-                Stores::$tableName . '.' . Stores::$deliveryPriceCurrency
-            )
+          
             ->join(
                 MainCategories::$tableName,
                 MainCategories::$tableName . '.' . MainCategories::$id,
@@ -352,8 +347,6 @@ class StoreManagerControllerGet extends Controller
                 DB::raw("CONCAT(ST_X(" . Stores::$tableName . "." . Stores::$latLong . "), ',', ST_Y(" . Stores::$tableName . "." . Stores::$latLong . ")) AS latLng"),
                     // Stores::$tableName . '.' . Stores::$latLong,
                 Stores::$tableName . '.' . Stores::$deliveryPrice,
-                Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
-                Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
                     //
                 MainCategories::$tableName . '.' . MainCategories::$name . ' as storeMainCategoryName',
                 MainCategories::$tableName . '.' . MainCategories::$image . ' as storeMainCategoryImage',
