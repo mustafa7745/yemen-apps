@@ -1102,10 +1102,18 @@ class StoreManagerControllerGet extends Controller
                 StoreCurencies::$tableName . '.' . StoreCurencies::$currencyId
             )
             ->get([
-                Currencies::$tableName . '.' . Currencies::$id,
-                Currencies::$tableName . '.' . Currencies::$name,
-                Currencies::$tableName . '.' . Currencies::$sign,
+                Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
+                Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
+                StoreCurencies::$tableName . '.' . StoreCurencies::$id,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$lessCartPrice,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$storeId,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$freeDeliveryPrice,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$deliveryPrice,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$isSelected,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$countUsed,
             ]);
+
+
         return response()->json($currencies);
     }
 

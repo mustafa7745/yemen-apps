@@ -803,6 +803,40 @@ class StoreManagerControllerUpdate extends Controller
         // return response()->json($sub);
     }
 
+    public function updateDefaultCurrency(Request $request)
+    {
+        $storeCurrencyId = $request->input('storeCurrencyId');
+
+
+        $updatedData = [
+            StoreCurencies::$isSelected => 1,
+            StoreCurencies::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+        ];
+
+
+        $myData = $this->getMyData(request: $request, appId: $this->appId);
+        $accessToken = $myData['accessToken'];
+        $store = $myData['store'];
+        ///
+        $myData = $this->getMyData(request: $request, appId: $this->appId, storePoints: 2);
+        $store = $myData['store'];
+
+        $storeCurrency = DB::table(table: StoreCurencies::$tableName)
+            ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$id, '=', $storeCurrencyId)
+            ->first();
+
+        if ($storeCurrency == null) {
+            throw new CustomException("ERROR Id", 0, 403);
+        }
+
+
+        DB::table(table: StoreCurencies::$tableName)
+            ->where(StoreCurencies::$id, '=', $storeCurrency->id)
+            ->update($updatedData);
+
+        return response()->json([]);
+    }
+
     public function updateStoreCurrencyPricing(Request $request)
     {
 
