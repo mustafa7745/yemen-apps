@@ -281,7 +281,7 @@ class StoreManagerControllerAdd extends Controller
                 ->first();
             $storeCurrency = DB::table(table: StoreCurencies::$tableName)
                 ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$storeId, '=', $store->id)
-                ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$storeId, '=', $currency->id)
+                ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$currencyId, '=', $currency->id)
                 ->get();
             if ($storeCurrency == null) {
                 $insertedId = DB::table(table: StoreCurencies::$tableName)
