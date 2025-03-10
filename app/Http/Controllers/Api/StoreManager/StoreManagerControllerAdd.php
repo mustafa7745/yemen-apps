@@ -309,7 +309,7 @@ class StoreManagerControllerAdd extends Controller
                 ];
 
                 // Check if there are existing records
-                if (count($storeCurrency) == 0) {
+                if (count($storeCurrencies) == 0) {
                     $data[StoreCurencies::$isSelected] = 1; // Set isSelected to 1 if no records exist
                 }
 
