@@ -19,6 +19,7 @@ use App\Models\ProductImages;
 use App\Models\Products;
 use App\Models\Situations;
 use App\Models\StoreAds;
+use App\Models\StoreCurencies;
 use App\Models\Stores;
 use App\Models\SharedStoresConfigs;
 use App\Models\StoreProducts;
@@ -802,32 +803,76 @@ class StoreManagerControllerUpdate extends Controller
         // return response()->json($sub);
     }
 
-    public function updateStoreDeliveryPrice(Request $request)
+    public function updateStoreCurrencyPriceing(Request $request)
     {
 
-        $this->validRequestV1($request, [
-            'deliveryPriceCurrency' => 'required|string|max:2',
-            'price' => 'required|string|max:10'
-        ]);
-        $price = $request->input('price');
-        $deliveryPriceCurrency = $request->input('deliveryPriceCurrency');
+        $deliveryPrice = $request->input('deliveryPrice');
+        $lessCartPrice = $request->input('lessCartPrice');
+        $freeDeliveryPrice = $request->input('freeDeliveryPrice');
 
+
+        $updatedData = [
+                // Stores::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+            StoreCurencies::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+        ];
+
+        if ($deliveryPrice != null) {
+            $updatedData[StoreCurencies::$deliveryPrice] = $deliveryPrice;
+        }
+
+        if ($lessCartPrice != null) {
+            $updatedData[StoreCurencies::$lessCartPrice] = $lessCartPrice;
+        }
+
+        if ($freeDeliveryPrice != null) {
+            $updatedData[StoreCurencies::$freeDeliveryPrice] = $freeDeliveryPrice;
+        }
+
+        if ($deliveryPrice != null) {
+            $updatedData[StoreCurencies::$deliveryPrice] = $deliveryPrice;
+        }
+
+
+        if (count($updatedData) == 1) {
+            throw new CustomException("Cant update empty values", 0, 403);
+        }
+
+        $myData = $this->getMyData(request: $request, appId: $this->appId);
+        $accessToken = $myData['accessToken'];
+        $store = $myData['store'];
         ///
         $myData = $this->getMyData(request: $request, appId: $this->appId, storePoints: 2);
         $store = $myData['store'];
 
-        DB::table(table: Stores::$tableName)
-            ->where(Stores::$id, '=', $store->id)
-            ->update(
-                [
-                    Stores::$deliveryPrice => $price,
-                    Stores::$deliveryPriceCurrency => $deliveryPriceCurrency,
-                ]
-            );
+        $storeCurrency = DB::table(table: StoreCurencies::$tableName)
+            ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$storeId, '=', $store->id)
+            ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$isSelected, '=', 1)
+            ->first([]);
+
+        if ($storeCurrency == null) {
+            throw new CustomException("اما لايوجد عملات للمتجر او ليس هناك عمله افتراضية", 0, 403);
+        }
 
 
+        DB::table(table: StoreCurencies::$tableName)
+            ->where(StoreCurencies::$id, '=', $storeCurrency->id)
+            ->update($updatedData);
 
-        return response()->json([]);
+        $storeCurrency = DB::table(table: StoreCurencies::$tableName)
+            ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$id, '=', $storeCurrency->id)
+            ->first([
+                Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
+                Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
+                StoreCurencies::$tableName . '.' . StoreCurencies::$id,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$lessCartPrice,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$storeId,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$freeDeliveryPrice,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$deliveryPrice,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$isSelected,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$countUsed,
+            ]);
+
+        return response()->json($storeCurrency);
     }
 
 
