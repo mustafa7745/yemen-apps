@@ -834,7 +834,28 @@ class StoreManagerControllerUpdate extends Controller
             ->where(StoreCurencies::$id, '=', $storeCurrency->id)
             ->update($updatedData);
 
-        return response()->json([]);
+        $storeCurrencies = DB::table(table: StoreCurencies::$tableName)
+            ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$storeId, '=', $store->id)
+            ->join(
+                Currencies::$tableName,
+                Currencies::$tableName . '.' . Currencies::$id,
+                '=',
+                StoreCurencies::$tableName . '.' . StoreCurencies::$currencyId
+            )
+            ->get([
+                Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
+                Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
+                StoreCurencies::$tableName . '.' . StoreCurencies::$id,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$lessCartPrice,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$storeId,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$freeDeliveryPrice,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$deliveryPrice,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$isSelected,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$countUsed,
+            ]);
+
+
+        return response()->json($storeCurrencies);
     }
 
     public function updateStoreCurrencyPricing(Request $request)
