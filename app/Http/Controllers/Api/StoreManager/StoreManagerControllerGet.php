@@ -443,6 +443,35 @@ class StoreManagerControllerGet extends Controller
             $data[$index]->subscription = $myapp;
         }
 
+        $storeCurrencies = DB::table(table: StoreCurencies::$tableName)
+            ->join(
+                Currencies::$tableName,
+                Currencies::$tableName . '.' . Currencies::$id,
+                '=',
+                StoreCurencies::$tableName . '.' . StoreCurencies::$currencyId
+            )
+            ->whereIn(StoreCurencies::$tableName . '.' . StoreCurencies::$storeId, $storeIds)
+            ->get([
+                Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
+                Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
+                StoreCurencies::$tableName . '.' . StoreCurencies::$lessCartPrice,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$storeId,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$freeDeliveryPrice,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$deliveryPrice,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$isSelected,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$countUsed,
+            ]);
+
+        foreach ($data as $index => $store) {
+            $res = [];
+            foreach ($storeCurrencies as $key => $storeCurrency) {
+                if ($store->id == $storeCurrency->storeId) {
+                    $res[] = $storeCurrency;
+                }
+            }
+            $data[$index]->storeCurrencies = $res;
+        }
+
         return response()->json($data);
     }
     public function getCategories(Request $request)
