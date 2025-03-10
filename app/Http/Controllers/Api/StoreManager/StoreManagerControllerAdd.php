@@ -254,7 +254,11 @@ class StoreManagerControllerAdd extends Controller
         $price = $request->input('price');
         $storeNestedSectionId = $request->input(key: 'storeNestedSectionId');
         $getWithProduct = $request->input(key: 'getWithProduct');
-        $storeId = $request->input('storeId');
+        // $storeId = $request->input('storeId');
+
+        $myData = $this->getMyData(request: $request, appId: $this->appId);
+        $accessToken = $myData['accessToken'];
+        $store = $myData['store'];
 
         try {
             $insertedId = DB::table(table: StoreProducts::$tableName)
@@ -265,7 +269,7 @@ class StoreManagerControllerAdd extends Controller
                     StoreProducts::$price => $price,
                     StoreProducts::$currencyId => $currencyId,
                     StoreProducts::$storeNestedSectionId => $storeNestedSectionId,
-                    StoreProducts::$storeId => $storeId,
+                    StoreProducts::$storeId => $store->id,
                     StoreProducts::$orderNo => 9000,
                     StoreProducts::$orderAt => Carbon::now()->format('Y-m-d H:i:s'),
                     StoreProducts::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
@@ -275,6 +279,20 @@ class StoreManagerControllerAdd extends Controller
             $currency = DB::table(Currencies::$tableName)
                 ->where(Currencies::$id, '=', $currencyId)
                 ->first();
+            $storeCurrency = DB::table(table: StoreCurencies::$tableName)
+                ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$storeId, '=', $store->id)
+                ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$storeId, '=', $currency->id)
+                ->get();
+            if ($storeCurrency == null) {
+                $insertedId = DB::table(table: StoreCurencies::$tableName)
+                    ->insertGetId([
+                        StoreCurencies::$id => null,
+                        StoreCurencies::$currencyId => $currencyId,
+                        StoreCurencies::$storeId => $store->id,
+                        StoreCurencies::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+                        StoreCurencies::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    ]);
+            }
 
             $productOption = null;
             if ($getWithProduct == 1) {
