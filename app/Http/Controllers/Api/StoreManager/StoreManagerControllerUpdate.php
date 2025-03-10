@@ -812,6 +812,10 @@ class StoreManagerControllerUpdate extends Controller
             StoreCurencies::$isSelected => 1,
             StoreCurencies::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
         ];
+        $updatedData = [
+            StoreCurencies::$isSelected => 0,
+            StoreCurencies::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+        ];
 
 
         $myData = $this->getMyData(request: $request, appId: $this->appId);
@@ -832,6 +836,11 @@ class StoreManagerControllerUpdate extends Controller
 
         DB::table(table: StoreCurencies::$tableName)
             ->where(StoreCurencies::$id, '=', $storeCurrency->id)
+            ->update($updatedData);
+
+        DB::table(table: StoreCurencies::$tableName)
+        ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$storeId, '=', $store->id)
+        ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$id, '<>', $storeCurrency->id)
             ->update($updatedData);
 
         $storeCurrencies = DB::table(table: StoreCurencies::$tableName)
