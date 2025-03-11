@@ -52,7 +52,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/getUserProfile', [StoresControllerGet::class, 'getUserProfile']);
 
 
-    Route::post('/updateProfile', [StoresControllerUpdate::class, 'updateProfile']);
+    Route::post('/logout', [StoresControllerUpdate::class, 'logout']);
 
 
 

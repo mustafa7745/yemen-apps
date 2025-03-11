@@ -18,4 +18,11 @@ class StoresControllerUpdate extends Controller
         $accessToken = $myData['accessToken'];
         return $this->updateOurProfile($request, $accessToken->userId);
     }
+
+    public function logout(Request $request)
+    {
+        $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, withUser: true);
+        $accessToken = $myData['accessToken'];
+        return $this->ourLogout($accessToken->userSessionId);
+    }
 }
