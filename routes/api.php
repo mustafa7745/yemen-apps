@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Delivery\DeliveryControllerGet;
 use App\Http\Controllers\Api\RootAdmin\RootAdminControllerGet;
+use App\Http\Controllers\Api\RootAdmin\RootAdminControllerUpdate;
 use App\Http\Controllers\Api\StoreManager\StoreManagerControllerAdd;
 use App\Http\Controllers\Api\StoreManager\StoreManagerControllerDelete;
 use App\Http\Controllers\Api\StoreManager\StoreManagerControllerGet;
@@ -239,4 +240,6 @@ Route::prefix('v1/delivery')->group(function () {
 
 Route::prefix('v1/rootadmin')->group(function () {
     Route::post('/login', [RootAdminControllerGet::class, 'login']);
+    Route::post('/logout', [RootAdminControllerUpdate::class, 'logout']);
+
 });
