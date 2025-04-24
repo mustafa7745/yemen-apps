@@ -33,6 +33,8 @@ class RootAdminControllerGet extends Controller
             ->get([
                 Users::$tableName . '.' . Users::$id,
                 Users::$tableName . '.' . Users::$logo,
+                Users::$tableName . '.' . Users::$phone,
+
                 Users::$tableName . '.' . Users::$firstName,
                 Users::$tableName . '.' . Users::$createdAt,
                 Countries::$tableName . '.' . Countries::$code,
