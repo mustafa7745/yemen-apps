@@ -243,7 +243,7 @@ class LoginController
         $this->validRequestV1($request, [
             'deviceId' => 'required|string|max:40',
             'model' => 'required|string|max:50',
-            'version' => 'required|string|max:5'
+            'version' => 'required|string|max:50'
         ]);
 
         $deviceId = $request->input('deviceId');
