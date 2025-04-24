@@ -240,6 +240,10 @@ Route::prefix('v1/delivery')->group(function () {
 
 Route::prefix('v1/rootadmin')->group(function () {
     Route::post('/login', [RootAdminControllerGet::class, 'login']);
+    Route::post('/getUsers', [RootAdminControllerGet::class, 'getUsers']);
+
+
     Route::post('/logout', [RootAdminControllerUpdate::class, 'logout']);
+
 
 });
