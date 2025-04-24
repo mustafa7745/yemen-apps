@@ -1409,7 +1409,7 @@ trait AllShared
     }
     public function updateOurProfile($request, $userId)
     {
-       
+
         return DB::transaction(function () use ($request, $userId) {
 
             $firstName = $request->input('firstName');
