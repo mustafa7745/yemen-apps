@@ -2076,7 +2076,7 @@ trait AllShared
             ->first([
                 Configuration::$tableName . '.' . Configuration::$remoteConfigVersion
             ]);
-        if ($config != $remoteConfigVersion) {
+        if ($config->remoteConfigVersion != $remoteConfigVersion) {
             throw new CustomException("Remote Config You Must Update To Latest", 3000, 442);
         }
     }
