@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Models\Apps;
 use App\Models\AppStores;
 use App\Models\Categories;
+use App\Models\Configuration;
 use App\Models\Countries;
 use App\Models\Currencies;
 use App\Models\CustomPrices;
@@ -2062,9 +2063,29 @@ trait AllShared
         return $store;
     }
 
+    function checkConfig($request)
+    {
+
+        $this->validRequestV1($request, [
+            'remoteConfigVersion' => 'required|string|max:100',
+        ]);
+
+        $remoteConfigVersion = $request->input('remoteConfigVersion');
+
+        $config = DB::table(Configuration::$tableName)
+            ->first([
+                Configuration::$tableName . '.' . Configuration::$remoteConfigVersion
+            ]);
+        if ($config != $remoteConfigVersion) {
+            throw new CustomException("Remote Config You Must Update To Latest", 3000, 442);
+        }
+    }
+
     public function getMyData($request, $appId = null, $withStore = true, $storePoints = null, $withUser = true, $myProcessName = null, )
     {
         $app = $this->getMyApp($request, $appId);
+        $this->checkConfig($request);
+
         $accessToken = null;
         if ($withUser === true) {
             $accessToken = (new LoginController($app->id))->readAccessToken($request);
