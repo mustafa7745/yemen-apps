@@ -580,6 +580,8 @@ class StoreManagerControllerUpdate extends Controller
             $accessToken = $myData['accessToken'];
             $store = $myData['store'];
 
+            print_r($store);
+
             $this->validRequestV1($request, [
                 'name' => 'required|string|max:20',
                 'logo' => 'required|image|mimes:jpg|max:300'
