@@ -790,8 +790,18 @@ trait AllShared
 
         return response()->json(array_values($data));
     }
-    public function getOurLocations($userId,$storeId)
+    public function getOurLocations($userId, $storeId)
     {
+
+       
+
+
+
+
+
+        // print_r($request->all());
+      
+
         $data = DB::table(table: Locations::$tableName)
             ->where(Locations::$tableName . '.' . Locations::$userId, '=', $userId)
             ->get(

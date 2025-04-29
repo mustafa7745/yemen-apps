@@ -59,10 +59,11 @@ class UserControllerGet extends Controller
     }
     public function getLocations(Request $request)
     {
-        $myData = $this->getMyData(request: $request, withStore: true, withUser: true);
+        $myData = $this->getMyData(request: $request, withUser: true);
         $accessToken = $myData['accessToken'];
-        $store = $myData['store'];
-        return $this->getOurLocations($accessToken->userId, $store->id);
+print_r($accessToken);
+
+        return $this->getOurLocations($accessToken->userId,);
     }
     public function getOrders(Request $request)
     {
