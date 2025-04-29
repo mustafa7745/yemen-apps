@@ -63,27 +63,8 @@ class UserControllerGet extends Controller
         $myData = $this->getMyData(request: $request, withStore: false, withUser: true);
         $accessToken = $myData['accessToken'];
         $app = $myData['app'];
-
-        // print_r($accessToken);
-
-        $this->validRequestV1($request, [
-            'storeId' => 'required|string|max:100',
-        ]);
-        $storeId = $request->input('storeId');
-
-        $appStore =  DB::table(AppStores::$tableName)
-        ->where(AppStores::$appId, '=', $app->id)
-        ->where(AppStores::$storeId, '=', $storeId)
-        ->first([
-            AppStores::$tableName . '.' . AppStores::$id
-        ]);
-
-        if ($appStore == null) {
-            throw new CustomException("not related store", 0, 442);
-        }
-        
-
-        return $this->getOurLocations($accessToken->userId,$storeId );
+        $appStore = $this->getAppStore($request, $app->id);
+        return $this->getOurLocations($accessToken->userId, $appStore->storeId);
     }
     public function getOrders(Request $request)
     {

@@ -2056,6 +2056,25 @@ trait AllShared
         }
     }
 
+    function getAppStore($request, $appId)
+    {
+        $this->validRequestV1($request, [
+            'storeId' => 'required|string|max:100',
+        ]);
+        $storeId = $request->input('storeId');
+
+        $appStore = DB::table(AppStores::$tableName)
+            ->where(AppStores::$appId, '=', $appId)
+            ->where(AppStores::$storeId, '=', $storeId)
+            ->first([
+                AppStores::$tableName . '.' . AppStores::$id
+            ]);
+
+        if ($appStore == null) {
+            throw new CustomException("not related store", 0, 442);
+        }
+        return $appStore;
+    }
     public function getMyData($request, $appId = null, $withStore = true, $storePoints = null, $withUser = true, $myProcessName = null, )
     {
         $app = $this->getMyApp($request, $appId);
