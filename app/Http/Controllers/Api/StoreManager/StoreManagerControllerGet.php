@@ -880,8 +880,8 @@ class StoreManagerControllerGet extends Controller
 
         $this->validRequestV1($request, [
             'from' => 'required|string|max:5',
-            'fromDate' => 'required|date_format:Y-d-m',
-            'toDate' => 'required|date_format:Y-d-m',
+            'fromDate' => 'required|date_format:Y-m-d',
+            'toDate' => 'required|date_format:Y-m-d',
         ]);
 
         $from = $request->input('from');
