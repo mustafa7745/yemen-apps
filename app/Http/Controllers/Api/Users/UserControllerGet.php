@@ -68,13 +68,8 @@ class UserControllerGet extends Controller
     }
     public function getOrders(Request $request)
     {
-        $app = $this->getMyApp($request);
-        $resultAccessToken = $this->getAccessToken($request, $app->id);
-        if ($resultAccessToken->isSuccess == false) {
-            return $this->responseError($resultAccessToken);
-        }
-        $accessToken = $resultAccessToken->message;
-
+        $myData = $this->getMyData(request: $request, withStore: false, withUser: true);
+        $accessToken = $myData['accessToken'];
         return $this->getOurOrders($request, $accessToken->userId);
     }
     public function getPaymentTypes(Request $request)
