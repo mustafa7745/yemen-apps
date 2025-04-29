@@ -661,7 +661,18 @@ class StoreManagerControllerUpdate extends Controller
                 }
                 $updatedRecord = DB::table(Stores::$tableName)
                     ->where(Stores::$id, '=', $storeId)
-                    ->first();
+                    ->first(
+                        [
+                            Stores::$tableName . '.' . Stores::$id,
+                            Stores::$tableName . '.' . Stores::$name,
+                            Stores::$tableName . '.' . Stores::$typeId,
+                            Stores::$tableName . '.' . Stores::$logo,
+                            Stores::$tableName . '.' . Stores::$cover,
+                            DB::raw("CONCAT(ST_X(" . Stores::$tableName . "." . Stores::$latLong . "), ',', ST_Y(" . Stores::$tableName . "." . Stores::$latLong . ")) AS latLng"),
+                                // Stores::$tableName . '.' . Stores::$latLong,
+                            Stores::$tableName . '.' . Stores::$deliveryPrice,
+                        ]
+                    );
 
                 $updatedRecord->storeConfig = null;
 
@@ -841,8 +852,8 @@ class StoreManagerControllerUpdate extends Controller
             ->update($updatedData);
 
         DB::table(table: StoreCurencies::$tableName)
-        ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$storeId, '=', $store->id)
-        ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$id, '<>', $storeCurrency->id)
+            ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$storeId, '=', $store->id)
+            ->where(StoreCurencies::$tableName . '.' . StoreCurencies::$id, '<>', $storeCurrency->id)
             ->update($updatedData2);
 
         $storeCurrencies = DB::table(table: StoreCurencies::$tableName)

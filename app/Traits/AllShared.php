@@ -2033,11 +2033,7 @@ trait AllShared
             })
 
             ->where(Stores::$id, $storeId)
-            ->first([
-                Stores::$id,
-                Stores::$typeId,
-
-            ]);
+            ->first();
         // print_r($store);
 
         if ($userId != null && $store == null) {
