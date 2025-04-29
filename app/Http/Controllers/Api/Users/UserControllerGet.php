@@ -73,7 +73,7 @@ class UserControllerGet extends Controller
 
         $appStore =  DB::table(AppStores::$tableName)
         ->where(AppStores::$appId, '=', $app->id)
-        ->where(AppStores::$storeId, '=', $storeId)
+        ->where(AppStores::$storeId, '=', 115)
         ->first([
             AppStores::$tableName . '.' . AppStores::$id
         ]);
