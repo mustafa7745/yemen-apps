@@ -23,6 +23,9 @@ class StoresControllerAdd extends Controller
     {
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, withUser: true);
         $accessToken = $myData['accessToken'];
-        return $this->confirmOurOrder($request, $accessToken->userId);
+        $app = $myData['app'];
+        $appStore = $this->getAppStore($request, $app->id);
+
+        return $this->confirmOurOrder($request, $accessToken->userId,$appStore->storeId,);
     }
 }

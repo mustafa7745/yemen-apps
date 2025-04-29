@@ -1125,10 +1125,9 @@ trait AllShared
         return (new LoginController($appId))->readAndRefreshAccessToken($request);
         // return $loginController;
     }
-    public function confirmOurOrder(Request $request, $userId)
+    public function confirmOurOrder(Request $request, $userId, $storeId)
     {
         $this->validRequest($request, [
-            'storeId' => 'required|string|max:100',
             'paid' => 'required|string|max:100',
             'orderProducts' => 'required|string|max:200',
         ]);
@@ -1141,8 +1140,6 @@ trait AllShared
         //     return $this->responseError($resultAccessToken);
         // }
         // $accessToken = $resultAccessToken->message;
-
-        $storeId = $request->input('storeId');
         $orderProducts = $request->input('orderProducts');
         $locationId = $request->input('locationId');
         $paid = $request->input('paid');
