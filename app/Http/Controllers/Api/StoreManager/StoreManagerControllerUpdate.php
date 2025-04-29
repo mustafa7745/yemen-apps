@@ -578,7 +578,7 @@ class StoreManagerControllerUpdate extends Controller
 
             $myData = $this->getMyData(request: $request, appId: $this->appId);
             $accessToken = $myData['accessToken'];
-            $store = $myData['app'];
+            $store = $myData['store'];
 
             $this->validRequestV1($request, [
                 'name' => 'required|string|max:20',
