@@ -790,45 +790,10 @@ trait AllShared
 
         return response()->json(array_values($data));
     }
-    public function getOurLocations(Request $request, $appId)
+    public function getOurLocations($userId,$storeId)
     {
-
-        $validator = Validator::make($request->all(), [
-            'accessToken' => 'required|string|max:255',
-            'deviceId' => 'required|string|max:255',
-            'storeId' => 'required|string|max:5'
-
-        ]);
-
-        // Check if validation fails
-        if ($validator->fails()) {
-            // Return a JSON response with validation errors
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
-                'code' => 0
-            ], 422);  // 422 Unprocessable Entity
-        }
-
-
-        $loginController = (new LoginController($appId));
-        $token = $request->input('accessToken');
-        $deviceId = $request->input('deviceId');
-        $storeId = $request->input('storeId');
-
-
-
-
-        // print_r($request->all());
-        $myResult = $loginController->readAccessToken($token, $deviceId);
-        if ($myResult->isSuccess == false) {
-            return response()->json(['message' => $myResult->message, 'code' => $myResult->code, 'errors' => []], $myResult->responseCode);
-        }
-
-        $accessToken = $myResult->message;
-
         $data = DB::table(table: Locations::$tableName)
-            ->where(Locations::$tableName . '.' . Locations::$userId, '=', $accessToken->userId)
+            ->where(Locations::$tableName . '.' . Locations::$userId, '=', $userId)
             ->get(
                 [
                     Locations::$tableName . '.' . Locations::$id,
