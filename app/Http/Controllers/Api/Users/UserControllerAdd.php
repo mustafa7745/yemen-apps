@@ -52,8 +52,11 @@ class UserControllerAdd extends Controller
     }
     public function confirmOrder(Request $request)
     {
-        $app = $this->getMyApp($request);
-        return $this->confirmOurOrder($request, $app->id);
+        $myData = $this->getMyData(request: $request, withStore: false, withUser: true);
+        $accessToken = $myData['accessToken'];
+        $app = $myData['app'];
+        $appStore = $this->getAppStore($request, $app->id);
+        return $this->confirmOurOrder($request, $accessToken->userId,$appStore->storeId);
     }
     // {
     //     $app = $this->getMyApp($request);
