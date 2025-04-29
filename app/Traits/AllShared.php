@@ -2034,7 +2034,9 @@ trait AllShared
 
             ->where(Stores::$id, $storeId)
             ->first([
-                Stores::$id
+                Stores::$id,
+                Stores::$typeId,
+
             ]);
         // print_r($store);
 
