@@ -2067,7 +2067,7 @@ trait AllShared
             ->where(AppStores::$appId, '=', $appId)
             ->where(AppStores::$storeId, '=', $storeId)
             ->first([
-                AppStores::$tableName . '.' . AppStores::$id
+                AppStores::$tableName . '.' . AppStores::$storeId
             ]);
 
         if ($appStore == null) {
