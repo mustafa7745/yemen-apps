@@ -325,7 +325,7 @@ class StoreManagerControllerGet extends Controller
 
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false);
         $accessToken = $myData['accessToken'];
-        // print_r($accessToken);
+        print_r($accessToken);
 
         $data = DB::table(Stores::$tableName)
             ->where(Stores::$tableName . '.' . Stores::$userId, '=', $accessToken->userId)
