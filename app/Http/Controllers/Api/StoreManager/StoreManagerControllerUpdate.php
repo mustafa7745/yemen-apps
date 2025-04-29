@@ -581,7 +581,7 @@ class StoreManagerControllerUpdate extends Controller
             $store = $myData['app'];
 
             $this->validRequestV1($request, [
-                'name' => 'required|string|max:9',
+                'name' => 'required|string|max:20',
                 'logo' => 'required|image|mimes:jpg|max:300'
             ]);
 
