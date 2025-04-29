@@ -580,7 +580,7 @@ class StoreManagerControllerUpdate extends Controller
             $accessToken = $myData['accessToken'];
             $store = $myData['store'];
 
-            print_r($store);
+            // print_r($store);
 
             $this->validRequestV1($request, [
                 'name' => 'required|string|max:20',
