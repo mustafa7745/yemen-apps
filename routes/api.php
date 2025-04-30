@@ -154,6 +154,8 @@ Route::prefix('v1/storeManager')->group(function () {
 
 
     Route::post('/cancelOrder', [StoreManagerControllerUpdate::class, 'cancelOrder']);
+    Route::post('/completeOrder', [StoreManagerControllerUpdate::class, 'completeOrder']);
+
 
 
 
