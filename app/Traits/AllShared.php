@@ -1696,7 +1696,7 @@ trait AllShared
                 // $this->whatsapp->sendMessageText($phoneNumber, $message);
             }
 
-        } elseif (preg_match('/\{(\d+)\}/', $message, $matches)) {
+        } elseif (preg_match('/^رمز التطبيق \{.*\}$/u', $message)) {
             // if ($user != null) {
             //     $whatsappMessage = DB::table(WhatsappMessages::$tableName)
             //         ->where(WhatsappMessages::$tableName . '.' . WhatsappMessages::$userId, '=', $user->id)
@@ -1715,14 +1715,16 @@ trait AllShared
             // }
 
 
-            $storeId = null;
-            if (preg_match('/\{(\d+)\}/', $message, $matches)) {
-                $storeId = $matches[1]; // الرقم المستخرج
-                // echo $number; // الناتج: 10
-            } else {
-                $whatsapp->sendMessageText($phoneNumber, "uncorrect format");
-                return response()->json(['success' => true]);
-            }
+            // $storeId = null;
+            preg_match('/\{(.*?)\}/', $message, $matches);
+            $storeId = $matches[1] ?? null;
+            // if (preg_match('/\{(\d+)\}/', $message, $matches)) {
+            //     $storeId = $matches[1]; // الرقم المستخرج
+            //     // echo $number; // الناتج: 10
+            // } else {
+            //     $whatsapp->sendMessageText($phoneNumber, "uncorrect format");
+            //     return response()->json(['success' => true]);
+            // }
 
             if ($user == null) {
                 $message = "يجب الاشتراك اولا";
