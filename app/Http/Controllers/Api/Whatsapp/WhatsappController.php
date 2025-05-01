@@ -30,12 +30,14 @@ class WhatsappController extends Controller
 
             $messageId = $request->input('entry.0.changes.0.value.messages.0.id');
 
-            
+
             Logger('Message Id:' . $messageId);
+            Logger('Phone :' . $phoneNumber);
+
             Logger('Message:' . $message);
 
-            return response()->json(['status' => 'received'], 200);
-            
+            // return response()->json(['status' => 'received'], 200);
+
             $phoneUtil = \libphonenumber\PhoneNumberUtil::getInstance();
             $number = $phoneUtil->parse("+" . $phoneNumber, null);
             $countryCode = $number->getCountryCode();
@@ -59,7 +61,7 @@ class WhatsappController extends Controller
         } catch (\Throwable $th) {
             Logger($th->getMessage());
             //throw $th;
-        } 
+        }
         // finally {
         //     // return response()->json(['success' => true]);
         //     return response()->json(['status' => 'received'], 200);

@@ -41,7 +41,8 @@ class WhatsappService
             "Authorization: Bearer " . $this->TOKEN
         );
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
+
         $resp = curl_exec($curl);
         $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
