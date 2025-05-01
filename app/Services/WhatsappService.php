@@ -20,6 +20,8 @@ class WhatsappService
 
         $url = 'https://graph.facebook.com/' . $this->VERSION . '/' . $this->PHONE_NUMBER_ID . '/messages';
         $data = [
+            "messaging_product" => "whatsapp",
+            "recipient_type" => "individual",
             'to' => $to,
             'type' => 'text',
             'text' => [
@@ -27,8 +29,8 @@ class WhatsappService
             ]
         ];
         // $data = [
-        //     "messaging_product" => "whatsapp",
-        //     "recipient_type" => "individual",
+            // "messaging_product" => "whatsapp",
+            // "recipient_type" => "individual",
         //     "to" => $to,
         //     "type" => "text",
         //     "text" => [
@@ -38,7 +40,7 @@ class WhatsappService
         // ];
 
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
+        // curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
