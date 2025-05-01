@@ -205,10 +205,14 @@ class WhatsappController extends Controller
                 UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId
             )
             ->where(UsersSessions::$tableName . '.' . UsersSessions::$userId, '=', $user->id)
+            ->where(UsersSessions::$tableName . '.' . UsersSessions::$isLogin, '=', 1)
+
             ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $appId)
+            
             ->first(
                 [
-                    UsersSessions::$tableName . '.' . UsersSessions::$id
+                    UsersSessions::$tableName . '.' . UsersSessions::$id,
+                    
                 ]
             );
 
