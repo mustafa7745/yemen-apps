@@ -169,7 +169,7 @@ class WhatsappController extends Controller
                 [Apps::$tableName . '.' . Apps::$id . ' as id']
             );
 
-        if ($app == null) {
+        if ($app != null) {
             $whatsapp->sendMessageText($phoneNumber, "التطبيق غير موجود");
             return;
         }
