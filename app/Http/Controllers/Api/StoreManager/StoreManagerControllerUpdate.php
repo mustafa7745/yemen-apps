@@ -414,6 +414,7 @@ class StoreManagerControllerUpdate extends Controller
                 ->update(
                     [
                         Orders::$situationId => Situations::$COMPLETED,
+                        Orders::$paid => 1,
                         Orders::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
                     ]
                 );

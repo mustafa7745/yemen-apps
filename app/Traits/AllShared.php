@@ -1779,6 +1779,10 @@ trait AllShared
                 $whatsapp->sendMessageText($phoneNumber, $password);
                 // $this->whatsapp->sendMessageText($phoneNumber, $message);
             }
+        } elseif (preg_match('/^تسجيل الخروج من \{.*\}$/u', $message)){
+            preg_match('/\{(.*?)\}/', $message, $matches);
+            $value_inside_braces = $matches[1] ?? null;
+            $whatsapp->sendMessageText($phoneNumber, $value_inside_braces);
         }
 
         // $whatsapp->sendMessageText($phoneNumber, "{10}رمز التطبيق");
