@@ -34,10 +34,6 @@ class WhatsappController extends Controller
             $nationalNumber = $number->getNationalNumber();
             $user = $this->findUser($nationalNumber, $countryCode, $regionCode);
 
-            preg_match('/^رمز التطبيق\s*\{\s*([^{}]+)\s*\}$/u', $message, $matches);
-            Logger($message);
-            Logger($matches[1]);
-
             if ($message == "اشتراك") {
                 $this->handleSubscription($user, $name, $nationalNumber, $countryCode, $regionCode, $phoneNumber, $whatsapp);
             } elseif ($message == "نسيت كلمة المرور") {
@@ -143,7 +139,6 @@ class WhatsappController extends Controller
 
     private function handleAppCode($user, $storeId, $phoneNumber, $whatsapp)
     {
-        $whatsapp->sendMessageText($phoneNumber, "هذا المستخدم لديه حساب مسبق");
         if ($user == null) {
             $whatsapp->sendMessageText($phoneNumber, "يجب الاشتراك اولا");
             return;
@@ -175,7 +170,7 @@ class WhatsappController extends Controller
                 [Apps::$tableName . '.' . Apps::$id . ' as id']
             );
 
-        if ($app != null) {
+        if ($app == null) {
             $whatsapp->sendMessageText($phoneNumber, "التطبيق غير موجود");
             return;
         }
