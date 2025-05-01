@@ -28,6 +28,9 @@ class WhatsappController extends Controller
             $name = $request->input('entry.0.changes.0.value.contacts.0.profile.name');
             $message = trim($message);
 
+            $messageId = $request->input('entry.0.changes.0.value.messages.0.id');
+
+            Logger('Message Id:' . $messageId);
             $phoneUtil = \libphonenumber\PhoneNumberUtil::getInstance();
             $number = $phoneUtil->parse("+" . $phoneNumber, null);
             $countryCode = $number->getCountryCode();
@@ -183,7 +186,7 @@ class WhatsappController extends Controller
             ->where(Apps::$id, $app->id)
             ->update([
                 Apps::$password => $hashedPassword,
-                Apps::$updatedAt =>Carbon::now()->format('Y-m-d H:i:s'),
+                Apps::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
 
         $whatsapp->sendMessageText($phoneNumber, "الرقم السري الجديد للتطبيق هو:");
@@ -208,11 +211,11 @@ class WhatsappController extends Controller
             ->where(UsersSessions::$tableName . '.' . UsersSessions::$isLogin, '=', 1)
 
             ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $appId)
-            
+
             ->first(
                 [
                     UsersSessions::$tableName . '.' . UsersSessions::$id,
-                    
+
                 ]
             );
 
@@ -227,7 +230,7 @@ class WhatsappController extends Controller
                 ]);
             $whatsapp->sendMessageText($phoneNumber, "تم تسجيل الخروج بنجاح (Session ID: {$userSession->id})");
         } else {
-            $whatsapp->sendMessageText($phoneNumber, "ثمة خطأ في تحديد الجلسة");
+            $whatsapp->sendMessageText($phoneNumber, "ثمة خطأ");
         }
     }
 
