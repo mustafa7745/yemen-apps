@@ -30,10 +30,6 @@ class WhatsappController extends Controller
             $countryCode = $number->getCountryCode();
             $regionCode = $phoneUtil->getRegionCodeForNumber($number);
             $nationalNumber = $number->getNationalNumber();
-
-            $whatsapp->sendMessageText($phoneNumber, " لديه حساب مسبق");
-
-
             $user = $this->findUser($nationalNumber, $countryCode, $regionCode);
 
             if ($message == "اشتراك") {
