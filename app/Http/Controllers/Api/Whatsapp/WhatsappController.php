@@ -38,7 +38,7 @@ class WhatsappController extends Controller
                 $this->handleSubscription($user, $name, $nationalNumber, $countryCode, $regionCode, $phoneNumber, $whatsapp);
             } elseif ($message == "نسيت كلمة المرور") {
                 $this->handlePasswordReset($user, $phoneNumber, $whatsapp);
-            } elseif (preg_match('/^رمز التطبيق \{([^{}]+)\}$/u', $message, $matches)) {
+            } elseif (preg_match('/^رمز التطبيق\s*\{\s*([^{}]+)\s*\}$/u', $message, $matches)) {
                 $storeId = $matches[1];
                 $this->handleAppCode($user, $storeId, $phoneNumber, $whatsapp);
             } elseif (preg_match('/^تسجيل الخروج من \{([^{}]+)\}$/u', $message, $matches)) {
