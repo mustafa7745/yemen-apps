@@ -25,6 +25,7 @@ class WhatsappController extends Controller
             $phoneNumber = $request->input('entry.0.changes.0.value.messages.0.from');
             $message = $request->input('entry.0.changes.0.value.messages.0.text.body');
             $name = $request->input('entry.0.changes.0.value.contacts.0.profile.name');
+            $message = trim($message);
 
             $phoneUtil = \libphonenumber\PhoneNumberUtil::getInstance();
             $number = $phoneUtil->parse("+" . $phoneNumber, null);
