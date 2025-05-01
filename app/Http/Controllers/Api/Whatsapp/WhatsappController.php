@@ -23,6 +23,14 @@ class WhatsappController extends Controller
         try {
             $whatsapp = new WhatsappService();
 
+            // ✅ أرسل رد سريع لـ WhatsApp (يجب أن يكون أول خطوة بعد الفحص)
+            $response = response()->json(['received' => true], 200);
+            ob_end_clean();
+            header("Connection: close");
+            header("Content-Length: " . strlen($response->getContent()));
+            $response->send();
+            flush();
+
             $phoneNumber = $request->input('entry.0.changes.0.value.messages.0.from');
             $message = $request->input('entry.0.changes.0.value.messages.0.text.body');
             $name = $request->input('entry.0.changes.0.value.contacts.0.profile.name');
@@ -61,8 +69,7 @@ class WhatsappController extends Controller
         } catch (\Throwable $th) {
             Logger($th->getMessage());
             //throw $th;
-        }
-        finally {
+        } finally {
             // return response()->json(['success' => true]);
             return response()->json(['status' => 'received'], 200);
         }
@@ -82,10 +89,10 @@ class WhatsappController extends Controller
             ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
             ->where(Countries::$tableName . '.' . Countries::$region, '=', $regionCode)
             ->first([
-                Users::$tableName . '.' . Users::$id,
-                Users::$tableName . '.' . Users::$firstName,
-                Users::$tableName . '.' . Users::$lastName,
-            ]);
+                    Users::$tableName . '.' . Users::$id,
+                    Users::$tableName . '.' . Users::$firstName,
+                    Users::$tableName . '.' . Users::$lastName,
+                ]);
     }
 
     private function handleSubscription($user, $name, $nationalNumber, $countryCode, $regionCode, $phoneNumber, $whatsapp)
@@ -143,9 +150,9 @@ class WhatsappController extends Controller
         DB::table(Users::$tableName)
             ->where(Users::$id, $user->id)
             ->update([
-                Users::$password => $hashedPassword,
-                Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-            ]);
+                    Users::$password => $hashedPassword,
+                    Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ]);
 
         $whatsapp->sendMessageText($phoneNumber, "الرقم السري الجديد هو:");
         $whatsapp->sendMessageText($phoneNumber, $password);
@@ -195,9 +202,9 @@ class WhatsappController extends Controller
         DB::table(Apps::$tableName)
             ->where(Apps::$id, $app->id)
             ->update([
-                Apps::$password => $hashedPassword,
-                Apps::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-            ]);
+                    Apps::$password => $hashedPassword,
+                    Apps::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+                ]);
 
         $whatsapp->sendMessageText($phoneNumber, "الرقم السري الجديد للتطبيق هو:");
         $whatsapp->sendMessageText($phoneNumber, $password);
@@ -233,11 +240,11 @@ class WhatsappController extends Controller
             DB::table(table: UsersSessions::$tableName)
                 ->where(UsersSessions::$id, '=', $userSession->id)
                 ->update([
-                    UsersSessions::$isLogin => 0,
-                    UsersSessions::$logoutCount => DB::raw(UsersSessions::$logoutCount . ' + 1'),
-                    UsersSessions::$lastLogoutAt => Carbon::now()->format('Y-m-d H:i:s'),
-                    UsersSessions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s')
-                ]);
+                        UsersSessions::$isLogin => 0,
+                        UsersSessions::$logoutCount => DB::raw(UsersSessions::$logoutCount . ' + 1'),
+                        UsersSessions::$lastLogoutAt => Carbon::now()->format('Y-m-d H:i:s'),
+                        UsersSessions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s')
+                    ]);
             $whatsapp->sendMessageText($phoneNumber, "تم تسجيل الخروج بنجاح (Session ID: {$userSession->id})");
         } else {
             $whatsapp->sendMessageText($phoneNumber, "ثمة خطأ");
