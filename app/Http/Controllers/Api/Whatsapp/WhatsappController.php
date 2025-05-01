@@ -57,15 +57,15 @@ class WhatsappController extends Controller
                 $this->handleLogout($user, $appId, $phoneNumber, $whatsapp);
             }
 
-            return response()->json(['status' => 'received'], 200);
+            // return response()->json(['status' => 'received'], 200);
         } catch (\Throwable $th) {
             Logger($th->getMessage());
             //throw $th;
         }
-        // finally {
-        //     // return response()->json(['success' => true]);
-        //     return response()->json(['status' => 'received'], 200);
-        // }
+        finally {
+            // return response()->json(['success' => true]);
+            return response()->json(['status' => 'received'], 200);
+        }
 
     }
 
