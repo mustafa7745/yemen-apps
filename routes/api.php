@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\StoreManager\StoreManagerControllerUpdate;
 use App\Http\Controllers\Api\Stores\StoresControllerAdd;
 use App\Http\Controllers\Api\Stores\StoresControllerGet;
 use App\Http\Controllers\Api\Stores\StoresControllerUpdate;
+use App\Http\Controllers\Api\Stores\WhatsappController;
 use App\Http\Controllers\Api\Users\UserControllerAdd;
 use App\Http\Controllers\Api\Users\UserControllerGet;
 use App\Http\Controllers\Api\Users\UserControllerUpdate;
@@ -59,7 +60,7 @@ Route::prefix('v1')->group(function () {
 
 
 
-    Route::post('/whatsapp_webhook', [StoresControllerGet::class, 'whatsapp_webhook']);
+    Route::post('/whatsapp_webhook', [WhatsappController::class, 'whatsapp_webhook']);
 
 
 

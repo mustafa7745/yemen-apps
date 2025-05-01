@@ -1,0 +1,179 @@
+<?php
+namespace App\Http\Controllers\Api\Stores;
+
+use App\Http\Controllers\Controller;
+use App\Models\Apps;
+use App\Models\AppStores;
+use App\Models\Countries;
+use App\Models\DevicesSessions;
+use App\Models\Stores;
+use App\Models\Users;
+use App\Models\UsersSessions;
+use App\Services\WhatsappService;
+use DB;
+use Hash;
+use Request;
+
+class WhatsappController extends Controller
+{
+    public function whatsapp_webhook(Request $request)
+    {
+        $whatsapp = new WhatsappService();
+
+        $phoneNumber = $request->input('entry.0.changes.0.value.messages.0.from');
+        $message = $request->input('entry.0.changes.0.value.messages.0.text.body');
+        $name = $request->input('entry.0.changes.0.value.contacts.0.profile.name');
+
+        $phoneUtil = \libphonenumber\PhoneNumberUtil::getInstance();
+        $number = $phoneUtil->parse("+" . $phoneNumber, null);
+        $countryCode = $number->getCountryCode();
+        $regionCode = $phoneUtil->getRegionCodeForNumber($number);
+        $nationalNumber = $number->getNationalNumber();
+
+        $user = $this->findUser($nationalNumber, $countryCode, $regionCode);
+
+        if ($message == "اشتراك") {
+            $this->handleSubscription($user, $name, $nationalNumber, $countryCode, $regionCode, $phoneNumber, $whatsapp);
+        } elseif ($message == "نسيت كلمة المرور") {
+            $this->handlePasswordReset($user, $phoneNumber, $whatsapp);
+        } elseif (preg_match('/^رمز التطبيق \{([^{}]+)\}$/u', $message, $matches)) {
+            $storeId = $matches[1];
+            $this->handleAppCode($user, $storeId, $phoneNumber, $whatsapp);
+        } elseif (preg_match('/^تسجيل الخروج من \{([^{}]+)\}$/u', $message, $matches)) {
+            $appId = $matches[1];
+            $this->handleLogout($user, $appId, $phoneNumber, $whatsapp);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    private function findUser($nationalNumber, $countryCode, $regionCode)
+    {
+        return DB::table(Users::$tableName)
+            ->join(Countries::$tableName, Countries::$id, '=', Users::$countryId)
+            ->where(Users::$phone, $nationalNumber)
+            ->where(Countries::$code, $countryCode)
+            ->where(Countries::$region, $regionCode)
+            ->first([Users::$id, Users::$firstName, Users::$lastName]);
+    }
+
+    private function handleSubscription($user, $name, $nationalNumber, $countryCode, $regionCode, $phoneNumber, $whatsapp)
+    {
+        if ($user != null) {
+            $whatsapp->sendMessageText($phoneNumber, "هذا المستخدم لديه حساب مسبق");
+            return;
+        }
+
+        $country = DB::table(Countries::$tableName)
+            ->where(Countries::$code, $countryCode)
+            ->where(Countries::$region, $regionCode)
+            ->first();
+
+        $countryId = $country?->id ?? DB::table(Countries::$tableName)->insertGetId([
+            Countries::$code => $countryCode,
+            Countries::$region => $regionCode,
+            Countries::$createdAt => now(),
+            Countries::$updatedAt => now(),
+        ]);
+
+        $password = $this->generateRandomPassword();
+        $hashedPassword = Hash::make($password);
+
+        DB::table(Users::$tableName)->insert([
+            Users::$firstName => $name,
+            Users::$lastName => $name,
+            Users::$phone => $nationalNumber,
+            Users::$password => $hashedPassword,
+            Users::$countryId => $countryId,
+            Users::$createdAt => now(),
+            Users::$updatedAt => now(),
+        ]);
+
+        $msg = "تم اضافة هذا المستخدم بنجاح\n";
+        $msg .= "معلومات الدخول:\n";
+        $msg .= "المنطقة: {$regionCode}\n";
+        $msg .= "رقم الهاتف هو:\n+{$countryCode}{$nationalNumber}\n";
+        $msg .= "الرقم السري هو:";
+
+        $whatsapp->sendMessageText($phoneNumber, $msg);
+        $whatsapp->sendMessageText($phoneNumber, $password);
+    }
+
+    private function handlePasswordReset($user, $phoneNumber, $whatsapp)
+    {
+        if ($user == null) {
+            $whatsapp->sendMessageText($phoneNumber, "يجب الاشتراك اولا");
+            return;
+        }
+
+        $password = $this->generateRandomPassword();
+        $hashedPassword = Hash::make($password);
+
+        DB::table(Users::$tableName)
+            ->where(Users::$id, $user->id)
+            ->update([
+                Users::$password => $hashedPassword,
+                Users::$updatedAt => now(),
+            ]);
+
+        $whatsapp->sendMessageText($phoneNumber, "الرقم السري الجديد هو:");
+        $whatsapp->sendMessageText($phoneNumber, $password);
+    }
+
+    private function handleAppCode($user, $storeId, $phoneNumber, $whatsapp)
+    {
+        if ($user == null) {
+            $whatsapp->sendMessageText($phoneNumber, "يجب الاشتراك اولا");
+            return;
+        }
+
+        $app = DB::table(AppStores::$tableName)
+            ->where(AppStores::$storeId, $storeId)
+            ->where(Stores::$tableName . '.' . Stores::$userId, $user->id)
+            ->join(Apps::$tableName, Apps::$id, '=', AppStores::$appId)
+            ->join(Stores::$tableName, Stores::$id, '=', AppStores::$storeId)
+            ->join(Users::$tableName, Users::$id, '=', Stores::$userId)
+            ->first([Apps::$id . ' as id']);
+
+        if ($app == null) {
+            $whatsapp->sendMessageText($phoneNumber, "التطبيق غير موجود");
+            return;
+        }
+
+        $password = $this->generateRandomPassword();
+        $hashedPassword = Hash::make($password);
+
+        DB::table(Apps::$tableName)
+            ->where(Apps::$id, $app->id)
+            ->update([
+                Apps::$password => $hashedPassword,
+                Apps::$updatedAt => now(),
+            ]);
+
+        $whatsapp->sendMessageText($phoneNumber, "الرقم السري الجديد للتطبيق هو:");
+        $whatsapp->sendMessageText($phoneNumber, $password);
+    }
+
+    private function handleLogout($user, $appId, $phoneNumber, $whatsapp)
+    {
+        if ($user == null) {
+            $whatsapp->sendMessageText($phoneNumber, "يجب الاشتراك اولا");
+            return;
+        }
+
+        $userSession = DB::table(UsersSessions::$tableName)
+            ->join(DevicesSessions::$tableName, DevicesSessions::$id, '=', UsersSessions::$deviceSessionId)
+            ->where(DevicesSessions::$appId, $appId)
+            ->where(UsersSessions::$userId, $user->id)
+            ->first([UsersSessions::$id]);
+
+        if ($userSession != null) {
+            $whatsapp->sendMessageText($phoneNumber, "تم تسجيل الخروج بنجاح (Session ID: {$userSession->id})");
+        } else {
+            $whatsapp->sendMessageText($phoneNumber, "ثمة خطأ في تحديد الجلسة");
+        }
+    }
+
+
+
+}
