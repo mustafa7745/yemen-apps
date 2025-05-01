@@ -10,6 +10,7 @@ use App\Models\Stores;
 use App\Models\Users;
 use App\Models\UsersSessions;
 use App\Services\WhatsappService;
+use Carbon\Carbon;
 use DB;
 use Hash;
 use Illuminate\Http\Request;
@@ -89,8 +90,8 @@ class WhatsappController extends Controller
         $countryId = $country?->id ?? DB::table(Countries::$tableName)->insertGetId([
             Countries::$code => $countryCode,
             Countries::$region => $regionCode,
-            Countries::$createdAt => now(),
-            Countries::$updatedAt => now(),
+            Countries::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+            Countries::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
         ]);
 
         $password = $this->generateRandomPassword();
@@ -102,8 +103,8 @@ class WhatsappController extends Controller
             Users::$phone => $nationalNumber,
             Users::$password => $hashedPassword,
             Users::$countryId => $countryId,
-            Users::$createdAt => now(),
-            Users::$updatedAt => now(),
+            Users::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+            Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
         ]);
 
         $msg = "تم اضافة هذا المستخدم بنجاح\n";
@@ -130,7 +131,7 @@ class WhatsappController extends Controller
             ->where(Users::$id, $user->id)
             ->update([
                 Users::$password => $hashedPassword,
-                Users::$updatedAt => now(),
+                Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
 
         $whatsapp->sendMessageText($phoneNumber, "الرقم السري الجديد هو:");
@@ -182,7 +183,7 @@ class WhatsappController extends Controller
             ->where(Apps::$id, $app->id)
             ->update([
                 Apps::$password => $hashedPassword,
-                Apps::$updatedAt => now(),
+                Apps::$updatedAt =>Carbon::now()->format('Y-m-d H:i:s'),
             ]);
 
         $whatsapp->sendMessageText($phoneNumber, "الرقم السري الجديد للتطبيق هو:");
@@ -197,27 +198,44 @@ class WhatsappController extends Controller
         }
 
         $userSession = DB::table(UsersSessions::$tableName)
-                ->join(
-                    DevicesSessions::$tableName,
-                    DevicesSessions::$tableName . '.' . DevicesSessions::$id,
-                    '=',
-                    UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId
-                )
-                ->where(UsersSessions::$tableName . '.' . UsersSessions::$userId, '=', $user->id)
-                ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $appId)
-                ->first(
-                    [
-                        UsersSessions::$tableName . '.' . UsersSessions::$id
-                    ]
-                );
+            ->join(
+                DevicesSessions::$tableName,
+                DevicesSessions::$tableName . '.' . DevicesSessions::$id,
+                '=',
+                UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId
+            )
+            ->where(UsersSessions::$tableName . '.' . UsersSessions::$userId, '=', $user->id)
+            ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $appId)
+            ->first(
+                [
+                    UsersSessions::$tableName . '.' . UsersSessions::$id
+                ]
+            );
 
         if ($userSession != null) {
+            DB::table(table: UsersSessions::$tableName)
+                ->where(UsersSessions::$id, '=', $userSession->id)
+                ->update([
+                    UsersSessions::$isLogin => 0,
+                    UsersSessions::$logoutCount => DB::raw(UsersSessions::$logoutCount . ' + 1'),
+                    UsersSessions::$lastLogoutAt => Carbon::now()->format('Y-m-d H:i:s'),
+                    UsersSessions::$updatedAt => Carbon::now()->format('Y-m-d H:i:s')
+                ]);
             $whatsapp->sendMessageText($phoneNumber, "تم تسجيل الخروج بنجاح (Session ID: {$userSession->id})");
         } else {
             $whatsapp->sendMessageText($phoneNumber, "ثمة خطأ في تحديد الجلسة");
         }
     }
 
-
+    function generateRandomPassword($length = 8)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()';
+        $charactersLength = strlen($characters);
+        $randomPassword = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomPassword .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomPassword;
+    }
 
 }
