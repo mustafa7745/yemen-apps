@@ -138,6 +138,7 @@ class WhatsappController extends Controller
 
     private function handleAppCode($user, $storeId, $phoneNumber, $whatsapp)
     {
+        $whatsapp->sendMessageText($phoneNumber, "هذا المستخدم لديه حساب مسبق");
         if ($user == null) {
             $whatsapp->sendMessageText($phoneNumber, "يجب الاشتراك اولا");
             return;
