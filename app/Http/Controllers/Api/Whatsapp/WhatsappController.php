@@ -50,11 +50,20 @@ class WhatsappController extends Controller
     private function findUser($nationalNumber, $countryCode, $regionCode)
     {
         return DB::table(Users::$tableName)
-            ->join(Countries::$tableName, Countries::$id, '=', Users::$countryId)
-            ->where(Users::$phone, $nationalNumber)
-            ->where(Countries::$code, $countryCode)
-            ->where(Countries::$region, $regionCode)
-            ->first([Users::$id, Users::$firstName, Users::$lastName]);
+            ->join(
+                Countries::$tableName,
+                Countries::$tableName . '.' . Countries::$id,
+                '=',
+                Users::$tableName . '.' . Users::$countryId
+            )
+            ->where(Users::$tableName . '.' . Users::$phone, '=', $nationalNumber)
+            ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
+            ->where(Countries::$tableName . '.' . Countries::$region, '=', $regionCode)
+            ->first([
+                Users::$tableName . '.' . Users::$id,
+                Users::$tableName . '.' . Users::$firstName,
+                Users::$tableName . '.' . Users::$lastName,
+            ]);
     }
 
     private function handleSubscription($user, $name, $nationalNumber, $countryCode, $regionCode, $phoneNumber, $whatsapp)

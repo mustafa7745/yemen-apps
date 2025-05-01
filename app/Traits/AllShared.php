@@ -1603,20 +1603,20 @@ trait AllShared
     //     $regionCode = $phoneUtil->getRegionCodeForNumber($number);
     //     $nationalNumber = $number->getNationalNumber();
     //     $user = DB::table(Users::$tableName)
-    //         ->join(
-    //             Countries::$tableName,
-    //             Countries::$tableName . '.' . Countries::$id,
-    //             '=',
-    //             Users::$tableName . '.' . Users::$countryId
-    //         )
-    //         ->where(Users::$tableName . '.' . Users::$phone, '=', $nationalNumber)
-    //         ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
-    //         ->where(Countries::$tableName . '.' . Countries::$region, '=', $regionCode)
+            // ->join(
+            //     Countries::$tableName,
+            //     Countries::$tableName . '.' . Countries::$id,
+            //     '=',
+            //     Users::$tableName . '.' . Users::$countryId
+            // )
+            // ->where(Users::$tableName . '.' . Users::$phone, '=', $nationalNumber)
+            // ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
+            // ->where(Countries::$tableName . '.' . Countries::$region, '=', $regionCode)
     //         ->first(
     //             [
-    //                 Users::$tableName . '.' . Users::$id,
-    //                 Users::$tableName . '.' . Users::$firstName,
-    //                 Users::$tableName . '.' . Users::$lastName,
+                    // Users::$tableName . '.' . Users::$id,
+                    // Users::$tableName . '.' . Users::$firstName,
+                    // Users::$tableName . '.' . Users::$lastName,
     //             ]
     //         );
     //     if ($message == "اشتراك") {
