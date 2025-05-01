@@ -56,7 +56,8 @@ class WhatsappController extends Controller
             Logger($th->getMessage());
             //throw $th;
         } finally {
-            return response()->json(['success' => true]);
+            // return response()->json(['success' => true]);
+            return response()->json(['status' => 'received'], 200);
         }
 
     }
