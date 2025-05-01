@@ -12,7 +12,7 @@ use App\Models\UsersSessions;
 use App\Services\WhatsappService;
 use DB;
 use Hash;
-use Request;
+use Illuminate\Http\Request;
 
 class WhatsappController extends Controller
 {
