@@ -50,6 +50,7 @@ use libphonenumber\PhoneNumberUtil;
 use Log;
 use Storage;
 use Str;
+use Symfony\Component\Cache\Traits\Relay\NullableReturnTrait;
 use Validator;
 
 trait AllShared
@@ -1779,13 +1780,34 @@ trait AllShared
                 $whatsapp->sendMessageText($phoneNumber, $password);
                 // $this->whatsapp->sendMessageText($phoneNumber, $message);
             }
-        } elseif (preg_match('/^تسجيل الخروج من \{.*\}$/u', $message)){
+        } elseif (preg_match('/^تسجيل الخروج من \{.*\}$/u', $message)) {
             preg_match('/\{(.*?)\}/', $message, $matches);
             $value_inside_braces = $matches[1] ?? null;
             $whatsapp->sendMessageText($phoneNumber, $value_inside_braces);
+
+            $userSession = DB::table(UsersSessions::$tableName)
+                ->join(
+                    DevicesSessions::$tableName,
+                    DevicesSessions::$tableName . '.' . DevicesSessions::$id,
+                    '=',
+                    UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId
+                )
+                ->where(Users::$tableName . '.' . Users::$id, '=', $user->id)
+                ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $value_inside_braces)
+                ->first(
+                    [
+                        UsersSessions::$tableName . '.' . UsersSessions::$id
+                    ]
+                );
+
+        }
+        if ($userSession != null) {
+                 $whatsapp->sendMessageText($phoneNumber, $userSession->id);
+
+        }else{
+            $whatsapp->sendMessageText($phoneNumber, "ثمة خطأ");
         }
 
-        // $whatsapp->sendMessageText($phoneNumber, "{10}رمز التطبيق");
         // exit;
         return response()->json(['success' => true]);
 
