@@ -1800,13 +1800,14 @@ trait AllShared
                     ]
                 );
 
-        }
-        if ($userSession != null) {
-                 $whatsapp->sendMessageText($phoneNumber, $userSession->id);
+            if ($userSession != null) {
+                $whatsapp->sendMessageText($phoneNumber, $userSession->id);
 
-        }else{
-            $whatsapp->sendMessageText($phoneNumber, "ثمة خطأ");
+            } else {
+                $whatsapp->sendMessageText($phoneNumber, "ثمة خطأ");
+            }
         }
+
 
         // exit;
         return response()->json(['success' => true]);
