@@ -13,7 +13,7 @@ use App\Http\Controllers\Api\Stores\StoresControllerUpdate;
 use App\Http\Controllers\Api\Users\UserControllerAdd;
 use App\Http\Controllers\Api\Users\UserControllerGet;
 use App\Http\Controllers\Api\Users\UserControllerUpdate;
-use App\Http\Controllers\Api\WhatsApp\WhatsappController;
+use App\Http\Controllers\Api\Whatsapp\WhatsappController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
