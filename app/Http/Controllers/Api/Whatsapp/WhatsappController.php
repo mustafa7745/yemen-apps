@@ -34,6 +34,10 @@ class WhatsappController extends Controller
             $nationalNumber = $number->getNationalNumber();
             $user = $this->findUser($nationalNumber, $countryCode, $regionCode);
 
+            preg_match('/^رمز التطبيق\s*\{\s*([^{}]+)\s*\}$/u', $message, $matches);
+            Logger($message);
+            Logger($matches[1]);
+
             if ($message == "اشتراك") {
                 $this->handleSubscription($user, $name, $nationalNumber, $countryCode, $regionCode, $phoneNumber, $whatsapp);
             } elseif ($message == "نسيت كلمة المرور") {
