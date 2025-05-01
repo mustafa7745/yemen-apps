@@ -31,6 +31,8 @@ class WhatsappController extends Controller
             $messageId = $request->input('entry.0.changes.0.value.messages.0.id');
 
             Logger('Message Id:' . $messageId);
+            Logger('Message:' . $message);
+
             $phoneUtil = \libphonenumber\PhoneNumberUtil::getInstance();
             $number = $phoneUtil->parse("+" . $phoneNumber, null);
             $countryCode = $number->getCountryCode();
