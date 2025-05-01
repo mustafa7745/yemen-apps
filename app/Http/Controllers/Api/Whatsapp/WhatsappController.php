@@ -13,6 +13,7 @@ use App\Services\WhatsappService;
 use DB;
 use Hash;
 use Illuminate\Http\Request;
+use Illuminate\Log\Logger;
 
 class WhatsappController extends Controller
 {
@@ -45,6 +46,7 @@ class WhatsappController extends Controller
             }
 
         } catch (\Throwable $th) {
+            Logger($th->getMessage());
             //throw $th;
         } finally {
             return response()->json(['success' => true]);
