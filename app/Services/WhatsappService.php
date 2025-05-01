@@ -35,11 +35,10 @@ class WhatsappService
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-        $headers = array(
-            "Accept: application/json",
-            "Content-Type: application/json",
-            "Authorization: Bearer " . $this->TOKEN
-        );
+        $headers = [
+            'Authorization: Bearer ' . $this->TOKEN,
+            'Content-Type: application/json'
+        ];
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
 

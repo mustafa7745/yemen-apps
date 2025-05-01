@@ -23,14 +23,6 @@ class WhatsappController extends Controller
         try {
             $whatsapp = new WhatsappService();
 
-            // ✅ أرسل رد سريع لـ WhatsApp (يجب أن يكون أول خطوة بعد الفحص)
-            $response = response()->json(['received' => true], 200);
-            ob_end_clean();
-            header("Connection: close");
-            header("Content-Length: " . strlen($response->getContent()));
-            $response->send();
-            flush();
-
             $phoneNumber = $request->input('entry.0.changes.0.value.messages.0.from');
             $message = $request->input('entry.0.changes.0.value.messages.0.text.body');
             $name = $request->input('entry.0.changes.0.value.contacts.0.profile.name');
@@ -70,8 +62,8 @@ class WhatsappController extends Controller
             Logger($th->getMessage());
             //throw $th;
         } finally {
-            // return response()->json(['success' => true]);
-            return response()->json(['status' => 'received'], 200);
+            return response()->json(['success' => true]);
+            // return response()->json(['status' => 'received'], 200);
         }
 
     }
