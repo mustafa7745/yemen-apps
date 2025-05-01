@@ -1556,284 +1556,284 @@ trait AllShared
     // {
     //     $this->whatsapp = $whatsapp;
     // }
-    public function whatsapp_webhook(Request $request)
-    {
-        $whatsapp = new WhatsappService();
-        // $verifyToken = '774519161'; // Replace with your verify token
-        // $challenge = $request->query('hub_challenge');
-        // $token = $request->query('hub_verify_token');
+    // public function whatsapp_webhook(Request $request)
+    // {
+    //     $whatsapp = new WhatsappService();
+    //     // $verifyToken = '774519161'; // Replace with your verify token
+    //     // $challenge = $request->query('hub_challenge');
+    //     // $token = $request->query('hub_verify_token');
 
-        // if ($token === $verifyToken) {
-        //     return response($challenge, 200);
-        // }
+    //     // if ($token === $verifyToken) {
+    //     //     return response($challenge, 200);
+    //     // }
 
-        // return response()->json(['error' => 'Invalid verify token'], 403);
+    //     // return response()->json(['error' => 'Invalid verify token'], 403);
 
-        // $hub_verify_token = "774519161";
-        // if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['hub_challenge']) && isset($_GET['hub_verify_token']) && $_GET["hub_verify_token"] === $hub_verify_token) {
-        //     echo $_GET['hub_challenge'];
-        //     exit;
-        // }
+    //     // $hub_verify_token = "774519161";
+    //     // if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['hub_challenge']) && isset($_GET['hub_verify_token']) && $_GET["hub_verify_token"] === $hub_verify_token) {
+    //     //     echo $_GET['hub_challenge'];
+    //     //     exit;
+    //     // }
 
-        // Log::info('WhatsApp Webhook Payload:', $request->all());
-
-
-        // $input = file_get_contents('php://input');
-        // $input = json_decode($input, true);
-        // $message = $input['entry'][0]['changes'][0]['value']['messages'][0]['text']['body'];
-        // $phone_number = $input['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id'];
-        $phoneNumber = $request->input('entry.0.changes.0.value.messages.0.from');
-        $message = $request->input('entry.0.changes.0.value.messages.0.text.body');
-        // $countryCode = substr($phoneNumber, 0, 3);
-        // $phone = substr($phoneNumber, 3);
-        //
-        $phoneUtil = PhoneNumberUtil::getInstance();
-        // try {
-        //     $swissNumberProto = $phoneUtil->parse($swissNumberStr, "CH");
-        //     var_dump($swissNumberProto);
-        // } catch (\libphonenumber\NumberParseException $e) {
-        //     var_dump($e);
-        // }
+    //     // Log::info('WhatsApp Webhook Payload:', $request->all());
 
 
-        // Get the region code (e.g., 'GB' for United Kingdom)
-        $number = $phoneUtil->parse("+" . $phoneNumber, null);
-        // Get the country code
-        $countryCode = $number->getCountryCode();
-        $regionCode = $phoneUtil->getRegionCodeForNumber($number);
-        $nationalNumber = $number->getNationalNumber();
-        $user = DB::table(Users::$tableName)
-            ->join(
-                Countries::$tableName,
-                Countries::$tableName . '.' . Countries::$id,
-                '=',
-                Users::$tableName . '.' . Users::$countryId
-            )
-            ->where(Users::$tableName . '.' . Users::$phone, '=', $nationalNumber)
-            ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
-            ->where(Countries::$tableName . '.' . Countries::$region, '=', $regionCode)
-            ->first(
-                [
-                    Users::$tableName . '.' . Users::$id,
-                    Users::$tableName . '.' . Users::$firstName,
-                    Users::$tableName . '.' . Users::$lastName,
-                ]
-            );
-        if ($message == "اشتراك") {
-            if ($user == null) {
-                $country = DB::table(Countries::$tableName)
-                    // ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
-                    ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
-                    ->where(Countries::$tableName . '.' . Countries::$region, '=', $regionCode)
-
-                    ->first();
-
-                $countryId = null;
-                if ($country == null) {
-                    $countryId = DB::table(table: Countries::$tableName)
-                        ->insertGetId([
-                            Countries::$id => null,
-                            Countries::$code => $countryCode,
-                            Countries::$region => $regionCode,
-                            Countries::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                            Countries::$updatedAt => Carbon::now()->format('Y-m-d H:i:s')
-                        ]);
-                } else {
-                    $countryId = $country->id;
-                }
-
-                $name = $request->input('entry.0.changes.0.value.contacts.0.profile.name');
-                $password = $this->generateRandomPassword();
-                $hashedPassword = Hash::make($password);
-                $insertedId = DB::table(table: Users::$tableName)
-                    ->insertGetId([
-                        Users::$id => null,
-                        Users::$firstName => $name,
-                        Users::$lastName => $name,
-                        Users::$phone => $nationalNumber,
-                        Users::$password => $hashedPassword,
-                        Users::$countryId => $countryId,
-                        Users::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
-                        Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-                    ]);
-                $message = "تم اضافة هذا المستخدم بنجاح";
-                $message = $message . "\n";
-                $message = $message . "معلومات الدخول: ";
-                $message = $message . "\n";
-                $message = $message . "المنطقة: " . ' ' . $regionCode;
-                $message = $message . "\n";
-                $message = $message . "رقم الهاتف هو: ";
-                $message = $message . "\n";
-                $message = $message . "+" . $countryCode . $nationalNumber;
-                $message = $message . "\n";
-
-                $message = $message . "الرقم السري هو: ";
-                $whatsapp->sendMessageText($phoneNumber, $message);
-                $whatsapp->sendMessageText($phoneNumber, $password);
-            } else {
-                $message = "هذا المستخدم لديه حساب مسبق";
-                $whatsapp->sendMessageText($phoneNumber, $message);
-            }
-        } elseif ($message == "نسيت كلمة المرور") {
-            if ($user == null) {
-                $message = "يجب الاشتراك اولا";
-                $whatsapp->sendMessageText($phoneNumber, $message);
-            } else {
-                $password = $this->generateRandomPassword();
-                $hashedPassword = Hash::make($password);
-                ///
-                DB::table(table: Users::$tableName)
-                    ->where(Users::$id, '=', $user->id)
-                    ->update(
-                        [
-                            Users::$password => $hashedPassword,
-                            Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-                        ]
-                    );
-                $message = "الرقم السري الجديد هو: ";
-                $whatsapp->sendMessageText($phoneNumber, $message);
-                $whatsapp->sendMessageText($phoneNumber, $password);
-                // $this->whatsapp->sendMessageText($phoneNumber, $message);
-            }
-
-        } elseif (preg_match('/^رمز التطبيق \{.*\}$/u', $message)) {
-            // if ($user != null) {
-            //     $whatsappMessage = DB::table(WhatsappMessages::$tableName)
-            //         ->where(WhatsappMessages::$tableName . '.' . WhatsappMessages::$userId, '=', $user->id)
-            //         ->first(
-            //             [
-            //                 Users::$tableName . '.' . Users::$id,
-            //                 Users::$tableName . '.' . Users::$firstName,
-            //                 Users::$tableName . '.' . Users::$lastName,
-            //             ]
-            //         );
-            //     if ($whatsappMessage->sevicesMode == 1) {
-            //         if ($message == 1) {
-            //         }
-
-            //     }
-            // }
+    //     // $input = file_get_contents('php://input');
+    //     // $input = json_decode($input, true);
+    //     // $message = $input['entry'][0]['changes'][0]['value']['messages'][0]['text']['body'];
+    //     // $phone_number = $input['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id'];
+    //     $phoneNumber = $request->input('entry.0.changes.0.value.messages.0.from');
+    //     $message = $request->input('entry.0.changes.0.value.messages.0.text.body');
+    //     // $countryCode = substr($phoneNumber, 0, 3);
+    //     // $phone = substr($phoneNumber, 3);
+    //     //
+    //     $phoneUtil = PhoneNumberUtil::getInstance();
+    //     // try {
+    //     //     $swissNumberProto = $phoneUtil->parse($swissNumberStr, "CH");
+    //     //     var_dump($swissNumberProto);
+    //     // } catch (\libphonenumber\NumberParseException $e) {
+    //     //     var_dump($e);
+    //     // }
 
 
-            // $storeId = null;
-            preg_match('/\{(.*?)\}/', $message, $matches);
-            $storeId = $matches[1] ?? null;
-            // if (preg_match('/\{(\d+)\}/', $message, $matches)) {
-            //     $storeId = $matches[1]; // الرقم المستخرج
-            //     // echo $number; // الناتج: 10
-            // } else {
-            //     $whatsapp->sendMessageText($phoneNumber, "uncorrect format");
-            //     return response()->json(['success' => true]);
-            // }
+    //     // Get the region code (e.g., 'GB' for United Kingdom)
+    //     $number = $phoneUtil->parse("+" . $phoneNumber, null);
+    //     // Get the country code
+    //     $countryCode = $number->getCountryCode();
+    //     $regionCode = $phoneUtil->getRegionCodeForNumber($number);
+    //     $nationalNumber = $number->getNationalNumber();
+    //     $user = DB::table(Users::$tableName)
+    //         ->join(
+    //             Countries::$tableName,
+    //             Countries::$tableName . '.' . Countries::$id,
+    //             '=',
+    //             Users::$tableName . '.' . Users::$countryId
+    //         )
+    //         ->where(Users::$tableName . '.' . Users::$phone, '=', $nationalNumber)
+    //         ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
+    //         ->where(Countries::$tableName . '.' . Countries::$region, '=', $regionCode)
+    //         ->first(
+    //             [
+    //                 Users::$tableName . '.' . Users::$id,
+    //                 Users::$tableName . '.' . Users::$firstName,
+    //                 Users::$tableName . '.' . Users::$lastName,
+    //             ]
+    //         );
+    //     if ($message == "اشتراك") {
+    //         if ($user == null) {
+    //             $country = DB::table(Countries::$tableName)
+    //                 // ->where(Users::$tableName . '.' . Users::$countryCode, '=', $countryCode)
+    //                 ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
+    //                 ->where(Countries::$tableName . '.' . Countries::$region, '=', $regionCode)
 
-            if ($user == null) {
-                $message = "يجب الاشتراك اولا";
-                $whatsapp->sendMessageText($phoneNumber, $message);
-            } else {
-                $password = $this->generateRandomPassword();
-                $hashedPassword = Hash::make($password);
-                ///
-                $whatsapp->sendMessageText($phoneNumber, $storeId);
-                $whatsapp->sendMessageText($phoneNumber, $user->id);
+    //                 ->first();
 
-                $app = DB::table(table: AppStores::$tableName)
-                    ->where(AppStores::$tableName . '.' . AppStores::$storeId, '=', $storeId)
-                    ->where(Stores::$tableName . '.' . Stores::$userId, '=', $user->id)
+    //             $countryId = null;
+    //             if ($country == null) {
+    //                 $countryId = DB::table(table: Countries::$tableName)
+    //                     ->insertGetId([
+    //                         Countries::$id => null,
+    //                         Countries::$code => $countryCode,
+    //                         Countries::$region => $regionCode,
+    //                         Countries::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+    //                         Countries::$updatedAt => Carbon::now()->format('Y-m-d H:i:s')
+    //                     ]);
+    //             } else {
+    //                 $countryId = $country->id;
+    //             }
 
-                    ->join(
-                        Apps::$tableName,
-                        Apps::$tableName . '.' . Apps::$id,
-                        '=',
-                        AppStores::$tableName . '.' . AppStores::$appId
-                    )
-                    ->join(
-                        Stores::$tableName,
-                        Stores::$tableName . '.' . Stores::$id,
-                        '=',
-                        AppStores::$tableName . '.' . AppStores::$storeId
-                    )
-                    ->join(
-                        Users::$tableName,
-                        Users::$tableName . '.' . Users::$id,
-                        '=',
-                        Stores::$tableName . '.' . Stores::$userId
-                    )
-                    ->first(
-                        [Apps::$tableName . '.' . Apps::$id . ' as id']
-                    );
+    //             $name = $request->input('entry.0.changes.0.value.contacts.0.profile.name');
+    //             $password = $this->generateRandomPassword();
+    //             $hashedPassword = Hash::make($password);
+    //             $insertedId = DB::table(table: Users::$tableName)
+    //                 ->insertGetId([
+    //                     Users::$id => null,
+    //                     Users::$firstName => $name,
+    //                     Users::$lastName => $name,
+    //                     Users::$phone => $nationalNumber,
+    //                     Users::$password => $hashedPassword,
+    //                     Users::$countryId => $countryId,
+    //                     Users::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
+    //                     Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+    //                 ]);
+    //             $message = "تم اضافة هذا المستخدم بنجاح";
+    //             $message = $message . "\n";
+    //             $message = $message . "معلومات الدخول: ";
+    //             $message = $message . "\n";
+    //             $message = $message . "المنطقة: " . ' ' . $regionCode;
+    //             $message = $message . "\n";
+    //             $message = $message . "رقم الهاتف هو: ";
+    //             $message = $message . "\n";
+    //             $message = $message . "+" . $countryCode . $nationalNumber;
+    //             $message = $message . "\n";
 
-                if ($app == null) {
-                    $whatsapp->sendMessageText($phoneNumber, "app not found");
-                    return response()->json(['success' => true]);
-                }
+    //             $message = $message . "الرقم السري هو: ";
+    //             $whatsapp->sendMessageText($phoneNumber, $message);
+    //             $whatsapp->sendMessageText($phoneNumber, $password);
+    //         } else {
+    //             $message = "هذا المستخدم لديه حساب مسبق";
+    //             $whatsapp->sendMessageText($phoneNumber, $message);
+    //         }
+    //     } elseif ($message == "نسيت كلمة المرور") {
+    //         if ($user == null) {
+    //             $message = "يجب الاشتراك اولا";
+    //             $whatsapp->sendMessageText($phoneNumber, $message);
+    //         } else {
+    //             $password = $this->generateRandomPassword();
+    //             $hashedPassword = Hash::make($password);
+    //             ///
+    //             DB::table(table: Users::$tableName)
+    //                 ->where(Users::$id, '=', $user->id)
+    //                 ->update(
+    //                     [
+    //                         Users::$password => $hashedPassword,
+    //                         Users::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+    //                     ]
+    //                 );
+    //             $message = "الرقم السري الجديد هو: ";
+    //             $whatsapp->sendMessageText($phoneNumber, $message);
+    //             $whatsapp->sendMessageText($phoneNumber, $password);
+    //             // $this->whatsapp->sendMessageText($phoneNumber, $message);
+    //         }
 
-                // $whatsapp->sendMessageText($phoneNumber, json_encode($app) . " ID");
+    //     } elseif (preg_match('/^رمز التطبيق \{.*\}$/u', $message)) {
+    //         // if ($user != null) {
+    //         //     $whatsappMessage = DB::table(WhatsappMessages::$tableName)
+    //         //         ->where(WhatsappMessages::$tableName . '.' . WhatsappMessages::$userId, '=', $user->id)
+    //         //         ->first(
+    //         //             [
+    //         //                 Users::$tableName . '.' . Users::$id,
+    //         //                 Users::$tableName . '.' . Users::$firstName,
+    //         //                 Users::$tableName . '.' . Users::$lastName,
+    //         //             ]
+    //         //         );
+    //         //     if ($whatsappMessage->sevicesMode == 1) {
+    //         //         if ($message == 1) {
+    //         //         }
 
-                DB::table(table: Apps::$tableName)
-                    ->where(Apps::$id, '=', $app->id)
-                    ->update(
-                        [
-                            Apps::$password => $hashedPassword,
-                            Apps::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
-                        ]
-                    );
-                $message = "الرقم السري الجديد للتطبيق هو: ";
-                $whatsapp->sendMessageText($phoneNumber, $message);
-                $whatsapp->sendMessageText($phoneNumber, $password);
-                // $this->whatsapp->sendMessageText($phoneNumber, $message);
-            }
-        } elseif (preg_match('/^تسجيل الخروج من \{.*\}$/u', $message)) {
-            preg_match('/\{(.*?)\}/', $message, $matches); 
-            $value_inside_braces = $matches[1] ?? null;
-            $whatsapp->sendMessageText($phoneNumber, $value_inside_braces);
-
-            $userSession = DB::table(UsersSessions::$tableName)
-                ->join(
-                    DevicesSessions::$tableName,
-                    DevicesSessions::$tableName . '.' . DevicesSessions::$id,
-                    '=',
-                    UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId
-                )
-                ->where(Users::$tableName . '.' . Users::$id, '=', $user->id)
-                ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $value_inside_braces)
-                ->first(
-                    [
-                        UsersSessions::$tableName . '.' . UsersSessions::$id
-                    ]
-                );
-
-            if ($userSession != null) {
-                $whatsapp->sendMessageText($phoneNumber, $userSession->id."MOO");
-
-            } else {
-                $whatsapp->sendMessageText($phoneNumber, "ثمة خطأ");
-            }
-        }
+    //         //     }
+    //         // }
 
 
-        // exit;
-        return response()->json(['success' => true]);
+    //         // $storeId = null;
+    //         preg_match('/\{(.*?)\}/', $message, $matches);
+    //         $storeId = $matches[1] ?? null;
+    //         // if (preg_match('/\{(\d+)\}/', $message, $matches)) {
+    //         //     $storeId = $matches[1]; // الرقم المستخرج
+    //         //     // echo $number; // الناتج: 10
+    //         // } else {
+    //         //     $whatsapp->sendMessageText($phoneNumber, "uncorrect format");
+    //         //     return response()->json(['success' => true]);
+    //         // }
 
-        // Log the entire incoming request payload
-        // Log::info('WhatsApp Webhook Payload:', $request->all());
+    //         if ($user == null) {
+    //             $message = "يجب الاشتراك اولا";
+    //             $whatsapp->sendMessageText($phoneNumber, $message);
+    //         } else {
+    //             $password = $this->generateRandomPassword();
+    //             $hashedPassword = Hash::make($password);
+    //             ///
+    //             $whatsapp->sendMessageText($phoneNumber, $storeId);
+    //             $whatsapp->sendMessageText($phoneNumber, $user->id);
 
-        // // Process the webhook data
-        // $payload = $request->all();
+    //             $app = DB::table(table: AppStores::$tableName)
+    //                 ->where(AppStores::$tableName . '.' . AppStores::$storeId, '=', $storeId)
+    //                 ->where(Stores::$tableName . '.' . Stores::$userId, '=', $user->id)
 
-        // if (isset($payload['entry'][0]['changes'][0]['value']['messages'][0])) {
-        //     $message = $payload['entry'][0]['changes'][0]['value']['messages'][0];
-        //     $from = $message['from']; // Sender's phone number
-        //     $text = $message['text']['body']; // Message content
+    //                 ->join(
+    //                     Apps::$tableName,
+    //                     Apps::$tableName . '.' . Apps::$id,
+    //                     '=',
+    //                     AppStores::$tableName . '.' . AppStores::$appId
+    //                 )
+    //                 ->join(
+    //                     Stores::$tableName,
+    //                     Stores::$tableName . '.' . Stores::$id,
+    //                     '=',
+    //                     AppStores::$tableName . '.' . AppStores::$storeId
+    //                 )
+    //                 ->join(
+    //                     Users::$tableName,
+    //                     Users::$tableName . '.' . Users::$id,
+    //                     '=',
+    //                     Stores::$tableName . '.' . Stores::$userId
+    //                 )
+    //                 ->first(
+    //                     [Apps::$tableName . '.' . Apps::$id . ' as id']
+    //                 );
 
-        //     // Log the message details
-        //     Log::info("Received message from $from: $text");
+    //             if ($app == null) {
+    //                 $whatsapp->sendMessageText($phoneNumber, "app not found");
+    //                 return response()->json(['success' => true]);
+    //             }
 
-        //     // You can also save the message to the database or trigger other actions here
-        // }
+    //             // $whatsapp->sendMessageText($phoneNumber, json_encode($app) . " ID");
 
-        // // Return a 200 OK response to acknowledge receipt of the webhook
-        // return response()->json(['success' => true]);
-    }
+    //             DB::table(table: Apps::$tableName)
+    //                 ->where(Apps::$id, '=', $app->id)
+    //                 ->update(
+    //                     [
+    //                         Apps::$password => $hashedPassword,
+    //                         Apps::$updatedAt => Carbon::now()->format('Y-m-d H:i:s'),
+    //                     ]
+    //                 );
+    //             $message = "الرقم السري الجديد للتطبيق هو: ";
+    //             $whatsapp->sendMessageText($phoneNumber, $message);
+    //             $whatsapp->sendMessageText($phoneNumber, $password);
+    //             // $this->whatsapp->sendMessageText($phoneNumber, $message);
+    //         }
+    //     } elseif (preg_match('/^تسجيل الخروج من \{.*\}$/u', $message)) {
+    //         preg_match('/\{(.*?)\}/', $message, $matches); 
+    //         $value_inside_braces = $matches[1] ?? null;
+    //         $whatsapp->sendMessageText($phoneNumber, $value_inside_braces);
+
+    //         $userSession = DB::table(UsersSessions::$tableName)
+    //             ->join(
+    //                 DevicesSessions::$tableName,
+    //                 DevicesSessions::$tableName . '.' . DevicesSessions::$id,
+    //                 '=',
+    //                 UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId
+    //             )
+    //             ->where(Users::$tableName . '.' . Users::$id, '=', $user->id)
+    //             ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $value_inside_braces)
+    //             ->first(
+    //                 [
+    //                     UsersSessions::$tableName . '.' . UsersSessions::$id
+    //                 ]
+    //             );
+
+    //         if ($userSession != null) {
+    //             $whatsapp->sendMessageText($phoneNumber, $userSession->id."MOO");
+    //             return response()->json(['success' => true]);
+    //         } else {
+    //             $whatsapp->sendMessageText($phoneNumber, "ثمة خطأ");
+    //         }
+    //     }
+
+
+    //     // exit;
+    //     return response()->json(['success' => true]);
+
+    //     // Log the entire incoming request payload
+    //     // Log::info('WhatsApp Webhook Payload:', $request->all());
+
+    //     // // Process the webhook data
+    //     // $payload = $request->all();
+
+    //     // if (isset($payload['entry'][0]['changes'][0]['value']['messages'][0])) {
+    //     //     $message = $payload['entry'][0]['changes'][0]['value']['messages'][0];
+    //     //     $from = $message['from']; // Sender's phone number
+    //     //     $text = $message['text']['body']; // Message content
+
+    //     //     // Log the message details
+    //     //     Log::info("Received message from $from: $text");
+
+    //     //     // You can also save the message to the database or trigger other actions here
+    //     // }
+
+    //     // // Return a 200 OK response to acknowledge receipt of the webhook
+    //     // return response()->json(['success' => true]);
+    // }
 
     function generateRandomPassword($length = 8)
     {
