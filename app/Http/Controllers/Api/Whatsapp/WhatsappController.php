@@ -143,13 +143,31 @@ class WhatsappController extends Controller
             return;
         }
 
-        $app = DB::table(AppStores::$tableName)
-            ->where(AppStores::$storeId, $storeId)
-            ->where(Stores::$tableName . '.' . Stores::$userId, $user->id)
-            ->join(Apps::$tableName, Apps::$id, '=', AppStores::$appId)
-            ->join(Stores::$tableName, Stores::$id, '=', AppStores::$storeId)
-            ->join(Users::$tableName, Users::$id, '=', Stores::$userId)
-            ->first([Apps::$id . ' as id']);
+        $app = DB::table(table: AppStores::$tableName)
+            ->where(AppStores::$tableName . '.' . AppStores::$storeId, '=', $storeId)
+            ->where(Stores::$tableName . '.' . Stores::$userId, '=', $user->id)
+
+            ->join(
+                Apps::$tableName,
+                Apps::$tableName . '.' . Apps::$id,
+                '=',
+                AppStores::$tableName . '.' . AppStores::$appId
+            )
+            ->join(
+                Stores::$tableName,
+                Stores::$tableName . '.' . Stores::$id,
+                '=',
+                AppStores::$tableName . '.' . AppStores::$storeId
+            )
+            ->join(
+                Users::$tableName,
+                Users::$tableName . '.' . Users::$id,
+                '=',
+                Stores::$tableName . '.' . Stores::$userId
+            )
+            ->first(
+                [Apps::$tableName . '.' . Apps::$id . ' as id']
+            );
 
         if ($app == null) {
             $whatsapp->sendMessageText($phoneNumber, "التطبيق غير موجود");
@@ -178,10 +196,19 @@ class WhatsappController extends Controller
         }
 
         $userSession = DB::table(UsersSessions::$tableName)
-            ->join(DevicesSessions::$tableName, DevicesSessions::$id, '=', UsersSessions::$deviceSessionId)
-            ->where(DevicesSessions::$appId, $appId)
-            ->where(UsersSessions::$userId, $user->id)
-            ->first([UsersSessions::$id]);
+                ->join(
+                    DevicesSessions::$tableName,
+                    DevicesSessions::$tableName . '.' . DevicesSessions::$id,
+                    '=',
+                    UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId
+                )
+                ->where(Users::$tableName . '.' . Users::$id, '=', $user->id)
+                ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $appId)
+                ->first(
+                    [
+                        UsersSessions::$tableName . '.' . UsersSessions::$id
+                    ]
+                );
 
         if ($userSession != null) {
             $whatsapp->sendMessageText($phoneNumber, "تم تسجيل الخروج بنجاح (Session ID: {$userSession->id})");
