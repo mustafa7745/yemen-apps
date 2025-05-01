@@ -46,6 +46,8 @@ class WhatsappService
         $resp = curl_exec($curl);
         $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
+        Logger("WhatsApp Response: " . $resp);
+
         if ($resp === false) {
             curl_close($curl);
             return false;
