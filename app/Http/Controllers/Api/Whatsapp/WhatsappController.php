@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\Api\Stores;
+namespace App\Http\Controllers\Api\WhatsApp;
 
 use App\Http\Controllers\Controller;
 use App\Models\Apps;

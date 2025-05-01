@@ -10,10 +10,10 @@ use App\Http\Controllers\Api\StoreManager\StoreManagerControllerUpdate;
 use App\Http\Controllers\Api\Stores\StoresControllerAdd;
 use App\Http\Controllers\Api\Stores\StoresControllerGet;
 use App\Http\Controllers\Api\Stores\StoresControllerUpdate;
-use App\Http\Controllers\Api\Stores\WhatsappController;
 use App\Http\Controllers\Api\Users\UserControllerAdd;
 use App\Http\Controllers\Api\Users\UserControllerGet;
 use App\Http\Controllers\Api\Users\UserControllerUpdate;
+use App\Http\Controllers\Api\WhatsApp\WhatsappController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
