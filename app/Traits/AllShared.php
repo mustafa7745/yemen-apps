@@ -1803,7 +1803,7 @@ trait AllShared
                 );
 
             if ($userSession != null) {
-                $whatsapp->sendMessageText($phoneNumber, $userSession->id);
+                $whatsapp->sendMessageText($phoneNumber, $userSession->id."MOO");
 
             } else {
                 $whatsapp->sendMessageText($phoneNumber, "ثمة خطأ");
