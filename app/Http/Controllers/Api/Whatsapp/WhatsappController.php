@@ -18,33 +18,42 @@ class WhatsappController extends Controller
 {
     public function whatsapp_webhook(Request $request)
     {
-        $whatsapp = new WhatsappService();
+        try {
+            $whatsapp = new WhatsappService();
 
-        $phoneNumber = $request->input('entry.0.changes.0.value.messages.0.from');
-        $message = $request->input('entry.0.changes.0.value.messages.0.text.body');
-        $name = $request->input('entry.0.changes.0.value.contacts.0.profile.name');
+            $phoneNumber = $request->input('entry.0.changes.0.value.messages.0.from');
+            $message = $request->input('entry.0.changes.0.value.messages.0.text.body');
+            $name = $request->input('entry.0.changes.0.value.contacts.0.profile.name');
 
-        $phoneUtil = \libphonenumber\PhoneNumberUtil::getInstance();
-        $number = $phoneUtil->parse("+" . $phoneNumber, null);
-        $countryCode = $number->getCountryCode();
-        $regionCode = $phoneUtil->getRegionCodeForNumber($number);
-        $nationalNumber = $number->getNationalNumber();
+            $phoneUtil = \libphonenumber\PhoneNumberUtil::getInstance();
+            $number = $phoneUtil->parse("+" . $phoneNumber, null);
+            $countryCode = $number->getCountryCode();
+            $regionCode = $phoneUtil->getRegionCodeForNumber($number);
+            $nationalNumber = $number->getNationalNumber();
 
-        $user = $this->findUser($nationalNumber, $countryCode, $regionCode);
+            $whatsapp->sendMessageText($phoneNumber, " لديه حساب مسبق");
 
-        if ($message == "اشتراك") {
-            $this->handleSubscription($user, $name, $nationalNumber, $countryCode, $regionCode, $phoneNumber, $whatsapp);
-        } elseif ($message == "نسيت كلمة المرور") {
-            $this->handlePasswordReset($user, $phoneNumber, $whatsapp);
-        } elseif (preg_match('/^رمز التطبيق \{([^{}]+)\}$/u', $message, $matches)) {
-            $storeId = $matches[1];
-            $this->handleAppCode($user, $storeId, $phoneNumber, $whatsapp);
-        } elseif (preg_match('/^تسجيل الخروج من \{([^{}]+)\}$/u', $message, $matches)) {
-            $appId = $matches[1];
-            $this->handleLogout($user, $appId, $phoneNumber, $whatsapp);
+
+            $user = $this->findUser($nationalNumber, $countryCode, $regionCode);
+
+            if ($message == "اشتراك") {
+                $this->handleSubscription($user, $name, $nationalNumber, $countryCode, $regionCode, $phoneNumber, $whatsapp);
+            } elseif ($message == "نسيت كلمة المرور") {
+                $this->handlePasswordReset($user, $phoneNumber, $whatsapp);
+            } elseif (preg_match('/^رمز التطبيق \{([^{}]+)\}$/u', $message, $matches)) {
+                $storeId = $matches[1];
+                $this->handleAppCode($user, $storeId, $phoneNumber, $whatsapp);
+            } elseif (preg_match('/^تسجيل الخروج من \{([^{}]+)\}$/u', $message, $matches)) {
+                $appId = $matches[1];
+                $this->handleLogout($user, $appId, $phoneNumber, $whatsapp);
+            }
+
+        } catch (\Throwable $th) {
+            //throw $th;
+        } finally {
+            return response()->json(['success' => true]);
         }
 
-        return response()->json(['success' => true]);
     }
 
     private function findUser($nationalNumber, $countryCode, $regionCode)
