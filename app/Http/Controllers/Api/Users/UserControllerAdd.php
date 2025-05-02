@@ -56,9 +56,7 @@ class UserControllerAdd extends Controller
         $accessToken = $myData['accessToken'];
         $app = $myData['app'];
         $appStore = $this->getAppStore($request, $app->id);
-        checkStoreOpen($appStore->storeId);
-
-
+        $this->checkStoreOpen($appStore->storeId);
         return $this->confirmOurOrder($request, $accessToken->userId, $appStore->storeId);
     }
     // {
