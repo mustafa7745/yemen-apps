@@ -35,6 +35,7 @@ use App\Models\StorePaymentTypes;
 use App\Models\StoreProducts;
 use App\Models\Stores;
 use App\Models\StoreSections;
+use App\Models\StoresTime;
 use App\Models\StoreSubscriptions;
 use App\Models\Users;
 use App\Models\UsersSessions;
@@ -203,11 +204,16 @@ trait AllShared
 
         // ];
 
+        $storeTime = DB::table(StoresTime::$tableName)
+            ->where(StoresTime::$storeId, '=', $store->id)
+            ->first();
+
         return response()->json([
             'ads' => $ads,
             'storeCategories' => $storeCategories,
             'storeSections' => $storeSections,
-            'storeNestedSections' => $storeNestedSections
+            'storeNestedSections' => $storeNestedSections,
+            'storeTime' => $storeTime
         ]);
     }
     public function getOurStores($appId)
@@ -1603,20 +1609,20 @@ trait AllShared
     //     $regionCode = $phoneUtil->getRegionCodeForNumber($number);
     //     $nationalNumber = $number->getNationalNumber();
     //     $user = DB::table(Users::$tableName)
-            // ->join(
-            //     Countries::$tableName,
-            //     Countries::$tableName . '.' . Countries::$id,
-            //     '=',
-            //     Users::$tableName . '.' . Users::$countryId
-            // )
-            // ->where(Users::$tableName . '.' . Users::$phone, '=', $nationalNumber)
-            // ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
-            // ->where(Countries::$tableName . '.' . Countries::$region, '=', $regionCode)
+    // ->join(
+    //     Countries::$tableName,
+    //     Countries::$tableName . '.' . Countries::$id,
+    //     '=',
+    //     Users::$tableName . '.' . Users::$countryId
+    // )
+    // ->where(Users::$tableName . '.' . Users::$phone, '=', $nationalNumber)
+    // ->where(Countries::$tableName . '.' . Countries::$code, '=', $countryCode)
+    // ->where(Countries::$tableName . '.' . Countries::$region, '=', $regionCode)
     //         ->first(
     //             [
-                    // Users::$tableName . '.' . Users::$id,
-                    // Users::$tableName . '.' . Users::$firstName,
-                    // Users::$tableName . '.' . Users::$lastName,
+    // Users::$tableName . '.' . Users::$id,
+    // Users::$tableName . '.' . Users::$firstName,
+    // Users::$tableName . '.' . Users::$lastName,
     //             ]
     //         );
     //     if ($message == "اشتراك") {
@@ -1736,31 +1742,31 @@ trait AllShared
     //             $whatsapp->sendMessageText($phoneNumber, $storeId);
     //             $whatsapp->sendMessageText($phoneNumber, $user->id);
 
-                // $app = DB::table(table: AppStores::$tableName)
-                //     ->where(AppStores::$tableName . '.' . AppStores::$storeId, '=', $storeId)
-                //     ->where(Stores::$tableName . '.' . Stores::$userId, '=', $user->id)
+    // $app = DB::table(table: AppStores::$tableName)
+    //     ->where(AppStores::$tableName . '.' . AppStores::$storeId, '=', $storeId)
+    //     ->where(Stores::$tableName . '.' . Stores::$userId, '=', $user->id)
 
-                //     ->join(
-                //         Apps::$tableName,
-                //         Apps::$tableName . '.' . Apps::$id,
-                //         '=',
-                //         AppStores::$tableName . '.' . AppStores::$appId
-                //     )
-                //     ->join(
-                //         Stores::$tableName,
-                //         Stores::$tableName . '.' . Stores::$id,
-                //         '=',
-                //         AppStores::$tableName . '.' . AppStores::$storeId
-                //     )
-                //     ->join(
-                //         Users::$tableName,
-                //         Users::$tableName . '.' . Users::$id,
-                //         '=',
-                //         Stores::$tableName . '.' . Stores::$userId
-                //     )
-                //     ->first(
-                //         [Apps::$tableName . '.' . Apps::$id . ' as id']
-                //     );
+    //     ->join(
+    //         Apps::$tableName,
+    //         Apps::$tableName . '.' . Apps::$id,
+    //         '=',
+    //         AppStores::$tableName . '.' . AppStores::$appId
+    //     )
+    //     ->join(
+    //         Stores::$tableName,
+    //         Stores::$tableName . '.' . Stores::$id,
+    //         '=',
+    //         AppStores::$tableName . '.' . AppStores::$storeId
+    //     )
+    //     ->join(
+    //         Users::$tableName,
+    //         Users::$tableName . '.' . Users::$id,
+    //         '=',
+    //         Stores::$tableName . '.' . Stores::$userId
+    //     )
+    //     ->first(
+    //         [Apps::$tableName . '.' . Apps::$id . ' as id']
+    //     );
 
     //             if ($app == null) {
     //                 $whatsapp->sendMessageText($phoneNumber, "app not found");
@@ -1787,20 +1793,20 @@ trait AllShared
     //         $value_inside_braces = $matches[1] ?? null;
     //         $whatsapp->sendMessageText($phoneNumber, $value_inside_braces);
 
-            // $userSession = DB::table(UsersSessions::$tableName)
-            //     ->join(
-            //         DevicesSessions::$tableName,
-            //         DevicesSessions::$tableName . '.' . DevicesSessions::$id,
-            //         '=',
-            //         UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId
-            //     )
-            //     ->where(Users::$tableName . '.' . Users::$id, '=', $user->id)
-            //     ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $value_inside_braces)
-            //     ->first(
-            //         [
-            //             UsersSessions::$tableName . '.' . UsersSessions::$id
-            //         ]
-            //     );
+    // $userSession = DB::table(UsersSessions::$tableName)
+    //     ->join(
+    //         DevicesSessions::$tableName,
+    //         DevicesSessions::$tableName . '.' . DevicesSessions::$id,
+    //         '=',
+    //         UsersSessions::$tableName . '.' . UsersSessions::$deviceSessionId
+    //     )
+    //     ->where(Users::$tableName . '.' . Users::$id, '=', $user->id)
+    //     ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$appId, '=', $value_inside_braces)
+    //     ->first(
+    //         [
+    //             UsersSessions::$tableName . '.' . UsersSessions::$id
+    //         ]
+    //     );
 
     //         if ($userSession != null) {
     //             $whatsapp->sendMessageText($phoneNumber, $userSession->id."MOO");
