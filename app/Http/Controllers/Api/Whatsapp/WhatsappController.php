@@ -33,8 +33,9 @@ class WhatsappController extends Controller
 
             Logger('Message Id:' . $messageId);
             Logger('Phone :' . $phoneNumber);
-
             Logger('Message:' . $message);
+            Logger('Date:' . Carbon::now()->format('Y-m-d H:i:s'));
+
 
             // return response()->json(['status' => 'received'], 200);
 
