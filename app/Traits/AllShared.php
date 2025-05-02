@@ -310,9 +310,9 @@ trait AllShared
         $customDay = $dayMap[$now->dayOfWeek];
 
         // جلب وقت العمل من الجدول
-        $storeTime = DB::table('stores_time')
-            ->where('store_id', $storeId)
-            ->where('day', $customDay)
+        $storeTime = DB::table(StoresTime::$tableName)
+            ->where(StoresTime::$storeId, '=', $storeId)
+            ->where(StoresTime::$day, '=', $customDay)
             ->first();
 
         if (!$storeTime || $storeTime->is_open != 1) {
