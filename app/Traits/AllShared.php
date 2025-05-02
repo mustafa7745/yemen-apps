@@ -216,7 +216,7 @@ trait AllShared
             4 => 6, // Thursday
             5 => 7, // Friday
         };
-        
+
         $storeTime = DB::table(StoresTime::$tableName)
             ->where(StoresTime::$storeId, '=', $store->id)
             ->where(StoresTime::$day, '=', $customDay)
@@ -292,6 +292,54 @@ trait AllShared
         // }
 
         return $data;
+    }
+    function checkStoreOpen($storeId): bool
+    {
+        $now = Carbon::now();
+
+        // تحويل اليوم الحالي إلى تنسيقك (1 = السبت)
+        $dayMap = [
+            6 => 1, // Saturday
+            0 => 2, // Sunday
+            1 => 3, // Monday
+            2 => 4, // Tuesday
+            3 => 5, // Wednesday
+            4 => 6, // Thursday
+            5 => 7, // Friday
+        ];
+        $customDay = $dayMap[$now->dayOfWeek];
+
+        // جلب وقت العمل من الجدول
+        $storeTime = DB::table('stores_time')
+            ->where('store_id', $storeId)
+            ->where('day', $customDay)
+            ->first();
+
+        if (!$storeTime || $storeTime->is_open != 1) {
+            return false;
+        }
+
+        // وقت الفتح
+        $openAt = Carbon::createFromTimeString($storeTime->open_at);
+
+        // وقت الإغلاق (يدعم ما بعد منتصف الليل)
+        $closeParts = explode(':', $storeTime->close_at);
+        $closeHour = (int) $closeParts[0];
+        $closeMinute = (int) $closeParts[1];
+        $closeSecond = (int) $closeParts[2];
+
+        $closeAt = $now->copy()->setTime($closeHour % 24, $closeMinute, $closeSecond);
+        if ($closeHour >= 24) {
+            $closeAt->addDay();
+        }
+
+        // وقت الفتح بنفس اليوم
+        $openAt = $now->copy()->setTimeFromTimeString($storeTime->open_at);
+
+        $isOpen = $now->between($openAt, $closeAt);
+        if ($isOpen === false) {
+            throw new CustomException("Store Closed", 0, 442);
+        }
     }
     public function getOurProducts2(Request $request)
     {
