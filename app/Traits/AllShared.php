@@ -316,7 +316,7 @@ trait AllShared
             ->first();
     
         if (!$storeTime || $storeTime->isOpen != 1) {
-            throw new CustomException("Store Closed", 0, 442);
+            throw new CustomException("Store in this day Closed", 0, 442);
         }
     
         // وقت الفتح
