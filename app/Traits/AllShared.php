@@ -315,15 +315,15 @@ trait AllShared
             ->where(StoresTime::$day, '=', $customDay)
             ->first();
 
-        if (!$storeTime || $storeTime->is_open != 1) {
+        if (!$storeTime || $storeTime->isOpen != 1) {
             return false;
         }
 
         // وقت الفتح
-        $openAt = Carbon::createFromTimeString($storeTime->open_at);
+        $openAt = Carbon::createFromTimeString($storeTime->openAt);
 
         // وقت الإغلاق (يدعم ما بعد منتصف الليل)
-        $closeParts = explode(':', $storeTime->close_at);
+        $closeParts = explode(':', $storeTime->closeAt);
         $closeHour = (int) $closeParts[0];
         $closeMinute = (int) $closeParts[1];
         $closeSecond = (int) $closeParts[2];
@@ -334,7 +334,7 @@ trait AllShared
         }
 
         // وقت الفتح بنفس اليوم
-        $openAt = $now->copy()->setTimeFromTimeString($storeTime->open_at);
+        $openAt = $now->copy()->setTimeFromTimeString($storeTime->openAt);
 
         $isOpen = $now->between($openAt, $closeAt);
         if ($isOpen === false) {
