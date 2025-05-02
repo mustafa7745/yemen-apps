@@ -204,8 +204,22 @@ trait AllShared
 
         // ];
 
+        $currentDay = Carbon::now()->dayOfWeekIso; // 1 (Monday) to 7 (Sunday)
+
+        // ملاحظة: إذا كنت تستخدم تنسيقك الخاص (1 = السبت، 2 = الأحد، ...)، عدّل هنا:
+        $customDay = match ($currentDay) {
+            6 => 1, // Saturday
+            7 => 2, // Sunday
+            1 => 3, // Monday
+            2 => 4, // Tuesday
+            3 => 5, // Wednesday
+            4 => 6, // Thursday
+            5 => 7, // Friday
+        };
+        
         $storeTime = DB::table(StoresTime::$tableName)
             ->where(StoresTime::$storeId, '=', $store->id)
+            ->where(StoresTime::$day, '=', $customDay)
             ->first();
 
         return response()->json([
