@@ -30,6 +30,7 @@ use App\Models\Sections;
 use App\Models\SharedStoresConfigs;
 use App\Models\StoreAds;
 use App\Models\StoreCategories;
+use App\Models\StoreCurencies;
 use App\Models\StoreNestedSections;
 use App\Models\StorePaymentTypes;
 use App\Models\StoreProducts;
@@ -288,6 +289,36 @@ trait AllShared
             ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg']
         ];
 
+        $storeCurrencies = DB::table(table: StoreCurencies::$tableName)
+            ->join(
+                Currencies::$tableName,
+                Currencies::$tableName . '.' . Currencies::$id,
+                '=',
+                StoreCurencies::$tableName . '.' . StoreCurencies::$currencyId
+            )
+            ->whereIn(StoreCurencies::$tableName . '.' . StoreCurencies::$storeId, $storeIds)
+            ->get([
+                Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
+                Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
+                StoreCurencies::$tableName . '.' . StoreCurencies::$id,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$lessCartPrice,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$storeId,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$freeDeliveryPrice,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$deliveryPrice,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$isSelected,
+                StoreCurencies::$tableName . '.' . StoreCurencies::$countUsed,
+            ]);
+
+        foreach ($data as $index => $store) {
+            $res = [];
+            foreach ($storeCurrencies as $key => $storeCurrency) {
+                if ($store->id == $storeCurrency->storeId) {
+                    $res[] = $storeCurrency;
+                }
+            }
+            $data[$index]->storeCurrencies = $res;
+        }
+
 
         // }
 
@@ -296,7 +327,7 @@ trait AllShared
     function checkStoreOpen($storeId)
     {
         $now = Carbon::now();
-    
+
         // تحويل اليوم الحالي إلى تنسيقك (1 = السبت)
         $dayMap = [
             6 => 1, // Saturday
@@ -308,41 +339,41 @@ trait AllShared
             5 => 7, // Friday
         ];
         $customDay = $dayMap[$now->dayOfWeek];
-    
+
         // جلب وقت العمل من الجدول
         $storeTime = DB::table(StoresTime::$tableName)
             ->where(StoresTime::$storeId, '=', $storeId)
             ->where(StoresTime::$day, '=', $customDay)
             ->first();
-    
+
         if (!$storeTime || $storeTime->isOpen != 1) {
             throw new CustomException("Store in this day Closed", 0, 442);
         }
-    
+
         // وقت الفتح
         $openAt = Carbon::createFromTimeString($storeTime->openAt);
-    
+
         // وقت الإغلاق (يدعم ما بعد منتصف الليل)
         $closeParts = explode(':', $storeTime->closeAt);
         $closeHour = (int) $closeParts[0];
         $closeMinute = (int) $closeParts[1];
         $closeSecond = (int) $closeParts[2];
-    
+
         $closeAt = $now->copy()->setTime($closeHour % 24, $closeMinute, $closeSecond);
         if ($closeHour >= 24) {
             $closeAt->addDay();
         }
-    
+
         // ضبط وقت الفتح من نفس اليوم
         $openAt = $now->copy()->setTimeFromTimeString($storeTime->openAt);
-    
+
         $isOpen = $now->between($openAt, $closeAt);
-    
+
         if (!$isOpen) {
             throw new CustomException("Store Closed", 0, 442);
         }
     }
-    
+
     public function getOurProducts2(Request $request)
     {
         $storeNestedSectionId = $request->input('storeNestedSectionId');
