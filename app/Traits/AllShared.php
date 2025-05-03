@@ -30,7 +30,6 @@ use App\Models\Sections;
 use App\Models\SharedStoresConfigs;
 use App\Models\StoreAds;
 use App\Models\StoreCategories;
-use App\Models\StoreCurencies;
 use App\Models\StoreNestedSections;
 use App\Models\StorePaymentTypes;
 use App\Models\StoreProducts;
@@ -231,199 +230,73 @@ trait AllShared
             'storeTime' => $storeTime
         ]);
     }
-    public function getOurStores($request)
+    public function getOurStores($appId)
     {
-        $myData = $this->getMyData(request: $request, withStore: false, withUser: true);
-
         // $app = $this->getMyApp($request);
-        // // 
-        // $data = DB::table(AppStores::$tableName)
-        //     ->join(
-        //         Stores::$tableName,
-        //         Stores::$tableName . '.' . Stores::$id,
-        //         '=',
-        //         AppStores::$tableName . '.' . AppStores::$storeId
-        //     )
+        // 
+        $data = DB::table(AppStores::$tableName)
+            ->join(
+                Stores::$tableName,
+                Stores::$tableName . '.' . Stores::$id,
+                '=',
+                AppStores::$tableName . '.' . AppStores::$storeId
+            )
 
-        //     ->where(AppStores::$appId, $appId)
-        //     ->get([
-        //         Stores::$tableName . '.' . Stores::$id,
-        //         Stores::$tableName . '.' . Stores::$name,
-        //         Stores::$tableName . '.' . Stores::$logo,
-        //         Stores::$tableName . '.' . Stores::$cover,
-        //         Stores::$tableName . '.' . Stores::$typeId,
-        //         Stores::$tableName . '.' . Stores::$likes,
-        //         Stores::$tableName . '.' . Stores::$subscriptions,
-        //         Stores::$tableName . '.' . Stores::$stars,
-        //         Stores::$tableName . '.' . Stores::$reviews,
-        //         Stores::$tableName . '.' . Stores::$latLng,
+            ->where(AppStores::$appId, $appId)
+            ->get([
+                Stores::$tableName . '.' . Stores::$id,
+                Stores::$tableName . '.' . Stores::$name,
+                Stores::$tableName . '.' . Stores::$logo,
+                Stores::$tableName . '.' . Stores::$cover,
+                Stores::$tableName . '.' . Stores::$typeId,
+                Stores::$tableName . '.' . Stores::$likes,
+                Stores::$tableName . '.' . Stores::$subscriptions,
+                Stores::$tableName . '.' . Stores::$stars,
+                Stores::$tableName . '.' . Stores::$reviews,
+                Stores::$tableName . '.' . Stores::$latLng,
 
-        //     ]);
-
-        // $storeIds = [];
-        // foreach ($data as $store) {
-        //     $storeIds[] = $store->id;
-        // }
-
-        // $storeConfigs = DB::table(table: SharedStoresConfigs::$tableName)
-        //     ->whereIn(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, $storeIds)
-        //     ->get();
-
-
-        // // 
-        // foreach ($data as $index => $store) {
-        //     if ($store->typeId == 1) {
-        //         foreach ($storeConfigs as $storeConfig) {
-        //             if ($storeConfig->storeId == $store->id) {
-        //                 $categories = json_decode($storeConfig->categories);
-        //                 $sections = json_decode($storeConfig->sections);
-        //                 $nestedSections = json_decode($storeConfig->nestedSections);
-        //                 $products = json_decode($storeConfig->products);
-        //                 // $stores[$index] = (array)$stores[$index];
-        //                 $data[$index]->storeConfig = ['storeIdReference' => $storeConfig->storeIdReference, 'categories' => $categories, 'sections' => $sections, 'nestedSections' => $nestedSections, 'products' => $products];
-        //             }
-        //         }
-        //     } else {
-        //         $data[$index]->storeConfig = null;
-        //     }
-        // }
-        // $ads = [
-        //     ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg']
-        // ];
-
-
-        // // }
-
-        // return $data;
-
-        $accessToken = $myData['accessToken'];
-        $mainCategoryId = $request->input('mainCategoryId');
-
-        $latitude = $request->input('latitude');
-        $longitude = $request->input('longitude');
-
-        $isLocationNull = is_null($latitude) || is_null($longitude);
-        // print_r($latitude.$longitude);
-        // print_r($isLocationNull ? "null":"not null");
-
-        $stores = DB::table(Stores::$tableName)
-            ->where(Stores::$tableName . '.' . Stores::$mainCategoryId, '=', $mainCategoryId)
-            ->where(Stores::$tableName . '.' . Stores::$countryId, '=', $accessToken->countryId)
-            ->where(Stores::$tableName . '.' . Stores::$latLong, '<>', null)
-
-            ->get(
-                [
-                    Stores::$tableName . '.' . Stores::$id,
-                    Stores::$tableName . '.' . Stores::$typeId,
-                    Stores::$tableName . '.' . Stores::$name,
-                    Stores::$tableName . '.' . Stores::$logo,
-                    Stores::$tableName . '.' . Stores::$cover,
-                    Stores::$tableName . '.' . Stores::$cover,
-                    Stores::$tableName . '.' . Stores::$reviews,
-                    Stores::$tableName . '.' . Stores::$subscriptions,
-                    Stores::$tableName . '.' . Stores::$stars,
-                    Stores::$tableName . '.' . Stores::$likes,
-                    DB::raw(
-                        $isLocationNull
-                        ? "NULL AS distance" // Return NULL if latitude or longitude is null
-                        : "ROUND(ST_Distance_Sphere(ST_GeomFromText('POINT($latitude $longitude)', 4326), " . Stores::$tableName . '.' . Stores::$latLong . ") * 1.45 / 1000, 2) AS distance"
-                    ),
-                ]
-            );
+            ]);
 
         $storeIds = [];
-        foreach ($stores as $store) {
+        foreach ($data as $store) {
             $storeIds[] = $store->id;
-            // }
         }
 
         $storeConfigs = DB::table(table: SharedStoresConfigs::$tableName)
             ->whereIn(SharedStoresConfigs::$tableName . '.' . SharedStoresConfigs::$storeId, $storeIds)
             ->get();
 
-        // print_r($storeConfigs);
 
-        // First, filter the storeConfigs by storeIds (matching storeConfig's storeId to store's id)
-        $filteredStoreConfigs = collect($storeConfigs)->keyBy('storeId');
-
-        // Now, update the stores with the corresponding storeConfig data
-        foreach ($stores as $index => $store) {
-            if ($store->typeId == 1 && isset($filteredStoreConfigs[$store->id])) {
-                $storeConfig = $filteredStoreConfigs[$store->id];
-
-                // Handle JSON decoding and checking for errors
-                $categories = json_decode($storeConfig->categories);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    $categories = [];  // Handle invalid JSON
+        // 
+        foreach ($data as $index => $store) {
+            if ($store->typeId == 1) {
+                foreach ($storeConfigs as $storeConfig) {
+                    if ($storeConfig->storeId == $store->id) {
+                        $categories = json_decode($storeConfig->categories);
+                        $sections = json_decode($storeConfig->sections);
+                        $nestedSections = json_decode($storeConfig->nestedSections);
+                        $products = json_decode($storeConfig->products);
+                        // $stores[$index] = (array)$stores[$index];
+                        $data[$index]->storeConfig = ['storeIdReference' => $storeConfig->storeIdReference, 'categories' => $categories, 'sections' => $sections, 'nestedSections' => $nestedSections, 'products' => $products];
+                    }
                 }
-
-                $sections = json_decode($storeConfig->sections);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    $sections = [];  // Handle invalid JSON
-                }
-
-                $nestedSections = json_decode($storeConfig->nestedSections);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    $nestedSections = [];  // Handle invalid JSON
-                }
-
-                $products = json_decode($storeConfig->products);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    $products = [];  // Handle invalid JSON
-                }
-
-                // Merge the storeConfig data into the store object
-                $stores[$index]->storeConfig = [
-                    'storeIdReference' => $storeConfig->storeIdReference,
-                    'categories' => $categories,
-                    'sections' => $sections,
-                    'nestedSections' => $nestedSections,
-                    'products' => $products
-                ];
             } else {
-                // If storeConfig doesn't exist for the store or doesn't match, set storeConfig to null
-                $stores[$index]->storeConfig = null;
+                $data[$index]->storeConfig = null;
             }
         }
+        $ads = [
+            ['id' => 1, 'image' => 'https://couponswala.com/blog/wp-content/uploads/2022/09/Food-Combo-Offers.jpg']
+        ];
 
 
-        $storeCurrencies = DB::table(table: StoreCurencies::$tableName)
-            ->join(
-                Currencies::$tableName,
-                Currencies::$tableName . '.' . Currencies::$id,
-                '=',
-                StoreCurencies::$tableName . '.' . StoreCurencies::$currencyId
-            )
-            ->whereIn(StoreCurencies::$tableName . '.' . StoreCurencies::$storeId, $storeIds)
-            ->get([
-                Currencies::$tableName . '.' . Currencies::$id . ' as currencyId',
-                Currencies::$tableName . '.' . Currencies::$name . ' as currencyName',
-                StoreCurencies::$tableName . '.' . StoreCurencies::$id,
-                StoreCurencies::$tableName . '.' . StoreCurencies::$lessCartPrice,
-                StoreCurencies::$tableName . '.' . StoreCurencies::$storeId,
-                StoreCurencies::$tableName . '.' . StoreCurencies::$freeDeliveryPrice,
-                StoreCurencies::$tableName . '.' . StoreCurencies::$deliveryPrice,
-                StoreCurencies::$tableName . '.' . StoreCurencies::$isSelected,
-                StoreCurencies::$tableName . '.' . StoreCurencies::$countUsed,
-            ]);
+        // }
 
-        foreach ($stores as $index => $store) {
-            $res = [];
-            foreach ($storeCurrencies as $key => $storeCurrency) {
-                if ($store->id == $storeCurrency->storeId) {
-                    $res[] = $storeCurrency;
-                }
-            }
-            $stores[$index]->storeCurrencies = $res;
-        }
-
-
-        return response()->json($stores);
+        return $data;
     }
     function checkStoreOpen($storeId)
     {
         $now = Carbon::now();
-
+    
         // تحويل اليوم الحالي إلى تنسيقك (1 = السبت)
         $dayMap = [
             6 => 1, // Saturday
@@ -435,41 +308,41 @@ trait AllShared
             5 => 7, // Friday
         ];
         $customDay = $dayMap[$now->dayOfWeek];
-
+    
         // جلب وقت العمل من الجدول
         $storeTime = DB::table(StoresTime::$tableName)
             ->where(StoresTime::$storeId, '=', $storeId)
             ->where(StoresTime::$day, '=', $customDay)
             ->first();
-
+    
         if (!$storeTime || $storeTime->isOpen != 1) {
             throw new CustomException("Store in this day Closed", 0, 442);
         }
-
+    
         // وقت الفتح
         $openAt = Carbon::createFromTimeString($storeTime->openAt);
-
+    
         // وقت الإغلاق (يدعم ما بعد منتصف الليل)
         $closeParts = explode(':', $storeTime->closeAt);
         $closeHour = (int) $closeParts[0];
         $closeMinute = (int) $closeParts[1];
         $closeSecond = (int) $closeParts[2];
-
+    
         $closeAt = $now->copy()->setTime($closeHour % 24, $closeMinute, $closeSecond);
         if ($closeHour >= 24) {
             $closeAt->addDay();
         }
-
+    
         // ضبط وقت الفتح من نفس اليوم
         $openAt = $now->copy()->setTimeFromTimeString($storeTime->openAt);
-
+    
         $isOpen = $now->between($openAt, $closeAt);
-
+    
         if (!$isOpen) {
             throw new CustomException("Store Closed", 0, 442);
         }
     }
-
+    
     public function getOurProducts2(Request $request)
     {
         $storeNestedSectionId = $request->input('storeNestedSectionId');
