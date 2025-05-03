@@ -289,7 +289,7 @@ class StoreManagerControllerGet extends Controller
             );
 
 
-        return response()->json(array_values($products));
+        return response()->json(($products));
     }
 
     public function getOptions()
