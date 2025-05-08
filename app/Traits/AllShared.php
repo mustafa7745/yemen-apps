@@ -233,7 +233,7 @@ trait AllShared
 
 
         $videoData = DB::table(YoutubeData::$tableName)
-            ->where(YoutubeData::$tableName . '.' . YoutubeData::$storeId, '=', $store->id)
+            ->where( YoutubeData::$tableName . '.' . YoutubeData::$storeId, '=', $store->id)
             ->get();
 
         return response()->json([
