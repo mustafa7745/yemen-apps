@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class YoutubeData
+class Youtube
 {
    public static $tableName = "youtube";
    public static $id = "id";
