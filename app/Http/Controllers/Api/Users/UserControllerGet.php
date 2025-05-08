@@ -83,12 +83,12 @@ class UserControllerGet extends Controller
         return $this->getOurUserProfile($accessToken->userId, );
     }
 
-    public function getYoutubeData(Request $request)
-    {
-        $myData = $this->getMyData(request: $request, withStore: false, withUser: false);
-        $store = $myData['store'];
-        return $this->getOurYoutubeData($store->id, );
-    }
+    // public function getYoutubeData(Request $request)
+    // {
+    //     $myData = $this->getMyData(request: $request, withStore: false, withUser: false);
+    //     $store = $myData['store'];
+    //     return $this->getOurYoutubeData($store->id, );
+    // }
 
 
     public function getOrderProducts(Request $request)

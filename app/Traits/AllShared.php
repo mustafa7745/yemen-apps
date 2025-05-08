@@ -109,15 +109,13 @@ trait AllShared
 
         return response()->json($data);
     }
-    public function getOurYoutubeData($storeId)
-    {
-        // $accessToken = (new LoginController($this->appId))->readAccessToken($request);
+    // public function getOurYoutubeData($storeId)
+    // {
+    //     // $accessToken = (new LoginController($this->appId))->readAccessToken($request);
 
-        $data = DB::table(table: YoutubeTable::$tableName)
-            ->where(YoutubeTable::$tableName . '.' . YoutubeTable::$storeId, '=', $storeId)
-            ->get();
-        return response()->json($data);
-    }
+
+    //     return response()->json($data);
+    // }
     public function getOurHome($store)
     {
         $storeIdReference = null;
@@ -233,13 +231,18 @@ trait AllShared
             ->where(StoresTime::$day, '=', $customDay)
             ->first();
 
+
+        $videoData = DB::table(table: YoutubeTable::$tableName)
+            ->where(YoutubeTable::$tableName . '.' . YoutubeTable::$storeId, '=', $storeId)
+            ->get();
+
         return response()->json([
             'ads' => $ads,
             'storeCategories' => $storeCategories,
             'storeSections' => $storeSections,
             'storeNestedSections' => $storeNestedSections,
             'storeTime' => $storeTime,
-            'videoData' => $this->getOurYoutubeData($store->id)
+            'videoData' => $videoData
         ]);
     }
     public function getOurStores($appId)
