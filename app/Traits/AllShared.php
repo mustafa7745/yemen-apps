@@ -232,7 +232,7 @@ trait AllShared
             ->first();
 
 
-        $videoData = DB::table(table: YoutubeTable::$tableName)
+        $videoData = DB::table(YoutubeTable::$tableName)
             ->where(YoutubeTable::$tableName . '.' . YoutubeTable::$storeId, '=', $store->id)
             ->get();
 
