@@ -41,6 +41,7 @@ use App\Models\StoreSubscriptions;
 use App\Models\Users;
 use App\Models\UsersSessions;
 use App\Models\WhatsappMessages;
+use App\Models\YoutubeTable;
 use App\Services\FirebaseService;
 use App\Services\WhatsappService;
 use Carbon\Carbon;
@@ -106,6 +107,15 @@ trait AllShared
                 Users::$tableName . '.' . Users::$logo,
             ]);
 
+        return response()->json($data);
+    }
+    public function getOurYoutubeData($storeId)
+    {
+        // $accessToken = (new LoginController($this->appId))->readAccessToken($request);
+
+        $data = DB::table(table: YoutubeTable::$tableName)
+            ->where(YoutubeTable::$tableName . '.' . YoutubeTable::$storeId, '=', $storeId)
+            ->get();
         return response()->json($data);
     }
     public function getOurHome($store)
@@ -228,7 +238,8 @@ trait AllShared
             'storeCategories' => $storeCategories,
             'storeSections' => $storeSections,
             'storeNestedSections' => $storeNestedSections,
-            'storeTime' => $storeTime
+            'storeTime' => $storeTime,
+            'videoData' => $this->getOurYoutubeData($store->id)
         ]);
     }
     public function getOurStores($appId)
