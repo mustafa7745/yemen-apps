@@ -41,7 +41,7 @@ use App\Models\StoreSubscriptions;
 use App\Models\Users;
 use App\Models\UsersSessions;
 use App\Models\WhatsappMessages;
-use App\Models\YoutubeTable;
+use App\Models\YoutubeData;
 use App\Services\FirebaseService;
 use App\Services\WhatsappService;
 use Carbon\Carbon;
@@ -232,8 +232,8 @@ trait AllShared
             ->first();
 
 
-        $videoData = DB::table(YoutubeTable::$tableName)
-            ->where(YoutubeTable::$tableName . '.' . YoutubeTable::$storeId, '=', $store->id)
+        $videoData = DB::table(YoutubeData::$tableName)
+            ->where(YoutubeData::$tableName . '.' . YoutubeData::$storeId, '=', $store->id)
             ->get();
 
         return response()->json([
