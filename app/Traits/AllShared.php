@@ -1239,7 +1239,7 @@ trait AllShared
             );
 
 
-            print_r("sdsfdfadfda");
+            // print_r("sdsfdfadfda");
 
         $store = DB::table(table: Stores::$tableName)
             ->join(
@@ -1258,9 +1258,9 @@ trait AllShared
             );
 
           
-        print_r("IDDDD" . $storeId);
+        // print_r("IDDDD" . $storeId);
 
-        print_r($store);
+        // print_r($store);
 
 
         $parts = explode(",", $store->latLng);
