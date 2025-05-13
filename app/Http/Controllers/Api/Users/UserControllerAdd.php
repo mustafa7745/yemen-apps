@@ -20,8 +20,13 @@ class UserControllerAdd extends Controller
 
     public function addLocation(Request $request)
     {
-        $app = $this->getMyApp($request);
-        return $this->addOurLocation($request, $app->id);
+        $myData = $this->getMyData(request: $request, appId: null, withStore: false, withUser: true);
+        // $storeId = $request->input('storeId');
+        // $app = $myData['app'];
+        $accessToken = $myData['accessToken'];
+
+        // $app = $this->getMyApp($request);
+        return $this->addOurLocation($request, $accessToken->userId);
     }
     public function addPaidCode(Request $request)
     {
