@@ -1254,6 +1254,8 @@ trait AllShared
                 ]
             );
 
+        print_r($store);
+
 
         $parts = explode(",", $store->latLng);
 
