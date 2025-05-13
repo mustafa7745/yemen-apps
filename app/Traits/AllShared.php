@@ -1238,6 +1238,9 @@ trait AllShared
                 ]
             );
 
+
+            print_r("sdsfdfadfda");
+
         $store = DB::table(table: Stores::$tableName)
             ->join(
                 Currencies::$tableName,
@@ -1254,6 +1257,7 @@ trait AllShared
                 ]
             );
 
+          
         print_r("IDDDD" . $storeId);
 
         print_r($store);
