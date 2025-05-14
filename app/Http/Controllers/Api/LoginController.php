@@ -304,7 +304,7 @@ class LoginController
                 ->first();
         }
 
-        if ($appToken != $this->deviceSession->appToken) {
+        if ($appToken != $deviceSession->appToken) {
             DB::table(table: DevicesSessions::$tableName)
                 ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$id, '=', $deviceSession->id)
                 ->update([
