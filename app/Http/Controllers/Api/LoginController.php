@@ -250,8 +250,6 @@ class LoginController
     {
         $this->validRequestV1($request, [
             'deviceId' => 'required|string|max:40',
-            'model' => 'required|string|max:50',
-            'version' => 'required|string|max:50'
         ]);
 
         $deviceId = $request->input('deviceId');
@@ -262,6 +260,11 @@ class LoginController
             ->first();
 
         if ($device == null) {
+            $this->validRequestV1($request, [
+                'model' => 'required|string|max:50',
+                'version' => 'required|string|max:50'
+            ]);
+    
             $insertedId = DB::table(Devices::$tableName)->insertGetId([
                 Devices::$id => null,
                 Devices::$model => $model,
