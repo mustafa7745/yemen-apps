@@ -19,10 +19,18 @@ class LoginController
 {
     use AllShared;
     private $appId;
-    public function __construct($appId)
+
+    private $device;
+    private $deviceSession;
+
+    public function __construct($appId, $request)
     {
         $this->appId = $appId;
+        $this->device = $this->getDevice(request: $request);
+        $this->deviceSession = $this->getDeviceSession($request, $this->device->id);
     }
+
+
     public function login(Request $request)
     {
         $app = $this->getMyApp($request);
@@ -40,10 +48,10 @@ class LoginController
         $phone = $request->input('phone');
         $password = $request->input('password');
 
-        $device = $this->getDevice(request: $request);
-        $deviceSession = $this->getDeviceSession($request, $device->id);
+        // $this->device = $this->getDevice(request: $request);
+        // $this->deviceSession = $this->getDeviceSession($request, $this->device->id);
 
-        $myProcess = $this->checkProcessV1('login', $device->id, null);
+        $myProcess = $this->checkProcessV1('login', $this->device->id, null);
 
         // print_r(strlen($phone));
         // print_r(strlen($countryCode));
@@ -71,16 +79,16 @@ class LoginController
             DB::table(FailProcesses::$tableName)->insert([
                 FailProcesses::$id => null,
                 FailProcesses::$myProcessId => $myProcess->id,
-                FailProcesses::$deviceId => $device->id,
+                FailProcesses::$deviceId => $this->device->id,
                 FailProcesses::$userId => null,
                 FailProcesses::$createdAt => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
             throw new CustomException("Phone Or Password Error", 0, 400);
         }
         //////
-        $this->updateAppToken($request, $deviceSession);
+        // $this->updateAppToken($request);
         /////
-        $userSession = $this->getFinalUserSession($user->id, $deviceSession->id);
+        $userSession = $this->getFinalUserSession($user->id, $this->deviceSession->id);
         $accessToken = $this->getAccessTokenByUserSessionId($userSession->id);
         // print_r($accessToken);
         $res = ["token" => $accessToken->token, 'expireAt' => $accessToken->expireAt];
@@ -95,16 +103,16 @@ class LoginController
         return $accessToken;
     }
     ///
-    private function updateAppToken(Request $request, $deviceSession)
+    private function updateAppToken(Request $request)
     {
         $this->validRequestV1($request, [
             'appToken' => 'required|string|max:250'
         ]);
 
         $appToken = $request->input('appToken');
-        if ($appToken != $deviceSession->appToken) {
+        if ($appToken != $this->deviceSession->appToken) {
             DB::table(table: DevicesSessions::$tableName)
-                ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$id, '=', $deviceSession->id)
+                ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$id, '=', $this->deviceSession->id)
                 ->update([
                     DevicesSessions::$tableName . '.' . DevicesSessions::$appToken => $appToken,
                     DevicesSessions::$createdAt => now()->format('Y-m-d H:i:s'),
@@ -292,6 +300,17 @@ class LoginController
                 ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$id, '=', $insertedId)
                 ->first();
         }
+
+        if ($appToken != $this->deviceSession->appToken) {
+            DB::table(table: DevicesSessions::$tableName)
+                ->where(DevicesSessions::$tableName . '.' . DevicesSessions::$id, '=', $deviceSession->id)
+                ->update([
+                    DevicesSessions::$tableName . '.' . DevicesSessions::$appToken => $appToken,
+                    DevicesSessions::$createdAt => now()->format('Y-m-d H:i:s'),
+                ]);
+            $deviceSession->appToken = $appToken;
+        }
+
         return $deviceSession;
     }
 

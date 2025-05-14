@@ -24,7 +24,7 @@ class DeliveryControllerGet extends Controller
     public function login(Request $request)
     {
         return DB::transaction(function () use ($request) {
-            $loginController = (new LoginController($this->appId));
+            $loginController = (new LoginController($this->appId,$request));
             $res = $loginController->loginNew($request);
             if ($res == false) {
                 return $this->responseError2($res->message, [], $res->code, $res->responseCode);

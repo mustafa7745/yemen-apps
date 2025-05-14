@@ -72,7 +72,7 @@ class StoreManagerControllerGet extends Controller
             ], 422);  // 422 Unprocessable Entity
         }
 
-        $loginController = (new LoginController($this->appId));
+        $loginController = (new LoginController($this->appId,$request));
         $token = $request->input('accessToken');
         $deviceId = $request->input('deviceId');
         $storeId = $request->input('storeId');
@@ -850,7 +850,7 @@ class StoreManagerControllerGet extends Controller
     {
         $myData = $this->getMyData(request: $request, appId: $this->appId, withStore: false, withUser: false, myProcessName: 'login');
         $app = $myData['app'];
-        return (new LoginController($app->id))->login($request);
+        return (new LoginController($app->id,$request))->login($request);
     }
     public function refreshToken(Request $request)
     {

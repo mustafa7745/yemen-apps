@@ -273,7 +273,7 @@ class StoresControllerGet extends Controller
 
     public function login(Request $request)
     {
-        return (new LoginController($this->appId))->login($request);
+        return (new LoginController($this->appId,$request))->login($request);
     }
     public function refreshToken(Request $request)
     {

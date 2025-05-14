@@ -32,7 +32,7 @@ class UserControllerGet extends Controller
     {
         $myData = $this->getMyData(request: $request, appId: null, withStore: false, withUser: false, myProcessName: 'login');
         $app = $myData['app'];
-        return (new LoginController($app->id))->login($request);
+        return (new LoginController($app->id,$request))->login($request);
     }
     public function refreshToken(Request $request)
     {

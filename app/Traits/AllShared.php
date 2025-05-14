@@ -1239,7 +1239,7 @@ trait AllShared
             );
 
 
-            // print_r("sdsfdfadfda");
+        // print_r("sdsfdfadfda");
 
         $store = DB::table(table: Stores::$tableName)
             ->join(
@@ -1257,7 +1257,7 @@ trait AllShared
                 ]
             );
 
-          
+
         // print_r("IDDDD" . $storeId);
 
         // print_r($store);
@@ -1294,7 +1294,7 @@ trait AllShared
     }
     public function refreshOurToken(Request $request, $appId)
     {
-        return (new LoginController($appId))->readAndRefreshAccessToken($request);
+        return (new LoginController($appId,$request))->readAndRefreshAccessToken($request);
         // return $loginController;
     }
     public function confirmOurOrder(Request $request, $userId, $storeId)
@@ -1665,7 +1665,7 @@ trait AllShared
 
 
 
-        $loginController = (new LoginController($appId));
+        $loginController = (new LoginController($appId,$request));
         $token = $request->input('accessToken');
         $deviceId = $request->input('deviceId');
 
@@ -2277,9 +2277,11 @@ trait AllShared
         $app = $this->getMyApp($request, $appId);
         $this->checkConfig($request);
 
+        $loginController = new LoginController($app->id, $request);
+
         $accessToken = null;
         if ($withUser === true) {
-            $accessToken = (new LoginController($app->id))->readAccessToken($request);
+            $accessToken = $loginController->readAccessToken($request);
         }
 
         $store = null;
